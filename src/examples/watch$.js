@@ -28,7 +28,7 @@ class WatchSource {
     const error$ = m.fromEvent('error', watcher)
       .take(1)
       .flatMap(err => m.throwError(err))
-    const d = debug(path.slice(0, __dirname.length) + '/watcher')
+    const d = debug(path + '/watcher')
     d('started')
 
     return dispose.all([
