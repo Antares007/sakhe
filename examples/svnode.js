@@ -1,9 +1,9 @@
 // const debug = require('debug')
-const apiRing = require('../rings/api')
-const sRing = require('../rings/s')
-const PatchBark = require('../barks/patch')
+const apiRing = require('../src/rings/api')
+const sRing = require('../src/rings/s')
+const PatchBark = require('../src/barks/patch')
 // const id = a => a
-const showHideRing = require('../rings/show-hide')
+const showHideRing = require('../src/rings/show-hide')
 
 const Counter = (key = 'Counter') => (put, select) => {
   put.onode('div.counter', {}, key, (enter, sselect, vselect) => {

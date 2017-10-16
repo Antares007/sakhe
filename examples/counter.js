@@ -1,6 +1,6 @@
 
-const PatchBark = require('../barks/patch')
-const hApiRing = require('../rings/h-api')
+const PatchBark = require('../src/barks/patch')
+const hApiRing = require('../src/rings/h-api')
 PatchBark(hApiRing)(document.getElementById('root-node'))(h => {
   h('div.app1', h => {
     h('div', showHideRing(Counter(0)))

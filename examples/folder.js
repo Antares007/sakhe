@@ -1,12 +1,12 @@
-const debug = require('debug')
+// const debug = require('debug')
 const watch$ = require('./watch$')
 const {join: pathJoin} = require('path')
 
-const eq = require('../eq')
-const PatchBark = require('../barks/patch')
-const cssRing = require('../rings/css')
-const apiRing = require('../rings/api')
-const sRing = require('../rings/s')
+const eq = require('../src/eq')
+const PatchBark = require('../src/barks/patch')
+const cssRing = require('../src/rings/css')
+const apiRing = require('../src/rings/api')
+const sRing = require('../src/rings/s')
 
 const Folder = path => (put, select) => {
   const change$ = watch$(path)
@@ -51,5 +51,5 @@ PatchBark(
 )(
   document.getElementById('root-node')
 )(
-  Folder(pathJoin(__dirname, '../..'))
+  Folder(pathJoin(__dirname, '..'))
 )
