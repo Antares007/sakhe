@@ -7,14 +7,22 @@ const aTree = deltac => pith => {
 }
 
 module.exports = aTree
-
-// const rez = aTree()(a => a)(({push, pull: pop}) => {
+// function map (pith) {
+//   return ({push, pull}) => {
+//     pith({push: a => { push(a); push(a) }, pull})
+//   }
+// }
+// const rez = aTree(a => a)(({push, pull}) => {
 //   push(1)
-//   push(aTree()(a => a)(({push, pull: pop}) => {
+//   push(aTree(a => a)(map(({push, pull}) => {
 //     push(1)
-//     pop()
-//     push(1.1)
-//   }))
-//   push(2)
+//     push(2)
+//     push(4)
+//     pull()
+//     push(3)
+//   })))
+//   push(4)
+//   pull()
+//   push(3)
 // })
 // console.log(rez)

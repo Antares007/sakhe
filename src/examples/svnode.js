@@ -1,4 +1,4 @@
-const debug = require('debug')
+// const debug = require('debug')
 const apiRing = require('../rings/api')
 const sRing = require('../rings/s')
 const PatchBark = require('../barks/patch')
@@ -32,4 +32,5 @@ PatchBark(
   document.getElementById('root-node')
 )(
   Counter()
-).tap(debug('patch')).drain()
+)
+// .tap(debug('patch')).drain()

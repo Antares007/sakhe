@@ -52,4 +52,4 @@ PatchBark(
   document.getElementById('root-node')
 )(
   Folder(pathJoin(__dirname, '../..'))
-).tap(debug('patch')).drain()
+)

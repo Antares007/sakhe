@@ -1,8 +1,3 @@
-const frame$ = require('./animation-frame').multicast() // .take(1000)
-const pi2 = Math.PI * 2
-const cycle$ = frame$.scan(i => i >= pi2 ? 0 : i + (0.15), 0)
-const sin$ = cycle$.map(i => Math.sin(i))
-const cos$ = cycle$.map(i => Math.cos(i))
 
 const PatchBark = require('../barks/patch')
 const hApiRing = require('../rings/h-api')
@@ -14,12 +9,17 @@ PatchBark(hApiRing)(document.getElementById('root-node'))(h => {
     h('div', showHideRing(Counter(3)))
   })
 })
-  .debounce(100)
-  .tap(x => x.log(x))
-  .drain()
+  // .debounce(100)
+  // .tap(x => x.log(x))
+  // .drain()
 
 function Counter (d = 1) { // eslint-disable-line
-  return h => {
+  return (h, select) => {
+    const pi2 = Math.PI * 2
+    const cycle$ = select.frame$.scan(i => i >= pi2 ? 0 : i + (0.15), 0)
+    const sin$ = cycle$.map(i => Math.sin(i))
+    const cos$ = cycle$.map(i => Math.cos(i))
+
     const sum$ = h.$.map(x => x.action).scan((sum, v) => sum + v, 0)
     const color$ = wave$ => wave$.map(i => 100 + d * 20 + Math.floor(30 * i))
     const r = 10
