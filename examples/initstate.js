@@ -1,8 +1,6 @@
 module.exports = key => {
-  var initState
-  try {
-    initState = JSON.parse(window.localStorage.getItem(key) || void 0)
-  } catch (err) {}
+  const item = window.localStorage.getItem(key)
+  var initState = item && JSON.parse(item)
   const proxy$ = {
     next: r => {
       const newState = r(initState)

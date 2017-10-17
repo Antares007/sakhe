@@ -34,15 +34,29 @@ const PatchBark = (pmap = require('../../rings/api')) => (elm) => pith => {
   const step = (timestamp) => {
     frame$.next(timestamp)
     if (oldVnode !== newVnode) {
+      // framesCount++
       oldVnode = patchVnode(oldVnode, newVnode)
     }
-    window.requestAnimationFrame(step)
+    requestId = window.requestAnimationFrame(step)
   }
+  var requestId = window.requestAnimationFrame(step)
 
-  window.requestAnimationFrame(step)
+  // var framesCount = 0
+  // const time = () => {
+  //   console.log('fps: ' + framesCount)
+  //   framesCount = 0
+  //   timeoutId = setTimeout(time, 1000)
+  // }
+  // var timeoutId = setTimeout(time, 1000)
+
   return vnodeBark(compose(addActionRing, pmap))(rootVnode.sel, rootVnode.data)(pith)
     .tap(vnode => { newVnode = vnode })
     .drain()
+    .then(() => {
+      window.cancelAnimationFrame(requestId)
+      // clearTimeout(timeoutId)
+      patchVnode(oldVnode, rootVnode)
+    })
 }
 
 module.exports = PatchBark

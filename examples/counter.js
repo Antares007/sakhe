@@ -1,6 +1,7 @@
 
 const PatchBark = require('../src/barks/patch')
 const hApiRing = require('../src/rings/h-api')
+
 PatchBark(hApiRing)(document.getElementById('root-node'))(h => {
   h('div.app1', h => {
     h('div', showHideRing(Counter(0)))
@@ -9,11 +10,8 @@ PatchBark(hApiRing)(document.getElementById('root-node'))(h => {
     h('div', showHideRing(Counter(3)))
   })
 })
-  // .debounce(100)
-  // .tap(x => x.log(x))
-  // .drain()
 
-function Counter (d = 1) { // eslint-disable-line
+function Counter (d = 0) {
   return (h, select) => {
     const pi2 = Math.PI * 2
     const cycle$ = select.frame$.scan(i => i >= pi2 ? 0 : i + (0.15), 0)
