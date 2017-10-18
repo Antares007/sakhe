@@ -45,9 +45,9 @@ const Folder = path => (put, select) => {
     })
   })
 }
-
+const stateRing = sRing(...(require('./initstate')('folder')))
 PatchBark(
-  p => cssRing(sRing(...(require('./initstate')('folder')))(apiRing(p)))
+  p => cssRing(stateRing(apiRing(p)))
 )(
   document.getElementById('root-node')
 )(

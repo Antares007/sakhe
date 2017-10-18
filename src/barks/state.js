@@ -54,9 +54,9 @@ module.exports = { ReducerBark }
 
 if (require.main === module) {
   ReducerBark(id)({}, _ => ({}))((enter, select) => {
-    enter.val('a', s => 'b')
-    enter.obj('o', s => {
-      s.val('a', s => 'b')
+    enter.val('a', m.of(s => 'b'))
+    enter.obj('o', enter => {
+      enter.val('a', s => 'b')
     })
     enter.arr('arr', (enter, select) => {
       enter.val(1, s => 42)

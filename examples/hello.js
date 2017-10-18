@@ -3,7 +3,9 @@ const m = require('most')
 
 const Folder = () => (put, select) => {
   put.text(m.never().startWith('hello'))
-  put.text(' world')
+  put.node('h1', (put) => {
+    put.text(m.of(' world'))
+  })
 }
 
 PatchBark()(
