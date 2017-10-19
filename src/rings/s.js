@@ -75,12 +75,12 @@ svpith => {
   )
 }
 
-const sRing = (initState, proxy$ = {next: id}) => pith => (put, select) => {
+const sRing = (initState, stateCb) => pith => (put, select) => {
   var state = initState
   const next$ = {
     next: r => {
       state = r(state)
-      proxy$.next((s => () => s)(state))
+      stateCb(state)
     }
   }
   const snode = ft => (pmap, spmap) => (sel, dta, key) => svpith =>
