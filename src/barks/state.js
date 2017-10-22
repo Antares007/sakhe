@@ -1,49 +1,50 @@
 const m = require('most')
+const {async, hold} = require('most-subject')
 const mostBark = require('./most')
-const {async: subject, hold} = require('most-subject')
+const apiRing = require('../rings/api')
 const id = a => a
-const cmp = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)))
 
-const c = (ft, k) => r => a => {
-  const ak = a && a[k]
+const c = (absurd, key) => r => a => {
+  const ak = a && a[key]
   const bk = r(ak)
   if (ak === bk) return a
-  return Object.assign(ft(), a, {[k]: bk})
+  const b = Object.assign(absurd(), a, {[key]: bk})
+  return b
 }
 
-const aBark = (pmap = id) => (ft = () => ({})) =>
-mostBark(pith => ({put}, select) => {
-  pmap(pith)({
-    val: (key, r) =>
-      put(select.$(r).map(c(ft, key))),
-    obj: pmap => key => pith =>
-      put(aBark(pmap)(_ => ({}))(pith).map(c(ft, key))),
-    arr: pmap => key => pith =>
-      put(aBark(pmap)(_ => ([]))(pith).map(c(ft, key))),
-    put
-  }, select)
+const absurda = () => ([])
+const absurdo = () => ({})
+
+const aBark = (pmap = id) => (absurd = absurdo) =>
+mostBark(pith => ({put}, select, ...rays) => {
+  const s = absurdt => pmap => key => pith =>
+    put(aBark(pmap)(absurdt)(pith).map(c(absurd, key)))
+  const v = (key, r) =>
+    put(select.$(r).map(c(absurd, key)))
+  pmap(pith)({ val: v, obj: s(absurdo), arr: s(absurda), put }, select, ...rays)
 })(m.mergeArray)
 
 const stateRing = state$ => pith => {
-  const select = ($, key) => $.map(s => s[key])
-  return (put, sray) => {
-    pith(Object.assign({}, put, {
-      obj: (pmap = id) => key =>
-        put.obj(cmp(stateRing(select(state$, key)), pmap))(key),
-      arr: (pmap = id) => key =>
-        put.arr(cmp(stateRing(select(state$, key)), pmap))(key)
-    }), Object.assign({}, sray, {
-      path: selectors => selectors.reduce(select, state$).skipRepeats()
+  const selectKey = ($, key) => $.map(s => s[key])
+  const s = absurdt => (pmap = id) => key =>
+    absurdt(pith => stateRing(selectKey(state$, key))(pmap(pith)))(key)
+  return (absurd, select) => {
+    pith(Object.assign({}, absurd, {
+      obj: s(absurd.obj),
+      arr: s(absurd.arr)
+    }),
+    Object.assign({}, select, {
+      path: selectors => selectors.reduce(selectKey, state$).skipRepeats()
     }))
   }
 }
 
 const ReducerBark =
-(pmap = require('../rings/api')) =>
-(initState = {}, ft = _ => ({})) =>
+(pmap = apiRing) =>
+(initState = {}, absurd = absurdo) =>
 (pith) => {
-  const state$ = hold(1, subject())
-  return aBark(cmp(stateRing(state$), pmap))(ft)(pith)
+  const state$ = hold(1, async())
+  return aBark(p => stateRing(state$)(pmap(p)))(absurd)(pith)
     .scan((s, r) => r(s), initState)
     .tap(state$.next.bind(state$))
     .skip(1)
@@ -52,18 +53,14 @@ const ReducerBark =
 
 module.exports = { ReducerBark }
 
-if (require.main === module) {
-  ReducerBark(id)({}, _ => ({}))((enter, select) => {
-    enter.val('a', m.of(s => 'b'))
-    enter.obj('o', enter => {
-      enter.val('a', s => 'b')
-    })
-    enter.arr('arr', (enter, select) => {
-      enter.val(1, s => 42)
-    })
-    enter.put(select.$(s => 42))
-  })
-  .tap(x => console.log(x))
-  .take(10)
-  .drain()
-}
+// ReducerBark()({}, absurdo)((absurd, select) => {
+//   absurd.val('a', m.of(s => 'b'))
+//   absurd.obj('o', absurd => {
+//     absurd.val('a', s => 'b')
+//   })
+//   absurd.arr('arr', (absurd, select) => {
+//     absurd.val(1, s => 42)
+//   })
+//   // absurd.put(select.$(s => 41))
+// }).tap(x => console.log(x))
+//   .drain()

@@ -1,11 +1,11 @@
+const debug = require('debug')('mostBark')
 const m = require('most')
 const aTree = require('../atree')
 
 const mostBark = pmap => deltac => pith => {
-  const run = pith => aTree(deltac)(function mPith ({push, pull}) {
-    pmap(pith)({
-      put: a => push(a)
-    }, {$})
+  const run = pith => aTree(deltac)(function mPith ({push: put}, ...rays) {
+    debug(pith.toString())
+    pmap(pith)({ put }, { $ }, ...rays)
   })
   return (
     typeof pith === 'function'
