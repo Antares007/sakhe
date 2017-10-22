@@ -39,7 +39,7 @@ const stateRing = state$ => pith => {
   }
 }
 
-const ReducerBark =
+const stateBark =
 (pmap = apiRing) =>
 (initState = {}, absurd = absurdo) =>
 (pith) => {
@@ -51,7 +51,7 @@ const ReducerBark =
     .flatMapEnd(() => { state$.complete(); return m.empty() })
 }
 
-module.exports = { ReducerBark }
+module.exports = Object.assign(stateBark, {absurdo, absurda, c})
 
 // ReducerBark()({}, absurdo)((absurd, select) => {
 //   absurd.val('a', m.of(s => 'b'))
