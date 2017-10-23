@@ -30,4 +30,4 @@ PatchBark(
   document.getElementById('root-node')
 )(
   Counter()
-)
+).drain()

@@ -4,12 +4,12 @@ const PatchBark = require('../src/barks/patch')
 const id = a => a
 
 PatchBark(
-  p => sRing(void 0, id)(apiRing(p))
+  p => sRing(...(require('./initstate')('todo')))(apiRing(p))
 )(
   document.getElementById('root-node')
 )(
   TodoApp()
-)
+).drain()
 
 function TodoApp () {
   return put => {

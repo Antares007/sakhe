@@ -1,4 +1,5 @@
 const vnodeBark = require('../vnode')
+const m = require('most')
 const id = a => a
 const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)))
 
@@ -31,31 +32,25 @@ const PatchBark = (pmap = require('../../rings/api')) => (elm) => pith => {
   }
   var newVnode = rootVnode
   var oldVnode = rootVnode
-  const step = (timestamp) => {
+  var requestId
+  const frame = (timestamp) => {
     frame$.next(timestamp)
     if (oldVnode !== newVnode) {
       // framesCount++
       oldVnode = patchVnode(oldVnode, newVnode)
     }
-    requestId = window.requestAnimationFrame(step)
+    requestId = window.requestAnimationFrame(frame)
   }
-  var requestId = window.requestAnimationFrame(step)
-
-  // var framesCount = 0
-  // const time = () => {
-  //   console.log('fps: ' + framesCount)
-  //   framesCount = 0
-  //   timeoutId = setTimeout(time, 1000)
-  // }
-  // var timeoutId = setTimeout(time, 1000)
-
   return vnodeBark(compose(addActionRing, pmap))(rootVnode.sel, rootVnode.data)(pith)
-    .tap(vnode => { newVnode = vnode })
-    .drain()
-    .then(() => {
+    .tap(vnode => {
+      newVnode = vnode
+      if (requestId) return
+      requestId = window.requestAnimationFrame(frame)
+    })
+    .flatMapEnd(() => {
       window.cancelAnimationFrame(requestId)
-      // clearTimeout(timeoutId)
       patchVnode(oldVnode, rootVnode)
+      return m.empty()
     })
 }
 

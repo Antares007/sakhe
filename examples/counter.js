@@ -9,7 +9,7 @@ PatchBark(hApiRing)(document.getElementById('root-node'))(h => {
     h('div', showHideRing(Counter(2)))
     h('div', showHideRing(Counter(3)))
   })
-})
+}).drain()
 
 function Counter (d = 0) {
   return (h, select) => {

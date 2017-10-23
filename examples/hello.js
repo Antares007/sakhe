@@ -12,4 +12,4 @@ PatchBark()(
   document.getElementById('root-node')
 )(
   Folder()
-)
+).drain()
