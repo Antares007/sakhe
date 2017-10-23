@@ -51,7 +51,7 @@ const stateBark =
     .flatMapEnd(() => { state$.complete(); return m.empty() })
 }
 
-module.exports = Object.assign(stateBark, {absurdo, absurda, c})
+module.exports = Object.assign(stateBark, {absurdo, absurda})
 
 // ReducerBark()({}, absurdo)((absurd, select) => {
 //   absurd.val('a', m.of(s => 'b'))

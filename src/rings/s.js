@@ -2,12 +2,10 @@ const debug = require('debug')
 const {sync} = require('most-subject')
 const vnodeBark = require('../barks/vnode')
 const stateBark = require('../barks/state')
-const {absurdo, absurda, c} = stateBark
+const {absurdo, absurda} = stateBark
 const {Cons} = require('../list')
 const id = a => a
 const apiRing = require('../rings/api')
-
-const rmap = (proxy$, f = id) => ({next: r => proxy$.next(s => f(r)(s))})
 
 const addActionRing = action$ => pith => (put, select) =>
   pith(Object.assign({}, put, {
@@ -30,14 +28,14 @@ svpith => {
   return vnodeBark(addActionRing(action$))(sel, data, path)(
     stateBark(spmap)(initState, absurd)((enter, sselect) => {
       const proxy$ = sync()
-      enter.put(proxy$)
-
+      const next = key => s =>
+        proxy$.next(ps => Object.assign(absurd(), ps, {[key]: s}))
       const chieldRing = pith => (put, select) => {
         const snode = absurd => (pmap = id, spmap) => (sel, dta, key) => svpith => {
           put.vnode(
             sselect.path([key]).take(1).map(initState =>
               svnodeBark(
-                select, initState, s => proxy$.next(c(absurd, key)(() => s)), absurd
+                select, initState, next(key), absurd
               )(pmap, spmap)(sel, dta, key)(svpith)
             ).switchLatest()
           )
@@ -51,6 +49,7 @@ svpith => {
           select
         )
       }
+      enter.put(proxy$)
       enter.put(
         sselect.$(svpith(enter, sselect, vselect))
           .map(p => chieldRing(pmap(p)))
@@ -71,25 +70,22 @@ svpith => {
   )
 }
 
-const sRing = (initState, stateCb) => pith => (put, select) => {
+const sRing = (initState, stateCb, absurd = absurdo) => pith => (put, select) => {
   var state = initState
-  const next = r => {
-    state = r(state)
+  const next = key => s => {
+    state = Object.assign(absurd(), state, {[key]: s})
     stateCb(state)
   }
   const snode = absurd => (pmap, spmap) => (sel, dta, key) => svpith =>
     put.vnode(
       svnodeBark(
-        select,
-        initState && initState[key],
-        s => next(c(absurd, key)(() => s)),
-        absurd
+        select, initState && initState[key], next(key), absurd
       )(pmap, spmap)(sel, dta, key)(svpith)
     )
   return pith(
     Object.assign({}, put, {
-      onode: snode(() => ({})),
-      anode: snode(() => ([]))
+      onode: snode(absurdo),
+      anode: snode(absurda)
     }),
     select
   )

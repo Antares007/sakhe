@@ -1,8 +1,6 @@
-// const debug = require('debug')
 const apiRing = require('../src/rings/api')
 const sRing = require('../src/rings/s')
 const PatchBark = require('../src/barks/patch')
-// const id = a => a
 const showHideRing = require('../src/rings/show-hide')
 
 const Counter = (key = 'Counter') => (put, select) => {
@@ -33,4 +31,3 @@ PatchBark(
 )(
   Counter()
 )
-// .tap(debug('patch')).drain()
