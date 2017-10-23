@@ -36,15 +36,16 @@ const PatchBark = (pmap = require('../../rings/api')) => (elm) => pith => {
   const frame = (timestamp) => {
     frame$.next(timestamp)
     if (oldVnode !== newVnode) {
-      // framesCount++
       oldVnode = patchVnode(oldVnode, newVnode)
+      requestId = window.requestAnimationFrame(frame)
+    } else {
+      requestId = void 0
     }
-    requestId = window.requestAnimationFrame(frame)
   }
   return vnodeBark(compose(addActionRing, pmap))(rootVnode.sel, rootVnode.data)(pith)
     .tap(vnode => {
       newVnode = vnode
-      if (requestId) return
+      if (typeof requestId !== 'undefined') return
       requestId = window.requestAnimationFrame(frame)
     })
     .flatMapEnd(() => {
