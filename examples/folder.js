@@ -1,4 +1,4 @@
-// const debug = require('debug')
+const m = require('most')
 const watch$ = require('./watch$')
 const {join: pathJoin} = require('path')
 
@@ -7,6 +7,10 @@ const PatchBark = require('../src/barks/patch')
 const cssRing = require('../src/rings/css')
 const apiRing = require('../src/rings/api')
 const sRing = require('../src/rings/s')
+
+const mapError = err => m.of(put => {
+  put.node('div', {style: {color: 'red'}}, put => put.text(err.message))
+})
 
 const Folder = path => (put, select) => {
   const change$ = watch$(path)
@@ -42,14 +46,17 @@ const Folder = path => (put, select) => {
           }
         })
       }
-    })
+    }).flatMapError(mapError)
   })
 }
+
 const stateRing = sRing(...(require('./initstate')('folder')))
+
 PatchBark(
   p => cssRing(stateRing(apiRing(p)))
 )(
   document.getElementById('root-node')
 )(
-  Folder(pathJoin(__dirname, '..'))
+  Folder('/')
+  // Folder(pathJoin(__dirname, '..'))
 ).drain()

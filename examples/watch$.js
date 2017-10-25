@@ -17,21 +17,22 @@ const readdir = path => _readdir(path).then(names => {
   return Promise.all(stats).then(() => s)
 })
 
-class WatchSource {
-  constructor (path) {
+class WatchTask {
+  constructor (sink, scheduler, path) {
+    this.sink = sink
+    this.scheduler = scheduler
     this.path = path
   }
-  run (sink, scheduler) {
+  run (t) {
     const path = this.path
     const watcher = fs.watch(path)
     const change$ = m.fromEvent('change', watcher)
     const error$ = m.fromEvent('error', watcher)
       .take(1)
       .flatMap(err => m.throwError(err))
-    const d = debug(path + '/watcher')
+    const d = debug('watcher: ' + path)
     d('started')
-
-    return dispose.all([
+    this.disposable = dispose.all([
       dispose.create(() => {
         watcher.close()
         d('closed')
@@ -51,18 +52,22 @@ class WatchSource {
           readdir(path)
         )
         .awaitPromises()
-        .source.run(sink, scheduler)
+        .source.run(this.sink, this.scheduler)
     ])
+  }
+  error (t, err) { this.sink.error(t, err) }
+  dispose () { return this.disposable && this.disposable.dispose() }
+}
+
+class WatchSource {
+  constructor (path) {
+    this.path = path
+  }
+  run (sink, scheduler) {
+    return scheduler.asap(new WatchTask(sink, scheduler, this.path))
   }
 }
 
 const watch$ = path => new m.Stream(new WatchSource(path))
 
 module.exports = watch$
-
-// // pairwise :: a -> Stream a -> Stream (a, a)
-// const pairwise = (initial, stream) => m.loop(
-//   (prev, current) => ({ seed: current, value: [prev, current] }),
-//   initial,
-//   stream
-// )
