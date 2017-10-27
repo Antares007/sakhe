@@ -1,15 +1,17 @@
-
 const PatchBark = require('../src/barks/patch')
 const hApiRing = require('../src/rings/h-api')
+const apiRing = require('../src/rings/api')
 
-PatchBark(hApiRing)(document.getElementById('root-node'))(h => {
-  h('div.app1', h => {
-    h('div', showHideRing(Counter(0)))
-    h('div', showHideRing(Counter(1)))
-    h('div', showHideRing(Counter(2)))
-    h('div', showHideRing(Counter(3)))
-  })
-}).drain()
+PatchBark(apiRing, hApiRing)(document.getElementById('root-node'))(
+  state => h => {
+    h('div.app1', h => {
+      h('div', showHideRing(Counter(0)))
+      h('div', showHideRing(Counter(1)))
+      h('div', showHideRing(Counter(2)))
+      h('div', showHideRing(Counter(3)))
+    })
+  }
+).drain()
 
 function Counter (d = 0) {
   return (h, select) => {

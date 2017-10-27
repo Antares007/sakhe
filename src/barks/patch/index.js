@@ -1,8 +1,6 @@
-const vnodeBark = require('../vnode')
+const svnodeBark = require('../svnode')
 const m = require('most')
 const id = a => a
-const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)))
-
 const {sync} = require('most-subject')
 const toVnode = require('snabbdom/tovnode').default
 const {init} = require('snabbdom')
@@ -10,8 +8,12 @@ const createActionModule = require('./action-module')
 const defaultModules = ['class', 'props', 'style', 'attributes'].map(
   name => require('snabbdom/modules/' + name).default
 )
+const apiRing = require('../../rings/api')
 
-const PatchBark = (pmap = require('../../rings/api')) => (elm) => pith => {
+const PatchBark =
+(spmap = apiRing, vpmap = apiRing) =>
+(elm, initState = {}, stateCb = () => void 0) =>
+pith => {
   const rootVnode = toVnode(elm)
   const action$ = sync()
   const frame$ = sync()
@@ -22,14 +24,34 @@ const PatchBark = (pmap = require('../../rings/api')) => (elm) => pith => {
       action$.next({ vnode: this, action, event })
     })
   ])
-  const addActionRing = pith => (put, select) => {
+
+  const sPithRing = pith => (state, select) => {
+    pith(state, Object.assign({}, select, {
+      action$: action$.filter(x => x.vnode.data.path.endsWith(select.vpath))
+    }))
+  }
+  const vPithRing = pith => (put, select) => {
+    const snode =
+    nodet =>
+    (spmap = id, vpmap = id) =>
+    (key, sel, data) => {
+      return nodet(
+        p => sPithRing(spmap(p)),
+        p => vPithRing(vpmap(p))
+      )(
+        key, sel, data
+      )
+    }
     pith(Object.assign({}, put, {
-      node: (pmap = id) => put.node(p => addActionRing(pmap(p)))
+      node: (pmap = id) => put.node(p => vPithRing(pmap(p))),
+      onode: snode(put.onode),
+      anode: snode(put.anode)
     }), Object.assign({}, select, {
       action$: action$.filter(x => x.vnode.data.path.endsWith(select.path)),
       frame$
     }))
   }
+
   var newVnode = rootVnode
   var oldVnode = rootVnode
   var requestId
@@ -42,7 +64,15 @@ const PatchBark = (pmap = require('../../rings/api')) => (elm) => pith => {
       requestId = void 0
     }
   }
-  return vnodeBark(compose(addActionRing, pmap))(rootVnode.sel, rootVnode.data)(pith)
+
+  return svnodeBark(
+    p => sPithRing(spmap(p)),
+    p => vPithRing(vpmap(p))
+  )(
+    stateCb, initState, () => ({}), rootVnode.sel, rootVnode.data
+  )(
+    pith
+  )
     .tap(vnode => {
       newVnode = vnode
       if (typeof requestId !== 'undefined') return
