@@ -75,3 +75,7 @@ vnodeBark(id)(sel, data, path)(
 )
 
 module.exports = svnodeBark
+
+// svnodeBark()(s => console.info('state:', s), {}, absurdo, 'div')(
+//   (state, sselect) => (put, vselect) => put.text('hello')
+// ).tap(vnode => vnode.log()).drain()

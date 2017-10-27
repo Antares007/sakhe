@@ -53,14 +53,13 @@ const stateBark =
 
 module.exports = Object.assign(stateBark, {absurdo, absurda})
 
-// ReducerBark()({}, absurdo)((absurd, select) => {
-//   absurd.val('a', m.of(s => 'b'))
-//   absurd.obj('o', absurd => {
-//     absurd.val('a', s => 'b')
+// stateBark()({}, absurdo)((state, select) => {
+//   state.val('a', m.of(s => 'b'))
+//   state.obj('o', state => {
+//     state.val('a', s => 'b')
 //   })
-//   absurd.arr('arr', (absurd, select) => {
-//     absurd.val(1, s => 42)
+//   state.arr('arr', (state, select) => {
+//     state.val(1, s => 42)
 //   })
-//   // absurd.put(select.$(s => 41))
 // }).tap(x => console.log(x))
 //   .drain()

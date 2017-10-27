@@ -20,10 +20,18 @@ class VText extends VTree {
 class VNode extends VTree {
   constructor (sel, data, children) {
     super()
-    if (typeof sel !== 'string') throw new Error('invalid selector')
-    if (typeof data !== 'object' || data === null) throw new Error('invalid data')
-    if (!Array.isArray(children)) throw new Error('invalid children')
-    if (children.some(a => !(a instanceof VTree))) throw new Error('invalid child')
+    if (typeof sel !== 'string') {
+      throw new Error('invalid selector')
+    }
+    if (typeof data !== 'object' || data === null) {
+      throw new Error('invalid data')
+    }
+    if (!Array.isArray(children)) {
+      throw new Error('invalid children')
+    }
+    if (children.some(a => !(a instanceof VTree))) {
+      throw new Error('invalid child')
+    }
     this.sel = sel
     this.data = data
     this.children = children
@@ -75,28 +83,32 @@ const pathRing = path => pith => function pathPith (put, select) {
   }), Object.assign({}, select, {path}))
 }
 
-const vnodeBark = (pmap = require('../rings/api')) => (sel, data = {}, path = nil) =>
+const vnodeBark =
+(pmap = require('../rings/api')) =>
+(sel, data = {}, path = nil) =>
   Node(cmp(pathRing(path), pmap))(sel, data)
 
 module.exports = vnodeBark
 
-if (require.main === module) {
-  vnodeBark()('div.a')((put, select) => {
-    put.node('button', {on: {click: true}}, put => {
-      put.node('button', put => {
-        put.text('hello1')
-      })
-      put.text('hello2')
-    })
-    put.vnode(vnodeBark()('div.a', {path: select.path}, Cons('mount1', select.path))(put => {
-      put.node('li', id)
-      put.node('button', {on: {click: true}}, put => {
-        put.node('button', put => {
-          put.text('hello1')
-        })
-        put.text('hello2')
-      })
-      put.node('li', id)
-    }))
-  }).tap(v => v.log()).drain()
-}
+// vnodeBark()('div.a')((put, select) => {
+//   put.node('button', {on: {click: true}}, put => {
+//     put.node('button', put => {
+//       put.text('hello1')
+//     })
+//     put.text('hello2')
+//   })
+//   put.vnode(vnodeBark()(
+//     'div.a',
+//     {path: select.path},
+//     Cons('mount1', select.path)
+//   )(put => {
+//     put.node('li', id)
+//     put.node('button', {on: {click: true}}, put => {
+//       put.node('button', put => {
+//         put.text('hello1')
+//       })
+//       put.text('hello2')
+//     })
+//     put.node('li', id)
+//   }))
+// }).tap(v => v.log()).drain()
