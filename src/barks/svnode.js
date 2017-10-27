@@ -13,14 +13,21 @@ const svnodeBark =
 svpith =>
 vnodeBark(id)(sel, data, path)(
   stateBark(
-    p => (enter, sselect) => spmap(p)(enter, Object.assign({}, sselect, {vpath: path}))
-  )(initState, absurd)((enter, sselect) => {
+    p => (state, sselect) => spmap(p)(
+      state,
+      Object.assign({}, sselect, {vpath: path})
+    )
+  )(initState, absurd)((state, sselect) => {
     const proxy$ = sync()
     const next = key => childState => proxy$.next(
       s => Object.assign(absurd(), s, {[key]: childState})
     )
     const chieldRing = pith => (put, select) => {
-      const snode = absurd => (spmap, vpmap) => (key, sel, dta = {}) => pith => {
+      const snode =
+      absurd =>
+      (spmap, vpmap) =>
+      (key, sel, dta = {}) =>
+      pith => {
         const data = select.$(dta).map(d => Object.assign({path, key}, d))
         const childPath = Cons(key, path)
         put.vnode(
@@ -44,9 +51,9 @@ vnodeBark(id)(sel, data, path)(
         select
       )
     }
-    enter.put(proxy$)
-    enter.put(
-      sselect.$(svpith(enter, sselect))
+    state.put(proxy$)
+    state.put(
+      sselect.$(svpith(state, sselect))
         .map(p => chieldRing(vpmap(p)))
         .map(pith => s => {
           s.pith = pith
@@ -68,53 +75,3 @@ vnodeBark(id)(sel, data, path)(
 )
 
 module.exports = svnodeBark
-
-// const addActionRing = pith => (put, select) => {
-//   pith(Object.assign({}, put, {
-//     node: (pmap = id) => put.node(p => addActionRing(pmap(p))),
-//     onode: (spmap, vpmap = id) => put.onode(spmap, p => addActionRing(vpmap(p))),
-//     anode: (spmap, vpmap = id) => put.anode(spmap, p => addActionRing(vpmap(p)))
-//   }), Object.assign({}, select, {
-//     aa: true
-//   }))
-// }
-// const logRing = pith => (...args) => {
-//   console.log(args)
-//   pith(...args)
-// }
-// svnodeBark(p => apiRing(logRing(p)), p => apiRing(logRing(p)))(
-//   state => {
-//     // console.log(JSON.stringify(state))
-//   },
-//   {},
-//   absurdo,
-//   'h1',
-//   {},
-//   nil
-// )(
-//   (state, sselect) => {
-//     state.val('a', s => 'b')
-//     return (put, vselect) => {
-//       put.node('h2', put => put.node('h2', (put, s) => {
-//         put.text('hello.')
-//         put.onode('zmuki1', 'h3', {}, (state, sselect) => {
-//           state.val('a', s => 'b')
-//           return (put, vselect) => {
-//             put.node('h4', put => put.node('h4', put => put.text('hello')))
-//             put.node('h4', put => put.node('h4', (put, s) => {
-//               put.text('hello')
-//             }))
-//           }
-//         })
-//       }))
-//       put.onode('zmuki2', 'h3', {}, (state, sselect) => {
-//         state.val('a', s => 'b')
-//         return (put, vselect) => {
-//           put.node('h4', put => put.text('hello'))
-//         }
-//       })
-//     }
-//   }
-// )
-// // .tap(x => x.log())
-//   .drain()
