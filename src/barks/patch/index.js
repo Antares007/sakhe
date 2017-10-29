@@ -5,9 +5,12 @@ const {sync} = require('most-subject')
 const toVnode = require('snabbdom/tovnode').default
 const {init} = require('snabbdom')
 const createActionModule = require('./action-module')
-const defaultModules = ['class', 'props', 'style', 'attributes'].map(
-  name => require('snabbdom/modules/' + name).default
-)
+const defaultModules = [
+  require('snabbdom/modules/class').default,
+  require('snabbdom/modules/props').default,
+  require('snabbdom/modules/style').default,
+  require('snabbdom/modules/attributes').default
+]
 const apiRing = require('../../rings/api')
 
 const PatchBark =

@@ -12,3 +12,5 @@ This project is in development process. If you want to follow:
 3.	Clone [This](https://github.com/Antares007/sakhe) repository
 4.	Open any example from [examples](https://github.com/Antares007/sakhe/tree/master/examples) folder
 5.	Press f5
+
+[Counter app demo](https://jsfiddle.net/Antares007/6p6x9v87/7/)
