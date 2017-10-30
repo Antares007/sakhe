@@ -7,22 +7,22 @@ const aTree = deltac => pith => {
 }
 
 module.exports = aTree
+
+// var i = 0
+// const step = v => `(${v})_${i++}`
 // function pmap (pith) {
 //   return ({push, pull}) => {
-//     pith({push: a => { push(a); push(a) }, pull})
+//     pith({push: a => push(step(a)), pull})
 //   }
 // }
-// const rez = aTree(a => a)(({push, pull}) => {
-//   push(1)
-//   push(aTree(a => a)(pmap(({push, pull}) => {
-//     push(1)
-//     push(2)
-//     push(4)
-//     pull()
-//     push(3)
-//   })))
-//   push(4)
-//   pull()
-//   push(3)
-// })
+// const rez = aTree(a => a.join(', '))(pmap(pmap(({push, pull}) => {
+//   push('a')
+//   push(aTree(a => a.join(', '))(pmap(pmap(({push, pull}) => {
+//     push('a')
+//     push('b')
+//     push('o')
+//   }))))
+//   push('b')
+//   push('o')
+// })))
 // console.log(rez)
