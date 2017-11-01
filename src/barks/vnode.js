@@ -73,12 +73,14 @@ const Node = (pmap = id) => (sel, data = {}) => mostBark(
 const pathRing = path => pith => function pathPith (put, select) {
   var i = 0
   pith(Object.assign({}, put, {
-    node: (pmap = id) => (sel, data = {}) => pith => {
+    node: (pmap = id) => (sel, data = {}) => {
       const key = i++
       const thisPath = Cons(key, path)
-      put.node(cmp(pathRing(thisPath), pmap))(
+      return put.node(
+        p => pathRing(thisPath)(pmap(p))
+      )(
         sel, select.$(data).map(data => Object.assign({path, key}, data))
-      )(pith)
+      )
     }
   }), Object.assign({}, select, {path}))
 }
