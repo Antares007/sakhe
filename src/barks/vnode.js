@@ -1,8 +1,8 @@
 const m = require('most')
 const {Cons, nil} = require('../list')
 const mostBark = require('./most')
-const id = a => a
-const cmp = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)))
+const apiRing = require('../rings/api')
+const invalid = msg => { throw new Error('invalid ' + msg) }
 
 class VTree {}
 
@@ -18,29 +18,18 @@ class VText extends VTree {
 }
 
 class VNode extends VTree {
-  constructor (sel, data, children) {
+  constructor (sel, data, children, path) {
     super()
-    if (typeof sel !== 'string') {
-      throw new Error('invalid selector')
-    }
-    if (typeof data !== 'object' || data === null) {
-      throw new Error('invalid data')
-    }
-    if (!Array.isArray(children)) {
-      throw new Error('invalid children')
-    }
-    if (children.some(a => !(a instanceof VTree))) {
-      throw new Error('invalid child')
-    }
+    if (typeof sel !== 'string') invalid('selector')
+    if (typeof data !== 'object' || data === null) invalid('data')
+    if (!Array.isArray(children)) invalid('children')
+    if (children.some(a => !(a instanceof VTree))) invalid('child')
+    if (path !== nil && !(path instanceof Cons)) invalid('path')
     this.sel = sel
     this.data = data
     this.children = children
-    if (typeof data.key !== 'undefined') {
-      this.key = data.key
-    }
-    if (data.path) {
-      this.path = data.path.toString()
-    }
+    this.path = path
+    this.key = path === nil ? 'nil' : path.head
   }
   log () {
     const grpKey = this.sel + (
@@ -48,69 +37,57 @@ class VNode extends VTree {
       ? '/' + this.key
       : ''
     )
-    console.groupCollapsed(grpKey, this.path)
+    console.groupCollapsed(grpKey, this.path.toString())
     this.children.forEach(v => v.log())
     console.groupEnd(grpKey)
   }
 }
 
-const Node = (pmap = id) => (sel, data = {}) => mostBark(
+const vnodeBark = (pmap = apiRing) => (sel, data = {}, path = nil) =>
+mostBark(
   pith => ({put}, select) => {
+    var i = 0
     put(select.$(sel))
     put(select.$(data))
-    const node = pmap => (sel, data) => pith => put(Node(pmap)(sel, data)(pith))
+    const node = pmap => (sel, data) => pith => put(
+      vnodeBark(pmap)(sel, data, Cons(i++, path))(pith)
+    )
     const text = text => put(select.$(text).map(text => new VText(text)))
-    const vnode = vnode => put(select.$(vnode).map(vnode => {
-      if (vnode instanceof VTree) return vnode
-      throw new Error('invalid vnode')
-    }))
-    pmap(pith)({node, text, vnode}, select)
+    const vnode = vnode => put(
+      select.$(vnode).map(vnode => {
+        if (vnode instanceof VTree) return vnode
+        throw new Error('invalid vnode')
+      })
+    )
+    pmap(pith)(
+      {node, text, vnode},
+      Object.assign({}, select, {path})
+    )
   }
 )(
-  a$s => m.combineArray((s, d, ...chlds) => new VNode(s, d, chlds), a$s)
+  a$s => m.combineArray(
+    (s, d, ...chlds) => new VNode(s, d, chlds, path),
+    a$s
+  )
 )
-
-const pathRing = path => pith => function pathPith (put, select) {
-  var i = 0
-  pith(Object.assign({}, put, {
-    node: (pmap = id) => (sel, data = {}) => {
-      const key = i++
-      const thisPath = Cons(key, path)
-      return put.node(
-        p => pathRing(thisPath)(pmap(p))
-      )(
-        sel, select.$(data).map(data => Object.assign({path, key}, data))
-      )
-    }
-  }), Object.assign({}, select, {path}))
-}
-
-const vnodeBark =
-(pmap = require('../rings/api')) =>
-(sel, data = {}, path = nil) =>
-  Node(cmp(pathRing(path), pmap))(sel, data)
 
 module.exports = vnodeBark
 
-// vnodeBark()('div.a')((put, select) => {
+// vnodeBark()('div.a', {}, nil)((put, select) => {
 //   put.node('button', {on: {click: true}}, put => {
 //     put.node('button', put => {
 //       put.text('hello1')
 //     })
 //     put.text('hello2')
 //   })
-//   put.vnode(vnodeBark()(
-//     'div.a',
-//     {path: select.path},
-//     Cons('mount1', select.path)
-//   )(put => {
-//     put.node('li', id)
+//   put.vnode(vnodeBark()('div.a', {}, Cons('mount1', select.path))(put => {
+//     put.node('li', put => {})
 //     put.node('button', {on: {click: true}}, put => {
 //       put.node('button', put => {
 //         put.text('hello1')
 //       })
 //       put.text('hello2')
 //     })
-//     put.node('li', id)
+//     put.node('li', put => {})
 //   }))
 // }).tap(v => v.log()).drain()

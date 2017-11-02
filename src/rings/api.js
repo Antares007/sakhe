@@ -3,7 +3,7 @@ const apiRing = pith => (put, select) => {
     const fn = put[key]
     const chains = fn.toString().split('=>')
     s[key] = (
-      chains[0].indexOf('pmap') > 0
+      chains[0].indexOf('pmap') > -1
       ? (...args) =>
         fn(apiRing, apiRing)(...args.slice(0, -1))(args[args.length - 1])
       : fn

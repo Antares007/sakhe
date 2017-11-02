@@ -30,7 +30,7 @@ pith => {
 
   const sPithRing = pith => (state, select) => {
     pith(state, Object.assign({}, select, {
-      action$: action$.filter(x => x.vnode.data.path.endsWith(select.vpath))
+      action$: action$.filter(x => x.vnode.path.endsWith(select.vpath))
     }))
   }
   const vPithRing = pith => (put, select) => {
@@ -50,7 +50,7 @@ pith => {
       onode: snode(put.onode),
       anode: snode(put.anode)
     }), Object.assign({}, select, {
-      action$: action$.filter(x => x.vnode.data.path.endsWith(select.path)),
+      action$: action$.filter(x => x.vnode.path.endsWith(select.path)),
       frame$
     }))
   }
