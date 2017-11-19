@@ -1,5 +1,5 @@
-const PatchBark = require('../src/barks/patch')
-const showHideRing = require('../src/rings/show-hide')
+const PatchBark = require('../src.js/barks/patch')
+const showHideRing = require('../src.js/rings/show-hide')
 
 const Counter = (state, sselect) => {
   state.val('count', sselect.action$

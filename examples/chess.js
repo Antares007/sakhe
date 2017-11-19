@@ -1,5 +1,5 @@
-const PatchBark = require('../src/barks/patch')
-const apiRing = require('../src/rings/api')
+const PatchBark = require('../src.js/barks/patch')
+const apiRing = require('../src.js/rings/api')
 const Knight = put => put.node('span', {
   style: {
     color: 'white',

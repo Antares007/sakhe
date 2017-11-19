@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "es2015",
+        "module": "commonjs",
+        "lib": ["dom", "es2015"],
+        "declaration": true,
+        "sourceMap": true,
+        "outDir": "out",
+        "rootDir": "src",
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true
+    },
+    /*"compileOnSave": true,*/
+    "exclude": [
+        "out",
+        "node_modules",
+        ".vscode-test"
+    ]
+}
