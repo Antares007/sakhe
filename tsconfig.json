@@ -6,17 +6,19 @@
         "declaration": true,
         "sourceMap": true,
         "outDir": "out",
-        "rootDir": "src",
+        "rootDir": ".",
         "strict": true,
+        "strictFunctionTypes": true,
         "noImplicitAny": true,
         "strictNullChecks": true,
         "noImplicitThis": true,
         "alwaysStrict": true
     },
     /*"compileOnSave": true,*/
+    "include": [
+      "src/**/*.ts",
+      "examples/**/*.ts"
+    ],
     "exclude": [
-        "out",
-        "node_modules",
-        ".vscode-test"
     ]
 }
