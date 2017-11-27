@@ -1,5 +1,5 @@
 import {Stream, Sink, Scheduler} from '@most/types'
-import {disposeWith} from '@most/disposable'
+import {disposeWith, disposeNone} from '@most/disposable'
 import {asap} from '@most/scheduler'
 import {
   map, skipRepeats, newStream, skip,
@@ -42,9 +42,17 @@ export const bark =
 <A> (absurdA: Absurd<A>, initState?: A) =>
 (pith: Pith$<Ray<A>>) => {
   var next: ((v: A) => void) | undefined
+  var disposable = disposeNone()
   const state$ = hold(newStream<A>((sink, scheduler) => {
-    next = (v) => asap(propagateEventTask(v, sink), scheduler)
-    return disposeWith(() => { next = undefined }, void 0)
+    next = (v) => {
+      disposable.dispose()
+      disposable = asap(propagateEventTask(v, sink), scheduler)
+    }
+    return disposeWith(() => {
+      next = undefined
+      disposable.dispose()
+      disposable = disposeNone()
+    }, void 0)
   }))
   return (
     skip(1,
