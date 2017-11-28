@@ -3,25 +3,28 @@ const PatchBark = require('../src.js/barks/patch')
 PatchBark()(
   document.getElementById('root-node'),
   ...require('./initState')('todo')
-)(
-  TodoApp()
-).drain()
+)(TodoApp()).drain()
 
-function TodoApp () {
+function TodoApp() {
   return (enter, sselect) => {
     const submit = sselect.action$.filter(x => x.action === submit)
     const input = sselect.action$.filter(x => x.action === input)
     enter.val('state', s => s || {text: '', items: []})
-    enter.val('state', submit.tap(x => x.event.preventDefault())
-      .constant(s => {
+    enter.val(
+      'state',
+      submit.tap(x => x.event.preventDefault()).constant(s => {
         if (!s.text) return s
-        return ({text: '', items: s.items.concat([{text: s.text}])})
+        return {text: '', items: s.items.concat([{text: s.text}])}
       })
     )
-    enter.val('state', input.map(x => x.event.target.value)
-      .map(text => ({items}) => ({ text: text.trim(), items }))
+    enter.val(
+      'state',
+      input
+        .map(x => x.event.target.value)
+        .map(text => ({items}) => ({text: text.trim(), items}))
     )
-    return sselect.path(['state'])
+    return sselect
+      .path(['state'])
       .filter(Boolean)
       .map(({text, items}) => (put, select) => {
         put.node('h3', put => put.text('TODO'))

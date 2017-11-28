@@ -2,14 +2,11 @@ import {cons, List} from './list'
 // import * as most from './most'
 import {Stream} from '@most/types'
 export type R<T> = (s: T) => T
-export type Pith<T> = {
-  [K in keyof T]: T[K]
-}
+export type Pith<T> = {[K in keyof T]: T[K]}
 var a: Pith<ElementTagNameMap> = <any>{}
 
 const z = <K extends keyof ElementTagNameMap>(type: K) => {}
 z('div')
-
 
 // export interface VNode {
 //   sel: string,

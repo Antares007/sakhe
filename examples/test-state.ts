@@ -11,7 +11,7 @@ const logger = (key: string) => (x: any) => console.log(key, JSON.stringify(x))
 const inc = (s: number) => s + 1
 const inc$ = now(inc)
 
-const initState = {a: 10, b: {s: 10, x: {y: 10, x: {y:10}}}}
+const initState = {a: 10, b: {s: 10, x: {y: 10, x: {y: 10}}}}
 
 const rez = bark(() => ({a: 0, b: {s: -100}}), initState)(s => {
   observe(logger('1: {a: number, b: {s: number}}'), s.onChange)

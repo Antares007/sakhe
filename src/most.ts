@@ -6,19 +6,16 @@ export {Pith}
 export type Pith$<Ray> = Pith<Ray> | Stream<Pith<Ray>>
 export type Ray<A> = (a: Stream<A>) => void
 
-export const ring = <A, B>(pmap: (p: Pith<A>) => Pith<B>) =>
-(pith: Pith$<A>): Pith$<B> => (
-  typeof pith === 'function'
-  ? pmap(pith)
-  : map(pmap, pith)
-)
+export const ring = <A, B>(pmap: (p: Pith<A>) => Pith<B>) => (
+  pith: Pith$<A>
+): Pith$<B> => (typeof pith === 'function' ? pmap(pith) : map(pmap, pith))
 
-export const bark = <A> (deltac: (as: Stream<A>[]) => Stream<A>) =>
-(pith: Pith$<Ray<A>>): Stream<A> => (
+export const bark = <A>(deltac: (as: Stream<A>[]) => Stream<A>) => (
+  pith: Pith$<Ray<A>>
+): Stream<A> =>
   typeof pith === 'function'
-  ? aBark(deltac)(pith)
-  : switchLatest(map(aBark(deltac), pith))
-)
+    ? aBark(deltac)(pith)
+    : switchLatest(map(aBark(deltac), pith))
 
 // function $ (x) {
 //   return (
