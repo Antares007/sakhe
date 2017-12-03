@@ -15,8 +15,8 @@ import {hold} from './hold'
 import {Pith} from './atree'
 import {Pith$, ring} from './most'
 import {R, Absurd, bark as rBark, Ray as rRay} from './r'
-
-export interface Ray<A> extends rRay<A> {
+export {R}
+export interface Ray<A> {
   extend: <B extends A[K], K extends keyof A>(
     key: K,
     absurdB: Absurd<B>

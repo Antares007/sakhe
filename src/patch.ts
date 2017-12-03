@@ -1,0 +1,208 @@
+type BNode = {
+  type: 'node'
+  tag: string
+  key?: string
+}
+type ANode = BNode & {
+  data?: Record<string, string>
+  children: ATree[]
+}
+type AText = {
+  type: 'text'
+  data: string
+}
+type AComment = {
+  type: 'comment'
+  data: string
+}
+type ATree = ANode | AText | AComment
+
+type ONode = BNode & {
+  data: Record<string, string>
+  children: OTree[]
+  node: Element
+}
+type OText = AText & {node: Text}
+type OComment = AComment & {node: Comment}
+type OTree = ONode | OText | OComment
+
+// ONode, ANode
+// OText, AText
+// OComment, AComment
+
+// ONode, AComment
+// ONode, AText
+
+// OText, ANode
+// OText, AComment
+
+// OComment, ANode
+// OComment, AText
+function create(aTree: ATree): OTree {
+  if (aTree.type === 'node') {
+    const node = document.createElement(aTree.tag)
+    const data = aTree.data || {}
+    Object.keys(data).forEach(key => node.setAttribute(key, data[key]))
+    const children = aTree.children.map(create)
+    children.forEach(sTree => node.appendChild(sTree.node))
+    return {...aTree, data, children, node}
+  } else if (aTree.type === 'text') {
+    const node = document.createTextNode(aTree.data)
+    return {...aTree, node}
+  } else if (aTree.type === 'comment') {
+    const node = document.createComment(aTree.data)
+    return {...aTree, node}
+  } else {
+    return assertNever()
+  }
+}
+
+function updateChildren(node: Node, oldChlds: OTree[], newChlds: ATree[]): OTree[] {
+  return assertNever()
+}
+
+function updateNode(oNode: ONode, aNode: ANode): ONode {
+  const oldData = oNode.data
+  const newData = aNode.data || {}
+  const oldChildren = oNode.children
+  const newChildren = aNode.children
+  const node = oNode.node
+  for (var key in oldData)
+    if (typeof newData[key] === 'undefined') node.removeAttribute(key)
+  for (var key in newData)
+    if (oldData[key] !== newData[key]) node.setAttribute(key, newData[key])
+
+  var children: OTree[]
+  if (oldChildren.length && newChildren.length) {
+    children = updateChildren(node, oldChildren, newChildren)
+  } else if (newChildren.length) {
+    children = newChildren.map(create)
+    children.forEach(nTree => node.appendChild(nTree.node))
+  } else if (oldChildren.length) {
+    children = []
+    oldChildren.forEach(oTree => node.removeChild(oTree.node))
+  } else {
+    children = []
+  }
+  return {
+    ...aNode,
+    data: newData,
+    children,
+    node: oNode.node
+  }
+}
+function updateText(oText: OText, aText: AText): OText {
+  const node = oText.node
+  const nText = aText.data
+  if (node.textContent === nText) return oText
+  node.textContent = nText
+  return {...aText, node}
+}
+function updateComment(oComment: OComment, aComment: AComment): OComment {
+  const node = oComment.node
+  const nText = aComment.data
+  if (node.textContent === nText) return oComment
+  node.textContent = aComment.data
+  return {...aComment, node}
+}
+
+function patch(oTree: OTree, aTree: ATree): OTree {
+  if (oTree === aTree) {
+    return oTree
+  } else if (
+    oTree.type === 'node' &&
+    aTree.type === 'node' &&
+    sameNode(oTree, aTree)
+  ) {
+    return updateNode(oTree, aTree)
+  } else if (oTree.type === 'text' && aTree.type === 'text') {
+    return updateText(oTree, aTree)
+  } else if (oTree.type === 'comment' && aTree.type === 'comment') {
+    return updateComment(oTree, aTree)
+  } else {
+    const sTree = create(aTree)
+    const oNode = oTree.node
+    const aNode = sTree.node
+    const parentNode = oNode.parentNode
+    parentNode && parentNode.replaceChild(aNode, oNode)
+    return sTree
+  }
+}
+
+const rootNode = document.getElementById('root-node')
+if (!rootNode) throw new Error('cant find node')
+
+// rootNode.setAttribute('style', 'width: 100px;')
+// rootNode.innerHTML =
+//   '<h1 onclick="alert(\'a\')" style="color: blue;">hello</h1>'
+
+const oldTree = oTree(rootNode)
+const newTree = {
+  type: 'node',
+  tag: 'div',
+  key: 'a',
+  data: {id: 'gj', class: 'zmuki', style: 'height: 600px; width: 800px; background-color: #CFF;'},
+  children: [
+    {type: 'text', data: 'hello'},
+    {
+      type: 'node',
+      tag: 'h1',
+      data: {style: 'color: blue;'},
+      children: [{type: 'text', data: 'hello'}]
+    }
+  ]
+} as ANode
+
+console.log(oldTree, patch(oldTree, newTree))
+
+// const p1 = patch(oldTree, {type: 'text', data: 'hello'})
+// setTimeout(() => {
+//   const p2 = patch(p1, {type: 'text', data: 'hello!!!'})
+//   setTimeout(() => {
+//     const p3 = patch(p2, newTree)
+//   }, 3000)
+// }, 3000)
+
+function oTree(node: Node): OTree {
+  if (isElement(node)) {
+    const tag = node.tagName.toLowerCase()
+    const data: Record<string, string> = {}
+    const children: Array<OTree> = []
+    const elmAttrs = node.attributes
+    const elmChildren = node.childNodes
+    for (var i = 0, n = elmAttrs.length; i < n; i++) {
+      const value = elmAttrs[i].nodeValue
+      if (value) data[elmAttrs[i].nodeName] = value
+    }
+    for (var i = 0, n = elmChildren.length; i < n; i++) {
+      children.push(oTree(elmChildren[i]))
+    }
+    return {type: 'node', tag, data, children, node}
+  } else if (isText(node)) {
+    return {type: 'text', data: node.textContent || '', node}
+  } else if (isComment(node)) {
+    return {type: 'comment', data: node.textContent || '', node}
+  } else {
+    return assertNever()
+  }
+}
+
+function sameNode(oNode: ONode, aNode: ANode) {
+  return oNode.tag === aNode.tag && oNode.key === aNode.key
+}
+
+function assertNever(message = 'never'): never {
+  throw new Error(message)
+}
+
+function isElement(node: Node): node is Element {
+  return node.nodeType === 1
+}
+
+function isText(node: Node): node is Text {
+  return node.nodeType === 3
+}
+
+function isComment(node: Node): node is Comment {
+  return node.nodeType === 8
+}

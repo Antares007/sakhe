@@ -1,12 +1,61 @@
 import {cons, List} from './list'
 // import * as most from './most'
+import {runEffects, now, tap, map, periodic, constant} from '@most/core'
 import {Stream} from '@most/types'
-export type R<T> = (s: T) => T
-export type Pith<T> = {[K in keyof T]: T[K]}
-var a: Pith<ElementTagNameMap> = <any>{}
 
-const z = <K extends keyof ElementTagNameMap>(type: K) => {}
-z('div')
+type Style = {[P in keyof CSSStyleDeclaration]?: string}
+type TagNameMap = VHTMLElementTagNameMap & VSVGElementTagNameMap
+type Events = HTMLElementEventMap
+type Data<Tag extends keyof TagNameMap> = {
+  [P in keyof TagNameMap[Tag]]?: TagNameMap[Tag][P]
+} & {style?: Style}
+
+
+type Pith<TagA extends keyof TagNameMap> = (
+  ray: {
+    node: <TagB extends keyof TagNameMap>(
+      tag: TagB,
+      data?: Data<TagB> | Stream<Data<TagB>>
+    ) => (pith: Pith<TagB>) => void
+    text: (text: String | Stream<String>) => void
+  }
+) => void
+
+var p = (pith: Pith<'div'>) => {}
+p(put => {
+  put.node('select', now({id: 'a', selectedIndex: 1}))(put => {
+    put.node('div', {id: 'aa'})(put => {
+      put.text(now('abc'))
+    })
+  })
+  put.node('svg', {})
+})
+
+type VNode = {
+  type: 'node'
+  tag: string
+  key: string
+  path: List
+  data: any
+  children: (VNode | {type: 'text', text: string})[]
+}
+
+const vn: VNode = <any>{}
+const c = vn.children[0]
+if (c.type ==='text') {
+  c.text
+}
+
+
+// const elmTree = <Tag extends keyof VHTMLElementTagNameMap>(
+//   tag: Tag,
+//   data?: Data<Tag> | Stream<Data<Tag>>
+// ) => (pith: Pith<Tag>) =>
+//   mBark<R<A>>(mergeArray)(ring<Ray<A>, mRay<R<A>>>(pith => put => {}))
+
+function isFish(pet: any): pet is Number {
+  return pet !== undefined
+}
 
 // export interface VNode {
 //   sel: string,

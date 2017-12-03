@@ -27,7 +27,7 @@ export const bark = <A>(absurdA: Absurd<A>) => (
           put(
             map(
               (r: R<B>): R<A> => a => {
-                const ak = a[key]
+                const ak = a && a[key]
                 const typeofB = typeof ak
                 const bk =
                   typeofB === 'object' || typeofB === 'function'
@@ -43,7 +43,7 @@ export const bark = <A>(absurdA: Absurd<A>) => (
           put(
             map(
               (r): R<A> => a => {
-                const ak = a[key]
+                const ak = a && a[key]
                 const bk = r(ak)
                 if (ak === bk) return a
                 return Object.assign(absurdA(), a, {[<any>key]: bk})
