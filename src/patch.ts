@@ -88,8 +88,19 @@ function updateChildren(node: Node, oldChlds: OTree[], newChlds: ATree[]): OTree
       oldEndTree = oldChlds[--oldEndIdx]
       newStartTree = newChlds[++newStartIdx]
     } else {
-      if (oldKeyToIdx === undefined) {
-        oldKeyToIdx = createKeyToOldIdx(oldChlds, oldStartIdx, oldEndIdx);
+      if (newStartTree.type === 'node' && newStartTree.key) {
+        if (oldKeyToIdx === undefined) {
+          oldKeyToIdx = createKeyToOldIdx(oldChlds, oldStartIdx, oldEndIdx);
+        }
+        const idxInOld: number | undefined = oldKeyToIdx[newStartTree.key]
+        if (!idxInOld) {
+          const sTree = create(newStartTree)
+          node.insertBefore(sTree.node, oldStartTree.node)
+          children[newStartIdx] = sTree
+          newStartTree = newChlds[++newStartIdx]
+        } else {
+
+        }
       }
       // idxInOld = oldKeyToIdx[newStartVnode.key as string];
       // if (isUndef(idxInOld)) { // New element
@@ -148,7 +159,7 @@ function updateNode(oNode: ONode, aNode: ANode): ONode {
     children = updateChildren(node, oldChildren, newChildren)
   } else if (newChildren.length) {
     children = newChildren.map(create)
-    children.forEach(nTree => node.appendChild(nTree.node))
+    children.forEach(nTree => node.insertBefore(nTree.node, null))
   } else if (oldChildren.length) {
     children = []
     oldChildren.forEach(oTree => node.removeChild(oTree.node))
@@ -188,7 +199,7 @@ function patch(oTree: OTree, aTree: ATree): OTree {
     const oNode = oTree.node
     const aNode = sTree.node
     const parentNode = oNode.parentNode
-    parentNode && parentNode.replaceChild(aNode, oNode)
+    parentNode && parentNode.insertBefore(aNode, oNode.nextSibling)
     return sTree
   }
 }

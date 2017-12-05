@@ -3,25 +3,29 @@ import {mergeArray, map, now, scan, combineArray} from '@most/core'
 import {Pith} from './atree'
 import {Pith$, ring, bark as mBark, Ray as mRay} from './most'
 
+export type Data = {
+  attrs?: Record<string, string>
+  class?: Record<string, boolean>
+  on?: Record<string, any>
+  props?: Record<string, any>
+  style?: { [K in keyof CSSStyleDeclaration]?: string }
+}
 export interface ANode {
-  type: 'node'
-  tag: string
+  sel: string
   key?: string
-  data?: Record<string, string>
+  data?: Data
   children: ATree[]
 }
 export interface AText {
-  type: 'text'
-  data: string
+  text: string
 }
 export interface AComment {
-  type: 'comment'
-  data: string
+  sel: '!'
+  text: string
 }
 export type ATree = ANode | AText | AComment
 export type $<T> = T | Stream<T>
 export type Tags = HTMLElementTagNameMap
-export type Data = Record<string, string>
 export type Ray<TagA extends keyof Tags> = {
   node: <TagB extends keyof Tags>(tag: TagB, data?: $<Data>, key?: string) =>
         (pith: Pith$<Ray<TagB>>) => void
@@ -36,12 +40,12 @@ mBark<ATree>($s =>
   isStream(data)
   ? combineArray<any, ANode>(
     (data: Data, ...children: ATree[]) =>
-      ({type: 'node', tag, data, key, children}),
+      ({sel: tag, data, key, children}),
     [data, ...$s]
   )
   : combineArray<ATree, ANode>(
     (...children) =>
-      ({type: 'node', tag, data, key, children}),
+      ({sel: tag, data, key, children}),
     $s
   )
 )(
@@ -52,13 +56,13 @@ mBark<ATree>($s =>
       ),
       comment: (text) => put(
         isStream(text)
-        ? map(text => (<AComment>{type: 'comment', data: text}), text)
-        : now({type: 'comment', data: text})
+        ? map(text => (<AComment>{sel: '!', text}), text)
+        : now(<AComment>{sel: '!', text})
       ),
       text: (text) => put(
         isStream(text)
-        ? map(text => (<AText>{type: 'text', data: text}), text)
-        : now({type: 'text', data: text})
+        ? map(text => (<AText>{text}), text)
+        : now(<AText>{text})
       )
     })
   })(pith)
