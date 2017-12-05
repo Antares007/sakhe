@@ -58,7 +58,78 @@ function create(aTree: ATree): OTree {
 }
 
 function updateChildren(node: Node, oldChlds: OTree[], newChlds: ATree[]): OTree[] {
-  return assertNever()
+  var oldStartIdx = 0
+  var oldEndIdx = oldChlds.length - 1
+  var oldStartTree = oldChlds[oldStartIdx]
+  var oldEndTree = oldChlds[oldEndIdx]
+  var newStartIdx = 0
+  var newEndIdx = newChlds.length - 1
+  var newStartTree = newChlds[newStartIdx]
+  var newEndTree = newChlds[newEndIdx]
+  var oldKeyToIdx: Record<string, number> | undefined
+  const children: OTree[] = []
+  while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+    if (isSame(oldStartTree, newStartTree)) {
+      children[newStartIdx] = update(oldStartTree, newStartTree)
+      oldStartTree = oldChlds[++oldStartIdx]
+      newStartTree = newChlds[++newStartIdx]
+    } else if (isSame(oldEndTree, newEndTree)) {
+      children[newEndIdx] = update(oldEndTree, newEndTree)
+      oldEndTree = oldChlds[--oldEndIdx]
+      newEndTree = newChlds[--newEndIdx]
+    } else if (isSame(oldStartTree, newEndTree)) { // Vnode moved right
+      children[newEndIdx] = update(oldStartTree, newEndTree)
+      node.insertBefore(oldStartTree.node, oldEndTree.node.nextSibling)
+      oldStartTree = oldChlds[++oldStartIdx]
+      newEndTree = newChlds[--newEndIdx]
+    } else if (isSame(oldEndTree, newStartTree)) { // Vnode moved left
+      children[newStartIdx] = update(oldEndTree, newStartTree)
+      node.insertBefore(oldEndTree.node, oldStartTree.node)
+      oldEndTree = oldChlds[--oldEndIdx]
+      newStartTree = newChlds[++newStartIdx]
+    } else {
+      if (oldKeyToIdx === undefined) {
+        oldKeyToIdx = createKeyToOldIdx(oldChlds, oldStartIdx, oldEndIdx);
+      }
+      // idxInOld = oldKeyToIdx[newStartVnode.key as string];
+      // if (isUndef(idxInOld)) { // New element
+      //   api.insertBefore(parentElm, createElm(newStartVnode, insertedVnodeQueue), oldStartVnode.elm as Node);
+      //   newStartVnode = newCh[++newStartIdx];
+      // } else {
+      //   elmToMove = oldCh[idxInOld];
+      //   if (elmToMove.sel !== newStartVnode.sel) {
+      //     api.insertBefore(parentElm, createElm(newStartVnode, insertedVnodeQueue), oldStartVnode.elm as Node);
+      //   } else {
+      //     patchVnode(elmToMove, newStartVnode, insertedVnodeQueue);
+      //     oldCh[idxInOld] = undefined as any;
+      //     api.insertBefore(parentElm, (elmToMove.elm as Node), oldStartVnode.elm as Node);
+      //   }
+      //   newStartVnode = newCh[++newStartIdx];
+      // }
+    }
+  }
+  return children
+}
+
+function createKeyToOldIdx(children: Array<OTree>, beginIdx: number, endIdx: number): Record<string, number> {
+  let i: number, map: Record<string, number> = {}, ch: OTree;
+  for (i = beginIdx; i <= endIdx; ++i) {
+    ch = children[i];
+    if (ch.type === 'node' && ch.key) {
+      map[ch.key] = i
+    }
+  }
+  return map
+}
+
+function update(oTree: OTree, aTree: ATree): OTree {
+  return (
+    oTree.type === 'node'
+    ? updateNode(oTree, aTree as ANode)
+    : oTree.type === 'text'
+    ? updateText(oTree, aTree as AText)
+    : updateComment(oTree, aTree as AComment)
+  )
 }
 
 function updateNode(oNode: ONode, aNode: ANode): ONode {
@@ -91,6 +162,7 @@ function updateNode(oNode: ONode, aNode: ANode): ONode {
     node: oNode.node
   }
 }
+
 function updateText(oText: OText, aText: AText): OText {
   const node = oText.node
   const nText = aText.data
@@ -109,16 +181,8 @@ function updateComment(oComment: OComment, aComment: AComment): OComment {
 function patch(oTree: OTree, aTree: ATree): OTree {
   if (oTree === aTree) {
     return oTree
-  } else if (
-    oTree.type === 'node' &&
-    aTree.type === 'node' &&
-    sameNode(oTree, aTree)
-  ) {
-    return updateNode(oTree, aTree)
-  } else if (oTree.type === 'text' && aTree.type === 'text') {
-    return updateText(oTree, aTree)
-  } else if (oTree.type === 'comment' && aTree.type === 'comment') {
-    return updateComment(oTree, aTree)
+  } else if (isSame(oTree, aTree)) {
+    return update(oTree, aTree)
   } else {
     const sTree = create(aTree)
     const oNode = oTree.node
@@ -140,7 +204,7 @@ const oldTree = oTree(rootNode)
 const newTree = {
   type: 'node',
   tag: 'div',
-  key: 'a',
+  // key: 'a',
   data: {id: 'gj', class: 'zmuki', style: 'height: 600px; width: 800px; background-color: #CFF;'},
   children: [
     {type: 'text', data: 'hello'},
@@ -184,6 +248,14 @@ function oTree(node: Node): OTree {
     return {type: 'comment', data: node.textContent || '', node}
   } else {
     return assertNever()
+  }
+}
+
+function isSame(oTree: OTree, aTree: ATree): boolean {
+  if (oTree.type === 'node' && aTree.type === 'node') {
+    return oTree.tag === aTree.tag && oTree.key === aTree.key
+  } else {
+    return oTree.type === aTree.type
   }
 }
 
