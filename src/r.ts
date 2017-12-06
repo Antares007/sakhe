@@ -1,29 +1,37 @@
 import {Stream} from '@most/types'
 import {mergeArray, map} from '@most/core'
-import {Pith} from './atree'
-import {Pith$, ring, bark as mBark, Ray as mRay} from './most'
+import {ring as mostRing, tree as mostTree, $, isStream} from './most'
 
 export type Absurd<T> = () => T
 export type R<T> = (state: T) => T
-
-export type Ray<A> = {
-  extend: <B extends A[K], K extends keyof A>(
-    key: K,
-    absurdB: Absurd<B>
-  ) => (pith: Pith$<Ray<B>>) => void
-  reduce: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) => void
+export interface Pith<A> {
+  (
+    state: {
+      extend: <B extends A[K], K extends keyof A>(
+        key: K,
+        absurdB: Absurd<B>
+      ) => (pith: $<Pith<B>>) => void
+      reduce: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) => void
+    }
+  ): void
+}
+export interface Bark<A> {
+  (pith: $<Pith<A>>): Stream<R<A>>
 }
 
-export const bark = <A>(absurdA: Absurd<A>) => (
-  pith: Pith$<Ray<A>>
-): Stream<R<A>> =>
-  mBark<R<A>>(mergeArray)(
-    ring<Ray<A>, mRay<R<A>>>(pith => put => {
+export const ring = <B, A>(
+  pmap: (b: B) => Pith<A>
+): ((b: $<B>) => $<Pith<A>>) => b =>
+  isStream(b) ? map(pmap, b) : pmap(b)
+
+export const tree = <A>(absurdA: Absurd<A>): Bark<A> => pith =>
+  mostTree<R<A>>(mergeArray)(
+    mostRing<Pith<A>, R<A>>(pith => put => {
       pith({
         extend: <B extends A[K], K extends keyof A>(
           key: K,
           absurdB: Absurd<B>
-        ) => (pith: Pith$<Ray<B>>) =>
+        ) => (pith: $<Pith<B>>) =>
           put(
             map(
               (r: R<B>): R<A> => a => {
@@ -36,7 +44,7 @@ export const bark = <A>(absurdA: Absurd<A>) => (
                 if (ak === bk) return a
                 return Object.assign(absurdA(), a, {[<any>key]: bk})
               },
-              bark(absurdB)(pith)
+              tree(absurdB)(pith)
             )
           ),
         reduce: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) =>
@@ -46,7 +54,7 @@ export const bark = <A>(absurdA: Absurd<A>) => (
                 const ak = a && a[key]
                 const bk = r(ak)
                 if (ak === bk) return a
-                return Object.assign(absurdA(), a, {[<any>key]: bk})
+                return Object.assign(absurdA(), a, {[key]: bk})
               },
               r
             )

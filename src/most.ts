@@ -1,33 +1,24 @@
 import {Stream} from '@most/types'
 import {map, switchLatest} from '@most/core'
-import {Pith, bark as aBark} from './atree'
-export {Pith}
+import {tree as aTree} from './a'
 
-export type Pith$<Ray> = Pith<Ray> | Stream<Pith<Ray>>
-export type Ray<A> = (a: Stream<A>) => void
+export interface Pith<A> {
+  (put: (a: Stream<A>) => void): void
+}
+export interface Bark<A> {
+  (pith: $<Pith<A>> | Stream<Pith<A>>): Stream<A>
+}
+export const ring = <B, A>(
+  pmap: (b: B) => Pith<A>
+): ((b: $<B>) => $<Pith<A>>) => b =>
+  isStream(b) ? map(pmap, b) : pmap(b)
 
-export const ring = <A, B>(pmap: (p: Pith<A>) => Pith<B>) => (
-  pith: Pith$<A>
-): Pith$<B> => (typeof pith === 'function' ? pmap(pith) : map(pmap, pith))
+export const tree = <A>(
+  deltac: (as: Stream<A>[]) => Stream<A>
+): Bark<A> => pith =>
+  isStream(pith) ? switchLatest(map(aTree(deltac), pith)) : aTree(deltac)(pith)
 
-export const bark = <A>(deltac: (as: Stream<A>[]) => Stream<A>) => (
-  pith: Pith$<Ray<A>>
-): Stream<A> =>
-  typeof pith === 'function'
-    ? aBark(deltac)(pith)
-    : switchLatest(map(aBark(deltac), pith))
-
-// function $ (x) {
-//   return (
-//     x instanceof m.Stream
-//       ? x
-//       : x && typeof x === 'object' && Object.keys(x).some(key => x[key] instanceof m.Stream)
-//         ? m.combineArray(function () {
-//           return Object.keys(x).reduce((s, key, i) => {
-//             s[key] = arguments[i]
-//             return s
-//           }, {})
-//         }, Object.keys(x).map(key => $(x[key])))
-//         : m.of(x)
-//   )
-// }
+export type $<T> = T | Stream<T>
+export function isStream<T>(x: any): x is Stream<T> {
+  return x && typeof x.run === 'function'
+}

@@ -1,7 +1,7 @@
 import {Stream} from '@most/types'
 import {runEffects, now, tap, map, periodic, constant, take, scan, startWith, filter} from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
-import {vtree} from '../src/vtree'
+import {tree} from '../src/vtree'
 
 import toVnode from 'snabbdom/tovnode'
 import {init} from 'snabbdom'
@@ -30,7 +30,7 @@ const chain = <A>($: Stream<A>) => ({
   valueOf: () => $
 })
 
-var rez = vtree('div', {
+var rez = tree('div', {
   style: {width: '1'},
   attrs: {style: 'background-color: #DDD;', id: 'df'},
   props: {any: undefined},

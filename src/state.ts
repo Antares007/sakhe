@@ -12,26 +12,37 @@ import {
   filter
 } from '@most/core'
 import {hold} from './hold'
-import {Pith} from './atree'
-import {Pith$, ring} from './most'
-import {R, Absurd, bark as rBark, Ray as rRay} from './r'
-export {R}
-export interface Ray<A> {
-  extend: <B extends A[K], K extends keyof A>(
-    key: K,
-    absurdB: Absurd<B>
-  ) => (pith: Pith$<Ray<B>>) => void
-  reduce: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) => void
-  onChange: Stream<A>
+import {$, isStream} from './most'
+import {R, Absurd, tree as rBark, ring as rRing} from './r'
+
+export interface Pith<A> {
+  (
+    ray: {
+      extend: <B extends A[K], K extends keyof A>(
+        key: K,
+        absurdB: Absurd<B>
+      ) => (pith: $<Pith<B>>) => void
+      reduce: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) => void
+      onChange: Stream<A>
+    }
+  ): void
 }
 
+export interface Bark<A> {
+  (pith: $<Pith<A>>): Stream<A>
+}
+
+export const ring = <B, A>(
+  pmap: (b: B) => Pith<A>
+): ((b: $<B>) => $<Pith<A>>) => b => (isStream(b) ? map(pmap, b) : pmap(b))
+
 const sring = <A>(state$: Stream<A>) =>
-  ring<Ray<A>, rRay<A>>(pith => put => {
+  rRing<Pith<A>, A>(pith => put => {
     pith({
       extend: <B extends A[K], K extends keyof A>(
         key: K,
         absurdB: Absurd<B>
-      ) => (pith: Pith$<Ray<B>>) => {
+      ) => (pith: $<Pith<B>>) => {
         const bKeysLenght = Object.keys(<any>absurdB()).length
         put.extend(key, absurdB)(
           sring(
@@ -53,9 +64,7 @@ const sring = <A>(state$: Stream<A>) =>
     })
   })
 
-export const bark = <A>(absurdA: Absurd<A>, initState?: A) => (
-  pith: Pith$<Ray<A>>
-) => {
+export const tree = <A>(absurdA: Absurd<A>, initState?: A): Bark<A> => pith => {
   var next: ((v: A) => void) | undefined
   var disposable = disposeNone()
   const state$ = hold(
