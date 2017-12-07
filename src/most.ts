@@ -6,12 +6,11 @@ export interface Pith<A> {
   (put: (a: Stream<A>) => void): void
 }
 export interface Bark<A> {
-  (pith: $<Pith<A>> | Stream<Pith<A>>): Stream<A>
+  (pith: $<Pith<A>>): Stream<A>
 }
 export const ring = <B, A>(
   pmap: (b: B) => Pith<A>
-): ((b: $<B>) => $<Pith<A>>) => b =>
-  isStream(b) ? map(pmap, b) : pmap(b)
+): ((b: $<B>) => $<Pith<A>>) => b => (isStream(b) ? map(pmap, b) : pmap(b))
 
 export const tree = <A>(
   deltac: (as: Stream<A>[]) => Stream<A>

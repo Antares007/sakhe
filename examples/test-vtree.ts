@@ -1,5 +1,16 @@
 import {Stream} from '@most/types'
-import {runEffects, now, tap, map, periodic, constant, take, scan, startWith, filter} from '@most/core'
+import {
+  runEffects,
+  now,
+  tap,
+  map,
+  periodic,
+  constant,
+  take,
+  scan,
+  startWith,
+  filter
+} from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 import {tree} from '../src/vtree'
 
@@ -11,7 +22,7 @@ import mstyle from 'snabbdom/modules/style'
 import mattributes from 'snabbdom/modules/attributes'
 import meventlisteners from 'snabbdom/modules/eventlisteners'
 
-const defaultModules = [mclass,mprops,mattributes,mstyle,meventlisteners]
+const defaultModules = [mclass, mprops, mattributes, mstyle, meventlisteners]
 
 const observe = <A>(fn: (x: A) => any, $: Stream<A>) =>
   runEffects(tap(fn, $), newDefaultScheduler())
@@ -30,12 +41,16 @@ const chain = <A>($: Stream<A>) => ({
   valueOf: () => $
 })
 
-var rez = tree('div', {
-  style: {width: '1'},
-  attrs: {style: 'background-color: #DDD;', id: 'df'},
-  props: {any: undefined},
-  class: {a: true, b: true}
-}, 'k0')(put => {
+var rez = tree(
+  'div',
+  {
+    style: {width: '1'},
+    attrs: {style: 'background-color: #DDD;', id: 'df'},
+    props: {any: undefined},
+    class: {a: true, b: true}
+  },
+  'k0'
+)(put => {
   put.text(
     chain(put.on('click'))
       .take(1)
@@ -49,6 +64,9 @@ var rez = tree('div', {
 const patch = init(defaultModules)
 
 chain(rez)
-  .scan((o, n) => patch(o, n as any), toVnode(document.getElementById('root-node')!))
+  .scan(
+    (o, n) => patch(o, n as any),
+    toVnode(document.getElementById('root-node')!)
+  )
   .tap(x => console.info(x))
   .drain()

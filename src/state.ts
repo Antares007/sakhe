@@ -94,16 +94,3 @@ export const tree = <A>(absurdA: Absurd<A>, initState?: A): Bark<A> => pith => {
     )
   )
 }
-
-// extend: new Proxy({}, {
-//   get: <K extends keyof A>(_: any, key: K) => new Proxy(() => {}, {
-//     apply: <B extends A[K]>(_1: any, _2: any, [absurdB]: [Absurd<B>]) =>
-//       (pith: Pith$<Ray<B>>) =>
-//       put.node(key, absurdB)(sring(map(a => <B>a[key], state$))(pith))
-//   })
-// }) as Ray<A>['extend'],
-// reduce: new Proxy({}, {
-//   get: (_, key: any) => new Proxy(() => {}, {
-//     apply: (_1, _2, [r]) => put.leaf(key, r)
-//   })
-// }) as Ray<A>['reduce'],
