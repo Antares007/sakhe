@@ -14,6 +14,7 @@ import {
 import {hold} from './hold'
 import {$, isStream} from './most'
 import {R, Absurd, tree as rBark, ring as rRing} from './r'
+export {R}
 
 export interface Pith<A> {
   (
@@ -23,8 +24,8 @@ export interface Pith<A> {
         absurdB: Absurd<B>
       ) => (pith: $<Pith<B>>) => void
       reduce: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) => void
-      onChange: Stream<A>
-    }
+    },
+    $: Stream<A>
   ): void
 }
 
@@ -38,30 +39,31 @@ export const ring = <B, A>(
 
 const sring = <A>(state$: Stream<A>) =>
   rRing<Pith<A>, A>(pith => put => {
-    pith({
-      extend: <B extends A[K], K extends keyof A>(
-        key: K,
-        absurdB: Absurd<B>
-      ) => (pith: $<Pith<B>>) => {
-        const bKeysLenght = Object.keys(<any>absurdB()).length
-        put.extend(key, absurdB)(
-          sring(
-            map(
-              ak => <B>ak,
-              filter(
-                ak =>
-                  typeof ak !== 'undefined' &&
-                  Object.keys(<any>ak).length === bKeysLenght,
-                skipRepeats(map(a => a[key], state$))
+    pith(
+      {
+        extend: <B extends A[K], K extends keyof A>(
+          key: K,
+          absurdB: Absurd<B>
+        ) => (pith: $<Pith<B>>) => {
+          const bKeysLenght = Object.keys(<any>absurdB()).length
+          put.extend(key, absurdB)(
+            sring(
+              map(
+                ak => <B>ak,
+                filter(
+                  ak =>
+                    typeof ak !== 'undefined' &&
+                    Object.keys(<any>ak).length === bKeysLenght,
+                  skipRepeats(map(a => a[key], state$))
+                )
               )
-            )
-          )(pith)
-        )
+            )(pith)
+          )
+        },
+        reduce: put.reduce
       },
-      reduce: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) =>
-        put.reduce(key, r),
-      onChange: state$
-    })
+      state$
+    )
   })
 
 export const tree = <A>(absurdA: Absurd<A>, initState?: A): Bark<A> => pith => {

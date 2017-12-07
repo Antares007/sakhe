@@ -13,17 +13,17 @@ const inc$ = now(inc)
 
 const initState = {a: 10, b: {s: 10, x: {y: 10, x: {y: 10}}}}
 
-const rez = tree(() => ({a: 0, b: {s: -100}}), initState)(s => {
-  observe(logger('1: {a: number, b: {s: number}}'), s.onChange)
+const rez = tree(() => ({a: 0, b: {s: -100}}), initState)((s, $) => {
+  observe(logger('1: {a: number, b: {s: number}}'), $)
   s.reduce('a', inc$)
-  s.extend('b', () => ({s: 0, x: {}}))(s => {
-    observe(logger('2: {s: number, x: {}}'), s.onChange)
+  s.extend('b', () => ({s: 0, x: {}}))((s, $) => {
+    observe(logger('2: {s: number, x: {}}'), $)
     s.reduce('s', inc$)
-    s.extend('x', () => ({y: -100, x: {y: -50}}))(s => {
-      observe(logger('3: {y: number, x: {y: number}}'), s.onChange)
+    s.extend('x', () => ({y: -100, x: {y: -50}}))((s, $) => {
+      observe(logger('3: {y: number, x: {y: number}}'), $)
       s.reduce('y', inc$)
-      s.extend('x', () => ({y: 1}))(s => {
-        observe(logger('4: {y: number}'), s.onChange)
+      s.extend('x', () => ({y: 1}))((s, $) => {
+        observe(logger('4: {y: number}'), $)
         s.reduce('y', constant(inc, periodic(2000)))
       })
     })
