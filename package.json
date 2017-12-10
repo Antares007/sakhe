@@ -18,7 +18,7 @@
     "@types/node": "^8.0.53",
     "@types/prettier": "^1.8.0",
     "prettier": "^1.8.2",
-    "typescript": "^2.7.0-dev.20171126"
+    "typescript": "^2.7.0-dev.20171209"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
