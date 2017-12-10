@@ -1,64 +1,56 @@
 import {Stream} from '@most/types'
-import {mergeArray, map} from '@most/core'
+import {mergeArray, map, now} from '@most/core'
 import {ring as mostRing, tree as mostTree, $, isStream} from './most'
 
 export type Absurd<T> = () => T
 
 export type R<T> = (state: T) => T
-export interface Pith<A> {
+
+export interface Pith<A extends object> {
   (
     state: {
-      extend: <B extends A[K], K extends keyof A>(
+      obj: <B extends A[K] & object, K extends keyof A>(
         key: K,
         absurdB: Absurd<B>
       ) => (pith: $<Pith<B>>) => void
-      reduce: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) => void
+      val: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) => void
     }
   ): void
 }
-export interface Bark<A> {
+
+export interface Bark<A extends object> {
   (pith: $<Pith<A>>): Stream<R<A>>
 }
 
-export const ring = <B, A>(
+export const ring = <B, A extends object>(
   pmap: (b: B) => Pith<A>
 ): ((b: $<B>) => $<Pith<A>>) => b => (isStream(b) ? map(pmap, b) : pmap(b))
 
-const extendRing = <A>(absurdA: Absurd<A>) =>
+const oRing = <A extends object>(absurdA: Absurd<A>) =>
   mostRing<Pith<A>, R<A>>(pith => put => {
+    const b2a = <B extends A[K] & object, K extends keyof A>(
+      key: K,
+      absurdB: () => B
+    ) =>
+      map((r: R<B>): R<A> => a => {
+        const ak = a[key]
+        const bk = r(Object.assign(absurdB(), ak))
+        if (ak === bk) return a
+        return Object.assign(absurdA(), a, {[<any>key]: bk})
+      })
+    const ak2a = <K extends keyof A>(key: K) =>
+      map<R<A[K]>, R<A>>(r => a => {
+        const ak = a[key]
+        const bk = r(ak)
+        if (ak === bk) return a
+        return Object.assign(absurdA(), a, {[key]: bk})
+      })
     pith({
-      extend: <B extends A[K], K extends keyof A>(
-        key: K,
-        absurdB: Absurd<B>
-      ) => (pith: $<Pith<B>>) =>
-        put(
-          map(
-            (r: R<B>): R<A> => a => {
-              const ak = a && a[key]
-              const typeofB = typeof ak
-              const bk =
-                typeofB === 'object' || typeofB === 'function'
-                  ? r(Object.assign(absurdB(), ak))
-                  : r(<B>ak)
-              if (ak === bk) return a
-              return Object.assign(absurdA(), a, {[<any>key]: bk})
-            },
-            tree(absurdB)(pith)
-          )
-        ),
-      reduce: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) =>
-        put(
-          map(
-            (r): R<A> => a => {
-              const ak = a && a[key]
-              const bk = r(ak)
-              if (ak === bk) return a
-              return Object.assign(absurdA(), a, {[key]: bk})
-            },
-            r
-          )
-        )
+      obj: (key, absurdB) => oPith =>
+        put(b2a(key, absurdB)(tree(absurdB)(oPith))),
+      val: (key, r) => put(ak2a(key)(r))
     })
   })
-export const tree = <A>(absurdA: Absurd<A>): Bark<A> => pith =>
-  mostTree<R<A>>(mergeArray)(extendRing(absurdA)(pith))
+
+export const tree = <A extends object>(absurdA: Absurd<A>): Bark<A> => pith =>
+  mostTree<R<A>>(mergeArray)(oRing(absurdA)(pith))
