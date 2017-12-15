@@ -23,9 +23,10 @@ var rez = tree(
     class: {a: true, b: true}
   },
   'k0'
-)(put => {
+)((put, on) => {
+  put.node('h1')(put => put.text('h1'))
   put.text(
-    chain(put.on('click'))
+    chain(on('click'))
       .take(1)
       .constant('click')
       .startWith('lets start')

@@ -9,7 +9,7 @@ export type R<T> = (state: T) => T
 export interface Pith<A extends object> {
   (
     state: {
-      obj: <B extends A[K] & object, K extends keyof A>(
+      extend: <B extends A[K] & object, K extends keyof A>(
         key: K,
         absurdB: Absurd<B>
       ) => (pith: $<Pith<B>>) => void
@@ -46,7 +46,7 @@ const oRing = <A extends object>(absurdA: Absurd<A>) =>
         return Object.assign(absurdA(), a, {[key]: bk})
       })
     pith({
-      obj: (key, absurdB) => oPith =>
+      extend: (key, absurdB) => oPith =>
         put(b2a(key, absurdB)(tree(absurdB)(oPith))),
       val: (key, r) => put(ak2a(key)(r))
     })

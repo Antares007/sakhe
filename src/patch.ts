@@ -3,8 +3,9 @@ type BNode = {
   tag: string
   key?: string
 }
+type Data = Record<string, string>
 type ANode = BNode & {
-  data?: Record<string, string>
+  data?: Data
   children: ATree[]
 }
 type AText = {
@@ -18,7 +19,7 @@ type AComment = {
 type ATree = ANode | AText | AComment
 
 type ONode = BNode & {
-  data: Record<string, string>
+  data: Data
   children: OTree[]
   node: Element
 }

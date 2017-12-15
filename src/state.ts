@@ -33,10 +33,7 @@ const sring = <A extends object>(a$: Stream<A>) =>
   rRing<Pith<A>, A>(pith => put => {
     pith(
       {
-        extend: <B extends A[K], K extends keyof A>(
-          key: K,
-          absurdB: Absurd<B>
-        ) => (pith: $<Pith<B>>) => {
+        extend: (key, absurdB) => pith => {
           const bKeysLenght = Object.keys(<any>absurdB()).length
           const b$ = chain(a$)
             .map(a => a[key])
@@ -45,9 +42,8 @@ const sring = <A extends object>(a$: Stream<A>) =>
                 typeof ak !== 'undefined' &&
                 Object.keys(<any>ak).length === bKeysLenght
             )
-            .map(ak => <B>ak)
             .valueOf()
-          put.obj(key, absurdB)(sring(b$)(pith))
+          put.extend(key, absurdB)(sring(b$)(pith))
         },
         reduce: put.val
       },
@@ -55,7 +51,10 @@ const sring = <A extends object>(a$: Stream<A>) =>
     )
   })
 
-export const tree = <A extends object>(absurdA: Absurd<A>, initState?: A): Bark<A> => pith => {
+export const tree = <A extends object>(
+  absurdA: Absurd<A>,
+  initState?: A
+): Bark<A> => pith => {
   var next: ((a: A) => void) | undefined
   var disposable = disposeNone()
   const a$ = hold(

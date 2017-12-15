@@ -17,7 +17,7 @@ export interface Data {
   attrs?: Record<string, string>
   class?: Record<string, boolean>
   props?: Record<string, any>
-  style?: {[K in keyof CSSStyleDeclaration]?: string | undefined}
+  style?: {[K in keyof CSSStyleDeclaration]?: string}
 }
 export type On = {
   [E in keyof HTMLElementEventMap]?: (e: HTMLElementEventMap[E]) => void
@@ -48,10 +48,10 @@ export interface Pith {
       ) => (pith: $<Pith>) => void
       text: (text: $<string>) => void
       comment: (text: $<string>) => void
-      on: <E extends keyof HTMLElementEventMap>(
-        eventName: E
-      ) => Stream<HTMLElementEventMap[E]>
-    }
+    },
+    on: <E extends keyof HTMLElementEventMap>(
+      eventName: E
+    ) => Stream<HTMLElementEventMap[E]>
   ): void
 }
 export interface Bark {
@@ -66,12 +66,15 @@ export const tree = <Tag extends keyof Tags>(
   const ons: On = {}
   var hasOns = false
   const eventStreamMap: Record<string, Stream<Event>> = {}
-  const combine = (data: Data, ...children: ATree[]): ANode => ({
-    sel: tag,
-    data: hasOns ? {...data, on: ons} : data,
-    key,
-    children
-  })
+  const combine = (data: Data, ...children: ATree[]): ANode => {
+    console.log('combine')
+    return {
+      sel: tag,
+      data: hasOns ? {...data, on: {...ons}} : data,
+      key,
+      children
+    }
+  }
   return mostTree<ATree>(
     $s =>
       isStream(data)
@@ -82,32 +85,31 @@ export const tree = <Tag extends keyof Tags>(
           )
   )(
     mostRing<Pith, ATree>(p => put => {
-      p({
-        node: (tag, data, key) => pith => put(tree(tag, data, key)(pith)),
-        comment: text =>
-          put(
-            isStream(text)
-              ? map(text => <AComment>{sel: '!', text}, text)
-              : now(<AComment>{sel: '!', text})
-          ),
-        text: text =>
-          put(
-            isStream(text)
-              ? map(text => <AText>{text}, text)
-              : now(<AText>{text})
-          ),
-        on: eventName => {
+      p(
+        {
+          node: (tag, data, key) => pith => put(tree(tag, data, key)(pith)),
+          comment: text =>
+            put(
+              isStream(text)
+                ? map(text => ({sel: '!', text}), text)
+                : now({sel: '!', text})
+            ),
+          text: text =>
+            put(isStream(text) ? map(text => ({text}), text) : now({text}))
+        },
+        eventName => {
           eventStreamMap[eventName] =
             eventStreamMap[eventName] ||
             multicast(
               newStream<Event>((sink, scheduler) => {
                 hasOns = true
-                ons[eventName] = (e: Event) => {
-                  console.log('aaa')
+                ons[eventName] = function(e: Event) {
+                  console.log(this, e)
                   sink.event(scheduler.currentTime(), e)
                 }
                 return {
                   dispose: () => {
+                    console.log('dispose')
                     delete ons[eventName]
                     hasOns = Object.keys(ons).length > 0
                   }
@@ -116,7 +118,7 @@ export const tree = <Tag extends keyof Tags>(
             )
           return eventStreamMap[eventName]
         }
-      })
+      )
     })(pith)
   ) as Stream<ANode>
 }
