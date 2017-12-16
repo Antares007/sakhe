@@ -1,44 +1,14 @@
-type BNode = {
-  type: 'node'
-  tag: string
-  key?: string
-}
-type Data = Record<string, string>
-type ANode = BNode & {
-  data?: Data
-  children: ATree[]
-}
-type AText = {
-  type: 'text'
-  data: string
-}
-type AComment = {
-  type: 'comment'
-  data: string
-}
-type ATree = ANode | AText | AComment
+import {
+  ANode,
+  AText,
+  AComment,
+  ATree,
+  ONode,
+  OText,
+  OComment,
+  OTree
+} from './vtypes'
 
-type ONode = BNode & {
-  data: Data
-  children: OTree[]
-  node: Element
-}
-type OText = AText & {node: Text}
-type OComment = AComment & {node: Comment}
-type OTree = ONode | OText | OComment
-
-// ONode, ANode
-// OText, AText
-// OComment, AComment
-
-// ONode, AComment
-// ONode, AText
-
-// OText, ANode
-// OText, AComment
-
-// OComment, ANode
-// OComment, AText
 function create(aTree: ATree): OTree {
   if (aTree.type === 'node') {
     const node = document.createElement(aTree.tag)
@@ -58,7 +28,11 @@ function create(aTree: ATree): OTree {
   }
 }
 
-function updateChildren(node: Node, oldChlds: OTree[], newChlds: ATree[]): OTree[] {
+function updateChildren(
+  node: Node,
+  oldChlds: OTree[],
+  newChlds: ATree[]
+): OTree[] {
   var oldStartIdx = 0
   var oldEndIdx = oldChlds.length - 1
   var oldStartTree = oldChlds[oldStartIdx]
@@ -78,12 +52,14 @@ function updateChildren(node: Node, oldChlds: OTree[], newChlds: ATree[]): OTree
       children[newEndIdx] = update(oldEndTree, newEndTree)
       oldEndTree = oldChlds[--oldEndIdx]
       newEndTree = newChlds[--newEndIdx]
-    } else if (isSame(oldStartTree, newEndTree)) { // Vnode moved right
+    } else if (isSame(oldStartTree, newEndTree)) {
+      // Vnode moved right
       children[newEndIdx] = update(oldStartTree, newEndTree)
       node.insertBefore(oldStartTree.node, oldEndTree.node.nextSibling)
       oldStartTree = oldChlds[++oldStartIdx]
       newEndTree = newChlds[--newEndIdx]
-    } else if (isSame(oldEndTree, newStartTree)) { // Vnode moved left
+    } else if (isSame(oldEndTree, newStartTree)) {
+      // Vnode moved left
       children[newStartIdx] = update(oldEndTree, newStartTree)
       node.insertBefore(oldEndTree.node, oldStartTree.node)
       oldEndTree = oldChlds[--oldEndIdx]
@@ -91,7 +67,7 @@ function updateChildren(node: Node, oldChlds: OTree[], newChlds: ATree[]): OTree
     } else {
       if (newStartTree.type === 'node' && newStartTree.key) {
         if (oldKeyToIdx === undefined) {
-          oldKeyToIdx = createKeyToOldIdx(oldChlds, oldStartIdx, oldEndIdx);
+          oldKeyToIdx = createKeyToOldIdx(oldChlds, oldStartIdx, oldEndIdx)
         }
         const idxInOld: number | undefined = oldKeyToIdx[newStartTree.key]
         if (!idxInOld) {
@@ -100,7 +76,6 @@ function updateChildren(node: Node, oldChlds: OTree[], newChlds: ATree[]): OTree
           children[newStartIdx] = sTree
           newStartTree = newChlds[++newStartIdx]
         } else {
-
         }
       }
       // idxInOld = oldKeyToIdx[newStartVnode.key as string];
@@ -123,10 +98,16 @@ function updateChildren(node: Node, oldChlds: OTree[], newChlds: ATree[]): OTree
   return children
 }
 
-function createKeyToOldIdx(children: Array<OTree>, beginIdx: number, endIdx: number): Record<string, number> {
-  let i: number, map: Record<string, number> = {}, ch: OTree;
+function createKeyToOldIdx(
+  children: Array<OTree>,
+  beginIdx: number,
+  endIdx: number
+): Record<string, number> {
+  let i: number,
+    map: Record<string, number> = {},
+    ch: OTree
   for (i = beginIdx; i <= endIdx; ++i) {
-    ch = children[i];
+    ch = children[i]
     if (ch.type === 'node' && ch.key) {
       map[ch.key] = i
     }
@@ -135,13 +116,11 @@ function createKeyToOldIdx(children: Array<OTree>, beginIdx: number, endIdx: num
 }
 
 function update(oTree: OTree, aTree: ATree): OTree {
-  return (
-    oTree.type === 'node'
+  return oTree.type === 'node'
     ? updateNode(oTree, aTree as ANode)
     : oTree.type === 'text'
-    ? updateText(oTree, aTree as AText)
-    : updateComment(oTree, aTree as AComment)
-  )
+      ? updateText(oTree, aTree as AText)
+      : updateComment(oTree, aTree as AComment)
 }
 
 function updateNode(oNode: ONode, aNode: ANode): ONode {
@@ -217,7 +196,11 @@ const newTree = {
   type: 'node',
   tag: 'div',
   // key: 'a',
-  data: {id: 'gj', class: 'zmuki', style: 'height: 600px; width: 800px; background-color: #CFF;'},
+  data: {
+    id: 'gj',
+    class: 'zmuki',
+    style: 'height: 600px; width: 800px; background-color: #CFF;'
+  },
   children: [
     {type: 'text', data: 'hello'},
     {
