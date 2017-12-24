@@ -1,5 +1,5 @@
 import {Stream} from '@most/types'
-import {map, switchLatest} from '@most/core'
+import {map, now, switchLatest} from '@most/core'
 import {tree as aTree} from './a'
 
 export interface Pith<A> {
@@ -18,6 +18,9 @@ export const tree = <A>(
   isStream(pith) ? switchLatest(map(aTree(deltac), pith)) : aTree(deltac)(pith)
 
 export type $<T> = T | Stream<T>
+export function to$<T>(a: $<T>): Stream<T> {
+  return isStream(a) ? a : now(a)
+}
 export function isStream<T>(x: any): x is Stream<T> {
   return x && typeof x.run === 'function'
 }
