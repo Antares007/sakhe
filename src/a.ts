@@ -1,13 +1,14 @@
+import {compose} from '@most/prelude'
 export interface Pith<A> {
   (ray: (a: A) => void): void
 }
-export interface Bark<A> {
-  (pith: Pith<A>): A
+export interface Bark<A, B = A> {
+  (pith: Pith<A>): B
 }
-export const ring = <B, A>(pmap: (b: B) => Pith<A>): ((b: B) => Pith<A>) => b =>
-  pmap(b)
+export const ring = <O, A>(pmap: (o: O) => Pith<A>): ((o: O) => Pith<A>) => o =>
+  pmap(o)
 
-export function tree<A>(deltaC: (as: Array<A>) => A): Bark<A> {
+export function tree<B, A = B>(deltaC: (as: Array<A>) => B): Bark<A, B> {
   return function bark(pith) {
     const as: Array<A> = []
     pith(a => as.push(a))
