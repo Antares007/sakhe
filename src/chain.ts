@@ -10,7 +10,10 @@ import {
   filter,
   skip,
   skipRepeats,
-  skipRepeatsWith
+  skipRepeatsWith,
+  loop,
+  merge,
+  now
 } from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 
@@ -27,6 +30,7 @@ export const chain = <A>($: Stream<A>) => ({
       .drain()
       .then(() => initState),
   startWith: (value: A) => chain(startWith(value, $)),
+  merge: (b$: Stream<A>) => chain(merge($, b$)),
   take: (n: number) => chain(take(n, $)),
   tap: (f: (a: A) => any) => chain(tap(f, $)),
   filter: (p: (a: A) => boolean) => chain(filter(p, $)),
@@ -34,5 +38,13 @@ export const chain = <A>($: Stream<A>) => ({
   skipRepeats: () => chain(skipRepeats($)),
   skipRepeatsWith: (f: (l: A, r: A) => boolean) => chain(skipRepeatsWith(f, $)),
   drain: () => runEffects($, newDefaultScheduler()),
+  pairwise: (initial: A) =>
+    chain(
+      loop(
+        (prev, current) => ({seed: current, value: [prev, current]}),
+        initial,
+        $
+      )
+    ),
   valueOf: () => $
 })
