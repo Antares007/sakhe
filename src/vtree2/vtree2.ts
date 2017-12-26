@@ -50,7 +50,7 @@ interface Patch {
   (api: Api): void
 }
 interface Api {
-  get: (i: number) => VTree<any> | null
+  getByIndex: (i: number) => VTree<any> | null
   getByKey: (key: string) => VNode<any> | undefined
   find: (f: (vtree: VTree<any>, i: number) => boolean) => VTree<any> | undefined
   createElement: <Tag extends Tags>(tag: Tag) => VNode<Tag>
@@ -90,7 +90,7 @@ export const tree = <TagA extends Tags>(
       put(
         map<R<TagB>, Patch>(
           r => api => {
-            const chld = api.get(li)
+            const chld = api.getByIndex(li)
             let onode: VNode<any> | undefined
             if (chld === null) {
               api.insertBefore(r(api.createElement(tagB)), null)
@@ -119,7 +119,7 @@ export const tree = <TagA extends Tags>(
       put(
         map<string[], Patch>(
           ([oText, text]) => api => {
-            const chld = api.get(li)
+            const chld = api.getByIndex(li)
             let oldCharData: VCharacterData | undefined
             if (!chld) {
               api.insertBefore(api.createCharacterData(type, text), null)
@@ -162,9 +162,18 @@ export const tree = <TagA extends Tags>(
   )(ring(pith))
 }
 
-var rez = tree('div', {}, 'k1')(put => {
+var rez = tree(
+  'div',
+  {
+    class: {a: true, b: true, o: true},
+    style: {width: '100%'}
+  },
+  'k1'
+)(put => {
   put.text('hello')
-  put.node('h1')(put => put.text('world!'))
+  put.node('h1', {class: {a: true, b: true, o: true}})(put =>
+    put.text('world!')
+  )
 })
 
 chain(rez)
@@ -193,7 +202,7 @@ class PatchApi<Tag extends Tags> implements Api {
     this.children = children.slice(0)
     this.node = node
   }
-  get(index: number) {
+  getByIndex(index: number) {
     return -1 < index && index < this.children.length
       ? this.children[index]
       : null
@@ -215,8 +224,17 @@ class PatchApi<Tag extends Tags> implements Api {
   find(f: (vtree: VTree<any>, i: number) => boolean): VTree<any> | undefined {
     return this.children.find(f)
   }
-  updateData(newData: Data) {
-    this.data = newData
+  updateData(data: Data) {
+    const oldClass = this.data.class || {}
+    const newClass = data.class || {}
+
+    for (const name in oldClass)
+      if (!newClass[name]) this.node.classList.remove(name)
+
+    for (const name in newClass)
+      if (newClass[name] !== oldClass[name]) this.node.classList.toggle(name)
+
+    this.data = data
   }
   updateNode(node: VNode<any>, nnode: VNode<any>) {
     const i = prelude.findIndex(node, this.children)
