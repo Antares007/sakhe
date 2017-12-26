@@ -4,6 +4,7 @@ import {
   tap,
   map,
   constant,
+  combine,
   take,
   scan,
   startWith,
@@ -21,6 +22,8 @@ export const chain = <A>($: Stream<A>) => ({
   constant: <B>(b: B) => chain(constant(b, $)),
   scan: <B>(f: (b: B, a: A) => B, b: B) => chain(scan(f, b, $)),
   map: <B>(f: (a: A) => B) => chain(map<A, B>(f, $)),
+  combine: <B, R>(fn: (a: A, b: B) => R, b$: Stream<B>) =>
+    chain(combine(fn, $, b$)),
   reduce: <S>(f: (s: S, a: A) => S, initState: S): Promise<S> =>
     chain($)
       .scan((s, a) => {
