@@ -5,18 +5,9 @@ import {map} from '@most/core'
 import {chain} from '../chain'
 import * as patcher from './patcher'
 
-export const ring = <TagA extends Tags>(data: Stream<Data>) =>
-  mostRing<Pith, Patch<TagA>>(pith => put => {
+export const ring = <O, TagA extends Tags>(pmap: (o: O) => Pith) =>
+  mostRing<O, Patch<TagA>>(pith => put => {
     var gi = 0
-
-    put(
-      map<Data, Patch<TagA>>(
-        data => vnode => {
-          patcher.patchData(data, vnode)
-        },
-        data
-      )
-    )
 
     const mNode = <TagB extends Tags>(
       tagB: TagB,
@@ -26,13 +17,13 @@ export const ring = <TagA extends Tags>(data: Stream<Data>) =>
       const li = gi++
       put(
         map<R<TagB>, Patch<TagA>>(
-          r => vnode => {
+          r => (vnode, cb) => {
             const {children} = vnode
             const chld = li < children.length ? children[li] : null
             let movedChld: VNode<any> | undefined
             if (chld === null) {
               patcher.insertBefore(
-                r(patcher.createElement(tagB, key)),
+                r(patcher.createElement(tagB, key), cb),
                 null,
                 vnode
               )
@@ -41,25 +32,28 @@ export const ring = <TagA extends Tags>(data: Stream<Data>) =>
               chld.tag === tagB &&
               chld.key === key
             ) {
-              patcher.updateChieldState(chld, r(chld), vnode)
+              patcher.updateChieldState(chld, r(chld, cb), vnode)
             } else if (
               key &&
               typeof (movedChld = <VNode<any> | undefined>children.find(
                 (vtree, i) =>
-                  i > li && vtree.type === 'node' && vtree.key === key
+                  i > li &&
+                  vtree.type === 'node' &&
+                  vtree.tag === tagB &&
+                  vtree.key === key
               )) !== 'undefined'
             ) {
               patcher.insertBefore(movedChld, chld, vnode)
-              patcher.updateChieldState(movedChld, r(movedChld), vnode)
+              patcher.updateChieldState(movedChld, r(movedChld, cb), vnode)
             } else if (
               chld.type === 'node' &&
               chld.tag === tagB &&
               typeof chld.key === 'undefined'
             ) {
-              patcher.updateChieldState(chld, {...r(chld), key}, vnode)
+              patcher.updateChieldState(chld, {...r(chld, cb), key}, vnode)
             } else {
               patcher.insertBefore(
-                r(patcher.createElement(tagB, key)),
+                r(patcher.createElement(tagB, key), cb),
                 chld,
                 vnode
               )
@@ -74,7 +68,7 @@ export const ring = <TagA extends Tags>(data: Stream<Data>) =>
       const li = gi++
       put(
         map<string[], Patch<TagA>>(
-          ([oText, text]) => vnode => {
+          ([oText, text]) => (vnode, cb) => {
             const {children} = vnode
             const chld = li < children.length ? children[li] : null
             let oldCharData: VCharacterData | undefined
@@ -95,11 +89,14 @@ export const ring = <TagA extends Tags>(data: Stream<Data>) =>
               patcher.insertBefore(oldCharData, chld, vnode)
               patcher.patchText(oldCharData, text, vnode)
             } else {
+              const charData = patcher.createCharacterData(type, text)
+              cb({type: 'created', data: charData})
               patcher.insertBefore(
-                patcher.createCharacterData(type, text),
+                charData,
                 chld,
                 vnode
               )
+              cb({type: 'inserted'})
             }
           },
           chain(to$(text))
@@ -109,7 +106,7 @@ export const ring = <TagA extends Tags>(data: Stream<Data>) =>
       )
     }
 
-    pith({
+    pmap(pith)({
       node: mNode,
       text: mCharacterData('text'),
       comment: mCharacterData('comment')

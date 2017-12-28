@@ -1,10 +1,9 @@
 import {Stream} from '@most/types'
 import {
-  mergeArray,
+  merge,
   map,
   now,
   periodic,
-  scan,
   combineArray,
   MulticastSource,
   newStream,
@@ -12,7 +11,7 @@ import {
 } from '@most/core'
 import * as patcher from './patcher'
 
-import {ring as mostRing, tree as mostTree, $, to$, isStream} from '../most'
+import {Pith as mostPith, ring as mostRing, tree as mostTree, $, to$, isStream} from '../most'
 import {chain} from '../chain'
 
 import {
@@ -36,15 +35,29 @@ export const tree = <TagA extends Tags>(
   data: $<Data> = {},
   key?: string
 ): Bark<TagA> => pith => {
-  return mostTree(
-    combineArray<Patch<TagA>, R<TagA>>((...patches) => vnode => {
-      patches.forEach(patch => patch(vnode))
-      vnode.children
-        .slice(patches.length - 1)
-        .forEach(vtree => patcher.removeChild(vtree, vnode))
-      return vnode
-    })
-  )(ring(to$(data))(pith))
+  return merge(
+    map<Data, R<TagA>>(
+      data => vnode => {
+        patcher.patchData(data, vnode)
+        return vnode
+      },
+      to$(data)
+    ),
+    mostTree(
+      combineArray<Patch<TagA>, R<TagA>>((...patches) => (vnode, cb) => {
+        const pl = patches.length
+        const {children} = vnode
+        for (var i = 0, l = Math.max(pl, children.length); i < l; i++) {
+          if (i < pl) {
+            patches[i](vnode, cb)
+          } else {
+            patcher.removeChild(children[i], vnode)
+          }
+        }
+        return vnode
+      })
+    )(ring<Pith, TagA>(p => p)(pith))
+  )
 }
 
 var rez = tree(
@@ -82,7 +95,7 @@ var rez = tree(
 })
 
 chain(rez)
-  .reduce((t, r) => r(t), toVNode<'div'>(document.getElementById('root-node')!))
+  .reduce((t, r) => r(t, console.log.bind(console)), toVNode<'div'>(document.getElementById('root-node')!))
   .then(console.log.bind(console))
 // .tap(console.log.bind(console))
 // .drain()
