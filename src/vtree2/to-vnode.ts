@@ -1,10 +1,10 @@
 import {VNode, VTree, Tags, Data} from './types'
 ;(<any>window).toVNode = toVNode
 
-function readAttrs(elmAttrs: NamedNodeMap): Record<string, string> | undefined {
+function readAttrs(elmAttrs: NamedNodeMap): Data['attrs'] {
   const l = elmAttrs.length
   if (l === 0) return
-  const attrs: Record<string, string> = {}
+  const attrs: Data['attrs'] = {}
   for (var i = 0; i < l; i++) {
     const name = elmAttrs[i].nodeName
     if (name === 'class' || name === 'style') continue
@@ -14,24 +14,20 @@ function readAttrs(elmAttrs: NamedNodeMap): Record<string, string> | undefined {
   return attrs
 }
 
-function readClass(
-  classList: DOMTokenList
-): Record<string, boolean> | undefined {
+function readClass(classList: DOMTokenList): Data['class'] {
   const l = classList.length
   if (l === 0) return
-  const classes: Record<string, boolean> = {}
+  const classes: Data['class'] = {}
   for (let i = 0; i < l; i++) {
     classes[classList[i]] = true
   }
   return classes
 }
 
-function readStyle(
-  style: CSSStyleDeclaration
-): Record<string, string> | undefined {
+function readStyle(style: CSSStyleDeclaration): Data['style'] {
   const l = style.length
   if (l === 0) return
-  const styles: Record<string, string> = {}
+  const styles: any = {}
   for (let i = 0; i < l; i++) {
     const name = style[i]
     styles[name] = style.getPropertyValue(name)

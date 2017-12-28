@@ -11,26 +11,31 @@ import {
 } from './types'
 
 export type EventNameToTypeMap = {
-  create: {type: 'create'; data: VTree<any>}
+  VNodeCreated: {type: 'VNodeCreated'; data: VNode<any>}
+  VCharacterDataCreated: {type: 'VCharacterDataCreated'; data: VCharacterData}
+  StateChanged: {type: 'StateChanged', data: VNode<any>}
+  Inserted: {type: 'Inserted', data: VTree<any>}
+  Removed: {type: 'Removed', data: VTree<any>}
 }
 export type EventNames = keyof EventNameToTypeMap
 
-const EventNames: EventNames[] = ['create']
+const EventNames: EventNames[] = [
+  'VNodeCreated',
+  'VCharacterDataCreated',
+  'StateChanged',
+  'Inserted',
+  'Removed'
+]
 
 export interface Face<Tag extends Tags> {
   state(): VNode<Tag>
-  getByIndex: (i: number) => VTree<any> | null
-  getByKey: (key: string) => VNode<any> | undefined
-  find: (f: (vtree: VTree<any>, i: number) => boolean) => VTree<any> | undefined
-  createElement: <Tag extends Tags>(tag: Tag) => VNode<Tag>
-  createCharacterData: (
-    type: 'text' | 'comment',
-    data: string
-  ) => VCharacterData
-  updateNode: (vnode: VNode<any>, nnode: VNode<any>) => void
-  updateData: (data: Data) => void
-  updateCharacterData: (charData: VCharacterData, text: string) => void
-  insertBefore: (v: VTree<any>, ref: VTree<any> | null) => void
+  createElement<Tag extends Tags>(tag: Tag): VNode<Tag>
+  createCharacterData(type: 'text' | 'comment', data: string): VCharacterData
+  updateChieldState(vnode: VNode<any>, nnode: VNode<any>): void
+  removeChild(vtree: VTree<any>): void
+  patchData(data: Data): void
+  patchText(charData: VCharacterData, text: string): void
+  insertBefore(v: VTree<any>, ref: VTree<any> | null): void
   on<E extends EventNames>(
     e: E,
     cb: (e: EventNameToTypeMap[E]) => void
@@ -54,8 +59,15 @@ export class PatchApi<Tag extends Tags> extends EventEmitter
   private data: Data
   private node: Element
   private keyMap: Record<string, VNode<any> | undefined> | undefined
-  state() {
-    return this.getVNode()
+  state(): VNode<Tag> {
+    return {
+      type: 'node',
+      tag: this.tag,
+      key: this.key,
+      data: this.data,
+      children: this.children,
+      node: this.node
+    }
   }
   constructor(
     tag: Tag,
@@ -81,29 +93,8 @@ export class PatchApi<Tag extends Tags> extends EventEmitter
   eventNames(): EventNames[] {
     return [...EventNames]
   }
-  getByIndex(index: number) {
-    return -1 < index && index < this.children.length
-      ? this.children[index]
-      : null
-  }
-  getByKey(key: string): VNode<any> | undefined {
-    if (!this.keyMap) {
-      this.keyMap = this.children.reduce(
-        (s, t) => {
-          if (t.type === 'node' && typeof t.key === 'string') {
-            s[t.key] = t
-          }
-          return s
-        },
-        {} as Record<string, VNode<any>>
-      )
-    }
-    return this.keyMap[key]
-  }
-  find(f: (vtree: VTree<any>, i: number) => boolean): VTree<any> | undefined {
-    return this.children.find(f)
-  }
-  updateData(data: Data) {
+
+  patchData(data: Data) {
     const oldClass = this.data.class || {}
     const newClass = data.class || {}
 
@@ -114,20 +105,31 @@ export class PatchApi<Tag extends Tags> extends EventEmitter
       if (newClass[name] !== oldClass[name]) this.node.classList.toggle(name)
 
     this.data = data
+    this.emmit('StateChanged', {type: 'StateChanged', data: this.state()})
   }
-  updateNode(node: VNode<any>, nnode: VNode<any>) {
+  updateChieldState(node: VNode<any>, nnode: VNode<any>) {
     const i = prelude.findIndex(node, this.children)
     this.children[i] = nnode
+    this.emmit('StateChanged', {type: 'StateChanged', data: this.state()})
   }
-  updateCharacterData(x: VCharacterData, text: string) {
+  patchText(x: VCharacterData, text: string) {
     const i = prelude.findIndex(x, this.children)
     const chld = <VText | VComment>this.children[i]
     chld.node.textContent = text
-    this.children[i] = Object.assign({}, chld, {data: text})
+    this.children[i] = {...chld, data: text}
+    this.emmit('StateChanged', {type: 'StateChanged', data: this.state()})
+  }
+  removeChild (vtree: VTree<any>): void {
+    const oi = prelude.findIndex(vtree, this.children)
+    if (oi > -1) {
+      this.node.removeChild(vtree.node)
+      this.children.splice(oi, 1)
+      this.emmit('Removed', {type: 'Removed', data: vtree})
+      this.emmit('StateChanged', {type: 'StateChanged', data: this.state()})
+    }
   }
   insertBefore(v: VTree<any>, ref: VTree<any> | null) {
-    const oi = prelude.findIndex(v, this.children)
-    if (oi > -1) this.children.splice(oi, 1)
+    this.removeChild(v)
     if (ref !== null) {
       const i = prelude.findIndex(ref, this.children)
       this.children = [
@@ -140,29 +142,25 @@ export class PatchApi<Tag extends Tags> extends EventEmitter
       this.children.push(v)
       this.node.insertBefore(v.node, null)
     }
+    this.emmit('Inserted', {type: 'Inserted', data: v})
+    this.emmit('StateChanged', {type: 'StateChanged', data: this.state()})
   }
   createElement<Tag extends Tags>(tag: Tag): VNode<Tag> {
-    return {
+    const v: VNode<Tag> = {
       type: 'node',
       tag,
       data: {},
       children: [],
       node: document.createElement(tag)
     }
+    this.emmit('VNodeCreated', {type: 'VNodeCreated', data: v})
+    return v
   }
   createCharacterData(type: 'text' | 'comment', data: string): VCharacterData {
-    return type === 'text'
+    const v = type === 'text'
       ? {type, data, node: document.createTextNode(data)}
       : {type, data, node: document.createComment(data)}
-  }
-  getVNode(): VNode<Tag> {
-    return {
-      type: 'node',
-      tag: this.tag,
-      key: this.key,
-      data: this.data,
-      children: this.children,
-      node: this.node
-    }
+    this.emmit('VCharacterDataCreated', {type: 'VCharacterDataCreated', data: v})
+    return v
   }
 }

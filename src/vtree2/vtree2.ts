@@ -65,7 +65,7 @@ export const tree = <TagA extends Tags>(
     put(
       map<Data, Patch<TagA>>(
         data => api => {
-          api.updateData(data)
+          api.patchData(data)
         },
         to$(data)
       )
@@ -80,7 +80,8 @@ export const tree = <TagA extends Tags>(
       put(
         map<R<TagB>, Patch<TagA>>(
           r => api => {
-            const chld = api.getByIndex(li)
+            const {children} = api.state()
+            const chld = li < children.length ? children[li] : null
             let onode: VNode<any> | undefined
             if (chld === null) {
               api.insertBefore(r(api.createElement(tagB)), null)
@@ -89,12 +90,15 @@ export const tree = <TagA extends Tags>(
               chld.tag === tagB &&
               chld.key === key
             ) {
-              api.updateNode(chld, r(chld))
-            } else if (key && (onode = api.getByKey(key))) {
+              api.updateChieldState(chld, r(chld))
+            } else if (key && (onode = <VNode<any> | undefined>children.find(
+                (vtree, i) =>
+                  i > li && vtree.type === 'node' && vtree.key === key
+              ))) {
               api.insertBefore(onode, chld)
-              api.updateNode(onode, r(onode))
+              api.updateChieldState(onode, r(onode))
             } else if (chld.type === 'node' && chld.tag === tagB) {
-              api.updateNode(chld, r(chld))
+              api.updateChieldState(chld, r(chld))
             } else {
               api.insertBefore(r(api.createElement(tagB)), chld)
             }
@@ -109,20 +113,21 @@ export const tree = <TagA extends Tags>(
       put(
         map<string[], Patch<TagA>>(
           ([oText, text]) => api => {
-            const chld = api.getByIndex(li)
+            const {children} = api.state()
+            const chld = li < children.length ? children[li] : null
             let oldCharData: VCharacterData | undefined
             if (!chld) {
               api.insertBefore(api.createCharacterData(type, text), null)
             } else if (chld.type === type) {
-              api.updateCharacterData(chld, text)
+              api.patchText(chld, text)
             } else if (
-              (oldCharData = <VCharacterData | undefined>api.find(
+              (oldCharData = <VCharacterData | undefined>children.find(
                 (vtree, i) =>
                   i > li && vtree.type === type && vtree.data === oText
               ))
             ) {
               api.insertBefore(oldCharData, chld)
-              api.updateCharacterData(oldCharData, text)
+              api.patchText(oldCharData, text)
             } else {
               api.insertBefore(api.createCharacterData(type, text), chld)
             }
@@ -170,9 +175,3 @@ chain(rez)
   .scan((t, r) => r(t), toVNode<'div'>(document.getElementById('root-node')!))
   .tap(console.log.bind(console))
   .drain()
-type EventsMap = {
-  create: {type: 'create'; data: VTree<any>}
-}
-type Events = keyof EventsMap
-
-var create: EventsMap['create'] = {type: 'create', data: <any>{}}
