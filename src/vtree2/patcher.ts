@@ -1,166 +1,81 @@
 import * as prelude from '@most/prelude'
 import {EventEmitter} from 'events'
-import {
-  VTree,
-  VNode,
-  Data,
-  Tags,
-  VText,
-  VComment,
-  VCharacterData
-} from './types'
+import {VTree, VNode, Data, Tags, VCharacterData} from './types'
 
-export type EventNameToTypeMap = {
-  VNodeCreated: {type: 'VNodeCreated'; data: VNode<any>}
-  VCharacterDataCreated: {type: 'VCharacterDataCreated'; data: VCharacterData}
-  StateChanged: {type: 'StateChanged', data: VNode<any>}
-  Inserted: {type: 'Inserted', data: VTree<any>}
-  Removed: {type: 'Removed', data: VTree<any>}
+export function patchData(data: Data, vnode: VNode<any>) {
+  const oldClass = vnode.data.class || {}
+  const newClass = data.class || {}
+
+  for (const name in oldClass)
+    if (!newClass[name]) vnode.node.classList.remove(name)
+
+  for (const name in newClass)
+    if (newClass[name] !== oldClass[name]) vnode.node.classList.toggle(name)
+  vnode.data = data
 }
-export type EventNames = keyof EventNameToTypeMap
 
-const EventNames: EventNames[] = [
-  'VNodeCreated',
-  'VCharacterDataCreated',
-  'StateChanged',
-  'Inserted',
-  'Removed'
-]
-
-export interface Face<Tag extends Tags> {
-  state(): VNode<Tag>
-  createElement<Tag extends Tags>(tag: Tag): VNode<Tag>
-  createCharacterData(type: 'text' | 'comment', data: string): VCharacterData
-  updateChieldState(vnode: VNode<any>, nnode: VNode<any>): void
-  removeChild(vtree: VTree<any>): void
-  patchData(data: Data): void
-  patchText(charData: VCharacterData, text: string): void
-  insertBefore(v: VTree<any>, ref: VTree<any> | null): void
-  on<E extends EventNames>(
-    e: E,
-    cb: (e: EventNameToTypeMap[E]) => void
-  ): Face<Tag>
-  eventNames(): EventNames[]
+export function updateChieldState(
+  oldVnode: VNode<any>,
+  newVnode: VNode<any>,
+  vnode: VNode<any>
+): void {
+  const i = prelude.findIndex(oldVnode, vnode.children)
+  vnode.children[i] = newVnode
 }
-export function create<Tag extends Tags>(
-  tag: Tag,
-  key: string | undefined,
-  data: Data,
-  children: VTree<any>[],
-  node: Element
-): Face<Tag> {
-  return new PatchApi(tag, key, data, children, node)
+
+export function patchText(
+  vCharData: VCharacterData,
+  text: string,
+  vnode: VNode<any>
+): void {
+  const i = prelude.findIndex(vCharData, vnode.children)
+  const chld = <VCharacterData>vnode.children[i]
+  chld.node.textContent = text
+  vnode.children[i] = {...chld, data: text}
 }
-export class PatchApi<Tag extends Tags> extends EventEmitter
-  implements Face<Tag> {
-  private tag: Tag
-  private key: string | undefined
-  private children: VTree<any>[]
-  private data: Data
-  private node: Element
-  private keyMap: Record<string, VNode<any> | undefined> | undefined
-  state(): VNode<Tag> {
-    return {
-      type: 'node',
-      tag: this.tag,
-      key: this.key,
-      data: this.data,
-      children: this.children,
-      node: this.node
-    }
-  }
-  constructor(
-    tag: Tag,
-    key: string | undefined,
-    data: Data,
-    children: VTree<any>[],
-    node: Element
-  ) {
-    super()
-    super.emit
-    this.tag = tag
-    this.key = key
-    this.data = data
-    this.children = children.slice(0)
-    this.node = node
-  }
-  emmit<E extends EventNames>(name: E, e: EventNameToTypeMap[E]): boolean {
-    return super.emit(name, e)
-  }
-  on<E extends EventNames>(e: E, cb: (e: EventNameToTypeMap[E]) => void) {
-    return super.on(e, cb)
-  }
-  eventNames(): EventNames[] {
-    return [...EventNames]
-  }
 
-  patchData(data: Data) {
-    const oldClass = this.data.class || {}
-    const newClass = data.class || {}
+export function removeChild(vTree: VTree<any>, vnode: VNode<any>): void {
+  const oi = prelude.findIndex(vTree, vnode.children)
+  if (oi > -1) {
+    vnode.node.removeChild(vTree.node)
+    vnode.children.splice(oi, 1)
+  }
+}
 
-    for (const name in oldClass)
-      if (!newClass[name]) this.node.classList.remove(name)
+export function insertBefore(
+  childVnode: VTree<any>,
+  refVnode: VTree<any> | null,
+  vnode: VNode<any>
+): void {
+  removeChild(childVnode, vnode)
+  if (refVnode !== null) {
+    const i = prelude.findIndex(refVnode, vnode.children)
+    vnode.children = [
+      ...vnode.children.slice(0, i),
+      childVnode,
+      ...vnode.children.slice(i)
+    ]
+    vnode.node.insertBefore(childVnode.node, refVnode.node)
+  } else {
+    vnode.children.push(childVnode)
+    vnode.node.insertBefore(childVnode.node, null)
+  }
+}
 
-    for (const name in newClass)
-      if (newClass[name] !== oldClass[name]) this.node.classList.toggle(name)
-
-    this.data = data
-    this.emmit('StateChanged', {type: 'StateChanged', data: this.state()})
+export function createElement<Tag extends Tags>(tag: Tag): VNode<Tag> {
+  return {
+    type: 'node',
+    tag,
+    data: {},
+    children: [],
+    node: document.createElement(tag)
   }
-  updateChieldState(node: VNode<any>, nnode: VNode<any>) {
-    const i = prelude.findIndex(node, this.children)
-    this.children[i] = nnode
-    this.emmit('StateChanged', {type: 'StateChanged', data: this.state()})
-  }
-  patchText(x: VCharacterData, text: string) {
-    const i = prelude.findIndex(x, this.children)
-    const chld = <VText | VComment>this.children[i]
-    chld.node.textContent = text
-    this.children[i] = {...chld, data: text}
-    this.emmit('StateChanged', {type: 'StateChanged', data: this.state()})
-  }
-  removeChild (vtree: VTree<any>): void {
-    const oi = prelude.findIndex(vtree, this.children)
-    if (oi > -1) {
-      this.node.removeChild(vtree.node)
-      this.children.splice(oi, 1)
-      this.emmit('Removed', {type: 'Removed', data: vtree})
-      this.emmit('StateChanged', {type: 'StateChanged', data: this.state()})
-    }
-  }
-  insertBefore(v: VTree<any>, ref: VTree<any> | null) {
-    this.removeChild(v)
-    if (ref !== null) {
-      const i = prelude.findIndex(ref, this.children)
-      this.children = [
-        ...this.children.slice(0, i),
-        v,
-        ...this.children.slice(i)
-      ]
-      this.node.insertBefore(v.node, ref.node)
-    } else {
-      this.children.push(v)
-      this.node.insertBefore(v.node, null)
-    }
-    this.emmit('Inserted', {type: 'Inserted', data: v})
-    this.emmit('StateChanged', {type: 'StateChanged', data: this.state()})
-  }
-  createElement<Tag extends Tags>(tag: Tag): VNode<Tag> {
-    const v: VNode<Tag> = {
-      type: 'node',
-      tag,
-      data: {},
-      children: [],
-      node: document.createElement(tag)
-    }
-    this.emmit('VNodeCreated', {type: 'VNodeCreated', data: v})
-    return v
-  }
-  createCharacterData(type: 'text' | 'comment', data: string): VCharacterData {
-    const v = type === 'text'
-      ? {type, data, node: document.createTextNode(data)}
-      : {type, data, node: document.createComment(data)}
-    this.emmit('VCharacterDataCreated', {type: 'VCharacterDataCreated', data: v})
-    return v
-  }
+}
+export function createCharacterData(
+  type: 'text' | 'comment',
+  data: string
+): VCharacterData {
+  return type === 'text'
+    ? {type, data, node: document.createTextNode(data)}
+    : {type, data, node: document.createComment(data)}
 }
