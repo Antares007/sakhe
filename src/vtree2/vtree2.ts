@@ -56,12 +56,15 @@ var rez = tree(
   'k1'
 )(put => {
   put.text('hello')
-  put.text(
-    chain(periodic(1))
-      .scan(c => c + 1, 0)
-      .map(i => 'world ' + i + '!')
-      .valueOf()
-  )
+  // put.text(
+  //   chain(periodic(1))
+  //     .scan(c => c + 1, 0)
+  //     .map(i => 'world ' + i + '!')
+  //     .take(10000)
+  //     .valueOf()
+  // )
+  put.node('div', tree('div', {}, 'key3')(put => put.text('hi')), 'key2')
+  put.text('world!')
   // put.node('h1', {class: {a: true, b: true, o: true}})(put => {
   //   put.text('world!')
   //   put.node('h1', {class: {a: true, b: true, o: true}})(put => {

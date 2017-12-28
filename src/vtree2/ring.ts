@@ -22,7 +22,7 @@ export const ring = <TagA extends Tags>(data: Stream<Data>) =>
       tagB: TagB,
       r$: $<R<TagB>>,
       key?: string
-    ) => (pith: $<Pith>) => {
+    ) => {
       const li = gi++
       put(
         map<R<TagB>, Patch<TagA>>(

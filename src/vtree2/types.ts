@@ -1,7 +1,4 @@
-import {Stream} from '@most/types'
 import {CSSProperties} from '../CSS'
-export type Tags = keyof HTMLElementTagNameMap
-
 export interface Data {
   attrs?: Record<string, string>
   class?: Record<string, boolean>
@@ -12,6 +9,7 @@ export type On = {
   [E in keyof HTMLElementEventMap]?: (e: HTMLElementEventMap[E]) => void
 }
 
+export type Tags = keyof HTMLElementTagNameMap
 export type VNode<Tag extends Tags> = {
   type: 'node'
   tag: Tag
@@ -32,6 +30,7 @@ export type VComment = {
 }
 export type VCharacterData = VComment | VText
 export type VTree<Tag extends Tags> = VNode<Tag> | VText | VComment
+
 import {$} from '../most'
 export interface Pith {
   (
@@ -40,13 +39,14 @@ export interface Pith {
         tag: Tag,
         r$: $<R<Tag>>,
         key?: string
-      ) => (pith: $<Pith>) => void
+      ) => void
       text: (text: $<string>) => void
       comment: (text: $<string>) => void
     }
   ): void
 }
 export type R<Tag extends Tags> = (tree: VNode<Tag>) => VNode<Tag>
+import {Stream} from '@most/types'
 export interface Bark<Tag extends Tags> {
   (pith: $<Pith>): Stream<R<Tag>>
 }
