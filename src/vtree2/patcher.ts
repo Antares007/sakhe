@@ -62,10 +62,11 @@ export function insertBefore(
   }
 }
 
-export function createElement<Tag extends Tags>(tag: Tag): VNode<Tag> {
+export function createElement<Tag extends Tags>(tag: Tag, key?: string): VNode<Tag> {
   return {
     type: 'node',
     tag,
+    key,
     data: {},
     children: [],
     node: document.createElement(tag)
