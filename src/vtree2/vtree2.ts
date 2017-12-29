@@ -42,31 +42,22 @@ export const tree = <TagA extends Tags>(
   key?: string
 ): Bark<TagA> => pith => {
   return mostTree(xs =>
-    merge(
-      map<Data, R<TagA>>(
-        data => vnode => {
-          console.log('a', JSON.stringify(vnode))
-          patchData(data, vnode)
-          return vnode
-        },
-        to$(data)
-      ),
-      combineArray<Patch<TagA>, R<TagA>>(
-        (...patches) => (vnode, cb) => {
-          const pl = patches.length
-          const {children, node} = vnode
-          for (var i = 0, l = Math.max(pl, children.length); i < l; i++) {
-            if (i < pl) {
-              patches[i](vnode, cb)
-            } else {
-              children.splice(i, 1)
-              node.removeChild(children[i].node)
-            }
+    combineArray<any, R<TagA>>(
+      (data: Data, ...patches: Patch<TagA>[]) => (vnode, cb) => {
+        const pl = patches.length
+        const {children, node} = vnode
+        patchData(data, vnode)
+        for (var i = 0, l = Math.max(pl, children.length); i < l; i++) {
+          if (i < pl) {
+            patches[i](vnode, cb)
+          } else {
+            children.splice(i, 1)
+            node.removeChild(children[i].node)
           }
-          return vnode
-        },
-        xs
-      ),
+        }
+        return vnode
+      },
+      [to$(data), ...xs]
     )
   )(ring<Pith, TagA>(p => p)(pith))
 }
@@ -87,7 +78,11 @@ var rez = tree(
   //     .take(10000)
   //     .valueOf()
   // )
-  put.node('h1', tree('h1', {style: {width: '50%'}}, 'key3')(put => put.text('hi')), 'key2')
+  put.node(
+    'h1',
+    tree('h1', {style: {width: '50%'}}, 'key3')(put => put.text('hi')),
+    'key2'
+  )
   put.text('world!')
   // put.node('h1', {class: {a: true, b: true, o: true}})(put => {
   //   put.text('world!')
@@ -107,12 +102,11 @@ var rez = tree(
 
 chain(rez)
   .scan(
-    (t, r) => r(t, console.log.bind(console)),
+    (t, r) => r(t, e => console.log('on', e)),
     toVNode<'div'>(document.getElementById('root-node')!)
   )
+  .tap(vnode => console.info('patch', JSON.stringify(vnode, null, '  ')))
   .drain()
-// .tap(console.log.bind(console))
-// .drain()
 
 function patchData(data: Data, vnode: VNode<any>): void {
   const oldClass = vnode.data.class || {}
