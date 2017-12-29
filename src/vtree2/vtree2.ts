@@ -1,7 +1,5 @@
 import {Stream} from '@most/types'
 import {
-  merge,
-  map,
   now,
   periodic,
   combineArray,
@@ -30,8 +28,7 @@ import {
   VCharacterData
 } from './types'
 import {toVNode} from './to-vnode'
-import {updateClass} from './update-class'
-import {updateAttributes} from './update-attributes'
+import {patchData} from './patch-data'
 
 import {Pith, Bark, Patch, R} from './types'
 import {ring} from './ring'
@@ -44,9 +41,9 @@ export const tree = <TagA extends Tags>(
   return mostTree(xs =>
     combineArray<any, R<TagA>>(
       (data: Data, ...patches: Patch<TagA>[]) => (vnode, cb) => {
+        patchData(data, vnode)
         const pl = patches.length
         const {children, node} = vnode
-        patchData(data, vnode)
         for (var i = 0, l = Math.max(pl, children.length); i < l; i++) {
           if (i < pl) {
             patches[i](vnode, cb)
@@ -80,7 +77,9 @@ var rez = tree(
   // )
   put.node(
     'h1',
-    tree('h1', {style: {width: '50%'}}, 'key3')(put => put.text('hi')),
+    tree('h1', {attrs: {id: 'hi'}, style: {width: '50%'}}, 'key3')(put =>
+      put.text('hi')
+    ),
     'key2'
   )
   put.text('world!')
@@ -107,15 +106,3 @@ chain(rez)
   )
   .tap(vnode => console.info('patch', JSON.stringify(vnode, null, '  ')))
   .drain()
-
-function patchData(data: Data, vnode: VNode<any>): void {
-  const oldClass = vnode.data.class || {}
-  const newClass = data.class || {}
-
-  for (const name in oldClass)
-    if (!newClass[name]) vnode.node.classList.remove(name)
-
-  for (const name in newClass)
-    if (newClass[name] !== oldClass[name]) vnode.node.classList.toggle(name)
-  vnode.data = data
-}
