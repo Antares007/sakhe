@@ -1,9 +1,8 @@
 import {Stream} from '@most/types'
-import {Pith, Data, VNode, Tags, R, VCharacterData, Patch} from './types'
+import {Pith, Data, VNode, Tags, R, VCharacterData, Patch, VTree} from './types'
 import {Pith as mostPith, ring as mostRing, $, to$} from '../most'
 import {map} from '@most/core'
 import {chain} from '../chain'
-import * as patcher from './patcher'
 
 export const ring = <O, TagA extends Tags>(pmap: (o: O) => Pith) =>
   mostRing<O, Patch<TagA>>(pith => put => {
@@ -18,45 +17,46 @@ export const ring = <O, TagA extends Tags>(pmap: (o: O) => Pith) =>
       put(
         map<R<TagB>, Patch<TagA>>(
           r => (vnode, cb) => {
-            const {children} = vnode
+            const {children, node} = vnode
             const chld = li < children.length ? children[li] : null
-            let movedChld: VNode<any> | undefined
+            let movedChldIndex: number | undefined
+
             if (chld === null) {
-              patcher.insertBefore(
-                r(patcher.createElement(tagB, key), cb),
-                null,
-                vnode
-              )
+              const v = r(createElement(tagB, key), cb)
+              children.push(v)
+              node.insertBefore(v.node, null)
             } else if (
               chld.type === 'node' &&
               chld.tag === tagB &&
               chld.key === key
             ) {
-              patcher.updateChieldState(chld, r(chld, cb), vnode)
+              children[li] = r(chld, cb)
             } else if (
               key &&
-              typeof (movedChld = <VNode<any> | undefined>children.find(
-                (vtree, i) =>
-                  i > li &&
-                  vtree.type === 'node' &&
-                  vtree.tag === tagB &&
-                  vtree.key === key
-              )) !== 'undefined'
+              -1 <
+                (movedChldIndex = children.findIndex(
+                  (vtree, i) =>
+                    i > li &&
+                    vtree.type === 'node' &&
+                    vtree.tag === tagB &&
+                    vtree.key === key
+                ))
             ) {
-              patcher.insertBefore(movedChld, chld, vnode)
-              patcher.updateChieldState(movedChld, r(movedChld, cb), vnode)
+              children.splice(
+                li,
+                0,
+                r(<VNode<TagB>>children.splice(movedChldIndex, 1)[0], cb)
+              )
             } else if (
               chld.type === 'node' &&
               chld.tag === tagB &&
               typeof chld.key === 'undefined'
             ) {
-              patcher.updateChieldState(chld, {...r(chld, cb), key}, vnode)
+              children[li] = {...r(chld, cb), key} // ???
             } else {
-              patcher.insertBefore(
-                r(patcher.createElement(tagB, key), cb),
-                chld,
-                vnode
-              )
+              const v = r(createElement(tagB, key), cb)
+              children.splice(li, 0, v)
+              node.insertBefore(v.node, chld.node)
             }
           },
           to$(r$)
@@ -69,34 +69,35 @@ export const ring = <O, TagA extends Tags>(pmap: (o: O) => Pith) =>
       put(
         map<string[], Patch<TagA>>(
           ([oText, text]) => (vnode, cb) => {
-            const {children} = vnode
+            const {children, node} = vnode
             const chld = li < children.length ? children[li] : null
-            let oldCharData: VCharacterData | undefined
+            let oldCharDataIndex: number | undefined
             if (!chld) {
-              patcher.insertBefore(
-                patcher.createCharacterData(type, text),
-                null,
-                vnode
-              )
+              const c = createCharacterData(type, text)
+              children.push(c)
+              node.insertBefore(c.node, null)
             } else if (chld.type === type) {
-              patcher.patchText(chld, text, vnode)
+              if (chld.data !== text) {
+                chld.node.textContent = text
+                chld.data = text
+              }
             } else if (
-              (oldCharData = <VCharacterData | undefined>children.find(
+              -1 <
+              (oldCharDataIndex = children.findIndex(
                 (vtree, i) =>
                   i > li && vtree.type === type && vtree.data === oText
               ))
             ) {
-              patcher.insertBefore(oldCharData, chld, vnode)
-              patcher.patchText(oldCharData, text, vnode)
+              const c = <VCharacterData>children.splice(oldCharDataIndex, 1)[0]
+              children.splice(li, 0, c)
+              if (c.data !== text) {
+                c.node.textContent = text
+                c.data = text
+              }
             } else {
-              const charData = patcher.createCharacterData(type, text)
-              cb({type: 'created', data: charData})
-              patcher.insertBefore(
-                charData,
-                chld,
-                vnode
-              )
-              cb({type: 'inserted'})
+              const charData = createCharacterData(type, text)
+              children.splice(li, 0, charData)
+              node.insertBefore(charData.node, chld.node)
             }
           },
           chain(to$(text))
@@ -112,3 +113,23 @@ export const ring = <O, TagA extends Tags>(pmap: (o: O) => Pith) =>
       comment: mCharacterData('comment')
     })
   })
+
+function createElement<Tag extends Tags>(tag: Tag, key?: string): VNode<Tag> {
+  return {
+    type: 'node',
+    tag,
+    key,
+    data: {},
+    children: [],
+    node: document.createElement(tag)
+  }
+}
+
+function createCharacterData(
+  type: 'text' | 'comment',
+  data: string
+): VCharacterData {
+  return type === 'text'
+    ? {type, data, node: document.createTextNode(data)}
+    : {type, data, node: document.createComment(data)}
+}

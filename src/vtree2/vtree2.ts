@@ -9,9 +9,15 @@ import {
   newStream,
   multicast
 } from '@most/core'
-import * as patcher from './patcher'
 
-import {Pith as mostPith, ring as mostRing, tree as mostTree, $, to$, isStream} from '../most'
+import {
+  Pith as mostPith,
+  ring as mostRing,
+  tree as mostTree,
+  $,
+  to$,
+  isStream
+} from '../most'
 import {chain} from '../chain'
 
 import {
@@ -35,29 +41,34 @@ export const tree = <TagA extends Tags>(
   data: $<Data> = {},
   key?: string
 ): Bark<TagA> => pith => {
-  return merge(
-    map<Data, R<TagA>>(
-      data => vnode => {
-        patcher.patchData(data, vnode)
-        return vnode
-      },
-      to$(data)
-    ),
-    mostTree(
-      combineArray<Patch<TagA>, R<TagA>>((...patches) => (vnode, cb) => {
-        const pl = patches.length
-        const {children} = vnode
-        for (var i = 0, l = Math.max(pl, children.length); i < l; i++) {
-          if (i < pl) {
-            patches[i](vnode, cb)
-          } else {
-            patcher.removeChild(children[i], vnode)
+  return mostTree(xs =>
+    merge(
+      map<Data, R<TagA>>(
+        data => vnode => {
+          console.log('a', JSON.stringify(vnode))
+          patchData(data, vnode)
+          return vnode
+        },
+        to$(data)
+      ),
+      combineArray<Patch<TagA>, R<TagA>>(
+        (...patches) => (vnode, cb) => {
+          const pl = patches.length
+          const {children, node} = vnode
+          for (var i = 0, l = Math.max(pl, children.length); i < l; i++) {
+            if (i < pl) {
+              patches[i](vnode, cb)
+            } else {
+              children.splice(i, 1)
+              node.removeChild(children[i].node)
+            }
           }
-        }
-        return vnode
-      })
-    )(ring<Pith, TagA>(p => p)(pith))
-  )
+          return vnode
+        },
+        xs
+      ),
+    )
+  )(ring<Pith, TagA>(p => p)(pith))
 }
 
 var rez = tree(
@@ -76,7 +87,7 @@ var rez = tree(
   //     .take(10000)
   //     .valueOf()
   // )
-  put.node('div', tree('div', {}, 'key3')(put => put.text('hi')), 'key2')
+  put.node('h1', tree('h1', {style: {width: '50%'}}, 'key3')(put => put.text('hi')), 'key2')
   put.text('world!')
   // put.node('h1', {class: {a: true, b: true, o: true}})(put => {
   //   put.text('world!')
@@ -95,7 +106,22 @@ var rez = tree(
 })
 
 chain(rez)
-  .reduce((t, r) => r(t, console.log.bind(console)), toVNode<'div'>(document.getElementById('root-node')!))
-  .then(console.log.bind(console))
+  .scan(
+    (t, r) => r(t, console.log.bind(console)),
+    toVNode<'div'>(document.getElementById('root-node')!)
+  )
+  .drain()
 // .tap(console.log.bind(console))
 // .drain()
+
+function patchData(data: Data, vnode: VNode<any>): void {
+  const oldClass = vnode.data.class || {}
+  const newClass = data.class || {}
+
+  for (const name in oldClass)
+    if (!newClass[name]) vnode.node.classList.remove(name)
+
+  for (const name in newClass)
+    if (newClass[name] !== oldClass[name]) vnode.node.classList.toggle(name)
+  vnode.data = data
+}
