@@ -45,14 +45,15 @@ function patchDiff(
   setValue: (k: string, v: any) => void,
   delValue: (k: string) => void
 ): void {
+  var key: string
   if (oldData === newData) return
   if (oldData) {
-    for (const k in oldData)
-      if (!newData || typeof newData[k] === 'undefined') delValue(k)
+    for (key in oldData)
+      if (!newData || typeof newData[key] === 'undefined') delValue(key)
   }
   if (newData) {
-    for (const name in newData)
-      if (!oldData || newData[name] !== oldData[name])
-        setValue(name, newData[name])
+    for (key in newData)
+      if (!oldData || newData[key] !== oldData[key])
+        setValue(key, newData[key])
   }
 }
