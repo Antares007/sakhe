@@ -1,8 +1,27 @@
 import {Stream} from '@most/types'
-import {Pith, Data, VNode, Tags, R, VCharacterData, Patch, VTree} from './types'
+import {Data, VNode, Tags, VCharacterData, VTree} from './types'
 import {Pith as mostPith, ring as mostRing, $, to$} from '../most'
 import {map} from '@most/core'
 import {chain} from '../chain'
+
+export interface Pith {
+  (
+    put: {
+      node: <Tag extends Tags>(tag: Tag, r$: $<R<Tag>>, key?: string) => void
+      text: (text: $<string>) => void
+      comment: (text: $<string>) => void
+    }
+  ): void
+}
+export type R<Tag extends Tags> = (
+  tree: VNode<Tag>,
+  cb: (event: any) => void
+) => VNode<Tag>
+
+export type Patch<Tag extends Tags> = (
+  a: VNode<Tag>,
+  cb: (event: any) => void
+) => void
 
 export const ring = <O, TagA extends Tags>(pmap: (o: O) => Pith) =>
   mostRing<O, Patch<TagA>>(pith => put => {

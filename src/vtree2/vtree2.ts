@@ -30,8 +30,11 @@ import {
 import {toVNode} from './to-vnode'
 import {patchData} from './patch-data'
 
-import {Pith, Bark, Patch, R} from './types'
-import {ring} from './ring'
+import {ring, Pith as PatchRingPith, Patch, R} from './patch-ring'
+
+export interface Bark<Tag extends Tags> {
+  (pith: $<PatchRingPith>): Stream<R<Tag>>
+}
 
 export const tree = <TagA extends Tags>(
   tag: TagA,
@@ -56,7 +59,7 @@ export const tree = <TagA extends Tags>(
       },
       [to$(data), ...xs]
     )
-  )(ring<Pith, TagA>(p => p)(pith))
+  )(ring<PatchRingPith, TagA>(p => p)(pith))
 }
 
 var rez = tree(
@@ -68,13 +71,13 @@ var rez = tree(
   'k1'
 )(put => {
   put.text('hello')
-  // put.text(
-  //   chain(periodic(1))
-  //     .scan(c => c + 1, 0)
-  //     .map(i => 'world ' + i + '!')
-  //     .take(10000)
-  //     .valueOf()
-  // )
+  put.text(
+    chain(periodic(1000 / 60))
+      .scan(c => c + 1, 0)
+      .map(i => 'world ' + i + '!')
+      .take(10000)
+      .valueOf()
+  )
   put.node(
     'h1',
     tree('h1', {attrs: {id: 'hi'}, style: {width: '50%'}}, 'key3')(put =>
@@ -104,5 +107,5 @@ chain(rez)
     (t, r) => r(t, e => console.log('on', e)),
     toVNode<'div'>(document.getElementById('root-node')!)
   )
-  .tap(vnode => console.info('patch', JSON.stringify(vnode, null, '  ')))
+  // .tap(vnode => console.info('patch', JSON.stringify(vnode, null, '  ')))
   .drain()
