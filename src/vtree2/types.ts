@@ -3,6 +3,9 @@ export interface Data {
   class?: Record<string, boolean>
   props?: Record<string, any>
   style?: Record<string, string>
+  on?: {
+    [K in keyof HTMLElementEventMap]?: any
+  }
 }
 export type Tags = keyof HTMLElementTagNameMap
 export type VNode<Tag extends Tags> = {
