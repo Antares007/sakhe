@@ -12,7 +12,7 @@ export function patchData(
   const listener = vnode
 
   const lnode: VNode<any> & {listener?: (e: Event) => void} = <any>vnode
-  patchARU(
+  diffARU(
     oldData.on,
     data.on,
     (k, n) => {
@@ -39,7 +39,7 @@ export function patchData(
         : v && booleanAttributes[k]
           ? node.setAttribute(k, '')
           : node.setAttribute(k, <string>v)
-  patchARU<string | number | boolean>(
+  diffARU<string | number | boolean>(
     oldData.attrs,
     data.attrs,
     setAttr,
@@ -47,7 +47,7 @@ export function patchData(
     setAttr
   )
 
-  patchARU<boolean>(
+  diffARU<boolean>(
     oldData.class,
     data.class,
     (k, n) => n && node.classList.add(k),
@@ -57,7 +57,7 @@ export function patchData(
 
   const style = (<HTMLElement>node).style
   const setStyle = (k: string, n: string) => style.setProperty(k, n)
-  patchARU<string>(
+  diffARU<string>(
     oldData.style,
     data.style,
     setStyle,
@@ -67,7 +67,7 @@ export function patchData(
   vnode.data = data
 }
 
-function patchARU<V = any>(
+function diffARU<V = any>(
   oldData: Record<string, V> | undefined,
   newData: Record<string, V> | undefined,
   add: (k: string, n: V) => void,

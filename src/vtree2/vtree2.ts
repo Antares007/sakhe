@@ -1,4 +1,5 @@
 import {Stream} from '@most/types'
+import {disposeWith, disposeNone, disposeOnce} from '@most/disposable'
 import {
   now,
   map,
@@ -41,7 +42,8 @@ export interface Pith {
       ) => (pith: Pith) => void
       text: (text: $<string>) => void
       comment: (text: $<string>) => void
-    }
+    },
+    on: Stream<{type: 'on'; action: any; event: Event}>
   ): void
 }
 export type R<Tag extends Tags> = (
@@ -63,6 +65,7 @@ export const tree = <TagA extends Tags>(
   data: $<Data> = {},
   key?: string
 ): Bark<TagA> => pith => {
+  var on: ((x: any) => void) | undefined
   const ring = mostRing<Pith, Patch<TagA>>(pith => put => {
     var localIndex = 0
     const mNode = <TagB extends Tags>(
@@ -165,11 +168,21 @@ export const tree = <TagA extends Tags>(
       )
     }
 
-    pith({
-      node: mNode,
-      text: mCharacterData('text'),
-      comment: mCharacterData('comment')
-    })
+    pith(
+      {
+        node: mNode,
+        text: mCharacterData('text'),
+        comment: mCharacterData('comment')
+      },
+      multicast(
+        newStream((sink, scheduler) => {
+          on = e => sink.event(scheduler.currentTime(), e)
+          return disposeWith(() => {
+            // on = undefined
+          }, null)
+        })
+      )
+    )
   })
 
   return mostTree(xs =>
@@ -179,13 +192,19 @@ export const tree = <TagA extends Tags>(
           if (!vnode.key && key) {
             vnode.key = key
           } else if (vnode.key !== key) throw new TypeError('key')
-          patchData(data, vnode, cb)
+          const cb2 = (e: any) => {
+            if (on) {
+              on(e)
+            }
+            cb(e)
+          }
+          patchData(data, vnode, cb2)
           const {children, node} = vnode
           const pl = patches.length
           const l = Math.max(pl, children.length)
           for (var i = 0; i < l; i++) {
             if (i < pl) {
-              patches[i](vnode, cb)
+              patches[i](vnode, cb2)
             } else {
               children.splice(i, 1)
               node.removeChild(children[i].node)
@@ -205,38 +224,16 @@ var rez = tree(
     style: {width: '100%'}
   },
   'key1'
-)(put => {
-  put.text('hello')
+)((put, on) => {
+  put.node('button', {on: {click: +1}})(put => put.text('+'))
+  put.node('button', {on: {click: -1}})(put => put.text('-'))
   put.text(
-    chain(periodic(1000 / 60))
-      .scan(c => c + 1, 0)
-      .map(i => 'world ' + i + '!')
-      .take(10000)
+    chain(on)
+      .map(x => x.action)
+      .scan((c, a) => c + a, 0)
+      .map(String)
       .valueOf()
   )
-  put.node(
-    'h1',
-    {attrs: {id: 'hi'}, style: {width: '50%'}, on: {click: 'hmm'}},
-    'key2'
-  )(put => {
-    put.text('hi')
-  })
-  put.node(
-    'h1',
-    chain(periodic(1000 / 60))
-      .scan(c => c + 1, 0)
-      .map(i => ({
-        attrs: {id: 'hi'},
-        style: {width: '50%'},
-        on: {click: 'hmm' + i}
-      }))
-      .take(10000)
-      .valueOf(),
-    'key2'
-  )(put => {
-    put.text('hi')
-  })
-  put.text('world!')
 })
 
 chain(rez)
