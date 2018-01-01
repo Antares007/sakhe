@@ -183,8 +183,8 @@ export const tree = <TagA extends Tags>(
             if (i < pl) {
               patches[i](vnode, cb2)
             } else {
-              children.splice(i, 1)
               node.removeChild(children[i].node)
+              children.splice(i, 1)
             }
           }
           return vnode
