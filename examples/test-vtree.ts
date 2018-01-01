@@ -1,7 +1,4 @@
-import {Stream} from '@most/types'
 import {chain} from '../src/chain'
-import { now } from '@most/core'
-import {newDefaultScheduler} from '@most/scheduler'
 import {tree} from '../src/vtree'
 
 import toVnode from 'snabbdom/tovnode'

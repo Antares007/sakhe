@@ -1,36 +1,11 @@
 import {Stream} from '@most/types'
-import {disposeWith, disposeNone, disposeOnce} from '@most/disposable'
-import {
-  now,
-  map,
-  periodic,
-  combineArray,
-  MulticastSource,
-  newStream,
-  multicast
-} from '@most/core'
+import {disposeWith} from '@most/disposable'
+import {map, combineArray, newStream, multicast} from '@most/core'
+import {ring as mostRing, tree as mostTree, $, to$} from '../most'
+import {VNode, VCharacterData, Data, Tags} from './types'
 
-import {
-  Pith as mostPith,
-  ring as mostRing,
-  tree as mostTree,
-  $,
-  to$,
-  isStream
-} from '../most'
-import {chain} from '../chain'
-
-import {
-  VTree,
-  VNode,
-  VText,
-  VComment,
-  VCharacterData,
-  Data,
-  Tags
-} from './types'
-import {toVNode} from './to-vnode'
 import {patchData} from './patch-data'
+import {chain} from '../chain'
 
 export interface Pith {
   (
@@ -46,6 +21,7 @@ export interface Pith {
     on: Stream<{type: 'on'; action: any; event: Event}>
   ): void
 }
+
 export type R<Tag extends Tags> = (
   tree: VNode<Tag>,
   cb: (event: any) => void
@@ -128,7 +104,7 @@ export const tree = <TagA extends Tags>(
       put(
         map(
           ([oText, text]) =>
-            function patchCharData(vnode, cb) {
+            function patchCharData(vnode) {
               const {children, node} = vnode
               const li = index < children.length ? children[index] : null
               let oldIndex: number | undefined
@@ -189,6 +165,7 @@ export const tree = <TagA extends Tags>(
     combineArray<any, R<TagA>>(
       (data: Data, ...patches: Patch<TagA>[]) =>
         function combinePatches(vnode, cb) {
+          if (vnode.tag !== tag) throw new TypeError('tag')
           if (!vnode.key && key) {
             vnode.key = key
           } else if (vnode.key !== key) throw new TypeError('key')
@@ -216,43 +193,6 @@ export const tree = <TagA extends Tags>(
     )
   )(ring(pith))
 }
-
-const Counter = (d = 3) =>
-  function(put, on) {
-    put.node('div')(put => {
-      put.node('button', {on: {click: +1}})(put => {
-        put.text('+')
-        if (d > 0) put.node('div')(Counter(d - 1))
-      })
-      put.node('button', {on: {click: -1}})(put => {
-        put.text('-')
-        if (d > 0) put.node('div')(Counter(d - 1))
-      })
-    })
-    put.text(
-      chain(on)
-        .map(x => x.action)
-        .scan((c, a) => c + a, 0)
-        .map(String)
-        .valueOf()
-    )
-  } as Pith
-var rez = tree(
-  'div',
-  {
-    class: {a: true, b: true, o: true},
-    style: {width: '100%'}
-  },
-  'key1'
-)(Counter())
-
-chain(rez)
-  .scan(
-    (t, r) => r(t, e => console.log('on', e)),
-    toVNode<'div'>(document.getElementById('root-node')!)
-  )
-  // .tap(vnode => console.info('patch', JSON.stringify(vnode, null, '  ')))
-  .drain()
 
 function createElement<Tag extends Tags>(tag: Tag): VNode<Tag> {
   return {

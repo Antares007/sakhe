@@ -1,5 +1,5 @@
 import {Stream} from '@most/types'
-import {runEffects, now, tap, map, periodic, constant} from '@most/core'
+import {runEffects, now, tap, periodic, constant} from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 import {tree} from '../src/state'
 

@@ -9,13 +9,11 @@ export function patchData(
   if (vnode.data === data) return
   const {data: oldData, node} = vnode
   var attrParts: string[] | undefined
-  const listener = vnode
-
   const lnode: VNode<any> & {listener?: (e: Event) => void} = <any>vnode
   diffARU(
     oldData.on,
     data.on,
-    (k, n) => {
+    k => {
       lnode.listener =
         lnode.listener ||
         function listener(e: Event) {
@@ -23,10 +21,10 @@ export function patchData(
         }
       node.addEventListener(k, lnode.listener)
     },
-    (k, o) => {
+    k => {
       if (lnode.listener) node.removeEventListener(k, lnode.listener)
     },
-    (k, n, o) => {}
+    () => {}
   )
 
   const setAttr = (k: string, v: string | number | boolean) =>
@@ -52,7 +50,7 @@ export function patchData(
     data.class,
     (k, n) => n && node.classList.add(k),
     (k, o) => o && node.classList.remove(k),
-    (k, n, o) => (n ? node.classList.add(k) : node.classList.remove(k))
+    (k, n) => (n ? node.classList.add(k) : node.classList.remove(k))
   )
 
   const style = (<HTMLElement>node).style
@@ -61,7 +59,7 @@ export function patchData(
     oldData.style,
     data.style,
     setStyle,
-    (k, o) => style.removeProperty(k),
+    k => style.removeProperty(k),
     setStyle
   )
   vnode.data = data

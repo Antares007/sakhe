@@ -1,5 +1,4 @@
 import {VNode, VTree, Tags, Data} from './types'
-;(<any>window).toVNode = toVNode
 
 function readAttrs(elmAttrs: NamedNodeMap): Data['attrs'] {
   const l = elmAttrs.length

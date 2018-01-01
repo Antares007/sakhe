@@ -1,7 +1,7 @@
 import {Stream} from '@most/types'
 import {disposeWith, disposeNone, disposeOnce} from '@most/disposable'
 import {asap} from '@most/scheduler'
-import {map, newStream, propagateEventTask, filter} from '@most/core'
+import {map, newStream, propagateEventTask} from '@most/core'
 import {hold} from './hold'
 import {chain} from './chain'
 import {$, isStream} from './most'

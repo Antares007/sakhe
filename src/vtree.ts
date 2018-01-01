@@ -1,14 +1,5 @@
 import {Stream} from '@most/types'
-import {
-  mergeArray,
-  map,
-  now,
-  scan,
-  combineArray,
-  MulticastSource,
-  newStream,
-  multicast
-} from '@most/core'
+import {map, now, combineArray, newStream, multicast} from '@most/core'
 import {ring as mostRing, tree as mostTree, $, isStream} from './most'
 
 export type Tags = HTMLElementTagNameMap

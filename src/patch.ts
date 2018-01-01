@@ -254,10 +254,6 @@ function isSame(oTree: OTree, aTree: ATree): boolean {
   }
 }
 
-function sameNode(oNode: ONode, aNode: ANode) {
-  return oNode.tag === aNode.tag && oNode.key === aNode.key
-}
-
 function assertNever(message = 'never'): never {
   throw new Error(message)
 }

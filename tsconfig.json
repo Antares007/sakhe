@@ -12,6 +12,8 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "noImplicitThis": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
     "alwaysStrict": true
   },
   "compileOnSave": true,

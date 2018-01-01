@@ -1,4 +1,3 @@
-import {compose} from '@most/prelude'
 export interface Pith<A> {
   (ray: (a: A) => void): void
 }

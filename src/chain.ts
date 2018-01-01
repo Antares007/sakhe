@@ -14,8 +14,7 @@ import {
   skipRepeatsWith,
   loop,
   merge,
-  delay,
-  now
+  delay
 } from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 
@@ -39,7 +38,7 @@ export const chain = <A>($: Stream<A>) => ({
   take: (n: number) => chain(take(n, $)),
   tap: (f: (a: A) => any) => chain(tap(f, $)),
   filter: (p: (a: A) => boolean) => chain(filter(p, $)),
-  skip: (n: number) => chain(skip(1, $)),
+  skip: (n: number) => chain(skip(n, $)),
   skipRepeats: () => chain(skipRepeats($)),
   skipRepeatsWith: (f: (l: A, r: A) => boolean) => chain(skipRepeatsWith(f, $)),
   drain: () => runEffects($, newDefaultScheduler()),

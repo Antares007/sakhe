@@ -1,5 +1,5 @@
 import {Stream} from '@most/types'
-import {mergeArray, map, now} from '@most/core'
+import {mergeArray, map} from '@most/core'
 import {ring as mostRing, tree as mostTree, $, isStream} from './most'
 
 export type Absurd<T> = () => T
