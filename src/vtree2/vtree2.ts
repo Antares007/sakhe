@@ -5,7 +5,6 @@ import {ring as mostRing, tree as mostTree, $, to$} from '../most'
 import {VNode, VCharacterData, Data, Tags} from './types'
 
 import {patchData} from './patch-data'
-import {chain} from '../chain'
 
 export interface Pith {
   (
@@ -101,9 +100,10 @@ export const tree = <TagA extends Tags>(
 
     const mCharacterData = (type: 'text' | 'comment') => (text: $<string>) => {
       const index = localIndex++
+      var oldText: string | undefined
       put(
         map(
-          ([oText, text]) =>
+          text =>
             function patchCharData(vnode) {
               const {children, node} = vnode
               const li = index < children.length ? children[index] : null
@@ -118,11 +118,12 @@ export const tree = <TagA extends Tags>(
                   li.data = text
                 }
               } else if (
+                oldText &&
                 -1 <
-                (oldIndex = children.findIndex(
-                  (vtree, i) =>
-                    i > index && vtree.type === type && vtree.data === oText
-                ))
+                  (oldIndex = children.findIndex(
+                    (vtree, i) =>
+                      i > index && vtree.type === type && vtree.data === oldText
+                  ))
               ) {
                 const c = <VCharacterData>children.splice(oldIndex, 1)[0]
                 children.splice(index, 0, c)
@@ -136,10 +137,9 @@ export const tree = <TagA extends Tags>(
                 children.splice(index, 0, c)
                 node.insertBefore(c.node, li.node)
               }
+              oldText = text
             } as Patch<TagA>,
-          chain(to$(text))
-            .pairwise('')
-            .valueOf()
+          to$(text)
         )
       )
     }
