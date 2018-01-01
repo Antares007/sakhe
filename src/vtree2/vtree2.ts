@@ -178,7 +178,7 @@ export const tree = <TagA extends Tags>(
         newStream((sink, scheduler) => {
           on = e => sink.event(scheduler.currentTime(), e)
           return disposeWith(() => {
-            // on = undefined
+            on = undefined
           }, null)
         })
       )
@@ -217,6 +217,26 @@ export const tree = <TagA extends Tags>(
   )(ring(pith))
 }
 
+const Counter = (d = 3) =>
+  function(put, on) {
+    put.node('div')(put => {
+      put.node('button', {on: {click: +1}})(put => {
+        put.text('+')
+        if (d > 0) put.node('div')(Counter(d - 1))
+      })
+      put.node('button', {on: {click: -1}})(put => {
+        put.text('-')
+        if (d > 0) put.node('div')(Counter(d - 1))
+      })
+    })
+    put.text(
+      chain(on)
+        .map(x => x.action)
+        .scan((c, a) => c + a, 0)
+        .map(String)
+        .valueOf()
+    )
+  } as Pith
 var rez = tree(
   'div',
   {
@@ -224,17 +244,7 @@ var rez = tree(
     style: {width: '100%'}
   },
   'key1'
-)((put, on) => {
-  put.node('button', {on: {click: +1}})(put => put.text('+'))
-  put.node('button', {on: {click: -1}})(put => put.text('-'))
-  put.text(
-    chain(on)
-      .map(x => x.action)
-      .scan((c, a) => c + a, 0)
-      .map(String)
-      .valueOf()
-  )
-})
+)(Counter())
 
 chain(rez)
   .scan(
