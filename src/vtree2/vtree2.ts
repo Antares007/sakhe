@@ -21,27 +21,23 @@ export interface Pith {
   ): void
 }
 
-export type R<Tag extends Tags> = (
-  tree: VNode<Tag>,
-  cb: (event: any) => void
-) => VNode<Tag>
+export interface RVNode {
+  (vnode: VNode, cb: (event: any) => void): VNode
+}
 
-export type Patch<Tag extends Tags> = (
-  a: VNode<Tag>,
-  cb: (event: any) => void
-) => void
+type Patch = (vnode: VNode, cb: (event: any) => void) => void
 
-export interface Bark<Tag extends Tags> {
-  (pith: $<Pith>): Stream<R<Tag>>
+export interface Bark {
+  (pith: $<Pith>): Stream<RVNode>
 }
 
 export const tree = <TagA extends Tags>(
   tag: TagA,
   data: $<Data> = {},
   key?: string
-): Bark<TagA> => pith => {
+): Bark => pith => {
   var on: ((x: any) => void) | undefined
-  const ring = mostRing<Pith, Patch<TagA>>(pith => put => {
+  const ring = mostRing<Pith, Patch>(pith => put => {
     var localIndex = 0
     const mNode = <TagB extends Tags>(
       tagB: TagB,
@@ -78,7 +74,7 @@ export const tree = <TagA extends Tags>(
                       vtree.key === key
                   ))
               ) {
-                const v = r(<VNode<TagB>>children.splice(oldIndex, 1)[0], cb)
+                const v = r(<VNode>children.splice(oldIndex, 1)[0], cb)
                 children.splice(index, 0, v)
                 node.insertBefore(v.node, li.node)
               } else if (
@@ -92,7 +88,7 @@ export const tree = <TagA extends Tags>(
                 children.splice(index, 0, v)
                 node.insertBefore(v.node, li.node)
               }
-            } as Patch<TagA>,
+            } as Patch,
           tree(tagB, data, key)(pith)
         )
       )
@@ -138,7 +134,7 @@ export const tree = <TagA extends Tags>(
                 node.insertBefore(c.node, li.node)
               }
               oldText = text
-            } as Patch<TagA>,
+            } as Patch,
           to$(text)
         )
       )
@@ -162,8 +158,8 @@ export const tree = <TagA extends Tags>(
   })
 
   return mostTree(xs =>
-    combineArray<any, R<TagA>>(
-      (data: Data, ...patches: Patch<TagA>[]) =>
+    combineArray<any, RVNode>(
+      (data: Data, ...patches: Patch[]) =>
         function combinePatches(vnode, cb) {
           if (vnode.tag !== tag) throw new TypeError('tag')
           if (!vnode.key && key) {
@@ -194,7 +190,7 @@ export const tree = <TagA extends Tags>(
   )(ring(pith))
 }
 
-function createElement<Tag extends Tags>(tag: Tag): VNode<Tag> {
+function createElement(tag: string): VNode {
   return {
     type: 'node',
     tag,

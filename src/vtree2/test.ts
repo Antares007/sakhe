@@ -25,20 +25,15 @@ const Counter = (d = 4): Pith => (put, on) => {
   )
 }
 
-const tree = <Tag extends keyof HTMLElementTagNameMap>(
-  element: HTMLElementTagNameMap[Tag],
-  data?: Data
-) => (pith: $<Pith>) => {
+const tree = (element: Element, data?: Data) => (pith: $<Pith>) => {
   return scan(
     (t, r) => r(t, e => console.info(e)),
-    toVNode<Tag>(element),
-    rvnodeTree<Tag>(<Tag>element.tagName.toLowerCase(), data)(pith)
+    toVNode(element),
+    rvnodeTree<any>(element.tagName.toLowerCase(), data)(pith)
   )
 }
 
-var rez = tree<'div'>(<HTMLDivElement>document.getElementById('root-node')!)(
-  Counter2(2)
-)
+var rez = tree(document.getElementById('root-node')!)(Counter2(2))
 
 chain(rez).drain()
 

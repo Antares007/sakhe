@@ -3,13 +3,13 @@ import {booleanAttributes, NAMESPACE_URIS} from './constants'
 
 export function patchData(
   data: Data,
-  vnode: VNode<any>,
+  vnode: VNode,
   cb: (e: any) => void
 ): void {
   if (vnode.data === data) return
   const {data: oldData, node} = vnode
   var attrParts: string[] | undefined
-  const lnode: VNode<any> & {listener?: (e: Event) => void} = <any>vnode
+  const lnode: VNode & {listener?: (e: Event) => void} = <any>vnode
   diffARU(
     oldData.on,
     data.on,

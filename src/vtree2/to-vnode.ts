@@ -1,4 +1,4 @@
-import {VNode, VTree, Tags, Data} from './types'
+import {VNode, VTree, Data} from './types'
 
 function readAttrs(elmAttrs: NamedNodeMap): Data['attrs'] {
   const l = elmAttrs.length
@@ -34,8 +34,8 @@ function readStyle(style: CSSStyleDeclaration): Data['style'] {
   return styles
 }
 
-export function toVNode<Tag extends Tags>(element: Element): VNode<Tag> {
-  const tag = element.tagName.toLowerCase() as Tag
+export function toVNode(element: Element): VNode {
+  const tag = element.tagName.toLowerCase()
   const data: Data = {}
   const attrs = readAttrs(element.attributes)
   const klass = readClass(element.classList)
@@ -43,7 +43,7 @@ export function toVNode<Tag extends Tags>(element: Element): VNode<Tag> {
   if (attrs) data.attrs = attrs
   if (klass) data.class = klass
   if (style) data.style = style
-  const children: Array<VTree<any>> = []
+  const children: Array<VTree> = []
   const elmChildren = element.childNodes
   for (var i = 0, n = elmChildren.length; i < n; i++) {
     children.push(toVTree(elmChildren[i]))
@@ -51,7 +51,7 @@ export function toVNode<Tag extends Tags>(element: Element): VNode<Tag> {
   return {type: 'node', tag, data, children, node: element}
 }
 
-export function toVTree<Tag extends Tags>(node: Node): VTree<Tag> {
+export function toVTree(node: Node): VTree {
   if (isElement(node)) {
     return toVNode(node)
   } else if (isText(node)) {

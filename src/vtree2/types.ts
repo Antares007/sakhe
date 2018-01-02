@@ -6,23 +6,23 @@ export interface Data {
   on?: {[K in keyof HTMLElementEventMap]?: any}
 }
 export type Tags = keyof HTMLElementTagNameMap
-export type VNode<Tag extends Tags> = {
+export interface VNode {
   type: 'node'
-  tag: Tag
+  tag: string
   key?: string
   data: Data
-  children: VTree<any>[]
+  children: VTree[]
   node: Element
 }
-export type VText = {
+export interface VText {
   type: 'text'
   data: string
   node: Text
 }
-export type VComment = {
+export interface VComment {
   type: 'comment'
   data: string
   node: Comment
 }
 export type VCharacterData = VComment | VText
-export type VTree<Tag extends Tags> = VNode<Tag> | VText | VComment
+export type VTree = VNode | VText | VComment
