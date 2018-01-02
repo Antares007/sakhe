@@ -5,8 +5,8 @@ import {map, newStream, propagateEventTask} from '@most/core'
 import {hold} from './hold'
 import {chain} from './chain'
 import {$, isStream} from './most'
-import {R, Absurd, tree as rTree, ring as rRing} from './r'
-export {R}
+import {RState, Absurd, tree as rTree, ring as rRing} from './r'
+export {RState}
 
 export interface Pith<A> {
   (
@@ -15,7 +15,7 @@ export interface Pith<A> {
         key: K,
         absurdB: Absurd<B>
       ) => (pith: $<Pith<B>>) => void
-      reduce: <K extends keyof A>(key: K, r: Stream<R<A[K]>>) => void
+      reduce: <K extends keyof A>(key: K, r: Stream<RState<A[K]>>) => void
     },
     $: Stream<A>
   ): void
