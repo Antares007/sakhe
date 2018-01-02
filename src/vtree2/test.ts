@@ -2,9 +2,9 @@ import {Pith, tree as rvnodeTree} from './vtree2'
 import {Data} from './types'
 import {$} from '../most'
 import {chain} from '../chain'
-import {periodic, scan, map} from '@most/core'
+import {requestAnimationFrames} from 'most-request-animation-frame'
+import {scan, map} from '@most/core'
 import {toVNode} from './to-vnode'
-
 const Counter = (d = 4): Pith => (put, on) => {
   put.node('div')(put => {
     put.node('button', {on: {click: +1}})(put => {
@@ -40,7 +40,7 @@ chain(rez).drain()
 function Counter2(d = 0): Pith {
   return (put, on) => {
     const pi2 = Math.PI * 2
-    const cycle$ = chain(periodic(1000 / 60)).scan(
+    const cycle$ = chain(requestAnimationFrames()).scan(
       i => (i >= pi2 ? 0 : i + 0.15),
       0
     )
@@ -58,10 +58,10 @@ function Counter2(d = 0): Pith {
               style: {
                 position: 'relative',
                 outline: 'none',
-                'border-radius': Math.abs(Math.floor(Math.sin(i) * 20)) + 'px',
+                borderRadius: Math.abs(Math.floor(Math.sin(i) * 20)) + 'px',
                 left: Math.floor(Math.sin(i) * r) + 'px',
                 top: Math.floor(Math.cos(i) * r) + 'px',
-                'background-color': `rgb(${100 +
+                backgroundColor: `rgb(${100 +
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
                   d * 20 +
@@ -82,10 +82,10 @@ function Counter2(d = 0): Pith {
               style: {
                 position: 'relative',
                 outline: 'none',
-                'border-radius': Math.abs(Math.floor(Math.cos(i) * 20)) + 'px',
+                borderRadius: Math.abs(Math.floor(Math.cos(i) * 20)) + 'px',
                 left: Math.floor(Math.cos(i) * r) + 'px',
                 top: Math.floor(Math.sin(i) * r) + 'px',
-                'background-color': `rgb(255, ${100 +
+                backgroundColor: `rgb(255, ${100 +
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
                   d * 20 +
