@@ -1,8 +1,9 @@
+import {CSSProperties} from '../CSS'
 export interface Data {
   attrs?: Record<string, string | boolean | number>
   class?: Record<string, boolean>
   props?: Record<string, any>
-  style?: Record<string, string>
+  style?: CSSProperties
   on?: {[K in keyof HTMLElementEventMap]?: any}
 }
 export type Tags = keyof HTMLElementTagNameMap

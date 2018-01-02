@@ -5,25 +5,6 @@ import {chain} from '../chain'
 import {requestAnimationFrames} from 'most-request-animation-frame'
 import {scan, map} from '@most/core'
 import {toVNode} from './to-vnode'
-const Counter = (d = 4): Pith => (put, on) => {
-  put.node('div')(put => {
-    put.node('button', {on: {click: +1}})(put => {
-      put.text('+')
-      if (d > 0) put.node('div')(Counter(d - 1))
-    })
-    put.node('button', {on: {click: -1}})(put => {
-      put.text('-')
-      if (d > 0) put.node('div')(Counter(d - 1))
-    })
-  })
-  put.text(
-    chain(on)
-      .map(x => x.action)
-      .scan((c, a) => c + a, 0)
-      .map(String)
-      .valueOf()
-  )
-}
 
 const tree = (element: Element, data?: Data) => (pith: $<Pith>) => {
   return scan(
@@ -32,7 +13,6 @@ const tree = (element: Element, data?: Data) => (pith: $<Pith>) => {
     rvnodeTree<any>(element.tagName.toLowerCase(), data)(pith)
   )
 }
-
 var rez = tree(document.getElementById('root-node')!)(Counter2(2))
 
 chain(rez).drain()
@@ -47,20 +27,20 @@ function Counter2(d = 0): Pith {
     const sum$ = chain(on)
       .map(x => x.action)
       .scan((sum, v) => sum + v, 0)
-    const r = 10
+    // const r = 10
     put.node('div', {style: {padding: '5px 10px', textAlign: 'center'}})(
       put => {
         put.node(
           'button',
-          map(
+          map<number, Data>(
             i => ({
               on: {click: +1},
               style: {
                 position: 'relative',
-                outline: 'none',
+                outlineStyle: 'none',
                 borderRadius: Math.abs(Math.floor(Math.sin(i) * 20)) + 'px',
-                left: Math.floor(Math.sin(i) * r) + 'px',
-                top: Math.floor(Math.cos(i) * r) + 'px',
+                // left: Math.floor(Math.sin(i) * r) + 'px',
+                // top: Math.floor(Math.cos(i) * r) + 'px',
                 backgroundColor: `rgb(${100 +
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
@@ -76,15 +56,15 @@ function Counter2(d = 0): Pith {
         })
         put.node(
           'button',
-          map(
+          map<number, Data>(
             i => ({
               on: {click: -1},
               style: {
                 position: 'relative',
-                outline: 'none',
+                outlineStyle: 'none',
                 borderRadius: Math.abs(Math.floor(Math.cos(i) * 20)) + 'px',
-                left: Math.floor(Math.cos(i) * r) + 'px',
-                top: Math.floor(Math.sin(i) * r) + 'px',
+                // left: Math.floor(Math.cos(i) * r) + 'px',
+                // top: Math.floor(Math.sin(i) * r) + 'px',
                 backgroundColor: `rgb(255, ${100 +
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +

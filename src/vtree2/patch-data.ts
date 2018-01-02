@@ -54,8 +54,8 @@ export function patchData(
   )
 
   const style = (<any>node).style
-  const setStyle = (k: string, n: string) => (style[k] = n)
-  diffARU<string>(
+  const setStyle = (k: string, n: any) => (style[k] = n)
+  diffARU<any>(
     oldData.style,
     data.style,
     setStyle,
