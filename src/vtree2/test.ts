@@ -1,4 +1,4 @@
-import {Pith, tree as rvnodeTree} from './vtree2'
+import {Pith, tree as rvnodeTree} from './rvnode'
 import {Data} from './types'
 import {$} from '../most'
 import {chain} from '../chain'
