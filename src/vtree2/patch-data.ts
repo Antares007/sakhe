@@ -53,13 +53,13 @@ export function patchData(
     (k, n) => (n ? node.classList.add(k) : node.classList.remove(k))
   )
 
-  const style = (<HTMLElement>node).style
-  const setStyle = (k: string, n: string) => style.setProperty(k, n)
+  const style = (<any>node).style
+  const setStyle = (k: string, n: string) => (style[k] = n)
   diffARU<string>(
     oldData.style,
     data.style,
     setStyle,
-    k => style.removeProperty(k),
+    k => (style[k] = ''),
     setStyle
   )
   vnode.data = data
