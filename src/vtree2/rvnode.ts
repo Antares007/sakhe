@@ -25,7 +25,9 @@ export interface RVNode {
   (vnode: VNode, cb: (event: any) => void): VNode
 }
 
-type Patch = (vnode: VNode, cb: (event: any) => void) => void
+interface Patch {
+  (vnode: VNode, cb: (event: any) => void): void
+}
 
 export interface Bark {
   (pith: $<Pith>): Stream<RVNode>
@@ -157,7 +159,7 @@ export const tree = <TagA extends Tags>(
     )
   })
 
-  return mostTree(xs =>
+  return mostTree<Patch, RVNode>(xs =>
     combineArray<any, RVNode>(
       (data: Data, ...patches: Patch[]) =>
         function combinePatches(vnode, cb) {
