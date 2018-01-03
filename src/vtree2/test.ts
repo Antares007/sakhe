@@ -1,29 +1,17 @@
-import {Pith, tree as rvnodeTree} from './rvnode'
 import {Data} from './types'
-import {$} from '../most'
 import {chain} from '../chain'
-import {requestAnimationFrames} from 'most-request-animation-frame'
-import {scan, map} from '@most/core'
-import {toVNode} from './to-vnode'
+import {Pith} from './rvnode'
+import {tree} from './element'
+import {map, periodic} from '@most/core'
 
-const tree = (element: Element, data?: Data) => (pith: $<Pith>) => {
-  return scan(
-    (t, r) => r(t, e => console.info(e)),
-    toVNode(element),
-    rvnodeTree<any>(element.tagName.toLowerCase(), data)(pith)
-  )
-}
-var rez = tree(document.getElementById('root-node')!)(Counter2(2))
+var rez = tree(document.getElementById('root-node')!)(Counter2(3))
 
 chain(rez).drain()
 
 function Counter2(d = 0): Pith {
   return (put, on) => {
     const pi2 = Math.PI * 2
-    const cycle$ = chain(requestAnimationFrames()).scan(
-      i => (i >= pi2 ? 0 : i + 0.15),
-      0
-    )
+    const cycle$ = chain(periodic(20)).scan(i => (i >= pi2 ? 0 : i + 0.15), 0)
     const sum$ = chain(on)
       .map(x => x.action)
       .scan((sum, v) => sum + v, 0)
