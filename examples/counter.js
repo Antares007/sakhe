@@ -1,7 +1,7 @@
 const PatchBark = require('../src.js/barks/patch')
 const hApiRing = require('../src.js/rings/h-api')
 const apiRing = require('../src.js/rings/api')
-
+const m = require('most')
 PatchBark(apiRing, hApiRing)(document.getElementById('root-node'))(
   state => h => {
     h('div.app1', h => {
@@ -16,7 +16,7 @@ PatchBark(apiRing, hApiRing)(document.getElementById('root-node'))(
 function Counter(d = 0) {
   return (h, select) => {
     const pi2 = Math.PI * 2
-    const cycle$ = select.frame$.scan(i => (i >= pi2 ? 0 : i + 0.15), 0)
+    const cycle$ = m.periodic(20).scan(i => (i >= pi2 ? 0 : i + 0.15), 0)
     const sin$ = cycle$.map(i => Math.sin(i))
     const cos$ = cycle$.map(i => Math.cos(i))
 

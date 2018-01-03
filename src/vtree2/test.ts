@@ -15,7 +15,7 @@ function Counter2(d = 0): Pith {
     const sum$ = chain(on)
       .map(x => x.action)
       .scan((sum, v) => sum + v, 0)
-    // const r = 10
+    const r = 10
     put.node('div', {style: {padding: '5px 10px', textAlign: 'center'}})(
       put => {
         put.node(
@@ -27,8 +27,8 @@ function Counter2(d = 0): Pith {
                 position: 'relative',
                 outlineStyle: 'none',
                 borderRadius: Math.abs(Math.floor(Math.sin(i) * 20)) + 'px',
-                // left: Math.floor(Math.sin(i) * r) + 'px',
-                // top: Math.floor(Math.cos(i) * r) + 'px',
+                left: Math.floor(Math.sin(i) * r) + 'px',
+                top: Math.floor(Math.cos(i) * r) + 'px',
                 backgroundColor: `rgb(${100 +
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
@@ -51,8 +51,8 @@ function Counter2(d = 0): Pith {
                 position: 'relative',
                 outlineStyle: 'none',
                 borderRadius: Math.abs(Math.floor(Math.cos(i) * 20)) + 'px',
-                // left: Math.floor(Math.cos(i) * r) + 'px',
-                // top: Math.floor(Math.sin(i) * r) + 'px',
+                left: Math.floor(Math.cos(i) * r) + 'px',
+                top: Math.floor(Math.sin(i) * r) + 'px',
                 backgroundColor: `rgb(255, ${100 +
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
