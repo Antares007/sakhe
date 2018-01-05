@@ -6,9 +6,6 @@ import type {Pith as RPith, Absurd, RState} from './r'
 import {tree as rTree} from './r'
 import {to$} from './most'
 import {
-  now,
-  empty,
-  runEffects,
   tap,
   scan,
   skipRepeats,
@@ -40,8 +37,8 @@ export interface Pith<A: Object> {
 export interface Bark<A> {
   (pith: $<Pith<A>>): Stream<A>;
 }
-export type Test = {|a: 42, b: {o: 'otar'}|}
-const tree = <A: Object>(
+
+export const tree = <A: Object>(
   absurdA: Absurd<A>,
   initState?: A
 ): Bark<A> => pith => {
@@ -95,22 +92,3 @@ const tree = <A: Object>(
     }, skipRepeats(scan((s, r) => r(s), initState || absurdA(), rez)))
   )
 }
-
-var abs = () => ({a: 42, b: {o: 'otar'}})
-var rez = tree(abs)((put, on) => {
-  runEffects(
-    tap(s => console.log(0, JSON.stringify(s)), on),
-    newDefaultScheduler()
-  )
-
-  put.val('a', now(n => n + 1))
-  put.extend('b', () => ({o: 'archil', t: 1}))((put, on) => {
-    runEffects(
-      tap(s => console.log(1, JSON.stringify(s)), on),
-      newDefaultScheduler()
-    )
-    put.val('o', now(s => s + ' bolkvadze'))
-  })
-})
-
-runEffects(tap(s => console.log(JSON.stringify(s)), rez), newDefaultScheduler())
