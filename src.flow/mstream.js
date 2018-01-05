@@ -44,7 +44,7 @@ export class MStream<A> {
     }, scan((s, a) => f(s, a), initState, this.$))
     return runEffects(rez, newDefaultScheduler()).then(() => s)
   }
-  continueWith(f: (a: any) => Stream<A>): MStream<A> {
+  continueWith(f: () => Stream<A>): MStream<A> {
     return new MStream(continueWith(f, this.$))
   }
   delay(n: number): MStream<A> {
@@ -59,7 +59,7 @@ export class MStream<A> {
   take(n: number): MStream<A> {
     return new MStream(take(n, this.$))
   }
-  tap(f: (a: A) => any): MStream<A> {
+  tap(f: (a: A) => mixed): MStream<A> {
     return new MStream(tap(f, this.$))
   }
   filter(p: (a: A) => boolean): MStream<A> {

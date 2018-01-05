@@ -4,11 +4,11 @@ import {map, now, switchLatest, mergeArray} from '@most/core'
 import {tree as aTree} from './a'
 
 export type $<T> = T | Stream<T>
-export function to$<T>(x: $<T>): Stream<T> {
-  if (x && typeof (x: any).run === 'function') {
-    return ((x: any): Stream<T>)
+export function to$<T>(x: any): Stream<T> {
+  if (typeof x === 'object' && x !== null && typeof x.run === 'function') {
+    return (x: any)
   } else {
-    return now(((x: any): T))
+    return now((x: any))
   }
 }
 export interface Pith<A> {
