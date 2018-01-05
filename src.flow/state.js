@@ -15,7 +15,8 @@ import {
   skip,
   map,
   newStream,
-  propagateEventTask
+  propagateEventTask,
+  filter
 } from '@most/core'
 import {disposeWith, disposeNone, disposeOnce} from '@most/disposable'
 import {newDefaultScheduler, asap} from '@most/scheduler'
@@ -40,9 +41,12 @@ export interface Bark<A> {
   (pith: $<Pith<A>>): Stream<A>;
 }
 export type Test = {|a: 42, b: {o: 'otar'}|}
-const tree = <A: Test>(absurdA: Absurd<A>, initState?: A): Bark<A> => pith => {
-  var next: ?(a: A) => void
+const tree = <A: Object>(
+  absurdA: Absurd<A>,
+  initState?: A
+): Bark<A> => pith => {
   var disposable = disposeNone()
+  var next: ?(a: A) => void
   const onChange = hold(
     newStream((sink, scheduler) => {
       next = a => {
@@ -58,41 +62,55 @@ const tree = <A: Test>(absurdA: Absurd<A>, initState?: A): Bark<A> => pith => {
       )
     })
   )
+  const rez = rTree(absurdA)(
+    map(
+      (function ring(onChange) {
+        return pith => put => {
+          pith(
+            {
+              extend: (key, absurdB) => pith => {
+                const b = absurdB()
+                const bKeysLenght = Object.keys(absurdB()).length
+                const onChangeB = filter(
+                  ak =>
+                    typeof ak !== 'undefined' &&
+                    Object.keys(ak).length === bKeysLenght,
+                  map(a => a[key], onChange)
+                )
+                put.extend(key, absurdB)(ring(onChangeB)(pith))
+              },
+              val: put.val
+            },
+            onChange
+          )
+        }
+      })(onChange),
+      to$(pith)
+    )
+  )
   return skip(
     1,
-    tap(
-      a => next && next(a),
-      skipRepeats(
-        scan(
-          (s, r) => r(s),
-          initState || absurdA(),
-          rTree(absurdA)(
-            map(
-              pith => put => {
-                put.val('a', now(s => s))
-                pith({extend: put.extend, val: put.val}, now(absurdA()))
-              },
-              to$(pith)
-            )
-          )
-        )
-      )
-    )
+    tap(a => {
+      next && next(a)
+    }, skipRepeats(scan((s, r) => r(s), initState || absurdA(), rez)))
   )
 }
 
 var abs = () => ({a: 42, b: {o: 'otar'}})
-var rez = rTree(abs)(put => {
+var rez = tree(abs)((put, on) => {
+  runEffects(
+    tap(s => console.log(0, JSON.stringify(s)), on),
+    newDefaultScheduler()
+  )
+
   put.val('a', now(n => n + 1))
-  put.extend('b', () => ({o: 'archil', t: 1}))(put => {
+  put.extend('b', () => ({o: 'archil', t: 1}))((put, on) => {
+    runEffects(
+      tap(s => console.log(1, JSON.stringify(s)), on),
+      newDefaultScheduler()
+    )
     put.val('o', now(s => s + ' bolkvadze'))
   })
 })
 
-runEffects(
-  tap(
-    s => console.log(JSON.stringify(s)),
-    scan((s, r) => r(s), {a: 43, b: {o: 'otar bolkvadze', t: 1}}, rez)
-  ),
-  newDefaultScheduler()
-)
+runEffects(tap(s => console.log(JSON.stringify(s)), rez), newDefaultScheduler())
