@@ -5,7 +5,15 @@
   "main": "index.js",
   "babel": {
     "presets": [
-      "env",
+      [
+        "env",
+        {
+          "loose": true,
+          "targets": {
+            "chrome": 56
+          }
+        }
+      ],
       "flow"
     ]
   },
