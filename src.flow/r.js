@@ -1,9 +1,8 @@
 // @flow
 import type {Stream} from '@most/types'
-import {mergeArray, map, now, runEffects, scan, tap} from '@most/core'
 import type {$} from './most'
+import {map, mergeArray, now} from '@most/core'
 import {tree as mostTree, to$} from './most'
-import {newDefaultScheduler} from '@most/scheduler'
 
 export interface Absurd<T> {
   (): T;
@@ -26,6 +25,7 @@ export interface Pith<A: Object> {
 export interface Bark<A> {
   (pith: $<Pith<A>>): Stream<RState<A>>;
 }
+
 export const tree = <A: Object>(absurdA: Absurd<A>): Bark<A> => pith => {
   return mostTree(mergeArray)(
     map(
@@ -61,15 +61,3 @@ export const tree = <A: Object>(absurdA: Absurd<A>): Bark<A> => pith => {
     )
   )
 }
-var abs = () => ({a: 42, b: {o: ''}})
-var rez = tree(abs)(put => {
-  put.val('a', now(n => n + 1))
-  put.extend('b', () => ({o: 'otar', t: 1}))(put => {
-    put.val('o', now(s => s + ' bolkvadze'))
-  })
-})
-
-runEffects(
-  tap(console.log.bind(console), scan((s, r) => r(s), abs(), rez)),
-  newDefaultScheduler()
-)
