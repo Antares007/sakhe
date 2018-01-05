@@ -30,14 +30,14 @@
     "most": "^1.7.2",
     "most-request-animation-frame": "^1.1.0",
     "most-subject": "^5.3.0",
-    "snabbdom": "^0.7.0"
+    "snabbdom": "^0.7.1"
   },
   "devDependencies": {
     "@most/types": "^1.0.0",
-    "@types/node": "^8.5.2",
-    "@types/prettier": "^1.8.0",
+    "@types/node": "^8.5.6",
+    "@types/prettier": "^1.9.0",
     "flow-bin": "^0.62.0",
-    "prettier": "^1.8.2",
+    "prettier": "^1.9.2",
     "typescript": "^2.7.0-dev.20171216"
   },
   "scripts": {
