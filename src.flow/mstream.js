@@ -13,14 +13,13 @@ import {
   skip,
   skipRepeats,
   skipRepeatsWith,
-  loop,
   merge,
   continueWith,
   delay
 } from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 
-export class MStream<A> {
+export default class MStream<A> {
   $: Stream<A>
   constructor($: Stream<A>) {
     this.$ = $
@@ -38,8 +37,8 @@ export class MStream<A> {
     return new MStream(combine(fn, this.$, b$))
   }
   reduce<S>(f: (s: S, a: A) => S, initState: S): Promise<S> {
-    var s = initState
-    var rez = tap(ns => {
+    let s = initState
+    const rez = tap(ns => {
       s = ns
     }, scan((s, a) => f(s, a), initState, this.$))
     return runEffects(rez, newDefaultScheduler()).then(() => s)

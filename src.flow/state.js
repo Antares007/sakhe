@@ -1,10 +1,5 @@
 // @flow
 import type {Stream} from '@most/types'
-import type {$} from './most'
-import type {Pith as RPith, Absurd, RState} from './r'
-
-import {tree as rTree} from './r'
-import {to$} from './most'
 import {
   tap,
   scan,
@@ -16,10 +11,16 @@ import {
   filter
 } from '@most/core'
 import {disposeWith, disposeNone, disposeOnce} from '@most/disposable'
-import {newDefaultScheduler, asap} from '@most/scheduler'
-import {hold} from './hold'
+import {asap} from '@most/scheduler'
 
-export interface Pith<A: Object> {
+import type {$} from './most'
+import type {Absurd, RState} from './r'
+
+import rTree from './r'
+import {to$} from './most'
+import hold from './hold'
+
+export interface Pith<A> {
   (
     state: {
       extend<Key: $Keys<A>, B: $Subtype<$ElementType<A, Key>>>(
@@ -38,57 +39,61 @@ export interface Bark<A> {
   (pith: $<Pith<A>>): Stream<A>;
 }
 
-export const tree = <A: Object>(
-  absurdA: Absurd<A>,
-  initState?: A
-): Bark<A> => pith => {
-  var disposable = disposeNone()
-  var next: ?(a: A) => void
-  const onChange = hold(
-    newStream((sink, scheduler) => {
-      next = a => {
-        disposable.dispose()
-        disposable = asap(propagateEventTask(a, sink), scheduler)
-      }
-      return disposeOnce(
-        disposeWith(() => {
-          next = void 0
+export default function tree<A>(absurdA: Absurd<A>, initState?: A): Bark<A> {
+  return pith => {
+    let disposable = disposeNone()
+    let next: ?(a: A) => void
+    const onChange = hold(
+      newStream((sink, scheduler) => {
+        next = a => {
           disposable.dispose()
-          disposable = disposeNone()
-        }, void 0)
-      )
-    })
-  )
-  const rez = rTree(absurdA)(
-    map(
-      (function ring(onChange) {
-        return pith => put => {
-          pith(
-            {
-              extend: (key, absurdB) => pith => {
-                const b = absurdB()
-                const bKeysLenght = Object.keys(absurdB()).length
-                const onChangeB = filter(
-                  ak =>
-                    typeof ak !== 'undefined' &&
-                    Object.keys(ak).length === bKeysLenght,
-                  map(a => a[key], onChange)
-                )
-                put.extend(key, absurdB)(ring(onChangeB)(pith))
-              },
-              val: put.val
-            },
-            onChange
-          )
+          disposable = asap(propagateEventTask(a, sink), scheduler)
         }
-      })(onChange),
-      to$(pith)
+        return disposeOnce(
+          disposeWith(() => {
+            next = undefined
+            disposable.dispose()
+            disposable = disposeNone()
+          }, undefined)
+        )
+      })
     )
-  )
-  return skip(
-    1,
-    tap(a => {
-      next && next(a)
-    }, skipRepeats(scan((s, r) => r(s), initState || absurdA(), rez)))
-  )
+    const rez = rTree(absurdA)(
+      map(
+        (function ring(onChange) {
+          return pith => put => {
+            pith(
+              {
+                extend: (key, absurdB) => pith => {
+                  const bKeysLenght = Object.keys(absurdB()).length
+                  const onChangeB = filter(
+                    ak =>
+                      typeof ak !== 'undefined' &&
+                      Object.keys(ak).length === bKeysLenght,
+                    map(
+                      a =>
+                        typeof a === 'object' && a !== null
+                          ? a[key]
+                          : undefined,
+                      onChange
+                    )
+                  )
+                  put.extend(key, absurdB)(ring(onChangeB)(pith))
+                },
+                val: put.val
+              },
+              onChange
+            )
+          }
+        })(onChange),
+        to$(pith)
+      )
+    )
+    return skip(
+      1,
+      tap(a => {
+        if (next) next(a)
+      }, skipRepeats(scan((s, r) => r(s), initState || absurdA(), rez)))
+    )
+  }
 }
