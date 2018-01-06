@@ -16,13 +16,17 @@ import {
   merge,
   continueWith,
   delay,
+  multicast,
 } from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 
 export default class MStream<A> {
-  $: Stream<A>
+  +$: Stream<A>
   constructor($: Stream<A>) {
     this.$ = $
+  }
+  multicast(): MStream<A> {
+    return new MStream(multicast(this.$))
   }
   constant<B>(b: B): MStream<B> {
     return new MStream(constant(b, this.$))
@@ -76,7 +80,7 @@ export default class MStream<A> {
   drain() {
     return runEffects(this.$, newDefaultScheduler())
   }
-  valueOf() {
+  valueOf(): Stream<A> {
     return this.$
   }
 }
