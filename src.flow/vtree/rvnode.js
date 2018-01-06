@@ -18,6 +18,7 @@ export interface Pith {
     on: Stream<Action>
   ): void;
 }
+// $FlowFixMe
 export interface Action {type: 'on'; action: any; event: Event}
 export interface RVNode {
   (vnode: VNode, cb: (event: mixed) => void): VNode;
@@ -64,7 +65,7 @@ export default function tree(
                 ) {
                   children[index] = r(li, cb)
                 } else if (
-                  key &&
+                  key != null &&
                   (oldIndex = children.findIndex(
                     (vtree, i) =>
                       i > index &&
@@ -73,6 +74,7 @@ export default function tree(
                       vtree.key === key
                   )) > -1
                 ) {
+                  // $FlowFixMe
                   const v = r((children.splice(oldIndex, 1)[0]: any), cb)
                   children.splice(index, 0, v)
                   node.insertBefore(v.node, li.node)
@@ -115,12 +117,13 @@ export default function tree(
                     li.data = text
                   }
                 } else if (
-                  oldText &&
+                  oldText != null &&
                   (oldIndex = children.findIndex(
                     (vtree, i) =>
                       i > index && vtree.type === type && vtree.data === oldText
                   )) > -1
                 ) {
+                  // $FlowFixMe
                   const c = (children.splice(oldIndex, 1)[0]: any)
                   children.splice(index, 0, c)
                   node.insertBefore(c.node, li.node)
@@ -160,11 +163,12 @@ export default function tree(
         (data: Data, ...patches: Patch[]) =>
           function combinePatches(vnode, cb) {
             if (vnode.tag !== tag) throw new TypeError('tag')
-            if (!vnode.key && key) {
+            if (vnode.key == null && key != null) {
               vnode.key = key
             } else if (vnode.key !== key) throw new TypeError('key')
             const cb2 = (e: mixed) => {
               if (on) {
+                // $FlowFixMe
                 on(((e: any): Action))
               }
               cb(e)

@@ -93,7 +93,7 @@ export default function tree<A>(absurdA: Absurd<A>, initState?: A): Bark<A> {
       1,
       tap(a => {
         if (next) next(a)
-      }, skipRepeats(scan((s, r) => r(s), initState || absurdA(), rez)))
+      }, skipRepeats(scan((s, r) => r(s), initState != null ? initState : absurdA(), rez)))
     )
   }
 }

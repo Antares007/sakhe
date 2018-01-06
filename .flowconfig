@@ -7,5 +7,6 @@
 [lints]
 all=warn
 [options]
-
+include_warnings=true
+suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe
 [strict]

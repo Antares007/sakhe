@@ -9,14 +9,18 @@ export default function patchData(
 ): void {
   if (vnode.data === data) return
   const {data: oldData, node} = vnode
+  // $FlowFixMe
   const lnode: {listener?: (e: Event) => void} = (vnode: any)
   diffARU(
+    // $FlowFixMe
     ((oldData.on: any): ?{[string]: string}),
+    // $FlowFixMe
     ((data.on: any): ?{[string]: string}),
     k => {
       lnode.listener =
         lnode.listener ||
         function listener(e: Event) {
+          // $FlowFixMe
           cb({type: 'on', action: (vnode.data: any).on[e.type], event: e})
         }
       node.addEventListener(k, lnode.listener)
@@ -54,7 +58,8 @@ export default function patchData(
     (k, n) => (n ? node.classList.add(k) : node.classList.remove(k))
   )
 
-  if (node.style) {
+  if (node.style != null) {
+    // $FlowFixMe
     const {style}: {style: {[string]: string}} = (node: any)
     const styleSetter = (k: string, v: string) => {
       style[k] = v

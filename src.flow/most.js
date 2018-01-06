@@ -5,11 +5,13 @@ import aTree from './a'
 
 export type $<T> = T | Stream<T>
 
-/* eslint-disable flowtype/no-weak-types */
+// $FlowFixMe
 export function to$<T>(x: any): Stream<T> {
   if (typeof x === 'object' && x !== null && typeof x.run === 'function') {
+    // $FlowFixMe
     return (x: any)
   }
+  // $FlowFixMe
   return now((x: any))
 }
 
