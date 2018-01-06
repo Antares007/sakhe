@@ -5,7 +5,7 @@ import type {
   ScheduledTask,
   Time,
   Scheduler,
-  Disposable
+  Disposable,
 } from '@most/types'
 import {MulticastSource} from '@most/core'
 import {asap, cancelTask} from '@most/scheduler'

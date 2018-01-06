@@ -19,7 +19,7 @@ export interface Pith<A> {
       key: Key,
       absurdB: Absurd<B>
     ): (pith: $<Pith<B>>) => void,
-    val<Key: $Keys<A>>(key: Key, r: Stream<RState<$ElementType<A, Key>>>): void
+    val<Key: $Keys<A>>(key: Key, r: Stream<RState<$ElementType<A, Key>>>): void,
   }): void;
 }
 
@@ -57,7 +57,7 @@ export default function tree<A>(absurdA: Absurd<A>): Bark<A> {
                   },
                   r
                 )
-              )
+              ),
           })
         },
         to$(pith)

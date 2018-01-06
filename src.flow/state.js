@@ -8,7 +8,7 @@ import {
   map,
   newStream,
   propagateEventTask,
-  filter
+  filter,
 } from '@most/core'
 import {disposeWith, disposeNone, disposeOnce} from '@most/disposable'
 import {asap} from '@most/scheduler'
@@ -30,7 +30,7 @@ export interface Pith<A> {
       val<Key: $Keys<A>>(
         key: Key,
         r: Stream<RState<$ElementType<A, Key>>>
-      ): void
+      ): void,
     },
     onChange: Stream<A>
   ): void;
@@ -80,7 +80,7 @@ export default function tree<A>(absurdA: Absurd<A>, initState?: A): Bark<A> {
                   )
                   put.extend(key, absurdB)(ring(onChangeB)(pith))
                 },
-                val: put.val
+                val: put.val,
               },
               onChange
             )

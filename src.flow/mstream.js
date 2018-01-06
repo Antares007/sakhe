@@ -15,7 +15,7 @@ import {
   skipRepeatsWith,
   merge,
   continueWith,
-  delay
+  delay,
 } from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 
