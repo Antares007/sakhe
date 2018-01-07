@@ -8,16 +8,13 @@ export interface Action {type: 'on'; action: $FlowTODO; event: Event}
 export interface RVNode {
   (vnode: VNode, cb: (event: mixed) => void): VNode;
 }
-
+export interface PutRay {
+  node(tag: string, data?: $<Data>, key?: string): (pith: Pith) => void;
+  text(text: $<string>): void;
+  comment(text: $<string>): void;
+}
 export interface Pith {
-  (
-    put: {
-      node(tag: string, data?: $<Data>, key?: string): (pith: Pith) => void,
-      text(text: $<string>): void,
-      comment(text: $<string>): void,
-    },
-    on: Stream<Action>
-  ): void;
+  (put: PutRay, on: Stream<Action>): void;
 }
 
 export interface Bark {
