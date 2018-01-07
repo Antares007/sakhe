@@ -1,5 +1,3 @@
-// @flow
-import type {Stream} from '@most/types'
 import {
   tap,
   scan,
@@ -13,36 +11,14 @@ import {
 import {disposeWith, disposeNone, disposeOnce} from '@most/disposable'
 import {asap} from '@most/scheduler'
 
-import type {$} from './most'
-import type {Absurd, RState} from './r'
-
 import rTree from './r'
 import {to$} from './most'
 import hold from './hold'
 
-export interface Pith<A> {
-  (
-    state: {
-      extend<Key: $Keys<A>, B: $Subtype<$ElementType<A, Key>>>(
-        key: Key,
-        absurdB: Absurd<B>
-      ): (pith: $<Pith<B>>) => void,
-      val<Key: $Keys<A>>(
-        key: Key,
-        r: Stream<RState<$ElementType<A, Key>>>
-      ): void,
-    },
-    onChange: Stream<A>
-  ): void;
-}
-export interface Bark<A> {
-  (pith: $<Pith<A>>): Stream<A>;
-}
-
-export default function tree<A>(absurdA: Absurd<A>, initState?: A): Bark<A> {
+export default function tree(absurdA, initState) {
   return pith => {
     let disposable = disposeNone()
-    let next: ?(a: A) => void
+    let next
     const onChange = hold(
       newStream((sink, scheduler) => {
         next = a => {

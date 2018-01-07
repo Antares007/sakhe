@@ -1,19 +1,13 @@
-// @flow
-import type {Stream} from '@most/types'
 import {map, tap} from '@most/core'
-
-import type {VNode, Data} from './types'
-import type {Pith, RVNode} from './rvnode'
-import type {$} from '../most'
 import rvnodeTree from './rvnode'
 import toVNode from './to-vnode'
 
-export default function(element: Element, data?: Data) {
-  return (pith: $<Pith>): Stream<VNode> => {
-    let requestId: ?number
+export default function(element, data) {
+  return pith => {
+    let requestId
     let vnode = toVNode(element)
     const cb = () => {}
-    let patch: RVNode
+    let patch
     const frame = () => {
       vnode = patch(vnode, cb)
       requestId = undefined

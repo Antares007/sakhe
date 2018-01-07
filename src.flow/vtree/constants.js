@@ -1,5 +1,4 @@
-// @flow
-export const NAMESPACE_URIS: {[string]: string} = {
+export const NAMESPACE_URIS = {
   xlink: 'http://www.w3.org/1999/xlink',
 }
 

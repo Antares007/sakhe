@@ -1,0 +1,29 @@
+// @flow
+import type {Stream} from '@most/types'
+import type {$} from './most'
+import type {Absurd, RState} from './r'
+
+export interface Pith<A> {
+  (
+    state: {
+      extend<Key: $Keys<A>, B: $Subtype<$ElementType<A, Key>>>(
+        key: Key,
+        absurdB: Absurd<B>
+      ): (pith: $<Pith<B>>) => void,
+      val<Key: $Keys<A>>(
+        key: Key,
+        r: Stream<RState<$ElementType<A, Key>>>
+      ): void,
+    },
+    onChange: Stream<A>
+  ): void;
+}
+
+export interface Bark<A> {
+  (pith: $<Pith<A>>): Stream<A>;
+}
+
+declare export default function tree<A>(
+  absurdA: Absurd<A>,
+  initState?: A
+): Bark<A>

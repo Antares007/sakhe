@@ -1,0 +1,26 @@
+// @flow
+import type {Stream} from '@most/types'
+
+declare export default class M<A> {
+  +$: Stream<A>;
+  static of<A>(a: Stream<A>): M<A>;
+  static switchLatest<B>(m: M<M<B>>): M<B>;
+  multicast(): M<A>;
+  constant<B>(b: B): M<B>;
+  scan<B>(f: (b: B, a: A) => B, b: B): M<B>;
+  map<B>(f: (a: A) => B): M<B>;
+  combine<B, R>(fn: (a: A, b: B) => R, b$: Stream<B>): M<R>;
+  reduce<S>(f: (s: S, a: A) => S, initState: S): Promise<S>;
+  continueWith(f: () => Stream<A>): M<A>;
+  delay(n: number): M<A>;
+  startWith(value: A): M<A>;
+  merge(b$: Stream<A>): M<A>;
+  take(n: number): M<A>;
+  tap(f: (a: A) => mixed): M<A>;
+  filter(p: (a: A) => boolean): M<A>;
+  skip(n: number): M<A>;
+  skipRepeats(): M<A>;
+  skipRepeatsWith(f: (l: A, r: A) => boolean): M<A>;
+  drain(): Promise<void>;
+  valueOf(): Stream<A>;
+}

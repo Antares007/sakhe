@@ -1,22 +1,22 @@
 // @flow
 import {periodic, map} from '@most/core'
-import M from '../mstream'
+import M from '../m'
 import type {Pith} from './rvnode'
 import tree from './element'
 
 const elm = global.document.getElementById('root-node')
 if (elm) {
   const rez = tree(elm)(Counter2(3))
-  new M(rez).drain()
+  M.of(rez).drain()
 }
 
 function Counter2(d = 0): Pith {
   return (put, on) => {
     const pi2 = Math.PI * 2
-    const cycle$ = new M(periodic(20))
+    const cycle$ = M.of(periodic(20))
       .scan(i => (i >= pi2 ? 0 : i + 0.15), 0)
       .multicast()
-    const sum$ = new M(on)
+    const sum$ = M.of(on)
       .map(x => x.action)
       .scan((sum, v) => sum + v, 0)
       .map(String)

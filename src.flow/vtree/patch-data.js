@@ -1,37 +1,31 @@
-// @flow
-import type {VNode, Data} from './types'
 import {booleanAttributes} from './constants'
 
-export default function patchData(
-  data: Data,
-  vnode: VNode,
-  cb: (e: mixed) => void
-): void {
+export default function patchData(data, vnode, cb) {
   if (vnode.data === data) return
   const {data: oldData, node} = vnode
-  const lnode: {listener?: (e: Event) => void} = (vnode: $FlowTODO)
+
   diffARU(
-    ((oldData.on: $FlowTODO): ?{[string]: string}),
-    ((data.on: $FlowTODO): ?{[string]: string}),
+    oldData.on,
+    data.on,
     k => {
-      lnode.listener =
-        lnode.listener ||
-        function listener(e: Event) {
+      vnode.listener =
+        vnode.listener ||
+        function listener(event) {
           cb({
             type: 'on',
-            action: (vnode.data: $FlowTODO).on[e.type],
-            event: e,
+            action: vnode.data.on[event.type],
+            event,
           })
         }
-      node.addEventListener(k, lnode.listener)
+      node.addEventListener(k, vnode.listener)
     },
     k => {
-      if (lnode.listener) node.removeEventListener(k, lnode.listener)
+      if (vnode.listener) node.removeEventListener(k, vnode.listener)
     },
     () => {}
   )
 
-  const setAttr = (k: string, v: string | number | boolean) => {
+  const setAttr = (k, v) => {
     if (!v && booleanAttributes[k]) {
       node.removeAttribute(k)
     } else if (v && booleanAttributes[k]) {
@@ -59,8 +53,8 @@ export default function patchData(
   )
 
   if (node.style != null) {
-    const {style}: {style: {[string]: string}} = (node: $FlowTODO)
-    const styleSetter = (k: string, v: string) => {
+    const {style} = node
+    const styleSetter = (k, v) => {
       style[k] = v
     }
     diffARU(
@@ -76,14 +70,8 @@ export default function patchData(
   vnode.data = data
 }
 
-function diffARU<V>(
-  oldData: ?{[string]: V},
-  newData: ?{[string]: V},
-  add: (k: string, n: V) => mixed,
-  remove: (k: string, o: V) => mixed,
-  update: (k: string, n: V, o: V) => mixed
-): void {
-  let key: string
+function diffARU(oldData, newData, add, remove, update) {
+  let key
   if (oldData === newData) return
   if (oldData) {
     for (key in oldData) {

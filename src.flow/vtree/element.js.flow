@@ -1,0 +1,11 @@
+// @flow
+import type {Stream} from '@most/types'
+import type {Data} from './types'
+import type {Pith} from './rvnode'
+import type {$} from '../most'
+
+export interface Bark {
+  (pith: $<Pith>): Stream<void>;
+}
+
+declare export default function tree(elm: Element, data?: Data): Bark

@@ -1,62 +1,46 @@
-// @flow
-import type {
-  Stream,
-  Sink,
-  ScheduledTask,
-  Time,
-  Scheduler,
-  Disposable,
-} from '@most/types'
 import {MulticastSource} from '@most/core'
 import {asap, cancelTask} from '@most/scheduler'
 
-type HeldValue<A> = {value: A}
-
-class Hold<A> extends MulticastSource<A> {
-  pendingSinks: Sink<A>[]
-  held: ?HeldValue<A>
-  task: ?ScheduledTask
-
-  constructor(source: Stream<A>) {
+class Hold extends MulticastSource {
+  constructor(source) {
     super(source)
     this.pendingSinks = []
     this.held = undefined
     this.task = undefined
   }
 
-  run(sink: Sink<A>, scheduler: Scheduler): Disposable {
+  run(sink, scheduler) {
     if (this.shouldScheduleFlush()) {
       this.scheduleFlush(sink, scheduler)
     }
-
     return super.run(sink, scheduler)
   }
 
-  hasValue(): boolean {
+  hasValue() {
     return this.held !== undefined
   }
 
-  hasSinks(): boolean {
+  hasSinks() {
     return this.sinks.length > 0
   }
 
-  shouldScheduleFlush(): boolean {
+  shouldScheduleFlush() {
     return this.hasValue() && this.hasSinks()
   }
 
-  dispose(): void {
+  dispose() {
     this.cancelTask()
     return super.dispose()
   }
 
-  event(time: Time, value: A): void {
+  event(time, value) {
     const pendingSinks = this.flushPending(time)
     this.sinks = this.sinks.concat(pendingSinks)
     this.held = {value}
     super.event(time, value)
   }
 
-  flushPending(time: Time): Sink<A>[] {
+  flushPending(time) {
     const {pendingSinks} = this
     this.pendingSinks = []
 
@@ -69,7 +53,7 @@ class Hold<A> extends MulticastSource<A> {
     return pendingSinks
   }
 
-  scheduleFlush(sink: Sink<A>, scheduler: Scheduler): void {
+  scheduleFlush(sink, scheduler) {
     this.pendingSinks.push(sink)
     if (this.task) {
       cancelTask(this.task)
@@ -77,43 +61,41 @@ class Hold<A> extends MulticastSource<A> {
     }
   }
 
-  cancelTask(): void {
+  cancelTask() {
     if (this.task) {
       cancelTask(this.task)
       this.task = undefined
     }
   }
 
-  end(time: Time): void {
+  end(time) {
     this.flushPending(time)
     super.end(time)
   }
 
-  error(time: Time, err: Error): void {
+  error(time, err) {
     this.flushPending(time)
     super.error(time, err)
   }
 }
 
-class HoldTask<A> {
-  hold: Hold<A>
-
-  constructor(hold: Hold<A>) {
+class HoldTask {
+  constructor(hold) {
     this.hold = hold
   }
 
-  run(t: Time): void {
+  run(t) {
     this.hold.flushPending(t)
   }
 
-  error(t: Time, e: Error): void {
+  error(t, e) {
     this.hold.error(t, e)
   }
 
-  dispose(): void {}
+  dispose() {}
 }
 
-function tryEvent<A>(t: Time, x: A, sink: Sink<A>): void {
+function tryEvent(t, x, sink) {
   try {
     sink.event(t, x)
   } catch (e) {
@@ -121,6 +103,6 @@ function tryEvent<A>(t: Time, x: A, sink: Sink<A>): void {
   }
 }
 
-export default function hold<A>(stream: Stream<A>): MulticastSource<A> {
+export default function hold(stream) {
   return new Hold(stream)
 }

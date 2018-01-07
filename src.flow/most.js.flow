@@ -1,0 +1,18 @@
+// @flow
+import type {Stream} from '@most/types'
+
+export type $<T> = T | Stream<T>
+
+export interface Pith<A> {
+  (put: (a: Stream<A>) => void): void;
+}
+
+export interface Bark<A, B> {
+  (pith: $<Pith<A>>): Stream<B>;
+}
+
+declare export function to$<T>(x: mixed): Stream<T>
+
+declare export function tree<A, B>(
+  deltac: (as: Stream<A>[]) => Stream<B>
+): Bark<A, B>

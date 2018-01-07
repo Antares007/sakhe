@@ -1,49 +1,11 @@
-// @flow
-import type {VNode, VTree, Data} from './types'
-import {isHTMLElement, isElement, isText, isComment} from './guards'
-
-function readAttrs(elmAttrs: NamedNodeMap): $PropertyType<Data, 'attrs'> {
-  const l = elmAttrs.length
-  if (l === 0) return undefined
-  const attrs = {}
-  for (let i = 0; i < l; i++) {
-    const name = elmAttrs[i].nodeName
-    if (name !== 'class' && name !== 'style') {
-      const value = elmAttrs[i].nodeValue
-      if (value) attrs[name] = value
-    }
-  }
-  return attrs
-}
-
-function readClass(classList: DOMTokenList): $PropertyType<Data, 'class'> {
-  const l = classList.length
-  if (l === 0) return undefined
-  const classes = {}
-  for (let i = 0; i < l; i++) {
-    classes[classList.item(i)] = true
-  }
-  return classes
-}
-
-function readStyle(style: CSSStyleDeclaration): $PropertyType<Data, 'style'> {
-  const l = style.length
-  if (l === 0) return undefined
-  const styles = {}
-  for (let i = 0; i < l; i++) {
-    const name = style[i]
-    styles[name] = style.getPropertyValue(name)
-  }
-  return styles
-}
-
-export default function toVNode(element: Element): VNode {
+export default function toVNode(element) {
   const tag = element.tagName.toLowerCase()
+
   const attrs = readAttrs(element.attributes)
   const klass = readClass(element.classList)
+  const style = element.style != null ? readStyle(element.style) : undefined
+
   const data = {}
-  let x
-  const style = (x = isHTMLElement(element)) ? readStyle(x.style) : undefined
   if (attrs) data.attrs = attrs
   if (klass) data.class = klass
   if (style) data.style = style
@@ -56,14 +18,49 @@ export default function toVNode(element: Element): VNode {
   return {type: 'node', tag, data, children, node: element}
 }
 
-function toVTree(x: Node): VTree {
-  let node
-  if ((node = isElement(x))) {
+function toVTree(node) {
+  let {nodeType} = node
+  if (nodeType === 1) {
     return toVNode(node)
-  } else if ((node = isText(x))) {
+  } else if (nodeType === 3) {
     return {type: 'text', data: x.textContent || '', node}
-  } else if ((node = isComment(x))) {
+  } else if (nodeType === 8) {
     return {type: 'comment', data: x.textContent || '', node}
   }
-  throw new Error('unexpected node type')
+  throw new Error(`unexpected node type [${nodeType}]`)
+}
+
+function readAttrs(elmAttrs) {
+  const l = elmAttrs.length
+  if (l === 0) return
+  const attrs = {}
+  for (let i = 0; i < l; i++) {
+    const name = elmAttrs[i].nodeName
+    if (name !== 'class' && name !== 'style') {
+      const value = elmAttrs[i].nodeValue
+      if (value) attrs[name] = value
+    }
+  }
+  return attrs
+}
+
+function readClass(classList) {
+  const l = classList.length
+  if (l === 0) return undefined
+  const classes = {}
+  for (let i = 0; i < l; i++) {
+    classes[classList.item(i)] = true
+  }
+  return classes
+}
+
+function readStyle(style) {
+  const l = style.length
+  if (l === 0) return undefined
+  const styles = {}
+  for (let i = 0; i < l; i++) {
+    const name = style[i]
+    styles[name] = style.getPropertyValue(name)
+  }
+  return styles
 }

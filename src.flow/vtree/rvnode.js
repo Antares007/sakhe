@@ -1,50 +1,16 @@
-// @flow
-import type {Stream} from '@most/types'
 import {combineArray, map, multicast, newStream} from '@most/core'
 import {disposeWith} from '@most/disposable'
 
-import type {Data, VNode, VCharacterData} from './types'
-import type {$, Pith as mostPith} from '../most'
 import {tree as mostTree, to$} from '../most'
 import patchData from './patch-data'
 
-export interface Pith {
-  (
-    put: {
-      node(tag: string, data?: $<Data>, key?: string): (pith: Pith) => void,
-      text(text: $<string>): void,
-      comment(text: $<string>): void,
-    },
-    on: Stream<Action>
-  ): void;
-}
-
-export interface Action {type: 'on'; action: $FlowTODO; event: Event}
-export interface RVNode {
-  (vnode: VNode, cb: (event: mixed) => void): VNode;
-}
-
-interface Patch {
-  (vnode: VNode, cb: (event: mixed) => void): void;
-}
-
-export interface Bark {
-  (pith: $<Pith>): Stream<RVNode>;
-}
-
-export default function tree(
-  tag: string,
-  data: $<Data> = {},
-  key?: string
-): Bark {
+export default function tree(tag, data = {}, key) {
   return pith => {
-    let on: ?(x: Action) => void
+    let on
     let localIndex = 0
 
-    const ring = (pith: Pith): mostPith<Patch> => put => {
-      const mNode = (tagB: string, data: $<Data> = {}, key?: string) => (
-        pith: Pith
-      ) => {
+    const ring = pith => put => {
+      const mNode = (tagB, data = {}, key) => pith => {
         const index = localIndex++
         put(
           map(
@@ -74,10 +40,7 @@ export default function tree(
                       vtree.key === key
                   )) > -1
                 ) {
-                  const v = r(
-                    (children.splice(oldIndex, 1)[0]: $FlowTrustMe),
-                    cb
-                  )
+                  const v = r(children.splice(oldIndex, 1)[0], cb)
                   children.splice(index, 0, v)
                   node.insertBefore(v.node, li.node)
                 } else if (
@@ -97,11 +60,9 @@ export default function tree(
         )
       }
 
-      const mCharacterData = (type: 'text' | 'comment') => (
-        text: $<string>
-      ) => {
+      const mCharacterData = type => text => {
         const index = localIndex++
-        let oldText: ?string
+        let oldText
         put(
           map(
             text =>
@@ -125,7 +86,7 @@ export default function tree(
                       i > index && vtree.type === type && vtree.data === oldText
                   )) > -1
                 ) {
-                  const c = (children.splice(oldIndex, 1)[0]: $FlowTrustMe)
+                  const c = children.splice(oldIndex, 1)[0]
                   children.splice(index, 0, c)
                   node.insertBefore(c.node, li.node)
                   if (c.data !== text) {
@@ -161,15 +122,15 @@ export default function tree(
     }
     const rez = mostTree(patch$s =>
       combineArray(
-        (data: Data, ...patches: Patch[]) =>
+        (data, ...patches) =>
           function combinePatches(vnode, cb) {
             if (vnode.tag !== tag) throw new TypeError('tag')
             if (vnode.key == null && key != null) {
               vnode.key = key
             } else if (vnode.key !== key) throw new TypeError('key')
-            const cb2 = (e: mixed) => {
+            const cb2 = e => {
               if (on) {
-                on(((e: $FlowTODO): Action))
+                on(e)
               }
               cb(e)
             }
@@ -194,7 +155,7 @@ export default function tree(
   }
 }
 
-function createElement(tag: string): VNode {
+function createElement(tag) {
   return {
     type: 'node',
     tag,
@@ -204,10 +165,7 @@ function createElement(tag: string): VNode {
   }
 }
 
-function createCharacterData(
-  type: 'text' | 'comment',
-  data: string
-): VCharacterData {
+function createCharacterData(type, data) {
   return type === 'text'
     ? {type: 'text', data, node: global.document.createTextNode(data)}
     : {type: 'comment', data, node: global.document.createComment(data)}

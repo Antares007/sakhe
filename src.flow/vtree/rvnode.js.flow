@@ -1,0 +1,31 @@
+// @flow
+import type {Stream} from '@most/types'
+import type {Data, VNode} from './types'
+import type {$} from '../most'
+
+export interface Action {type: 'on'; action: $FlowTODO; event: Event}
+
+export interface RVNode {
+  (vnode: VNode, cb: (event: mixed) => void): VNode;
+}
+
+export interface Pith {
+  (
+    put: {
+      node(tag: string, data?: $<Data>, key?: string): (pith: Pith) => void,
+      text(text: $<string>): void,
+      comment(text: $<string>): void,
+    },
+    on: Stream<Action>
+  ): void;
+}
+
+export interface Bark {
+  (pith: $<Pith>): Stream<RVNode>;
+}
+
+declare export default function tree(
+  tag: string,
+  data?: $<Data>,
+  key?: string
+): Bark
