@@ -11,8 +11,7 @@ export default function tree(absurdA) {
               put(
                 map(
                   r => a => {
-                    const ak =
-                      typeof a === 'object' && a !== null ? a[key] : undefined
+                    const ak = a[key]
                     const bk = r(Object.assign(absurdB(), ak))
                     if (ak === bk) return a
                     return Object.assign(absurdA(), a, {[key]: bk})

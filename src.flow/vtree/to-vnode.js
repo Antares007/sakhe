@@ -19,13 +19,13 @@ export default function toVNode(element) {
 }
 
 function toVTree(node) {
-  let {nodeType} = node
+  const {nodeType} = node
   if (nodeType === 1) {
     return toVNode(node)
   } else if (nodeType === 3) {
-    return {type: 'text', data: x.textContent || '', node}
+    return {type: 'text', data: node.textContent || '', node}
   } else if (nodeType === 8) {
-    return {type: 'comment', data: x.textContent || '', node}
+    return {type: 'comment', data: node.textContent || '', node}
   }
   throw new Error(`unexpected node type [${nodeType}]`)
 }
