@@ -9,19 +9,19 @@ export default function patchData(
 ): void {
   if (vnode.data === data) return
   const {data: oldData, node} = vnode
-  // $FlowFixMe
-  const lnode: {listener?: (e: Event) => void} = (vnode: any)
+  const lnode: {listener?: (e: Event) => void} = (vnode: $FlowTODO)
   diffARU(
-    // $FlowFixMe
-    ((oldData.on: any): ?{[string]: string}),
-    // $FlowFixMe
-    ((data.on: any): ?{[string]: string}),
+    ((oldData.on: $FlowTODO): ?{[string]: string}),
+    ((data.on: $FlowTODO): ?{[string]: string}),
     k => {
       lnode.listener =
         lnode.listener ||
         function listener(e: Event) {
-          // $FlowFixMe
-          cb({type: 'on', action: (vnode.data: any).on[e.type], event: e})
+          cb({
+            type: 'on',
+            action: (vnode.data: $FlowTODO).on[e.type],
+            event: e,
+          })
         }
       node.addEventListener(k, lnode.listener)
     },
@@ -59,8 +59,7 @@ export default function patchData(
   )
 
   if (node.style != null) {
-    // $FlowFixMe
-    const {style}: {style: {[string]: string}} = (node: any)
+    const {style}: {style: {[string]: string}} = (node: $FlowTODO)
     const styleSetter = (k: string, v: string) => {
       style[k] = v
     }

@@ -8,5 +8,6 @@
 all=warn
 [options]
 include_warnings=true
-suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe
+suppress_type=$FlowTrustMe
+suppress_type=$FlowTODO
 [strict]

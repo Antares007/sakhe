@@ -5,14 +5,11 @@ import aTree from './a'
 
 export type $<T> = T | Stream<T>
 
-// $FlowFixMe
-export function to$<T>(x: any): Stream<T> {
+export function to$<T>(x: mixed): Stream<T> {
   if (typeof x === 'object' && x !== null && typeof x.run === 'function') {
-    // $FlowFixMe
-    return (x: any)
+    return (x: $FlowTrustMe)
   }
-  // $FlowFixMe
-  return now((x: any))
+  return now((x: $FlowTrustMe))
 }
 
 export interface Pith<A> {

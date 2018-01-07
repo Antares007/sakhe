@@ -18,8 +18,8 @@ export interface Pith {
     on: Stream<Action>
   ): void;
 }
-// $FlowFixMe
-export interface Action {type: 'on'; action: any; event: Event}
+
+export interface Action {type: 'on'; action: $FlowTODO; event: Event}
 export interface RVNode {
   (vnode: VNode, cb: (event: mixed) => void): VNode;
 }
@@ -74,8 +74,10 @@ export default function tree(
                       vtree.key === key
                   )) > -1
                 ) {
-                  // $FlowFixMe
-                  const v = r((children.splice(oldIndex, 1)[0]: any), cb)
+                  const v = r(
+                    (children.splice(oldIndex, 1)[0]: $FlowTrustMe),
+                    cb
+                  )
                   children.splice(index, 0, v)
                   node.insertBefore(v.node, li.node)
                 } else if (
@@ -123,8 +125,7 @@ export default function tree(
                       i > index && vtree.type === type && vtree.data === oldText
                   )) > -1
                 ) {
-                  // $FlowFixMe
-                  const c = (children.splice(oldIndex, 1)[0]: any)
+                  const c = (children.splice(oldIndex, 1)[0]: $FlowTrustMe)
                   children.splice(index, 0, c)
                   node.insertBefore(c.node, li.node)
                   if (c.data !== text) {
@@ -168,8 +169,7 @@ export default function tree(
             } else if (vnode.key !== key) throw new TypeError('key')
             const cb2 = (e: mixed) => {
               if (on) {
-                // $FlowFixMe
-                on(((e: any): Action))
+                on(((e: $FlowTODO): Action))
               }
               cb(e)
             }
