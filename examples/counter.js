@@ -1,6 +1,6 @@
-const PatchBark = require('../src.js/barks/patch')
-const hApiRing = require('../src.js/rings/h-api')
-const apiRing = require('../src.js/rings/api')
+const PatchBark = require('../src.old/barks/patch')
+const hApiRing = require('../src.old/rings/h-api')
+const apiRing = require('../src.old/rings/api')
 const m = require('most')
 PatchBark(apiRing, hApiRing)(document.getElementById('root-node'))(
   state => h => {

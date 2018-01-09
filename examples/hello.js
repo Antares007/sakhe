@@ -1,4 +1,4 @@
-const PatchBark = require('../src.js/barks/patch')
+const PatchBark = require('../src.old/barks/patch')
 const m = require('most')
 
 const Folder = () => state => (put, select) => {

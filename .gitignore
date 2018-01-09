@@ -31,4 +31,5 @@ yarn.lock
 package-lock.json
 .DS_Store
 out/
+lib/
 .vscode

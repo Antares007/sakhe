@@ -48,8 +48,8 @@
     "typescript": "^2.7.0-dev.20171216"
   },
   "scripts": {
-    "lint": "eslint src.flow && flow",
-    "build": "babel src.flow -d lib",
+    "lint": "eslint src && flow",
+    "build": "babel src -d lib",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
