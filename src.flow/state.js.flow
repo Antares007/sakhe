@@ -1,7 +1,7 @@
 // @flow
 import type {Stream} from '@most/types'
 import type {$} from './most'
-import type {Absurd, RState, Pith, Bark} from './r'
+import type {Absurd, RState, Pith, Bark} from './rstate'
 
 declare export default function tree<A>(
   absurdA: Absurd<A>,

@@ -16,7 +16,6 @@ import {
   continueWith,
   delay,
   multicast,
-  now,
 } from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 

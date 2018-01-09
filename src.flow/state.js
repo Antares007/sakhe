@@ -1,8 +1,6 @@
-import {tap, scan, skipRepeats, skip, map, filter} from '@most/core'
+import {scan, skipRepeats, skip} from '@most/core'
 
-import rTree from './r'
-import {to$} from './most'
-import stateProxy from './stateProxy'
+import rTree from './rstate'
 
 export default function tree(absurdA, initState) {
   return pith => {
