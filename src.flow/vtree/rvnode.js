@@ -1,12 +1,12 @@
-import {combineArray, map, multicast, newStream} from '@most/core'
-import {disposeWith} from '@most/disposable'
+import {combineArray, map} from '@most/core'
 
 import {tree as mostTree, to$} from '../most'
 import patchData from './patch-data'
+import eventProxy from './eventProxy'
 
 export default function tree(tag, data = {}, key) {
   return pith => {
-    let on
+    const [on, proxy] = eventProxy()
     let localIndex = 0
 
     const ring = pith => put => {
@@ -110,14 +110,7 @@ export default function tree(tag, data = {}, key) {
           text: mCharacterData('text'),
           comment: mCharacterData('comment'),
         },
-        multicast(
-          newStream((sink, scheduler) => {
-            on = e => sink.event(scheduler.currentTime(), e)
-            return disposeWith(() => {
-              on = undefined
-            }, null)
-          })
-        )
+        proxy
       )
     }
     const rez = mostTree(patch$s =>
