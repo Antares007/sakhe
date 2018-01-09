@@ -10,14 +10,16 @@ export interface RState<T> {
   (state: T): T;
 }
 
+export interface InputRay<A> {
+  extend<Key: $Keys<A>, B: $Subtype<$ElementType<A, Key>>>(
+    key: Key,
+    absurdB: Absurd<B>
+  ): (pith: $<Pith<B>>) => void;
+  val<Key: $Keys<A>>(key: Key, r: Stream<RState<$ElementType<A, Key>>>): void;
+}
+
 export interface Pith<A> {
-  (state: {
-    extend<Key: $Keys<A>, B: $Subtype<$ElementType<A, Key>>>(
-      key: Key,
-      absurdB: Absurd<B>
-    ): (pith: $<Pith<B>>) => void,
-    val<Key: $Keys<A>>(key: Key, r: Stream<RState<$ElementType<A, Key>>>): void,
-  }): void;
+  (state: InputRay<A>, onChange: Stream<A>): void;
 }
 
 export interface Bark<A> {
