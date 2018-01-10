@@ -3,23 +3,18 @@ import type {Stream} from '@most/types'
 import type {Data, VNode} from './types'
 import type {$} from '../most'
 
-export interface Action {type: 'on'; action: $FlowTODO; event: Event}
+export type Action = {type: 'on', action: $FlowTODO, event: Event}
 
-export interface RVNode {
-  (vnode: VNode, cb: (event: mixed) => void): VNode;
-}
-export interface PutRay {
+export type RVNode = {(vnode: VNode, cb: (event: mixed) => void): VNode}
+
+export interface Ray0 {
   node(tag: string, data?: $<Data>, key?: string): (pith: Pith) => void;
   text(text: $<string>): void;
   comment(text: $<string>): void;
 }
-export interface Pith {
-  (put: PutRay, on: Stream<Action>): void;
-}
+export type Pith = {(put: Ray0, on: Stream<Action>): void}
 
-export interface Bark {
-  (pith: $<Pith>): Stream<RVNode>;
-}
+export type Bark = {(pith: $<Pith>): Stream<RVNode>}
 
 declare export default function tree(
   tag: string,

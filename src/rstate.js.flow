@@ -2,15 +2,11 @@
 import type {Stream} from '@most/types'
 import type {$} from './most'
 
-export interface Absurd<T> {
-  (): T;
-}
+export type Absurd<T> = {(): T}
 
-export interface RState<T> {
-  (state: T): T;
-}
+export type RState<T> = {(state: T): T}
 
-export interface InputRay<A> {
+export interface Ray0<A> {
   extend<Key: $Keys<A>, B: $Subtype<$ElementType<A, Key>>>(
     key: Key,
     absurdB: Absurd<B>
@@ -18,12 +14,8 @@ export interface InputRay<A> {
   val<Key: $Keys<A>>(key: Key, r: Stream<RState<$ElementType<A, Key>>>): void;
 }
 
-export interface Pith<A> {
-  (state: InputRay<A>, onChange: Stream<A>): void;
-}
+export type Pith<A> = {(state: Ray0<A>, onChange: Stream<A>): void}
 
-export interface Bark<A> {
-  (pith: $<Pith<A>>): Stream<RState<A>>;
-}
+export type Bark<A> = {(pith: $<Pith<A>>): Stream<RState<A>>}
 
 declare export default function tree<A>(absurdA: Absurd<A>): Bark<A>
