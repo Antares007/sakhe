@@ -4,7 +4,7 @@ import {tree as mostTree, to$} from '../most'
 import patchData from './patch-data'
 import eventProxy from './eventProxy'
 
-export default function tree(tag, data = {}, key) {
+export default function tree(tag, data = {}) {
   return pith => {
     const [on, proxy] = eventProxy()
     let localIndex = 0
@@ -21,7 +21,7 @@ export default function tree(tag, data = {}, key) {
                 let oldIndex = -1
 
                 if (li === null) {
-                  const v = r(createElement(tagB), cb)
+                  const v = r(createElement(tagB, key), cb)
                   children.push(v)
                   node.insertBefore(v.node, null)
                 } else if (
@@ -48,14 +48,15 @@ export default function tree(tag, data = {}, key) {
                   li.tag === tagB &&
                   typeof li.key === 'undefined'
                 ) {
+                  li.key = key
                   children[index] = r(li, cb)
                 } else {
-                  const v = r(createElement(tagB), cb)
+                  const v = r(createElement(tagB, key), cb)
                   children.splice(index, 0, v)
                   node.insertBefore(v.node, li.node)
                 }
               },
-            tree(tagB, data, key)(pith)
+            tree(tagB, data)(pith)
           )
         )
       }
@@ -104,6 +105,7 @@ export default function tree(tag, data = {}, key) {
           )
         )
       }
+
       pith(
         {
           node: mNode,
@@ -118,9 +120,6 @@ export default function tree(tag, data = {}, key) {
         (data, ...patches) =>
           function combinePatches(vnode, cb) {
             if (vnode.tag !== tag) throw new TypeError('tag')
-            if (vnode.key == null && key != null) {
-              vnode.key = key
-            } else if (vnode.key !== key) throw new TypeError('key')
             const cb2 = e => {
               if (on) {
                 on(e)
@@ -148,10 +147,11 @@ export default function tree(tag, data = {}, key) {
   }
 }
 
-function createElement(tag) {
+function createElement(tag, key) {
   return {
     type: 'node',
     tag,
+    key,
     data: {},
     children: [],
     node: global.document.createElement(tag),

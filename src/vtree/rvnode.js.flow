@@ -16,8 +16,4 @@ export type Pith = {(put: Ray0, on: Stream<Action>): void}
 
 export type Bark = {(pith: $<Pith>): Stream<RVNode>}
 
-declare export default function tree(
-  tag: string,
-  data?: $<Data>,
-  key?: string
-): Bark
+declare export default function tree(tag: string, data?: $<Data>): Bark
