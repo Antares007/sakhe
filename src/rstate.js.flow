@@ -12,6 +12,7 @@ export interface Ray0<A> {
     absurdB: Absurd<B>
   ): (pith: $<Pith<B>>) => void;
   val<Key: $Keys<A>>(key: Key, r: Stream<RState<$ElementType<A, Key>>>): void;
+  put(r: Stream<RState<A>>): void;
 }
 
 export type Pith<A> = {(state: Ray0<A>, onChange: Stream<A>): void}

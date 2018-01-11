@@ -43,6 +43,7 @@ export default function tree(absurdA) {
                     r
                   )
                 ),
+              put,
             },
             proxy
           )
