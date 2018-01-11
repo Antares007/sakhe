@@ -9,7 +9,7 @@ export type Pith<A> = {(put: Ray<A>): void}
 
 export type Bark<A, B> = {(pith: $<Pith<A>>): Stream<B>}
 
-declare export function to$<T>(x: T | Stream<T>): Stream<T>
+declare export function to$<T>(x: mixed): Stream<T>
 
 declare export function tree<A, B>(
   deltac: (as: Stream<A>[]) => Stream<B>
