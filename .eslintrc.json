@@ -10,6 +10,7 @@
     "no-cond-assign": 0,
     "no-param-reassign": 0,
     "no-restricted-syntax": 0,
+    "prefer-template": 0,
     "flowtype/require-valid-file-annotation": [2, "always"],
     "flowtype/boolean-style": [2, "boolean"],
     "flowtype/define-flow-type": 1,
