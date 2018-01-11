@@ -15,15 +15,17 @@
         }
       ],
       "flow"
-    ]
+    ],
+    "plugins": ["transform-object-rest-spread"]
   },
   "dependencies": {
-    "@most/types": "^1.0.0",
     "@most/core": "^1.2.0",
     "@most/disposable": "^1.1.0",
     "@most/prelude": "^1.7.0",
     "@most/scheduler": "^1.1.0",
+    "@most/types": "^1.0.0",
     "babel-core": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
     "babel-register": "^6.26.0",
