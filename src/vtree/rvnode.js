@@ -2,11 +2,11 @@ import {combineArray, map} from '@most/core'
 
 import {tree as mostTree, to$} from '../most'
 import patchData from './patch-data'
-import eventProxy from './eventProxy'
+import syncSubject from './sync-subject'
 
 export default function tree(tag, data = {}) {
   return pith => {
-    const [on, proxy] = eventProxy()
+    const subject = syncSubject()
     let localIndex = 0
 
     const ring = pith => put => {
@@ -112,7 +112,7 @@ export default function tree(tag, data = {}) {
           text: mCharacterData('text'),
           comment: mCharacterData('comment'),
         },
-        proxy
+        subject.stream
       )
     }
     const rez = mostTree(patch$s =>
@@ -121,9 +121,7 @@ export default function tree(tag, data = {}) {
           function combinePatches(vnode, cb) {
             if (vnode.tag !== tag) throw new TypeError('tag')
             const cb2 = e => {
-              if (on) {
-                on(e)
-              }
+              subject.event(e)
               cb(e)
             }
             patchData(data, vnode, cb2)
