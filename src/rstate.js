@@ -1,15 +1,16 @@
 import {map, mergeArray} from '@most/core'
 import {tree as mostTree, to$} from './most'
-import stateProxy from './stateProxy'
+import subject from './subject'
+import hold from './hold'
 
 export default function tree(absurdA) {
-  const [on, proxy] = stateProxy()
+  const proxy = subject(true)
   return pith =>
     mostTree(xs =>
       map(
         r => s => {
           const ns = r(s)
-          on(ns)
+          proxy.event(ns)
           return ns
         },
         mergeArray(xs)
@@ -45,7 +46,7 @@ export default function tree(absurdA) {
                 ),
               put,
             },
-            proxy
+            hold(proxy.stream)
           )
         },
         to$(pith)
