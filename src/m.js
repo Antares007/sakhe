@@ -16,12 +16,16 @@ import {
   continueWith,
   delay,
   multicast,
+  debounce,
 } from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 
 export default class M {
   constructor($) {
     this.$ = $
+  }
+  debounce(n) {
+    return new M(debounce(n, this.$))
   }
   multicast() {
     return new M(multicast(this.$))
