@@ -11,6 +11,7 @@ export interface Ray0 {
   node(tag: string, data?: $<Data>, key?: string): (pith: Pith) => void;
   text(text: $<string>): void;
   comment(text: $<string>): void;
+  put(tag: string, key: string, r: Stream<RVNode>): void;
 }
 export type Pith = {(put: Ray0, on: Stream<Action>): void}
 

@@ -10,7 +10,7 @@ export default function tree(tag, data = {}) {
     let localIndex = 0
 
     const ring = pith => put => {
-      const mNode = (tagB, data = {}, key) => pith => {
+      const mPut = (tagB, key, r) => {
         const index = localIndex++
         put(
           map(
@@ -56,9 +56,12 @@ export default function tree(tag, data = {}) {
                   node.insertBefore(v.node, li.node)
                 }
               },
-            tree(tagB, data)(pith)
+            r
           )
         )
+      }
+      const mNode = (tagB, data = {}, key) => pith => {
+        mPut(tagB, key, tree(tagB, data)(pith))
       }
 
       const mCharacterData = type => text => {
@@ -111,6 +114,7 @@ export default function tree(tag, data = {}) {
           node: mNode,
           text: mCharacterData('text'),
           comment: mCharacterData('comment'),
+          put: mPut,
         },
         sync.stream
       )
