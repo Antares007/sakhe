@@ -16,9 +16,7 @@
       ],
       "flow"
     ],
-    "plugins": [
-      "transform-object-rest-spread"
-    ]
+    "plugins": ["transform-object-rest-spread"]
   },
   "dependencies": {
     "@most/core": "^1.2.0",
