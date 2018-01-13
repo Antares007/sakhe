@@ -46,8 +46,7 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-flowtype": "^2.40.1",
     "eslint-plugin-import": "^2.8.0",
-    "flow-bin": "^0.62.0",
-    "prettier": "^1.9.2",
+    "flow-bin": "^0.63.1",
     "typescript": "^2.7.0-dev.20171216"
   },
   "scripts": {
