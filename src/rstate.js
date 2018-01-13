@@ -1,7 +1,8 @@
 import {map, mergeArray} from '@most/core'
+import {hold} from '@most/hold'
+
 import {tree as mostTree, to$} from './most'
 import subject from './subject'
-import hold from './hold'
 
 export default function tree(absurdA) {
   const proxy = subject(true)

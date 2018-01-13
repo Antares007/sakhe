@@ -16,11 +16,14 @@
       ],
       "flow"
     ],
-    "plugins": ["transform-object-rest-spread"]
+    "plugins": [
+      "transform-object-rest-spread"
+    ]
   },
   "dependencies": {
     "@most/core": "^1.2.0",
     "@most/disposable": "^1.1.0",
+    "@most/hold": "^3.0.0",
     "@most/prelude": "^1.7.0",
     "@most/scheduler": "^1.1.0",
     "@most/types": "^1.0.0",
