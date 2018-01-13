@@ -119,33 +119,35 @@ export default function tree(tag, data = {}) {
         sync.stream
       )
     }
-    const rez = mostTree(patch$s =>
+    return mostTree(patch$s =>
       combineArray(
         (data, ...patches) =>
-          function combinePatches(vnode, cb) {
-            if (vnode.tag !== tag) throw new TypeError('tag')
-            const cb2 = e => {
-              sync.event(e)
-              cb(e)
-            }
-            patchData(data, vnode, cb2)
-            const {children, node} = vnode
-            const pl = patches.length
-            const l = Math.max(pl, children.length)
-            for (let i = 0; i < l; i++) {
-              if (i < pl) {
-                patches[i](vnode, cb2)
-              } else {
-                node.removeChild(children[i].node)
-                children.splice(i, 1)
+          Object.assign(
+            (vnode, cb) => {
+              if (vnode.tag !== tag) throw new TypeError('tag')
+              const cb2 = e => {
+                sync.event(e)
+                cb(e)
               }
-            }
-            return vnode
-          },
+              patchData(data, vnode, cb2)
+              const {children, node} = vnode
+              const pl = patches.length
+              const l = Math.max(pl, children.length)
+              for (let i = 0; i < l; i++) {
+                if (i < pl) {
+                  patches[i](vnode, cb2)
+                } else {
+                  node.removeChild(children[i].node)
+                  children.splice(i, 1)
+                }
+              }
+              return vnode
+            },
+            {type: 'rvnode'}
+          ),
         [to$(data), ...patch$s]
       )
     )(map(ring, to$(pith)))
-    return rez
   }
 }
 

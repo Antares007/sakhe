@@ -5,7 +5,10 @@ import type {$} from '../most'
 
 export type Action = {type: 'on', action: $FlowTODO, event: Event}
 
-export type RVNode = {(vnode: VNode, cb: (event: mixed) => void): VNode}
+export type RVNode = {
+  (vnode: VNode, cb: (event: mixed) => void): VNode,
+  type: 'rvnode',
+}
 
 export interface Ray0 {
   node(tag: string, data?: $<Data>, key?: string): (pith: Pith) => void;
@@ -13,8 +16,8 @@ export interface Ray0 {
   comment(text: $<string>): void;
   put(tag: string, key: string, r: Stream<RVNode>): void;
 }
-export type Pith = {(put: Ray0, on: Stream<Action>): void}
+export type Pith = (put: Ray0, on: Stream<Action>) => void
 
-export type Bark = {(pith: $<Pith>): Stream<RVNode>}
+export type Bark = (pith: $<Pith>) => Stream<RVNode>
 
 declare export default function tree(tag: string, data?: $<Data>): Bark

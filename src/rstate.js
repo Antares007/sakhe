@@ -9,11 +9,15 @@ export default function tree(absurdA) {
   return pith =>
     mostTree(xs =>
       map(
-        r => s => {
-          const ns = r(s)
-          proxy.event(ns)
-          return ns
-        },
+        r =>
+          Object.assign(
+            s => {
+              const ns = r(s)
+              proxy.event(ns)
+              return ns
+            },
+            {type: 'rstate'}
+          ),
         mergeArray(xs)
       )
     )(
