@@ -30,7 +30,7 @@ export default function tree(absurdA, tag, data) {
                 return Object.assign(absurdA(), a, {[key]: bk})
               })
               return false
-            }, tree(absurdB, tag, data))
+            }, tree(absurdB, tag, data)(pith))
           )
         },
       })
