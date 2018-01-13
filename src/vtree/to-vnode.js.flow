@@ -1,0 +1,4 @@
+// @flow
+import type {VNode} from './types'
+
+declare export default function toVNode(element: Element): VNode
