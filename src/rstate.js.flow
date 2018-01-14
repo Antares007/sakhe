@@ -12,11 +12,14 @@ export type RState<T> = {
 }
 
 export type Ray0<A> = {
-  extend<Key: $Keys<A>, B: $Subtype<$ElementType<A, Key>>>(
+  extend<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurdB: Absurd<B>
   ): (pith: $<Pith<B>>) => void,
-  val<Key: $Keys<A>>(key: Key, r: Stream<R<$ElementType<A, Key>>>): void,
+  val<Key: $Keys<A>>(
+    key: Key,
+    r: Stream<R<$ElementType<$Exact<A>, Key>>>
+  ): void,
   put(r: Stream<R<A>>): void,
 }
 

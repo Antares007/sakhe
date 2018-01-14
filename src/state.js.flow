@@ -5,7 +5,7 @@ import type {$} from './most'
 
 export type Ray<A> = {
   ...$Exact<RstateRay<A>>,
-  extend<Key: $Keys<A>, B: $Subtype<$ElementType<A, Key>>>(
+  extend<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurdB: Absurd<B>
   ): (pith: $<Pith<B>>) => void,
