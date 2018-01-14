@@ -18,9 +18,9 @@ const rez = svnodeTree(abs, 'div')(s => {
     put.snode('b', () => ({o: 'otar'}), 'div')(s => {
       s.val('o', now(s => s + ' bolkvadze'))
 
-      return put => {
+      return now(put => {
         put.text('world!')
-      }
+      })
     })
     put.text('hello')
   }

@@ -6,8 +6,8 @@ import {to$} from '../most'
 
 export default function tree(absurdA, tag, data) {
   return svPith => {
-    const vpithSubject = subject(true)
-    const stateProxy = subject(true)
+    const vpithSubject = subject()
+    const stateProxy = subject()
 
     const ring = vpith => put => {
       vpith({

@@ -1,6 +1,7 @@
 // @flow
 import type {Stream} from '@most/types'
 import type {Data} from '../vtree/types'
+import type {$} from '../most'
 
 import type {Absurd, Ray0 as StateRay, RState} from '../rstate'
 import type {Ray0 as RVNodeRay, Action, RVNode} from '../vtree/rvnode'
@@ -11,17 +12,17 @@ export interface Ray<A> {
     absurd: Absurd<B>,
     tag: string,
     data?: Data
-  ): (pith: Pith<B>) => void;
+  ): (pith: SPith<B>) => void;
 }
 export type VPith<A> = (put: RVNodeRay & Ray<A>) => void
 
-export type Pith<A> = (
+export type SPith<A> = (
   state: StateRay<A>,
   onChange: Stream<A>,
   on: Stream<Action>
-) => VPith<A>
+) => $<VPith<A>>
 
-export type Bark<A> = (pith: Pith<A>) => Stream<RState<A> | RVNode>
+export type Bark<A> = (pith: SPith<A>) => Stream<RState<A> | RVNode>
 
 declare export default function tree<A>(
   absurd: Absurd<A>,
