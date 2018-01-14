@@ -3,11 +3,11 @@ import type {Stream} from '@most/types'
 
 export type $<T> = T | Stream<T>
 
-export interface Ray<A> {(a: Stream<A>): void}
+export type Ray<A> = (a: Stream<A>) => void
 
-export type Pith<A> = {(put: Ray<A>): void}
+export type Pith<A> = (put: Ray<A>) => void
 
-export type Bark<A, B> = {(pith: $<Pith<A>>): Stream<B>}
+export type Bark<A, B> = (pith: $<Pith<A>>) => Stream<B>
 
 declare export function to$<T>(x: mixed): Stream<T>
 

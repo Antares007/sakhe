@@ -1,9 +1,9 @@
 // @flow
-export interface Ray<A> {(a: A): void}
+export type Ray<A> = (a: A) => void
 
-export type Pith<A> = {(ray: Ray<A>): void}
+export type Pith<A> = (ray: Ray<A>) => void
 
-export type Bark<A, B> = {(pith: Pith<A>): B}
+export type Bark<A, B> = (pith: Pith<A>) => B
 
 declare export default function tree<B, A>(
   deltaC: (as: Array<A>) => B
