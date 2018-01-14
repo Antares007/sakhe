@@ -11,16 +11,16 @@ export type RState<T> = {
   type: 'rstate',
 }
 
-export interface Ray0<A> {
+export type Ray0<A> = {
   extend<Key: $Keys<A>, B: $Subtype<$ElementType<A, Key>>>(
     key: Key,
     absurdB: Absurd<B>
-  ): (pith: $<Pith<B>>) => void;
-  val<Key: $Keys<A>>(key: Key, r: Stream<R<$ElementType<A, Key>>>): void;
-  put(r: Stream<R<A>>): void;
+  ): (pith: $<Pith<B>>) => void,
+  val<Key: $Keys<A>>(key: Key, r: Stream<R<$ElementType<A, Key>>>): void,
+  put(r: Stream<R<A>>): void,
 }
 
-export type Pith<A> = (state: Ray0<A>, onChange: Stream<A>) => void
+export type Pith<A> = (state: Ray0<A>) => void
 
 export type Bark<A> = (pith: $<Pith<A>>) => Stream<RState<A>>
 

@@ -5,7 +5,7 @@ import tree from './state'
 
 const abs = () => ({a: 42, b: {o: 'otar'}})
 
-const rez = tree(abs)((put, on) => {
+const rez = tree(abs, {a: 43, b: {o: 'otar bolkvadze', t: 1}})((put, on) => {
   M.of(on)
     .tap(s => global.console.log(0, JSON.stringify(s)))
     .drain()
@@ -16,6 +16,7 @@ const rez = tree(abs)((put, on) => {
       .drain()
     put.val('o', now(s => `${s} bolkvadze`))
   })
+  // put.put(now(s => ({...s, a: -42})))
 })
 
 M.of(rez)
