@@ -1,17 +1,15 @@
-/* eslint-disable no-unused-vars */
-import {now, map, merge, switchLatest, empty, filter, tap} from '@most/core'
+import {now, map, merge, switchLatest, empty, filter} from '@most/core'
 import rvnodeTree from '../vtree/rvnode'
 import subject from '../subject'
 import rstateTree from '../rstate'
 import {to$} from '../most'
-import M from '../m'
 
 export default function tree(absurdA, tag, data) {
   return svPith => {
     const vpithSubject = subject(true)
     const stateProxy = subject(true)
 
-    const ring = vpith => (put, on) => {
+    const ring = vpith => put => {
       vpith({
         ...put,
         node: (tag, data, key) => pith => {
@@ -44,12 +42,5 @@ export default function tree(absurdA, tag, data) {
         })
       )
     )
-  }
-}
-
-function tagType(type) {
-  return x => {
-    x.type = type
-    return x
   }
 }
