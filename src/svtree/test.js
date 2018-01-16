@@ -5,7 +5,7 @@ import type {VNode} from '../vtree/types'
 import M from '../m'
 import toVNode from '../vtree/to-vnode'
 
-import svnodeTree from './svnode'
+import svnodeTree from './rsvnode'
 
 const abs = () => ({a: 42, b: {}})
 const rez = svnodeTree(abs, 'div')(s => {
@@ -29,14 +29,26 @@ const rez = svnodeTree(abs, 'div')(s => {
 const elm = document.getElementById('root-node')
 if (elm == null) throw new Error('cant find root-node')
 
-const vnode = toVNode(elm)
+let requestId
+let vnode = toVNode(elm)
+const cb = () => {}
+let patch
+const frame = () => {
+  vnode = patch(vnode, cb)
+  requestId = undefined
+}
 
 M.of(rez)
-  .scan(
-    ([v, s], r) => (r.type === 'rvnode' ? [r(v, () => {}), s] : [v, r(s)]),
-    [vnode, abs()]
-  )
-  .tap(([vnode, state]) => {
-    global.console.log(vnode, state)
-  })
+  .scan((s, r) => {
+    if (r.type === 'rvnode') {
+      patch = r
+      if (typeof requestId === 'undefined') {
+        requestId = global.window.requestAnimationFrame(frame)
+      }
+      return s
+    }
+    return r(s)
+  }, abs())
+  .skipRepeats()
+  .tap(s => global.console.log(JSON.stringify(s)))
   .drain()

@@ -17,7 +17,6 @@ export type VPith<A> = (put: RVNodeRay & Ray<A>) => void
 
 export type SPith<A> = (
   state: StateRay<A>,
-  onChange: Stream<A>,
   on: Stream<Action>
 ) => VPith<A> | Stream<VPith<A>>
 
