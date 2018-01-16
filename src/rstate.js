@@ -1,6 +1,7 @@
 import {map, mergeArray} from '@most/core'
 
 import mostTree from './most'
+import {pmap} from './pmap'
 
 export default function tree(absurdA) {
   const ring = pith => put => {
@@ -39,5 +40,5 @@ export default function tree(absurdA) {
       }
       rstate.type = 'rstate'
       return rstate
-    }, mostTree(mergeArray)(typeof pith === 'function' ? ring(pith) : map(ring, pith)))
+    }, mostTree(mergeArray)(pmap(ring, pith)))
 }

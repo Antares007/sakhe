@@ -2,6 +2,7 @@ import {scan, skipRepeats, skip, tap, map, filter} from '@most/core'
 import {hold} from '@most/hold'
 import rTree from './rstate'
 import subject from './subject'
+import {pmap} from './pmap'
 
 const ring = onChangeA => pith => put => {
   pith(
@@ -16,9 +17,7 @@ const ring = onChangeA => pith => put => {
         )
         const thisRing = ring(onChangeB)
 
-        put.extend(key, absurdB)(
-          typeof pith === 'function' ? thisRing(pith) : map(thisRing, pith)
-        )
+        put.extend(key, absurdB)(pmap(thisRing, pith))
       },
     },
     onChangeA
@@ -28,9 +27,7 @@ export default function tree(absurdA, initState) {
   return pith => {
     const proxy = subject(true)
     const thisRing = ring(hold(proxy.stream))
-    const rez = rTree(absurdA)(
-      typeof pith === 'function' ? thisRing(pith) : map(thisRing, pith)
-    )
+    const rez = rTree(absurdA)(pmap(thisRing, pith))
     return skip(
       1,
       tap(s => {

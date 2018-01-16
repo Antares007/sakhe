@@ -1,8 +1,9 @@
-import {combineArray, map, now} from '@most/core'
+import {combineArray, map} from '@most/core'
 
 import mostTree from '../most'
 import patchData from './patch-data'
 import subject from '../subject'
+import {pmap, toStream} from '../pmap'
 
 export default function tree(tag, data = {}) {
   return pith => {
@@ -104,7 +105,7 @@ export default function tree(tag, data = {}) {
                 }
                 oldText = text
               },
-            typeof text === 'string' ? now(text) : text
+            toStream(text)
           )
         )
       }
@@ -145,9 +146,9 @@ export default function tree(tag, data = {}) {
           rvnode.type = 'rvnode'
           return rvnode
         },
-        [typeof data.run === 'function' ? data : now(data), ...patch$s]
+        [toStream(data), ...patch$s]
       )
-    )(typeof pith === 'function' ? ring(pith) : map(ring, pith))
+    )(pmap(ring, pith))
   }
 }
 
