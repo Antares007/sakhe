@@ -20,7 +20,7 @@ export interface Data {
 export interface VNode {
   type: 'node';
   tag: string;
-  key?: string;
+  key: ?string;
   data: Data;
   children: VTree[];
   node: Element;

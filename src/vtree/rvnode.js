@@ -47,7 +47,7 @@ export default function tree(tag, data = {}) {
                 } else if (
                   li.type === 'node' &&
                   li.tag === tagB &&
-                  typeof li.key === 'undefined'
+                  li.key == null
                 ) {
                   li.key = key
                   children[index] = r(li, cb)

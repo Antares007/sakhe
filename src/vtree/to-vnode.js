@@ -15,7 +15,7 @@ export default function toVNode(element) {
   for (let i = 0, n = elmChildren.length; i < n; i++) {
     children.push(toVTree(elmChildren[i]))
   }
-  return {type: 'node', tag, data, children, node: element}
+  return {type: 'node', tag, key: undefined, data, children, node: element}
 }
 
 function toVTree(node) {
