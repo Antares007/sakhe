@@ -1,5 +1,5 @@
 // @flow
-export type Ray<A> = (a: A) => void
+export type Ray<A> = (a: A) => number
 
 export type Pith<A> = (ray: Ray<A>) => void
 

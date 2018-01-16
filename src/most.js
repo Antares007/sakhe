@@ -1,13 +1,7 @@
-import {map, now, switchLatest} from '@most/core'
+import {map, switchLatest as sw} from '@most/core'
 import aTree from './a'
 
-export function to$(x) {
-  if (typeof x === 'object' && x !== null && typeof x.run === 'function') {
-    return x
-  }
-  return now(x)
-}
-
-export function tree(deltac) {
-  return pith => switchLatest(map(aTree(deltac), to$(pith)))
+export default function tree(deltac) {
+  const ring = aTree(deltac)
+  return pith => (typeof pith === 'function' ? ring(pith) : sw(map(ring, pith)))
 }

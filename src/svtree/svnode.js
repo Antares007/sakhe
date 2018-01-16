@@ -2,7 +2,6 @@ import {now, map, merge, switchLatest, empty, filter} from '@most/core'
 import rvnodeTree from '../vtree/rvnode'
 import subject from '../subject'
 import rstateTree from '../rstate'
-import {to$} from '../most'
 
 export default function tree(absurdA, tag, data) {
   return svPith => {
@@ -13,7 +12,9 @@ export default function tree(absurdA, tag, data) {
       vpith({
         ...put,
         node: (tag, data, key) => pith => {
-          put.node(tag, data, key)(map(ring, to$(pith)))
+          put.node(tag, data, key)(
+            typeof pith === 'function' ? ring(pith) : map(ring, pith)
+          )
         },
         snode: (key, absurdB, tag, data) => pith => {
           put.put(
@@ -38,7 +39,8 @@ export default function tree(absurdA, tag, data) {
       rstateTree(absurdA)(
         now((s, onChange) => {
           s.put(stateProxy.stream)
-          vpithSubject.event(to$(svPith(s, onChange, empty())))
+          const vPith = svPith(s, onChange, empty())
+          vpithSubject.event(typeof vPith === 'function' ? now(vPith) : vPith)
         })
       )
     )

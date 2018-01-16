@@ -1,6 +1,6 @@
-import {combineArray, map} from '@most/core'
+import {combineArray, map, now} from '@most/core'
 
-import {tree as mostTree, to$} from '../most'
+import mostTree from '../most'
 import patchData from './patch-data'
 import subject from '../subject'
 
@@ -104,7 +104,7 @@ export default function tree(tag, data = {}) {
                 }
                 oldText = text
               },
-            to$(text)
+            typeof text === 'string' ? now(text) : text
           )
         )
       }
@@ -121,33 +121,33 @@ export default function tree(tag, data = {}) {
     }
     return mostTree(patch$s =>
       combineArray(
-        (data, ...patches) =>
-          Object.assign(
-            (vnode, cb) => {
-              if (vnode.tag !== tag) throw new TypeError('tag')
-              const cb2 = e => {
-                sync.event(e)
-                cb(e)
+        (data, ...patches) => {
+          const rvnode = function rvnode(vnode, cb) {
+            if (vnode.tag !== tag) throw new TypeError('tag')
+            const cb2 = e => {
+              sync.event(e)
+              cb(e)
+            }
+            patchData(data, vnode, cb2)
+            const {children, node} = vnode
+            const pl = patches.length
+            const l = Math.max(pl, children.length)
+            for (let i = 0; i < l; i++) {
+              if (i < pl) {
+                patches[i](vnode, cb2)
+              } else {
+                node.removeChild(children[i].node)
+                children.splice(i, 1)
               }
-              patchData(data, vnode, cb2)
-              const {children, node} = vnode
-              const pl = patches.length
-              const l = Math.max(pl, children.length)
-              for (let i = 0; i < l; i++) {
-                if (i < pl) {
-                  patches[i](vnode, cb2)
-                } else {
-                  node.removeChild(children[i].node)
-                  children.splice(i, 1)
-                }
-              }
-              return vnode
-            },
-            {type: 'rvnode'}
-          ),
-        [to$(data), ...patch$s]
+            }
+            return vnode
+          }
+          rvnode.type = 'rvnode'
+          return rvnode
+        },
+        [typeof data.run === 'function' ? data : now(data), ...patch$s]
       )
-    )(map(ring, to$(pith)))
+    )(typeof pith === 'function' ? ring(pith) : map(ring, pith))
   }
 }
 

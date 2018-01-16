@@ -1,19 +1,18 @@
 // @flow
 import type {Stream} from '@most/types'
 import type {Absurd, Ray0 as RstateRay} from './rstate'
-import type {$} from './most'
 
 export type Ray<A> = {
   ...$Exact<RstateRay<A>>,
   extend<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurdB: Absurd<B>
-  ): (pith: $<Pith<B>>) => void,
+  ): (pith: Pith<B> | Stream<Pith<B>>) => void,
 }
 
 export type Pith<A> = (state: Ray<A>, onChange: Stream<A>) => void
 
-export type Bark<A> = (pith: $<Pith<A>>) => Stream<A>
+export type Bark<A> = (pith: Pith<A> | Stream<Pith<A>>) => Stream<A>
 
 declare export default function tree<A>(
   absurdA: Absurd<A>,
