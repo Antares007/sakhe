@@ -9,17 +9,19 @@ export type RVNode = {
   type: 'rvnode',
 }
 
-export interface Ray0 {
+export type VNodeRay = {
   node(
     tag: string,
     data?: Data | Stream<Data>,
     key?: string
-  ): (pith: Pith | Stream<Pith>) => void;
-  text(text: string | Stream<string>): void;
-  comment(text: string | Stream<string>): void;
-  put(tag: string, key: string, r: Stream<RVNode>): void;
+  ): (pith: Pith | Stream<Pith>) => void,
+  text(text: string | Stream<string>): void,
+  comment(text: string | Stream<string>): void,
+  put(tag: string, key: string, r: Stream<RVNode>): void,
 }
-export type Pith = (put: Ray0, on: Stream<Action>) => void
+export type ActionRay = Stream<Action>
+
+export type Pith = (put: VNodeRay, on: ActionRay) => void
 
 export type Bark = (pith: Pith | Stream<Pith>) => Stream<RVNode>
 

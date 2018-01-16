@@ -1,9 +1,9 @@
 // @flow
 import type {Stream} from '@most/types'
 
-export type Ray<A> = (a: Stream<A>) => number
+export type PutRay<A> = (a: Stream<A>) => number
 
-export type Pith<A> = (put: Ray<A>) => void
+export type Pith<A> = (put: PutRay<A>) => void
 
 export type Bark<A, B> = (pith: Pith<A> | Stream<Pith<A>>) => Stream<B>
 

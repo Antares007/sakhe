@@ -1,7 +1,7 @@
 // @flow
-export type Ray<A> = (a: A) => number
+export type PutRay<A> = (a: A) => number
 
-export type Pith<A> = (ray: Ray<A>) => void
+export type Pith<A> = (put: PutRay<A>) => void
 
 export type Bark<A, B> = (pith: Pith<A>) => B
 

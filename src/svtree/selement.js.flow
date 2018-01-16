@@ -1,23 +1,30 @@
 // @flow
 import type {Stream} from '@most/types'
-import type {Absurd, Ray0 as StateRay} from '../rstate'
 import type {Data} from '../vtree/types'
-import type {Ray0 as RVNodeRay, Action} from '../vtree/rvnode'
+import type {Absurd, StateRay as InnerStateRay} from '../rstate'
+import type {
+  VNodeRay as InnerVNodeRay,
+  ActionRay as InnerActionRay,
+} from './rsvnode'
 
-export interface Ray<A> {
+export type VNodeRay<A> = {
+  ...$Exact<InnerVNodeRay<A>>,
   snode<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurd: Absurd<B>,
     tag: string,
     data?: Data
-  ): (pith: SPith<B>) => void;
+  ): (pith: SPith<B>) => void,
 }
-export type VPith<A> = (put: RVNodeRay & Ray<A>) => void
+export type ActionRay = InnerActionRay
+export type VPith<A> = (put: VNodeRay<A>, on: ActionRay) => void
 
+export type StateRay<A> = InnerStateRay<A>
+export type StateChangeRay<A> = Stream<A>
 export type SPith<A> = (
   state: StateRay<A>,
-  on: Stream<Action>,
-  onChange: Stream<A>
+  on: ActionRay,
+  onChange: StateChangeRay<A>
 ) => VPith<A> | Stream<VPith<A>>
 
 declare export default function tree<A>(

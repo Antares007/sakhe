@@ -10,7 +10,7 @@ export type RState<T> = {
   type: 'rstate',
 }
 
-export type Ray0<A> = {
+export type StateRay<A> = {
   extend<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurdB: Absurd<B>
@@ -22,7 +22,7 @@ export type Ray0<A> = {
   put(r: Stream<R<A>>): void,
 }
 
-export type Pith<A> = (state: Ray0<A>) => void
+export type Pith<A> = (state: StateRay<A>) => void
 
 export type Bark<A> = (pith: Pith<A> | Stream<Pith<A>>) => Stream<RState<A>>
 
