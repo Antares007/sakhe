@@ -1,14 +1,15 @@
 // @flow
-/* eslint-disable no-unused-vars */
-import {now, scan} from '@most/core'
-import type {VNode} from '../vtree/types'
+import {now} from '@most/core'
 import M from '../m'
-import toVNode from '../vtree/to-vnode'
 
-import svnodeTree from './rsvnode'
+import selementTree from './selement'
+
+const elm = document.getElementById('root-node')
+if (elm == null) throw new Error('cant find root-node')
 
 const abs = () => ({a: 42, b: {}})
-const rez = svnodeTree(abs, 'div')(s => {
+
+const rez = selementTree(abs, abs(), elm)(s => {
   s.extend('b', () => ({a: 'archil'}))(s => {
     s.val('a', now(s => s + ' bolkvadze'))
   })
@@ -26,29 +27,6 @@ const rez = svnodeTree(abs, 'div')(s => {
   }
 })
 
-const elm = document.getElementById('root-node')
-if (elm == null) throw new Error('cant find root-node')
-
-let requestId
-let vnode = toVNode(elm)
-const cb = () => {}
-let patch
-const frame = () => {
-  vnode = patch(vnode, cb)
-  requestId = undefined
-}
-
 M.of(rez)
-  .scan((s, r) => {
-    if (r.type === 'rvnode') {
-      patch = r
-      if (typeof requestId === 'undefined') {
-        requestId = global.window.requestAnimationFrame(frame)
-      }
-      return s
-    }
-    return r(s)
-  }, abs())
-  .skipRepeats()
   .tap(s => global.console.log(JSON.stringify(s)))
   .drain()

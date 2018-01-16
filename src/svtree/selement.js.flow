@@ -1,0 +1,12 @@
+// @flow
+import type {Stream} from '@most/types'
+import type {Absurd} from '../rstate'
+import type {Data} from '../vtree/types'
+import type {SPith} from './rsvnode'
+
+declare export default function tree<A>(
+  absurd: Absurd<A>,
+  initState: A,
+  element: Element,
+  data?: Data
+): (pith: SPith<A>) => Stream<A>
