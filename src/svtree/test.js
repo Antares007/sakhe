@@ -9,14 +9,20 @@ if (elm == null) throw new Error('cant find root-node')
 
 const abs = () => ({a: 42, b: {}})
 
-const rez = selementTree(abs, abs(), elm)(s => {
+const rez = selementTree(abs, abs(), elm)((s, onAction, onChange) => {
+  M.of(onChange)
+    .tap(s => global.console.log(0, JSON.stringify(s)))
+    .drain()
   s.extend('b', () => ({a: 'archil'}))(s => {
     s.val('a', now(s => s + ' bolkvadze'))
   })
   s.val('a', now(sss => sss + 1))
 
   return put => {
-    put.snode('b', () => ({o: 'otar'}), 'div')(s => {
+    put.snode('b', () => ({o: 'otar'}), 'div')((s, onAction, onChange) => {
+      M.of(onChange)
+        .tap(s => global.console.log(1, JSON.stringify(s)))
+        .drain()
       s.val('o', now(s => s + ' bolkvadze'))
 
       return now(put => {
