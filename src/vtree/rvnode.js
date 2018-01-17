@@ -7,9 +7,9 @@ import {pmap, toStream} from '../pmap'
 export default function tree(tag, data = {}) {
   return pith => {
     const sync = new MulticastSource(never())
-    let localIndex = 0
 
     const ring = pith => put => {
+      let localIndex = 0
       const mPut = (tagB, key, r) => {
         const index = localIndex++
         put(
