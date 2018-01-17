@@ -1,7 +1,17 @@
-import {scan, skipRepeats, skip, tap, map, filter} from '@most/core'
+import {
+  scan,
+  skipRepeats,
+  skip,
+  tap,
+  map,
+  filter,
+  never,
+  propagateEventTask,
+  newStream,
+} from '@most/core'
+import {asap} from '@most/scheduler'
 import {hold} from '@most/hold'
 import rTree from './rstate'
-import subject from './subject'
 import {pmap} from './pmap'
 
 const ring = onChangeA => pith => put => {
@@ -12,12 +22,11 @@ const ring = onChangeA => pith => put => {
         const bKeysLenght = Object.keys(absurdB()).length
         const onChangeB = filter(
           ak =>
-            typeof ak !== 'undefined' && Object.keys(ak).length === bKeysLenght,
+            typeof ak !== 'undefined' && Object.keys(ak).length >= bKeysLenght,
           map(a => a[key], onChangeA)
         )
-        const thisRing = ring(onChangeB)
 
-        put.extend(key, absurdB)(pmap(thisRing, pith))
+        put.extend(key, absurdB)(pmap(ring(onChangeB), pith))
       },
     },
     onChangeA
@@ -25,14 +34,15 @@ const ring = onChangeA => pith => put => {
 }
 export default function tree(absurdA, initState) {
   return pith => {
-    const proxy = subject(true)
-    const thisRing = ring(hold(proxy.stream))
-    const rez = rTree(absurdA)(pmap(thisRing, pith))
-    return skip(
-      1,
-      tap(s => {
-        proxy.event(s)
-      }, skipRepeats(scan((s, r) => r(s), initState != null ? initState : absurdA(), rez)))
+    const proxy = hold(never())
+    const rez = rTree(absurdA)(pmap(ring(proxy), pith))
+    return newStream((sink, scheduler) =>
+      skip(
+        1,
+        tap(s => {
+          asap(propagateEventTask(s, proxy), scheduler)
+        }, skipRepeats(scan((s, r) => r(s), initState != null ? initState : absurdA(), rez)))
+      ).run(sink, scheduler)
     )
   }
 }

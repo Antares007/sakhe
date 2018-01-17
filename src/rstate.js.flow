@@ -3,12 +3,7 @@ import type {Stream} from '@most/types'
 
 export type Absurd<T> = () => T
 
-export type R<T> = (state: T) => T
-
-export type RState<T> = {
-  (state: T): T,
-  type: 'rstate',
-}
+export type RState<T> = (state: T) => T
 
 export type StateRay<A> = {
   extend<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
@@ -17,9 +12,9 @@ export type StateRay<A> = {
   ): (pith: Pith<B> | Stream<Pith<B>>) => void,
   val<Key: $Keys<A>>(
     key: Key,
-    r: Stream<R<$ElementType<$Exact<A>, Key>>>
+    r: Stream<RState<$ElementType<$Exact<A>, Key>>>
   ): void,
-  put(r: Stream<R<A>>): void,
+  put(r: Stream<RState<A>>): void,
 }
 
 export type Pith<A> = (state: StateRay<A>) => void

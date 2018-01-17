@@ -4,10 +4,7 @@ import type {Data, VNode} from './types'
 
 export type Action = {type: 'on', action: $FlowTODO, event: Event}
 
-export type RVNode = {
-  (vnode: VNode, cb: (event: mixed) => void): VNode,
-  type: 'rvnode',
-}
+export type RVNode = (vnode: VNode, cb: (event: mixed) => void) => VNode
 
 export type VNodeRay = {
   node(

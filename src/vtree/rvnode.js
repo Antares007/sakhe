@@ -1,13 +1,12 @@
-import {combineArray, map} from '@most/core'
+import {combineArray, map, newStream, MulticastSource, never} from '@most/core'
 
 import mostTree from '../most'
 import patchData from './patch-data'
-import subject from '../subject'
 import {pmap, toStream} from '../pmap'
 
 export default function tree(tag, data = {}) {
   return pith => {
-    const sync = subject()
+    const sync = new MulticastSource(never())
     let localIndex = 0
 
     const ring = pith => put => {
@@ -117,36 +116,35 @@ export default function tree(tag, data = {}) {
           comment: mCharacterData('comment'),
           put: mPut,
         },
-        sync.stream
+        sync
       )
     }
     return mostTree(patch$s =>
-      combineArray(
-        (data, ...patches) => {
-          const rvnode = function rvnode(vnode, cb) {
-            if (vnode.tag !== tag) throw new TypeError('tag')
-            const cb2 = e => {
-              sync.event(e)
-              cb(e)
-            }
-            patchData(data, vnode, cb2)
-            const {children, node} = vnode
-            const pl = patches.length
-            const l = Math.max(pl, children.length)
-            for (let i = 0; i < l; i++) {
-              if (i < pl) {
-                patches[i](vnode, cb2)
-              } else {
-                node.removeChild(children[i].node)
-                children.splice(i, 1)
+      newStream((sink, scheduler) =>
+        combineArray(
+          (data, ...patches) =>
+            function rvnode(vnode, cb) {
+              if (vnode.tag !== tag) throw new TypeError('tag')
+              const cb2 = e => {
+                sync.event(scheduler.currentTime(), e)
+                cb(e)
               }
-            }
-            return vnode
-          }
-          rvnode.type = 'rvnode'
-          return rvnode
-        },
-        [toStream(data), ...patch$s]
+              patchData(data, vnode, cb2)
+              const {children, node} = vnode
+              const pl = patches.length
+              const l = Math.max(pl, children.length)
+              for (let i = 0; i < l; i++) {
+                if (i < pl) {
+                  patches[i](vnode, cb2)
+                } else {
+                  node.removeChild(children[i].node)
+                  children.splice(i, 1)
+                }
+              }
+              return vnode
+            },
+          [toStream(data), ...patch$s]
+        ).run(sink, scheduler)
       )
     )(pmap(ring, pith))
   }

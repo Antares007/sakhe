@@ -33,12 +33,5 @@ export default function tree(absurdA) {
       put,
     })
   }
-  return pith =>
-    map(r => {
-      const rstate = function rstate(s) {
-        return r(s)
-      }
-      rstate.type = 'rstate'
-      return rstate
-    }, mostTree(mergeArray)(pmap(ring, pith)))
+  return pith => mostTree(mergeArray)(pmap(ring, pith))
 }

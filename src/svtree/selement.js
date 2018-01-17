@@ -1,7 +1,7 @@
 import {hold} from '@most/hold'
-import {filter, map} from '@most/core'
+import {filter, map, never, propagateEventTask, newStream} from '@most/core'
+import {asap} from '@most/scheduler'
 import toVNode from '../vtree/to-vnode'
-import subject from '../subject'
 import M from '../m'
 import svnodeTree from './rsvnode'
 import {pmap} from '../pmap'
@@ -24,7 +24,7 @@ export default function tree(absurd, initState, element, data) {
     pmap(vRing(onChangeA), pith(state, on, onChangeA))
 
   return pith => {
-    const proxy = subject(true)
+    const proxy = hold(never())
     let requestId
     let vnode = toVNode(element)
     const cb = () => {}
@@ -34,26 +34,29 @@ export default function tree(absurd, initState, element, data) {
       requestId = undefined
     }
 
-    return M.of(
-      svnodeTree(absurd, element.tagName.toLowerCase(), data)(
-        pmap(sRing(hold(proxy.stream)), pith)
+    return newStream((sink, scheduler) =>
+      M.of(
+        svnodeTree(absurd, element.tagName.toLowerCase(), data)(
+          pmap(sRing(proxy), pith)
+        )
       )
-    )
-      .scan((s, r) => {
-        if (r.type === 'rvnode') {
-          patch = r
-          if (typeof requestId === 'undefined') {
-            requestId = global.window.requestAnimationFrame(frame)
+        .scan((s, r) => {
+          if (r.type === 'rvnode') {
+            patch = r
+            if (typeof requestId === 'undefined') {
+              requestId = global.window.requestAnimationFrame(frame)
+            }
+            return s
           }
-          return s
-        }
-        return r(s)
-      }, initState)
-      .skipRepeats()
-      .tap(s => {
-        proxy.event(s)
-      })
-      .skip(1)
-      .valueOf()
+          return r(s)
+        }, initState)
+        .skipRepeats()
+        .tap(s => {
+          asap(propagateEventTask(s, proxy), scheduler)
+        })
+        .skip(1)
+        .valueOf()
+        .run(sink, scheduler)
+    )
   }
 }

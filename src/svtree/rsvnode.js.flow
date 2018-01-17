@@ -26,7 +26,9 @@ export type SPith<A> = (
   on: ActionRay
 ) => VPith<A> | Stream<VPith<A>>
 
-export type Bark<A> = (pith: SPith<A>) => Stream<RState<A> | RVNode>
+export type Bark<A> = (
+  pith: SPith<A>
+) => Stream<RState<A> | (RVNode & {|+type: 'rvnode'|})>
 
 declare export default function tree<A>(
   absurd: Absurd<A>,
