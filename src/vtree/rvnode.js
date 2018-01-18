@@ -1,4 +1,5 @@
 import {combineArray, map, newStream, MulticastSource, never} from '@most/core'
+import {disposeAll} from '@most/disposable'
 
 import mostTree from '../most'
 import patchData from './patch-data'
@@ -114,34 +115,38 @@ export default function tree(tag, data = {}) {
           node: mNode,
           text: mCharacterData('text'),
           comment: mCharacterData('comment'),
-          put: mPut,
+          put: mPut
         },
         sync
       )
     }
     return mostTree(patch$s =>
       newStream((sink, scheduler) =>
-        combineArray(
-          (data, ...patches) =>
-            function rvnode(vnode, cb) {
-              if (vnode.tag !== tag) throw new TypeError('tag')
-              const cb2 = e => {
-                sync.event(scheduler.currentTime(), e)
-                cb(e)
-              }
-              patchData(data, vnode, cb2)
-              const {children, node} = vnode
-              for (let i = 0; i < patches.length; i++) {
-                patches[i](vnode, cb2)
-              }
-              for (let i = patches.length; i < children.length; i++) {
-                node.removeChild(children[i].node)
-                children.splice(i, 1)
-              }
-              return vnode
-            },
-          [toStream(data), ...patch$s]
-        ).run(sink, scheduler)
+        disposeAll([
+          combineArray(
+            (data, ...patches) =>
+              function rvnode(vnode, cb) {
+                if (rvnode.vnode === vnode) return vnode
+                if (vnode.tag !== tag) throw new TypeError('tag')
+                rvnode.vnode = vnode
+                const cb2 = e => {
+                  sync.event(scheduler.currentTime(), e)
+                  cb(e)
+                }
+                patchData(data, vnode, cb2)
+                const {children, node} = vnode
+                for (let i = 0; i < patches.length; i++) {
+                  patches[i](vnode, cb2)
+                }
+                for (let i = patches.length; i < children.length; i++) {
+                  node.removeChild(children[i].node)
+                  children.splice(i, 1)
+                }
+                return vnode
+              },
+            [toStream(data), ...patch$s]
+          ).run(sink, scheduler)
+        ])
       )
     )(pmap(ring, pith))
   }
@@ -154,7 +159,7 @@ function createElement(tag, key) {
     key,
     data: {},
     children: [],
-    node: global.document.createElement(tag),
+    node: global.document.createElement(tag)
   }
 }
 
