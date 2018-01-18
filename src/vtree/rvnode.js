@@ -1,18 +1,24 @@
-import {combineArray, map, newStream, MulticastSource, never} from '@most/core'
-import {disposeAll} from '@most/disposable'
+import {
+  combineArray,
+  map,
+  newStream,
+  MulticastSource,
+  never,
+  now
+} from '@most/core'
 
 import mostTree from '../most'
 import patchData from './patch-data'
 import {pmap, toStream} from '../pmap'
 
 export default function tree(tag, data = {}) {
+  const sync = new MulticastSource(never())
   return pith => {
-    const sync = new MulticastSource(never())
-
     const ring = pith => put => {
-      let localIndex = 0
+      let currentIndex = 0
+
       const mPut = (tagB, key, r) => {
-        const index = localIndex++
+        const index = currentIndex++
         put(
           map(
             r =>
@@ -64,9 +70,8 @@ export default function tree(tag, data = {}) {
       const mNode = (tagB, data = {}, key) => pith => {
         mPut(tagB, key, tree(tagB, data)(pith))
       }
-
       const mCharacterData = type => text => {
-        const index = localIndex++
+        const index = currentIndex++
         let oldText
         put(
           map(
@@ -119,36 +124,49 @@ export default function tree(tag, data = {}) {
         },
         sync
       )
-    }
-    return mostTree(patch$s =>
-      newStream((sink, scheduler) =>
-        disposeAll([
-          combineArray(
-            (data, ...patches) =>
-              function rvnode(vnode, cb) {
-                if (rvnode.vnode === vnode) return vnode
-                if (vnode.tag !== tag) throw new TypeError('tag')
-                rvnode.vnode = vnode
-                const cb2 = e => {
-                  sync.event(scheduler.currentTime(), e)
-                  cb(e)
-                }
-                patchData(data, vnode, cb2)
-                const {children, node} = vnode
-                for (let i = 0; i < patches.length; i++) {
-                  patches[i](vnode, cb2)
-                }
-                for (let i = patches.length; i < children.length; i++) {
-                  node.removeChild(children[i].node)
-                  children.splice(i, 1)
-                }
-                return vnode
-              },
-            [toStream(data), ...patch$s]
-          ).run(sink, scheduler)
-        ])
+
+      put(
+        map(
+          data => (vnode, cb) => {
+            if (vnode.data === data) return
+            patchData(data, vnode, cb)
+            vnode.data = data
+          },
+          toStream(data)
+        )
       )
-    )(pmap(ring, pith))
+
+      put(
+        now(vnode => {
+          const {children, node} = vnode
+          for (let i = currentIndex; i < children.length; i++) {
+            node.removeChild(children[i].node)
+            children.splice(i, 1)
+          }
+        })
+      )
+    }
+
+    return newStream((sink, scheduler) =>
+      mostTree(
+        combineArray(
+          (...patches) =>
+            function rvnode(vnode, cb) {
+              if (vnode.pachedBy === rvnode) return vnode
+              if (vnode.tag !== tag) throw new TypeError('tag')
+              const cb2 = e => {
+                sync.event(scheduler.currentTime(), e)
+                cb(e)
+              }
+              for (let i = 0; i < patches.length; i++) {
+                patches[i](vnode, cb2)
+              }
+              vnode.pachedBy = rvnode
+              return vnode
+            }
+        )
+      )(pmap(ring, pith)).run(sink, scheduler)
+    )
   }
 }
 

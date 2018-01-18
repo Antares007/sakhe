@@ -14,7 +14,7 @@ export default function patchData(data, vnode, cb) {
           cb({
             type: 'on',
             action: vnode.data.on[event.type],
-            event,
+            event
           })
         }
       node.addEventListener(k, vnode.listener)
@@ -67,7 +67,6 @@ export default function patchData(data, vnode, cb) {
       styleSetter
     )
   }
-  vnode.data = data
 }
 
 function diffARU(oldData, newData, add, remove, update) {
