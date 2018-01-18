@@ -131,15 +131,12 @@ export default function tree(tag, data = {}) {
               }
               patchData(data, vnode, cb2)
               const {children, node} = vnode
-              const pl = patches.length
-              const l = Math.max(pl, children.length)
-              for (let i = 0; i < l; i++) {
-                if (i < pl) {
-                  patches[i](vnode, cb2)
-                } else {
-                  node.removeChild(children[i].node)
-                  children.splice(i, 1)
-                }
+              for (let i = 0; i < patches.length; i++) {
+                patches[i](vnode, cb2)
+              }
+              for (let i = patches.length; i < children.length; i++) {
+                node.removeChild(children[i].node)
+                children.splice(i, 1)
               }
               return vnode
             },
