@@ -6,7 +6,7 @@ import M from '../m'
 export default function Counter2(d: number = 0): Pith {
   return (put, on) => {
     const pi2 = Math.PI * 2
-    const cycle$ = M.of(periodic(50))
+    const cycle$ = M.of(periodic(1000 / 60))
       .scan(i => (i >= pi2 ? 0 : i + 0.15), 0)
       .multicast()
     // .take(1)
@@ -33,8 +33,8 @@ export default function Counter2(d: number = 0): Pith {
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
                   d * 20 +
-                  Math.floor(30 * Math.cos(i))}, 255)`,
-              },
+                  Math.floor(30 * Math.cos(i))}, 255)`
+              }
             }),
             cycle$.valueOf()
           )
@@ -57,8 +57,8 @@ export default function Counter2(d: number = 0): Pith {
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
                   d * 20 +
-                  Math.floor(30 * Math.cos(i))})`,
-              },
+                  Math.floor(30 * Math.cos(i))})`
+              }
             }),
             cycle$.valueOf()
           )

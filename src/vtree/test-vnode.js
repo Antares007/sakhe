@@ -1,5 +1,6 @@
 // @flow
 // /* eslint-disable no-unused-vars */
+import {now} from '@most/core'
 import M from '../m'
 import tree from './element'
 import Counter1 from '../piths/counter1'
@@ -14,6 +15,23 @@ const rez = tree(elm)((put, on) => {
     put.node('button', {on: {click: 'b'}})(put => put.text('b'))
     put.node('button', {on: {click: 'o'}})(put => put.text('o'))
   })
+  put.node('div')(put =>
+    put.node('div')(put =>
+      put.node('div')(put =>
+        put.node('div')(put => {
+          put.text('aaa')
+          put.put(
+            'div',
+            'k',
+            now(vnode => {
+              global.console.log('called')
+              return vnode
+            })
+          )
+        })
+      )
+    )
+  )
   put.node('div', {}, 'key')(
     M.of(on)
       .filter(x => typeof x.action === 'string')
