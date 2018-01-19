@@ -1,9 +1,8 @@
 import {booleanAttributes} from './constants'
 
 export default function patchData(data, vnode, cb) {
-  if (vnode.data === data) return
   const {data: oldData, node} = vnode
-
+  vnode.cb = cb
   diffARU(
     oldData.on,
     data.on,
@@ -11,7 +10,7 @@ export default function patchData(data, vnode, cb) {
       vnode.listener =
         vnode.listener ||
         function listener(event) {
-          cb({
+          vnode.cb({
             type: 'on',
             action: vnode.data.on[event.type],
             event

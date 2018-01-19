@@ -3,6 +3,7 @@
 import {now} from '@most/core'
 import M from '../m'
 import tree from './element'
+import type {Pith} from '../vtree/rvnode'
 import Counter1 from '../piths/counter1'
 import Counter2 from '../piths/counter2'
 
@@ -44,6 +45,21 @@ const rez = tree(elm)((put, on) => {
       .tap(pith => global.console.timeStamp(pith.toString()))
       .valueOf()
   )
+  put.node('div')(C())
 })
 
 M.of(rez).drain()
+
+function C(): Pith {
+  return (put, on) => {
+    put.node('button', {on: {click: 'A'}})(put => {
+      put.text('A')
+    })
+    put.text(
+      M.of(on)
+        .map(x => x.action)
+        .startWith('')
+        .valueOf()
+    )
+  }
+}
