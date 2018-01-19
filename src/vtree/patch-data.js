@@ -1,8 +1,7 @@
 import {booleanAttributes} from './constants'
 
-export default function patchData(data, vnode, cb) {
+export default function patchData(data, vnode) {
   const {data: oldData, node} = vnode
-  vnode.cb = cb
   diffARU(
     oldData.on,
     data.on,

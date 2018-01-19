@@ -155,12 +155,12 @@ export default function tree(tag, data = {}) {
             function rvnode(vnode, cb) {
               if (vnode.pachedBy === rvnode) return vnode
               if (vnode.tag !== tag) throw new TypeError('tag')
-              const cb2 = e => {
+              vnode.cb = e => {
                 sync.event(scheduler.currentTime(), e)
                 cb(e)
               }
               for (let i = 0; i < patches.length; i++) {
-                patches[i](vnode, cb2)
+                patches[i](vnode, vnode.cb)
               }
               vnode.pachedBy = rvnode
               return vnode
