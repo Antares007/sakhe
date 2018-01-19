@@ -4,7 +4,7 @@ import {
   newStream,
   MulticastSource,
   never,
-  now
+  now,
 } from '@most/core'
 
 import mostTree from '../most'
@@ -123,7 +123,7 @@ export default function tree(tag, data = {}) {
             node: mNode,
             text: mCharacterData('text'),
             comment: mCharacterData('comment'),
-            put: mPut
+            put: mPut,
           },
           sync
         )
@@ -177,7 +177,7 @@ function createElement(tag, key) {
     key,
     data: {},
     children: [],
-    node: global.document.createElement(tag)
+    node: global.document.createElement(tag),
   }
 }
 

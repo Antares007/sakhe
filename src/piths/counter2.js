@@ -33,8 +33,8 @@ export default function Counter2(d: number = 0): Pith {
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
                   d * 20 +
-                  Math.floor(30 * Math.cos(i))}, 255)`
-              }
+                  Math.floor(30 * Math.cos(i))}, 255)`,
+              },
             }),
             cycle$.valueOf()
           )
@@ -57,8 +57,8 @@ export default function Counter2(d: number = 0): Pith {
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
                   d * 20 +
-                  Math.floor(30 * Math.cos(i))})`
-              }
+                  Math.floor(30 * Math.cos(i))})`,
+              },
             }),
             cycle$.valueOf()
           )

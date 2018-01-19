@@ -13,7 +13,7 @@ export default function patchData(data, vnode, cb) {
           vnode.cb({
             type: 'on',
             action: vnode.data.on[event.type],
-            event
+            event,
           })
         }
       node.addEventListener(k, vnode.listener)
