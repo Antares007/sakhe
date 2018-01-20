@@ -1,5 +1,5 @@
 // @flow
-// /* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars */
 import {disposeWith} from '@most/disposable'
 import {now, newStream} from '@most/core'
 import M from '../m'
@@ -17,46 +17,6 @@ const rez = tree(elm)((put, on) => {
     put.node('button', {on: {click: 'b'}})(put => put.text('b'))
     put.node('button', {on: {click: 'o'}})(put => put.text('o'))
   })
-  put.node('div')(put =>
-    put.node('div')(put =>
-      put.node('div')(put =>
-        put.node('div')(put => {
-          put.text('aaa')
-          put.put(
-            'div',
-            'k',
-            now(vnode => {
-              global.console.log('called')
-              return vnode
-            })
-          )
-        })
-      )
-    )
-  )
-  put.ref(
-    now(vnode => {
-      global.console.log('ref', vnode)
-      return vnode
-    })
-  )
-  put.put(
-    'button',
-    'k',
-    newStream((sink, scheduler) => {
-      sink.event(scheduler.currentTime(), vnode => {
-        global.console.log(1, vnode)
-        vnode.node.addEventListener('click', (e: MouseEvent) => {
-          global.console.log('click', e)
-        })
-        vnode.node.innerHTML = 'hi'
-        return vnode
-      })
-      return disposeWith(() => {
-        global.console.log('hmmm')
-      }, null)
-    })
-  )
   put.node('div', {}, 'key')(
     M.of(on)
       .filter(x => typeof x.action === 'string')
@@ -69,7 +29,47 @@ const rez = tree(elm)((put, on) => {
       .tap(pith => global.console.timeStamp(pith.toString()))
       .valueOf()
   )
-  put.node('div')(C())
+  // put.node('div')(put =>
+  //   put.node('div')(put =>
+  //     put.node('div')(put =>
+  //       put.node('div')(put => {
+  //         put.text('aaa')
+  //         put.put(
+  //           'div',
+  //           'k',
+  //           now(vnode => {
+  //             global.console.log('called')
+  //             return vnode
+  //           })
+  //         )
+  //       })
+  //     )
+  //   )
+  // )
+  // put.ref(
+  //   now(vnode => {
+  //     global.console.log('ref', vnode)
+  //     return vnode
+  //   })
+  // )
+  // put.put(
+  //   'button',
+  //   'k',
+  //   newStream((sink, scheduler) => {
+  //     sink.event(scheduler.currentTime(), vnode => {
+  //       global.console.log(1, vnode)
+  //       vnode.node.addEventListener('click', (e: MouseEvent) => {
+  //         global.console.log('click', e)
+  //       })
+  //       vnode.node.innerHTML = 'hi'
+  //       return vnode
+  //     })
+  //     return disposeWith(() => {
+  //       global.console.log('hmmm')
+  //     }, null)
+  //   })
+  // )
+  // put.node('div')(C())
 })
 
 M.of(rez).drain()

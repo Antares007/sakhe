@@ -9,7 +9,7 @@ export default function (element, data) {
     const cb = () => {}
     let patch
     const frame = () => {
-      vnode = patch(vnode, cb)
+      patch(vnode, cb)
       requestId = undefined
     }
     return map(

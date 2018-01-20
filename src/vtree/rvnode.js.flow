@@ -4,7 +4,7 @@ import type {Data, VNode} from './types'
 
 export type Action = {type: 'on', action: $FlowTODO, event: Event}
 
-export type RVNode = (vnode: VNode, cb: (event: mixed) => void) => VNode
+export type Patch = (vnode: VNode, cb: (event: mixed) => void) => VNode
 
 export type VNodeRay = {
   node(
@@ -14,14 +14,14 @@ export type VNodeRay = {
   ): (pith: Pith | Stream<Pith>) => void,
   text(text: string | Stream<string>): void,
   comment(text: string | Stream<string>): void,
-  put(tag: string, key: string, r: Stream<RVNode>): void,
-  ref(r: Stream<RVNode>): void
+  put(tag: string, key: string, r: Stream<Patch>): void,
+  ref(r: Stream<Patch>): void
 }
 export type ActionRay = Stream<Action>
 
 export type Pith = (put: VNodeRay, on: ActionRay) => void
 
-export type Bark = (pith: Pith | Stream<Pith>) => Stream<RVNode>
+export type Bark = (pith: Pith | Stream<Pith>) => Stream<Patch>
 
 declare export default function tree(
   tag: string,

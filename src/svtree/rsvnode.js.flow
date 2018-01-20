@@ -5,7 +5,7 @@ import type {Absurd, StateRay as InnerStateRay, RState} from '../rstate'
 import type {
   VNodeRay as InnerVNodeRay,
   ActionRay as InnerActionRay,
-  RVNode
+  Patch
 } from '../vtree/rvnode'
 
 export type VNodeRay<A> = {
@@ -28,7 +28,7 @@ export type SPith<A> = (
 
 export type Bark<A> = (
   pith: SPith<A>
-) => Stream<RState<A> | (RVNode & {|+type: 'rvnode'|})>
+) => Stream<RState<A> | (Patch & {|+type: 'rvnode'|})>
 
 declare export default function tree<A>(
   absurd: Absurd<A>,
