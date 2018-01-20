@@ -3,7 +3,7 @@ import {map, periodic} from '@most/core'
 import type {Pith} from '../vtree/rvnode'
 import M from '../m'
 
-export default function Counter2(d: number = 0): Pith {
+export default function Counter2 (d: number = 0): Pith {
   return (put, on) => {
     const pi2 = Math.PI * 2
     const cycle$ = M.of(periodic(1000 / 60))
@@ -33,8 +33,8 @@ export default function Counter2(d: number = 0): Pith {
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
                   d * 20 +
-                  Math.floor(30 * Math.cos(i))}, 255)`,
-              },
+                  Math.floor(30 * Math.cos(i))}, 255)`
+              }
             }),
             cycle$.valueOf()
           )
@@ -57,8 +57,8 @@ export default function Counter2(d: number = 0): Pith {
                   d * 20 +
                   Math.floor(30 * Math.sin(i))}, ${100 +
                   d * 20 +
-                  Math.floor(30 * Math.cos(i))})`,
-              },
+                  Math.floor(30 * Math.cos(i))})`
+              }
             }),
             cycle$.valueOf()
           )

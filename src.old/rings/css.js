@@ -1,14 +1,15 @@
 const m = require('most')
 const id = a => a
 
-const cssRing = pith => (put, select) => pith(
-  Object.assign({}, put, {
-    node: (pmap = id) => put.node(p => cssRing(pmap(p))),
-    onode: (spmap, vpmap = id) => put.onode(spmap, p => cssRing(vpmap(p))),
-    anode: (spmap, vpmap = id) => put.anode(spmap, p => cssRing(vpmap(p)))
-  }),
-  Object.assign({}, select, {css$})
-)
+const cssRing = pith => (put, select) =>
+  pith(
+    Object.assign({}, put, {
+      node: (pmap = id) => put.node(p => cssRing(pmap(p))),
+      onode: (spmap, vpmap = id) => put.onode(spmap, p => cssRing(vpmap(p))),
+      anode: (spmap, vpmap = id) => put.anode(spmap, p => cssRing(vpmap(p)))
+    }),
+    Object.assign({}, select, {css$})
+  )
 
 module.exports = cssRing
 
@@ -30,7 +31,10 @@ function css (str) {
 function css$ (strings, ...exprs) {
   if (exprs.length === 0) return m.of(css(strings[0]))
   return m.combineArray(
-    (...exprs) => css(strings.slice(1).reduce((rez, s, i) => rez + exprs[i] + s, strings[0])),
-    exprs.map(x => x instanceof m.Stream ? x : m.of(x))
+    (...exprs) =>
+      css(
+        strings.slice(1).reduce((rez, s, i) => rez + exprs[i] + s, strings[0])
+      ),
+    exprs.map(x => (x instanceof m.Stream ? x : m.of(x)))
   )
 }

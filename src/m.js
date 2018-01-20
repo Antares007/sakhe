@@ -16,79 +16,79 @@ import {
   continueWith,
   delay,
   multicast,
-  debounce,
+  debounce
 } from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 
 export default class M {
-  constructor($) {
+  constructor ($) {
     this.$ = $
   }
-  debounce(n) {
+  debounce (n) {
     return new M(debounce(n, this.$))
   }
-  multicast() {
+  multicast () {
     return new M(multicast(this.$))
   }
-  static of(a) {
+  static of (a) {
     return new M(a)
   }
-  static switchLatest(m) {
+  static switchLatest (m) {
     return new M(switchLatest(m.map(x => x.valueOf()).valueOf()))
   }
-  constant(b) {
+  constant (b) {
     return new M(constant(b, this.$))
   }
-  scan(f, b) {
+  scan (f, b) {
     return new M(scan(f, b, this.$))
   }
-  map(f) {
+  map (f) {
     return new M(map(f, this.$))
   }
-  combine(fn, b$) {
+  combine (fn, b$) {
     return new M(combine(fn, this.$, b$))
   }
-  reduce(f, initState) {
+  reduce (f, initState) {
     let s = initState
     const rez = tap(ns => {
       s = ns
     }, scan((s, a) => f(s, a), initState, this.$))
     return runEffects(rez, newDefaultScheduler()).then(() => s)
   }
-  continueWith(f) {
+  continueWith (f) {
     return new M(continueWith(f, this.$))
   }
-  delay(n) {
+  delay (n) {
     return new M(delay(n, this.$))
   }
-  startWith(value) {
+  startWith (value) {
     return new M(startWith(value, this.$))
   }
-  merge(b$) {
+  merge (b$) {
     return new M(merge(this.$, b$))
   }
-  take(n) {
+  take (n) {
     return new M(take(n, this.$))
   }
-  tap(f) {
+  tap (f) {
     return new M(tap(f, this.$))
   }
-  filter(p) {
+  filter (p) {
     return new M(filter(p, this.$))
   }
-  skip(n) {
+  skip (n) {
     return new M(skip(n, this.$))
   }
-  skipRepeats() {
+  skipRepeats () {
     return new M(skipRepeats(this.$))
   }
-  skipRepeatsWith(f) {
+  skipRepeatsWith (f) {
     return new M(skipRepeatsWith(f, this.$))
   }
-  drain() {
+  drain () {
     return runEffects(this.$, newDefaultScheduler())
   }
-  valueOf() {
+  valueOf () {
     return this.$
   }
 }

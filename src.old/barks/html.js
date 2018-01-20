@@ -12,45 +12,46 @@ var toHTML = init([
 
 const apiRing = require('../rings/api')
 
-const htmlBark =
-(spmap = apiRing, vpmap = apiRing) =>
-(initState = {}, stateCb = () => void 0) =>
-pith => {
+const htmlBark = (spmap = apiRing, vpmap = apiRing) => (
+  initState = {},
+  stateCb = () => void 0
+) => pith => {
   const sPithRing = pith => (state, select) => {
-    pith(state, Object.assign({}, select, {
-      action$: m.empty()
-    }))
+    pith(
+      state,
+      Object.assign({}, select, {
+        action$: m.empty()
+      })
+    )
   }
   const vPithRing = pith => (put, select) => {
-    const snode =
-    nodet =>
-    (spmap = id, vpmap = id) =>
-    (key, sel, data) => {
-      return nodet(
-        p => sPithRing(spmap(p)),
-        p => vPithRing(vpmap(p))
-      )(
-        key, sel, data
+    const snode = nodet => (spmap = id, vpmap = id) => (key, sel, data) => {
+      return nodet(p => sPithRing(spmap(p)), p => vPithRing(vpmap(p)))(
+        key,
+        sel,
+        data
       )
     }
-    pith(Object.assign({}, put, {
-      node: (pmap = id) => put.node(p => vPithRing(pmap(p))),
-      onode: snode(put.onode),
-      anode: snode(put.anode)
-    }), Object.assign({}, select, {
-      action$: m.empty(),
-      frame$: m.empty()
-    }))
+    pith(
+      Object.assign({}, put, {
+        node: (pmap = id) => put.node(p => vPithRing(pmap(p))),
+        onode: snode(put.onode),
+        anode: snode(put.anode)
+      }),
+      Object.assign({}, select, {
+        action$: m.empty(),
+        frame$: m.empty()
+      })
+    )
   }
 
-  return svnodeBark(
-    p => sPithRing(spmap(p)),
-    p => vPithRing(vpmap(p))
-  )(
-    stateCb, initState, () => ({}), 'html', {}
-  )(
-    pith
-  ).map(toHTML)
+  return svnodeBark(p => sPithRing(spmap(p)), p => vPithRing(vpmap(p)))(
+    stateCb,
+    initState,
+    () => ({}),
+    'html',
+    {}
+  )(pith).map(toHTML)
 }
 
 module.exports = htmlBark

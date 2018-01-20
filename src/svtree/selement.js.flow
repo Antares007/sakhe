@@ -4,7 +4,7 @@ import type {Data} from '../vtree/types'
 import type {Absurd, StateRay as InnerStateRay} from '../rstate'
 import type {
   VNodeRay as InnerVNodeRay,
-  ActionRay as InnerActionRay,
+  ActionRay as InnerActionRay
 } from './rsvnode'
 
 export type VNodeRay<A> = {
@@ -14,7 +14,7 @@ export type VNodeRay<A> = {
     absurd: Absurd<B>,
     tag: string,
     data?: Data
-  ): (pith: SPith<B>) => void,
+  ): (pith: SPith<B>) => void
 }
 export type ActionRay = InnerActionRay
 export type VPith<A> = (put: VNodeRay<A>, on: ActionRay) => void

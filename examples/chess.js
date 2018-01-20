@@ -6,15 +6,15 @@ const Knight = put =>
     {
       style: {
         color: 'white',
-        textShadow: '0px 0px 5px black',
-      },
+        textShadow: '0px 0px 5px black'
+      }
     },
     put => put.text('♘')
   )
 const Empty = put => {}
 const colors = {
   black: 'rgb(215, 139, 78)',
-  white: 'rgb(255, 206, 162)',
+  white: 'rgb(255, 206, 162)'
 }
 const squareRing = pith => put =>
   pith({
@@ -26,14 +26,14 @@ const squareRing = pith => put =>
         backgroundColor: black ? colors.black : colors.white,
         color: !black ? colors.black : colors.white,
         fontSize: '7vw',
-        textAlign: 'center',
+        textAlign: 'center'
       }
       const click = [x, y]
       put.node(apiRing)('div.square', {
         style,
-        on: {click},
+        on: {click}
       })(pith)
-    },
+    }
   })
 const boardRing = pith => put =>
   pith({
@@ -45,9 +45,9 @@ const boardRing = pith => put =>
           backgroundColor: 'black',
           display: 'flex',
           flexWrap: 'wrap',
-          padding: '5px',
-        },
-      })(pith),
+          padding: '5px'
+        }
+      })(pith)
   })
 const chessRing = pith => put =>
   pith({
@@ -85,7 +85,7 @@ const chessRing = pith => put =>
             }
           })
         }
-      }),
+      })
   })
 const Chess = (state, sselect) => {
   return (put, select) => {
@@ -95,7 +95,7 @@ const Chess = (state, sselect) => {
 
 const id = a => a
 const mapRaysRing = f =>
-  function map(pith) {
+  function map (pith) {
     return (...rays) => {
       const [put, ...rest] = f(...rays)
       const node = (pmap = id) => put.node(p => map(pmap(p)))
@@ -104,7 +104,7 @@ const mapRaysRing = f =>
         Object.assign({}, put, {
           node,
           onode: snode(put.onode),
-          anode: snode(put.anode),
+          anode: snode(put.anode)
         }),
         ...rest
       )
@@ -118,9 +118,9 @@ PatchBark(apiRing, p =>
       onode: (spmap, vpmap) => (key, sel, data) =>
         put.onode(spmap, vpmap)(key, sel + '.o', data),
       anode: (spmap, vpmap) => (key, sel, data) =>
-        put.anode(spmap, vpmap)(key, sel + '.a', data),
+        put.anode(spmap, vpmap)(key, sel + '.a', data)
     }),
-    ...rest,
+    ...rest
   ])(chessRing(p))
 )(document.getElementById('root-node'), ...require('./initState')('chess'))(
   Chess

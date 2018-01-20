@@ -14,7 +14,7 @@ export type StateRay<A> = {
     key: Key,
     r: Stream<RState<$ElementType<$Exact<A>, Key>>>
   ): void,
-  put(r: Stream<RState<A>>): void,
+  put(r: Stream<RState<A>>): void
 }
 
 export type Pith<A> = (state: StateRay<A>) => void

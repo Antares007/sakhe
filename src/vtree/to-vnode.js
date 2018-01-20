@@ -1,4 +1,4 @@
-export default function toVNode(element) {
+export default function toVNode (element) {
   const tag = element.tagName.toLowerCase()
 
   const attrs = readAttrs(element.attributes)
@@ -18,7 +18,7 @@ export default function toVNode(element) {
   return {type: 'node', tag, key: undefined, data, children, node: element}
 }
 
-function toVTree(node) {
+function toVTree (node) {
   const {nodeType} = node
   if (nodeType === 1) {
     return toVNode(node)
@@ -30,7 +30,7 @@ function toVTree(node) {
   throw new Error(`unexpected node type [${nodeType}]`)
 }
 
-function readAttrs(elmAttrs) {
+function readAttrs (elmAttrs) {
   const l = elmAttrs.length
   if (l === 0) return
   const attrs = {}
@@ -44,7 +44,7 @@ function readAttrs(elmAttrs) {
   return attrs
 }
 
-function readClass(classList) {
+function readClass (classList) {
   const l = classList.length
   if (l === 0) return undefined
   const classes = {}
@@ -54,7 +54,7 @@ function readClass(classList) {
   return classes
 }
 
-function readStyle(style) {
+function readStyle (style) {
   const l = style.length
   if (l === 0) return undefined
   const styles = {}

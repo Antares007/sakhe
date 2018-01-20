@@ -1,6 +1,6 @@
 import {booleanAttributes} from './constants'
 
-export default function patchData(data, vnode) {
+export default function patchData (data, vnode) {
   const {data: oldData, node} = vnode
   diffARU(
     oldData.on,
@@ -8,11 +8,11 @@ export default function patchData(data, vnode) {
     k => {
       vnode.listener =
         vnode.listener ||
-        function listener(event) {
+        function listener (event) {
           vnode.cb({
             type: 'on',
             action: vnode.data.on[event.type],
-            event,
+            event
           })
         }
       node.addEventListener(k, vnode.listener)
@@ -67,7 +67,7 @@ export default function patchData(data, vnode) {
   }
 }
 
-function diffARU(oldData, newData, add, remove, update) {
+function diffARU (oldData, newData, add, remove, update) {
   let key
   if (oldData === newData) return
   if (oldData) {

@@ -16,7 +16,9 @@
       ],
       "flow"
     ],
-    "plugins": ["transform-object-rest-spread"]
+    "plugins": [
+      "transform-object-rest-spread"
+    ]
   },
   "dependencies": {
     "@most/core": "^1.2.0",
@@ -31,23 +33,21 @@
     "babel-preset-flow": "^6.23.0",
     "babel-register": "^6.26.0",
     "debug": "^3.1.0",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-standard": "^3.0.1",
     "most": "^1.7.2",
-    "most-request-animation-frame": "^1.1.0",
     "most-subject": "^5.3.0",
     "snabbdom": "^0.7.1"
   },
   "devDependencies": {
-    "@types/node": "^8.5.6",
-    "@types/prettier": "^1.9.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.1.2",
-    "eslint": "^4.14.0",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-config-prettier": "^2.9.0",
+    "eslint": "^4.16.0",
     "eslint-plugin-flowtype": "^2.40.1",
     "eslint-plugin-import": "^2.8.0",
-    "flow-bin": "^0.63.1",
-    "typescript": "^2.7.0-dev.20171216"
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "flow-bin": "^0.63.1"
   },
   "scripts": {
     "lint": "eslint src && flow",

@@ -6,7 +6,7 @@ import M from '../m'
 import svnodeTree from './rsvnode'
 import {pmap} from '../pmap'
 
-export default function tree(absurd, initState, element, data) {
+export default function tree (absurd, initState, element, data) {
   const vRing = onChangeA => pith => put =>
     pith({
       ...put,
@@ -18,7 +18,7 @@ export default function tree(absurd, initState, element, data) {
           map(a => a[key], onChangeA)
         )
         put.snode(key, absurdB, tag, data)(pmap(sRing(onChangeB), pith))
-      },
+      }
     })
   const sRing = onChangeA => pith => (state, on) =>
     pmap(vRing(onChangeA), pith(state, on, onChangeA))

@@ -7,7 +7,7 @@ import {
   filter,
   never,
   propagateEventTask,
-  newStream,
+  newStream
 } from '@most/core'
 import {asap} from '@most/scheduler'
 import {hold} from '@most/hold'
@@ -27,12 +27,12 @@ const ring = onChangeA => pith => put => {
         )
 
         put.extend(key, absurdB)(pmap(ring(onChangeB), pith))
-      },
+      }
     },
     onChangeA
   )
 }
-export default function tree(absurdA, initState) {
+export default function tree (absurdA, initState) {
   return pith => {
     const proxy = hold(never())
     const rez = rTree(absurdA)(pmap(ring(proxy), pith))

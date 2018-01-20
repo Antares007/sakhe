@@ -5,7 +5,7 @@ PatchBark()(
   ...require('./initState')('todo')
 )(TodoApp()).drain()
 
-function TodoApp() {
+function TodoApp () {
   return (enter, sselect) => {
     const submit = sselect.action$.filter(x => x.action === submit)
     const input = sselect.action$.filter(x => x.action === input)

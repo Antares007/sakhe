@@ -3,7 +3,7 @@ import rvnodeTree from '../vtree/rvnode'
 import rstateTree from '../rstate'
 import {pmap, toStream} from '../pmap'
 
-export default function tree(absurdA, tag, data) {
+export default function tree (absurdA, tag, data) {
   return sPith => {
     // const vpithSubject = subject()
     const rStateProxy = new MulticastSource(never())
@@ -34,7 +34,7 @@ export default function tree(absurdA, tag, data) {
                 }, tree(absurdB, tag, data)(pith)).run(sink, scheduler)
               )
             )
-          },
+          }
         },
         on
       )
@@ -45,7 +45,7 @@ export default function tree(absurdA, tag, data) {
       newStream((sink, scheduler) =>
         map(
           r => {
-            const rvnode = function rvnode(vnode, cb) {
+            const rvnode = function rvnode (vnode, cb) {
               return r(vnode, e => {
                 actionProxy.event(scheduler.currentTime(), e)
                 cb(e)

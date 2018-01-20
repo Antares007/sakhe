@@ -20,12 +20,12 @@ const readdir = path =>
   })
 
 class WatchTask {
-  constructor(sink, scheduler, path) {
+  constructor (sink, scheduler, path) {
     this.sink = sink
     this.scheduler = scheduler
     this.path = path
   }
-  run(t) {
+  run (t) {
     const path = this.path
     const watcher = fs.watch(path)
     const change$ = m.fromEvent('change', watcher)
@@ -60,19 +60,19 @@ class WatchTask {
         .source.run(this.sink, this.scheduler)
     ])
   }
-  error(t, err) {
+  error (t, err) {
     this.sink.error(t, err)
   }
-  dispose() {
+  dispose () {
     return this.disposable && this.disposable.dispose()
   }
 }
 
 class WatchSource {
-  constructor(path) {
+  constructor (path) {
     this.path = path
   }
-  run(sink, scheduler) {
+  run (sink, scheduler) {
     return scheduler.asap(new WatchTask(sink, scheduler, this.path))
   }
 }

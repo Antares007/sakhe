@@ -13,7 +13,7 @@ PatchBark(apiRing, hApiRing)(document.getElementById('root-node'))(
   }
 ).drain()
 
-function Counter(d = 0) {
+function Counter (d = 0) {
   return (h, select) => {
     const pi2 = Math.PI * 2
     const cycle$ = m.periodic(20).scan(i => (i >= pi2 ? 0 : i + 0.15), 0)
@@ -63,8 +63,8 @@ function Counter(d = 0) {
   }
 }
 
-function showHideRing(pith) {
-  return function showHidePith(h) {
+function showHideRing (pith) {
+  return function showHidePith (h) {
     const showHide$ = h.$.filter(({action}) => action === showHide$)
       .scan(b => !b, false)
       .multicast()

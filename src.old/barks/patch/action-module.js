@@ -8,7 +8,7 @@ module.exports = function (send) {
     create (emptyVnode, vnode) {
       const newOns = vnode.data.on
       if (!newOns) return
-      const listener = vnode.listener = createListener()
+      const listener = (vnode.listener = createListener())
       listener.vnode = vnode
       updateListners(listener, vnode.elm, {}, newOns)
     },
@@ -16,11 +16,11 @@ module.exports = function (send) {
       const oldOns = oldVnode.data.on
       const newOns = vnode.data.on
       if (!oldOns && !newOns) return
-      const listener = vnode.listener = oldVnode.listener || createListener()
+      const listener = (vnode.listener = oldVnode.listener || createListener())
       listener.vnode = vnode
       updateListners(listener, vnode.elm, oldOns || {}, newOns || {})
     },
-    destroy: (vnode) => {
+    destroy: vnode => {
       const oldOns = vnode.data.on
       if (!oldOns) return
       updateListners(vnode.listener, vnode.elm, oldOns, {})

@@ -2,7 +2,7 @@ import {map, tap} from '@most/core'
 import rvnodeTree from './rvnode'
 import toVNode from './to-vnode'
 
-export default function(element, data) {
+export default function (element, data) {
   return pith => {
     let requestId
     let vnode = toVNode(element)

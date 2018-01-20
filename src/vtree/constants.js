@@ -1,5 +1,5 @@
 export const NAMESPACE_URIS = {
-  xlink: 'http://www.w3.org/1999/xlink',
+  xlink: 'http://www.w3.org/1999/xlink'
 }
 
 export const booleanAttributes = [
@@ -46,7 +46,7 @@ export const booleanAttributes = [
   'translate',
   'truespeed',
   'typemustmatch',
-  'visible',
+  'visible'
 ].reduce((s, k) => {
   s[k] = true
   return s

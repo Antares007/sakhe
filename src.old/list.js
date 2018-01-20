@@ -10,12 +10,10 @@ const nil = Object.create({
   }
 })
 
-module.exports = { Cons, nil }
+module.exports = {Cons, nil}
 
 function Cons (head, tail) {
-  if (!(
-    tail instanceof Cons || tail === nil
-  )) throw new Error('argument error tail')
+  if (!(tail instanceof Cons || tail === nil)) { throw new Error('argument error tail') }
   if (!(this instanceof Cons)) return new Cons(head, tail)
   this.head = head
   this.tail = tail

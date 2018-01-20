@@ -7,7 +7,7 @@ import {asap} from '@most/scheduler'
 
 const noop = () => {}
 
-export default function subject<A>(isAsync: boolean = false) {
+export default function subject<A> (isAsync: boolean = false) {
   let event: (a: A) => void = noop
   let error: (err: Error) => void = noop
   let end = noop
@@ -24,15 +24,15 @@ export default function subject<A>(isAsync: boolean = false) {
   )
   return {
     stream: subject,
-    event(e: A) {
+    event (e: A) {
       event(e)
     },
-    error(err: Error) {
+    error (err: Error) {
       error(err)
     },
-    end() {
+    end () {
       end()
-    },
+    }
   }
 }
 
@@ -43,7 +43,7 @@ class AsyncSink<A> {
   scheduler: Scheduler
   scheduledTask: ?ScheduledTask
 
-  constructor(sink: Sink<A>, scheduler: Scheduler) {
+  constructor (sink: Sink<A>, scheduler: Scheduler) {
     this.sink = sink
     this.scheduler = scheduler
     this.events = []
@@ -51,28 +51,28 @@ class AsyncSink<A> {
     this.scheduledTask = undefined
   }
 
-  event(t, a: A) {
+  event (t, a: A) {
     this.events.push(t => this.sink.event(t, a))
     this.scheduleSend()
   }
 
-  end() {
+  end () {
     this.events.push(t => this.sink.end(t))
     this.scheduleSend()
   }
 
-  error(t, err: Error) {
+  error (t, err: Error) {
     this.events.push(t => this.sink.error(t, err))
     this.scheduleSend()
   }
 
-  scheduleSend() {
+  scheduleSend () {
     if (this.sendScheduled) return
     this.sendScheduled = true
     this.scheduledTask = asap(new SendTask(this), this.scheduler)
   }
 
-  disable() {
+  disable () {
     const {scheduledTask} = this
     if (scheduledTask != null) scheduledTask.dispose()
   }
@@ -82,11 +82,11 @@ class SendTask<A> {
   sink: AsyncSink<A>
   active: boolean
 
-  constructor(sink: AsyncSink<A>) {
+  constructor (sink: AsyncSink<A>) {
     this.sink = sink
     this.active = true
   }
-  run(t) {
+  run (t) {
     const {sink} = this
     const es = sink.events
     sink.events = []
@@ -96,10 +96,10 @@ class SendTask<A> {
       es[i](t)
     }
   }
-  error(t, err) {
+  error (t, err) {
     this.sink.error(t, err)
   }
-  dispose() {
+  dispose () {
     this.active = false
   }
 }
@@ -108,28 +108,28 @@ class SafeSink<A> {
   sink: Sink<A>
   active: boolean
 
-  constructor(sink: Sink<A>) {
+  constructor (sink: Sink<A>) {
     this.sink = sink
     this.active = true
   }
 
-  event(t, a: A) {
+  event (t, a: A) {
     if (!this.active) return
     this.sink.event(t, a)
   }
 
-  end(t) {
+  end (t) {
     if (!this.active) return
     this.disable()
     this.sink.end(t)
   }
 
-  error(t, e: Error) {
+  error (t, e: Error) {
     this.disable()
     this.sink.error(t, e)
   }
 
-  disable() {
+  disable () {
     this.active = false
     const {sink} = this
     if (typeof sink.disable === 'function') sink.disable()

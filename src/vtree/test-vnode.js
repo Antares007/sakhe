@@ -74,7 +74,7 @@ const rez = tree(elm)((put, on) => {
 
 M.of(rez).drain()
 
-function C(): Pith {
+function C (): Pith {
   return (put, on) => {
     put.node('button', {on: {click: 'A'}})(put => {
       put.text('A')

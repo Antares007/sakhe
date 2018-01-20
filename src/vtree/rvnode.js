@@ -4,14 +4,14 @@ import {
   newStream,
   MulticastSource,
   never,
-  now,
+  now
 } from '@most/core'
 
 import mostTree from '../most'
 import patchData from './patch-data'
 import {pmap, toStream} from '../pmap'
 
-export default function tree(tag, data = {}) {
+export default function tree (tag, data = {}) {
   return pith =>
     newStream((sink, scheduler) => {
       const sync = new MulticastSource(never())
@@ -23,7 +23,7 @@ export default function tree(tag, data = {}) {
           put(
             map(
               r =>
-                function patchNode(vnode, cb) {
+                function patchNode (vnode, cb) {
                   const {children, node} = vnode
                   const li = index < children.length ? children[index] : null
                   let oldIndex = -1
@@ -77,7 +77,7 @@ export default function tree(tag, data = {}) {
           put(
             map(
               text =>
-                function patchCharData(vnode) {
+                function patchCharData (vnode) {
                   const {children, node} = vnode
                   const li = index < children.length ? children[index] : null
                   let oldIndex = -1
@@ -124,7 +124,7 @@ export default function tree(tag, data = {}) {
             text: mCharacterData('text'),
             comment: mCharacterData('comment'),
             put: mPut,
-            ref: put,
+            ref: put
           },
           sync
         )
@@ -153,7 +153,7 @@ export default function tree(tag, data = {}) {
       return mostTree(
         combineArray(
           (...patches) =>
-            function rvnode(vnode, cb) {
+            function rvnode (vnode, cb) {
               if (vnode.pachedBy === rvnode) return vnode
               if (vnode.tag !== tag) throw new TypeError('tag')
               vnode.cb = e => {
@@ -171,18 +171,18 @@ export default function tree(tag, data = {}) {
     })
 }
 
-function createElement(tag, key) {
+function createElement (tag, key) {
   return {
     type: 'node',
     tag,
     key,
     data: {},
     children: [],
-    node: global.document.createElement(tag),
+    node: global.document.createElement(tag)
   }
 }
 
-function createCharacterData(type, data) {
+function createCharacterData (type, data) {
   return type === 'text'
     ? {type: 'text', data, node: global.document.createTextNode(data)}
     : {type: 'comment', data, node: global.document.createComment(data)}

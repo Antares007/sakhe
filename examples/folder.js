@@ -42,23 +42,23 @@ const Folder = path => (state, sselect) => {
                     op =>
                       op
                         ? put => {
-                            put.node(
-                              'button',
-                              {
-                                on: {click: actClose}
-                              },
-                              put => put.text('- ' + name)
-                            )
-                            put.onode(epath, 'div', {}, Folder(epath))
-                          }
+                          put.node(
+                            'button',
+                            {
+                              on: {click: actClose}
+                            },
+                            put => put.text('- ' + name)
+                          )
+                          put.onode(epath, 'div', {}, Folder(epath))
+                        }
                         : put =>
-                            put.node(
-                              'button',
-                              {
-                                on: {click: actOpen_}
-                              },
-                              put => put.text('+ ' + name)
-                            )
+                          put.node(
+                            'button',
+                            {
+                              on: {click: actOpen_}
+                            },
+                            put => put.text('+ ' + name)
+                          )
                   )
                 )
               } else {

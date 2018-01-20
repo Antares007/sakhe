@@ -7,7 +7,7 @@ export type StateRay<A> = {
   extend<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurdB: Absurd<B>
-  ): (pith: Pith<B> | Stream<Pith<B>>) => void,
+  ): (pith: Pith<B> | Stream<Pith<B>>) => void
 }
 
 export type Pith<A> = (state: StateRay<A>, onChange: Stream<A>) => void

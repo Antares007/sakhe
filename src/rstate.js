@@ -3,7 +3,7 @@ import {map, mergeArray} from '@most/core'
 import mostTree from './most'
 import {pmap} from './pmap'
 
-export default function tree(absurdA) {
+export default function tree (absurdA) {
   const ring = pith => put => {
     pith({
       extend: (key, absurdB) => oPith =>
@@ -30,7 +30,7 @@ export default function tree(absurdA) {
             r
           )
         ),
-      put,
+      put
     })
   }
   return pith => mostTree(mergeArray)(pmap(ring, pith))

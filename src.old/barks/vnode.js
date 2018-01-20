@@ -2,7 +2,9 @@ const m = require('most')
 const {Cons, nil} = require('../list')
 const mostBark = require('./most')
 const apiRing = require('../rings/api')
-const invalid = msg => { throw new Error('invalid ' + msg) }
+const invalid = msg => {
+  throw new Error('invalid ' + msg)
+}
 
 class VTree {}
 
@@ -32,11 +34,8 @@ class VNode extends VTree {
     this.key = path === nil ? 'nil' : path.head
   }
   log () {
-    const grpKey = this.sel + (
-      typeof this.key !== 'undefined'
-      ? '/' + this.key
-      : ''
-    )
+    const grpKey =
+      this.sel + (typeof this.key !== 'undefined' ? '/' + this.key : '')
     console.groupCollapsed(grpKey, this.path.toString())
     this.children.forEach(v => v.log())
     console.groupEnd(grpKey)
@@ -44,32 +43,24 @@ class VNode extends VTree {
 }
 
 const vnodeBark = (pmap = apiRing) => (sel, data = {}, path = nil) =>
-mostBark(
-  pith => ({put}, select) => {
+  mostBark(pith => ({put}, select) => {
     var i = 0
     put(select.$(sel))
     put(select.$(data))
-    const node = pmap => (sel, data) => pith => put(
-      vnodeBark(pmap)(sel, data, Cons(i++, path))(pith)
-    )
+    const node = pmap => (sel, data) => pith =>
+      put(vnodeBark(pmap)(sel, data, Cons(i++, path))(pith))
     const text = text => put(select.$(text).map(text => new VText(text)))
-    const vnode = vnode => put(
-      select.$(vnode).map(vnode => {
-        if (vnode instanceof VTree) return vnode
-        throw new Error('invalid vnode')
-      })
-    )
-    pmap(pith)(
-      {node, text, vnode},
-      Object.assign({}, select, {path})
-    )
-  }
-)(
-  a$s => m.combineArray(
-    (s, d, ...chlds) => new VNode(s, d, chlds, path),
-    a$s
+    const vnode = vnode =>
+      put(
+        select.$(vnode).map(vnode => {
+          if (vnode instanceof VTree) return vnode
+          throw new Error('invalid vnode')
+        })
+      )
+    pmap(pith)({node, text, vnode}, Object.assign({}, select, {path}))
+  })(a$s =>
+    m.combineArray((s, d, ...chlds) => new VNode(s, d, chlds, path), a$s)
   )
-)
 
 module.exports = vnodeBark
 
