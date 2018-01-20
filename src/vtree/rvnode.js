@@ -124,6 +124,7 @@ export default function tree(tag, data = {}) {
             text: mCharacterData('text'),
             comment: mCharacterData('comment'),
             put: mPut,
+            ref: put,
           },
           sync
         )

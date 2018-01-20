@@ -1,6 +1,7 @@
 // @flow
 // /* eslint-disable no-unused-vars */
-import {now} from '@most/core'
+import {disposeWith} from '@most/disposable'
+import {now, newStream} from '@most/core'
 import M from '../m'
 import tree from './element'
 import type {Pith} from '../vtree/rvnode'
@@ -32,6 +33,29 @@ const rez = tree(elm)((put, on) => {
         })
       )
     )
+  )
+  put.ref(
+    now(vnode => {
+      global.console.log('ref', vnode)
+      return vnode
+    })
+  )
+  put.put(
+    'button',
+    'k',
+    newStream((sink, scheduler) => {
+      sink.event(scheduler.currentTime(), vnode => {
+        global.console.log(1, vnode)
+        vnode.node.addEventListener('click', (e: MouseEvent) => {
+          global.console.log('click', e)
+        })
+        vnode.node.innerHTML = 'hi'
+        return vnode
+      })
+      return disposeWith(() => {
+        global.console.log('hmmm')
+      }, null)
+    })
   )
   put.node('div', {}, 'key')(
     M.of(on)
