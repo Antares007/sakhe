@@ -30,7 +30,7 @@ export default function tree (absurd, initState, element, data) {
     const cb = () => {}
     let patch
     const frame = () => {
-      vnode = patch(vnode, cb)
+      patch(vnode, cb)
       requestId = undefined
     }
 
@@ -41,14 +41,12 @@ export default function tree (absurd, initState, element, data) {
         )
       )
         .scan((s, r) => {
-          if (r.type === 'rvnode') {
-            patch = r
-            if (typeof requestId === 'undefined') {
-              requestId = global.window.requestAnimationFrame(frame)
-            }
-            return s
+          if (r.type !== 'rvnode') return r(s)
+          patch = r
+          if (typeof requestId === 'undefined') {
+            requestId = global.window.requestAnimationFrame(frame)
           }
-          return r(s)
+          return s
         }, initState)
         .skipRepeats()
         .tap(s => {

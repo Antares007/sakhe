@@ -5,7 +5,6 @@ import {pmap, toStream} from '../pmap'
 
 export default function tree (absurdA, tag, data) {
   return sPith => {
-    // const vpithSubject = subject()
     const rStateProxy = new MulticastSource(never())
     const putStateProxy = new MulticastSource(never())
     const actionProxy = new MulticastSource(never())
@@ -24,7 +23,7 @@ export default function tree (absurdA, tag, data) {
               newStream((sink, scheduler) =>
                 filter(r => {
                   if (r.type === 'rvnode') return true
-                  putStateProxy.event(a => {
+                  putStateProxy.event(scheduler.currentTime(), a => {
                     const ak = a[key]
                     const bk = r(Object.assign(absurdB(), ak))
                     if (ak === bk) return a
@@ -39,17 +38,17 @@ export default function tree (absurdA, tag, data) {
         on
       )
     }
-
     return merge(
       rStateProxy,
       newStream((sink, scheduler) =>
         map(
           r => {
             const rvnode = function rvnode (vnode, cb) {
-              return r(vnode, e => {
+              vnode.cb = e => {
                 actionProxy.event(scheduler.currentTime(), e)
                 cb(e)
-              })
+              }
+              r(vnode, vnode.cb)
             }
             rvnode.type = 'rvnode'
             return rvnode

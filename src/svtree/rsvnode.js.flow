@@ -10,6 +10,11 @@ import type {
 
 export type VNodeRay<A> = {
   ...$Exact<InnerVNodeRay>,
+  node(
+    tag: string,
+    data?: Data | Stream<Data>,
+    key?: string
+  ): (pith: VPith<A> | Stream<VPith<A>>) => void,
   snode<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurd: Absurd<B>,
