@@ -17,7 +17,7 @@ export default function tree (absurdA, tag, data) {
             put.node(tag, data, key)(pmap(vRing, pith))
           },
           snode: (key, absurdB, tag, data) => pith => {
-            put.put(
+            put.rnode(
               tag,
               key,
               newStream((sink, scheduler) =>

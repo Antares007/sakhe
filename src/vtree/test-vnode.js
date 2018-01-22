@@ -1,7 +1,6 @@
 // @flow
-/* eslint-disable no-unused-vars */
-import {disposeWith} from '@most/disposable'
-import {now, newStream, periodic} from '@most/core'
+/* eslint-disable */
+import {periodic} from '@most/core'
 import M from '../m'
 import tree from './element'
 import type {Pith} from '../vtree/rvnode'
@@ -24,7 +23,7 @@ const rez = tree(elm)(Test())
 
 M.of(rez).drain()
 
-function Test (): Pith {
+function Test(): Pith {
   return (put, on) => {
     put.node('div')(put => {
       put.node('button', {on: {click: 'a'}})(put => put.text('a'))
@@ -46,7 +45,7 @@ function Test (): Pith {
     )
   }
 }
-function C (): Pith {
+function C(): Pith {
   return (put, on) => {
     put.node('button', {on: {click: 'A'}})(put => {
       put.text('A')

@@ -16,7 +16,8 @@ import {
   continueWith,
   delay,
   multicast,
-  debounce
+  debounce,
+  empty
 } from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
 
@@ -31,6 +32,7 @@ export default class M {
     return new M(multicast(this.$))
   }
   static of (a) {
+    if (a == null) return new M(empty())
     return new M(a)
   }
   static switchLatest (m) {

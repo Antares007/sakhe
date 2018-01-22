@@ -4,33 +4,38 @@ import type {Data} from '../vtree/types'
 import type {Absurd, StateRay as InnerStateRay} from '../rstate'
 import type {
   VNodeRay as InnerVNodeRay,
-  ActionRay as InnerActionRay
+  ActionRay as InnerActionRay,
+  VPith as SuperVPith,
+  SPith as SuperSPith
 } from './rsvnode'
 
-export type VNodeRay<A> = {
-  ...$Exact<InnerVNodeRay<A>>,
+export interface VNodeRay<A: {+[key: string]: mixed}> extends InnerVNodeRay<A> {
   node(
     tag: string,
     data?: Data | Stream<Data>,
     key?: string
-  ): (pith: VPith<A> | Stream<VPith<A>>) => void,
+  ): (pith: VPith<A> | Stream<VPith<A>>) => void;
   snode<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurd: Absurd<B>,
     tag: string,
     data?: Data
-  ): (pith: SPith<B>) => void
+  ): (pith: SPith<B>) => void;
 }
 export type ActionRay = InnerActionRay
-export type VPith<A> = (put: VNodeRay<A>, on: ActionRay) => void
+export interface VPith<A> extends SuperVPith<A> {
+  (put: VNodeRay<A>, on: ActionRay): void;
+}
 
 export type StateRay<A> = InnerStateRay<A>
 export type StateChangeRay<A> = Stream<A>
-export type SPith<A> = (
-  state: StateRay<A>,
-  on: ActionRay,
-  onChange: StateChangeRay<A>
-) => VPith<A> | Stream<VPith<A>>
+export interface SPith<A> extends SuperSPith<A> {
+  (
+    state: StateRay<A>,
+    on: ActionRay,
+    onChange: StateChangeRay<A>
+  ): VPith<A> | Stream<VPith<A>>;
+}
 
 declare export default function tree<A>(
   absurd: Absurd<A>,

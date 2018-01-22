@@ -1,18 +1,25 @@
 // @flow
 import type {Stream} from '@most/types'
-import type {Absurd, StateRay as InnerStateRay} from './rstate'
+import type {
+  Absurd,
+  StateRay as SuperStateRay,
+  Pith as SuperPith
+} from './rstate'
 
-export type StateRay<A> = {
-  ...$Exact<InnerStateRay<A>>,
+export interface StateRay<A: {+[key: string]: mixed}> extends SuperStateRay<A> {
   extend<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurdB: Absurd<B>
-  ): (pith: Pith<B> | Stream<Pith<B>>) => void
+  ): (pith: Pith<B> | Stream<Pith<B>>) => void;
 }
 
-export type Pith<A> = (state: StateRay<A>, onChange: Stream<A>) => void
+export interface Pith<A> extends SuperPith<A> {
+  (state: StateRay<A>, onChange: Stream<A>): void;
+}
 
-export type Bark<A> = (pith: Pith<A> | Stream<Pith<A>>) => Stream<A>
+export interface Bark<A> {
+  (pith: Pith<A> | Stream<Pith<A>>): Stream<$Subtype<$Exact<A>>>;
+}
 
 declare export default function tree<A>(
   absurdA: Absurd<A>,

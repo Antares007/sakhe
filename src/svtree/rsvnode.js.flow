@@ -5,35 +5,36 @@ import type {Absurd, StateRay as InnerStateRay, RState} from '../rstate'
 import type {
   VNodeRay as InnerVNodeRay,
   ActionRay as InnerActionRay,
+  Pith as RVNodePith,
   Patch
 } from '../vtree/rvnode'
 
-export type VNodeRay<A> = {
-  ...$Exact<InnerVNodeRay>,
+export interface VNodeRay<A: {+[key: string]: mixed}> extends InnerVNodeRay {
   node(
     tag: string,
     data?: Data | Stream<Data>,
     key?: string
-  ): (pith: VPith<A> | Stream<VPith<A>>) => void,
+  ): (pith: VPith<A> | Stream<VPith<A>>) => void;
   snode<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurd: Absurd<B>,
     tag: string,
     data?: Data
-  ): (pith: SPith<B>) => void
+  ): (pith: SPith<B>) => void;
 }
 export type ActionRay = InnerActionRay
-export type VPith<A> = (put: VNodeRay<A>, on: ActionRay) => void
+export interface VPith<A> extends RVNodePith {
+  (put: VNodeRay<A>, on: ActionRay): void;
+}
 
 export type StateRay<A> = InnerStateRay<A>
-export type SPith<A> = (
-  state: StateRay<A>,
-  on: ActionRay
-) => VPith<A> | Stream<VPith<A>>
+export interface SPith<A> {
+  (state: StateRay<A>, on: ActionRay): VPith<A> | Stream<VPith<A>>;
+}
 
-export type Bark<A> = (
-  pith: SPith<A>
-) => Stream<RState<A> | (Patch & {|+type: 'rvnode'|})>
+export interface Bark<A> {
+  (pith: SPith<A>): Stream<RState<A> | (Patch & {|+type: 'rvnode'|})>;
+}
 
 declare export default function tree<A>(
   absurd: Absurd<A>,

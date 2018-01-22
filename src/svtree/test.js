@@ -1,8 +1,6 @@
 // @flow
-/* eslint-disable no-unused-vars */
-
-import {now, periodic, map} from '@most/core'
-import type {Pith as RVNodePith} from '../vtree/rvnode'
+/* eslint-disable */
+import {now} from '@most/core'
 import Counter2 from '../piths/counter2'
 import M from '../m'
 
@@ -29,7 +27,11 @@ const rez = selementTree(abs, abs(), elm)((s, onAction, onChange) => {
       // })
       put.node('button', {on: {click: 'p'}})(put => put.text('+'))
       put.node('button', {on: {click: 'm'}})(put => put.text('-'))
-      put.text(map(x => String(x.count), onChange))
+      put.text(
+        M.of(onChange)
+          .map(x => String(x.count))
+          .valueOf()
+      )
     })
     // put.text(
     //   M.of(onAction)
@@ -40,11 +42,21 @@ const rez = selementTree(abs, abs(), elm)((s, onAction, onChange) => {
     //     .valueOf()
     // )
     //
+    // put.node('div')(put => {
+    //   if (typeof put.snode === 'function') {
+    //     put.snode('b', () => ({a: 42, b: {}}), 'div')((s, a, c) => {
+    //       s.val('a', now(s => s + 1))
+    //       return put => put.text('aa')
+    //     })
+    //   }
+    // })
     put.node('div', {}, '1')(
-      map(x => {
-        console.log(x)
-        return Counter2(x.count)
-      }, onChange)
+      M.of(onChange)
+        .map(x => {
+          console.log(x)
+          return Counter2(x.count)
+        })
+        .valueOf()
     )
   }
 })

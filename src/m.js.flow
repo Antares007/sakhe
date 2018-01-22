@@ -3,7 +3,7 @@ import type {Stream} from '@most/types'
 
 declare export default class M<A> {
   +$: Stream<A>;
-  static of<A>(a: Stream<A>): M<A>;
+  static of<A>(a: ?Stream<A>): M<A>;
   static switchLatest<B>(m: M<M<B>>): M<B>;
   multicast(): M<A>;
   debounce(n: number): M<A>;

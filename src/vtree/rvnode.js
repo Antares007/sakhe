@@ -106,8 +106,8 @@ export default function tree (tag, data = {}) {
           node: mNode,
           text: mCharacterData('text'),
           comment: mCharacterData('comment'),
-          put: mPut,
-          ref: put
+          rnode: mPut,
+          put
         },
         sync
       )

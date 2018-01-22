@@ -1,11 +1,12 @@
 // @flow
 import type {Stream} from '@most/types'
+import type {PutRay as SuperPutRay} from './a'
 
-export type PutRay<A> = (a: Stream<A>) => number
+export interface PutRay<A> extends SuperPutRay<Stream<A>> {}
 
-export type Pith<A> = (put: PutRay<A>) => void
+export interface Pith<A> {(put: PutRay<A>): void}
 
-export type Bark<A, B> = (pith: Pith<A> | Stream<Pith<A>>) => Stream<B>
+export interface Bark<A, B> {(pith: Pith<A> | Stream<Pith<A>>): Stream<B>}
 
 declare export default function tree<A, B>(
   deltac: (as: Stream<A>[]) => Stream<B>
