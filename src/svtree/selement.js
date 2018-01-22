@@ -10,6 +10,11 @@ export default function tree (absurd, initState, element, data) {
   const vRing = onChangeA => pith => put =>
     pith({
       ...put,
+      node: (tag, data, key) => pith => {
+        put.node(tag, data, key)(
+          typeof put.snode === 'function' ? pith : pmap(vRing, pith)
+        )
+      },
       snode: (key, absurdB, tag, data) => pith => {
         const bKeysLenght = Object.keys(absurdB()).length
         const onChangeB = filter(

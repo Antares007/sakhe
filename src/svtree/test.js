@@ -21,10 +21,11 @@ const rez = selementTree(abs, abs(), elm)((s, onAction, onChange) => {
   )
   return put => {
     put.node('div', {}, '0')((put, on) => {
-      // put.snode('b', () => ({a: 42, b: {}}), 'div')((s, a, c) => {
-      //   s.val('a', now(s => s + 1))
-      //   return put => put.text('aa')
-      // })
+      if (typeof put.snode !== 'function') return
+      put.snode('b', () => ({a: 42, b: {}}), 'div')((s, a, c) => {
+        s.val('a', now(s => s + 1))
+        return put => put.text('aa')
+      })
       put.node('button', {on: {click: 'p'}})(put => put.text('+'))
       put.node('button', {on: {click: 'm'}})(put => put.text('-'))
       put.text(
