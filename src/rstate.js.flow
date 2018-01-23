@@ -16,7 +16,6 @@ export interface StateRay<A: {+[key: string]: mixed}>
     key: Key,
     r: Stream<RState<$ElementType<$Exact<A>, Key>>>
   ): void;
-  put(r: Stream<RState<A>>): void;
 }
 
 export interface Pith<A> {(state: StateRay<A>): void}

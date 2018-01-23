@@ -34,23 +34,6 @@ const rez = selementTree(abs, abs(), elm)((s, onAction, onChange) => {
           .valueOf()
       )
     })
-    // put.text(
-    //   M.of(onAction)
-    //     .filter(x => x.action === 'p' || x.action === 'm')
-    //     .map(x => (x.action === 'p' ? +1 : -1))
-    //     .scan((a, x) => a + x, 0)
-    //     .map(String)
-    //     .valueOf()
-    // )
-    //
-    // put.node('div')(put => {
-    //   if (typeof put.snode === 'function') {
-    //     put.snode('b', () => ({a: 42, b: {}}), 'div')((s, a, c) => {
-    //       s.val('a', now(s => s + 1))
-    //       return put => put.text('aa')
-    //     })
-    //   }
-    // })
     put.node('div', {}, '1')(
       M.of(onChange)
         .map(x => {

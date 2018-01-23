@@ -2,18 +2,18 @@
 import type {Stream} from '@most/types'
 import type {
   Absurd,
-  StateRay as SuperStateRay,
-  Pith as SuperPith
+  StateRay as InnerStateRay,
+  Pith as InnerPith
 } from './rstate'
 
-export interface StateRay<A: {+[key: string]: mixed}> extends SuperStateRay<A> {
+export interface StateRay<A: {+[key: string]: mixed}> extends InnerStateRay<A> {
   extend<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
     key: Key,
     absurdB: Absurd<B>
   ): (pith: Pith<B> | Stream<Pith<B>>) => void;
 }
 
-export interface Pith<A> extends SuperPith<A> {
+export interface Pith<A> extends InnerPith<A> {
   (state: StateRay<A>, onChange: Stream<A>): void;
 }
 

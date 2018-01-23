@@ -1,5 +1,5 @@
 // @flow
-export interface PutRay<A> {(a: A): number}
+export interface PutRay<A> {put(a: A): number}
 
 export interface Pith<A> {(put: PutRay<A>): void}
 

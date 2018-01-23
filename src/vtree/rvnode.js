@@ -17,9 +17,9 @@ export default function tree (tag, data = {}) {
     const ring = pith => put => {
       var currentIndex = 0
 
-      const mPut = (tagB, key, r) => {
+      const rnode = (tagB, key, r) => {
         const index = currentIndex++
-        put(
+        put.put(
           map(
             patchVNode =>
               function patchChieldVNode (parentVnode, cb) {
@@ -68,11 +68,11 @@ export default function tree (tag, data = {}) {
         )
       }
       const mNode = (tagB, data = {}, key) => pith => {
-        mPut(tagB, key, tree(tagB, data)(pith))
+        rnode(tagB, key, tree(tagB, data)(pith))
       }
       const mCharacterData = charDataType => text => {
         const index = currentIndex++
-        put(
+        put.put(
           map(
             text =>
               function patchCharData (parentVnode) {
@@ -103,17 +103,16 @@ export default function tree (tag, data = {}) {
 
       pith(
         {
+          ...put,
           node: mNode,
           text: mCharacterData('text'),
           comment: mCharacterData('comment'),
-          rnode: mPut,
-          put
+          rnode
         },
         sync
       )
 
-      put(
-        // newStream((sink, scheduler) =>
+      put.put(
         map(
           data =>
             function patchDataModule (vnode, cb) {
@@ -123,11 +122,9 @@ export default function tree (tag, data = {}) {
             },
           toStream(data)
         )
-        // .run(sink, scheduler)
-        // )
       )
 
-      put(
+      put.put(
         now(function patchRemoveChildren (vnode) {
           const {children, node} = vnode
           for (let i = currentIndex; i < children.length; i++) {

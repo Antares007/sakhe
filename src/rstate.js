@@ -6,8 +6,9 @@ import {pmap} from './pmap'
 export default function tree (absurdA) {
   const ring = pith => put => {
     pith({
+      ...put,
       extend: (key, absurdB) => oPith =>
-        put(
+        put.put(
           map(
             r => a => {
               const ak = a[key]
@@ -19,7 +20,7 @@ export default function tree (absurdA) {
           )
         ),
       val: (key, r) =>
-        put(
+        put.put(
           map(
             r => a => {
               const ak = a[key]
@@ -29,8 +30,7 @@ export default function tree (absurdA) {
             },
             r
           )
-        ),
-      put
+        )
     })
   }
   return pith => mostTree(mergeArray)(pmap(ring, pith))

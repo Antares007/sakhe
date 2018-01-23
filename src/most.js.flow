@@ -1,10 +1,10 @@
 // @flow
 import type {Stream} from '@most/types'
-import type {PutRay as SuperPutRay} from './a'
+import type {PutRay as InnerPutRay, Pith as InnerPith} from './a'
 
-export interface PutRay<A> extends SuperPutRay<Stream<A>> {}
+export interface PutRay<A> extends InnerPutRay<Stream<A>> {}
 
-export interface Pith<A> {(put: PutRay<A>): void}
+export interface Pith<A> extends InnerPith<Stream<A>> {}
 
 export interface Bark<A, B> {(pith: Pith<A> | Stream<Pith<A>>): Stream<B>}
 

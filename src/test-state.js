@@ -16,6 +16,7 @@ const rez = tree(abs)((put, on) => {
       .drain()
     put.val('o', now(s => `${s} bolkvadze`))
   })
+  put.put(now(s => ({...s, a: s.a * 3})))
 })
 
 M.of(rez)

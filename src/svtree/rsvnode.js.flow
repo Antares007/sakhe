@@ -33,7 +33,7 @@ export interface SPith<A> {
 }
 
 export interface Bark<A> {
-  (pith: SPith<A>): Stream<RState<A> | (Patch & {|+type: 'rvnode'|})>;
+  (pith: SPith<A>): Stream<RState<A> | (Patch & {type: 'rvnode'})>;
 }
 
 declare export default function tree<A>(
