@@ -43,11 +43,11 @@
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.1.2",
     "eslint": "^4.16.0",
-    "eslint-plugin-flowtype": "^2.40.1",
+    "eslint-plugin-flowtype": "^2.41.1",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
-    "flow-bin": "^0.63.1"
+    "flow-bin": "^0.64.0"
   },
   "scripts": {
     "lint": "eslint src && flow",
