@@ -20,10 +20,14 @@ import {
   empty
 } from '@most/core'
 import {newDefaultScheduler} from '@most/scheduler'
+import {hold} from '@most/hold'
 
 export default class M {
   constructor ($) {
     this.$ = $
+  }
+  hold () {
+    return new M(hold(this.$))
   }
   debounce (n) {
     return new M(debounce(n, this.$))

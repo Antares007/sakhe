@@ -1,6 +1,6 @@
 import {map, merge, filter, MulticastSource, never, newStream} from '@most/core'
 import rvnodeTree from '../vtree/rvnode'
-import rstateTree from '../rstate'
+import rstateTree, {mapRb2Ra} from '../rstate'
 import {pmap, toStream} from '../pmap'
 
 export default function tree (absurdA, tag, data) {
@@ -23,12 +23,11 @@ export default function tree (absurdA, tag, data) {
               newStream((sink, scheduler) =>
                 filter(r => {
                   if (r.type === 'rvnode') return true
-                  putStateProxy.event(scheduler.currentTime(), a => {
-                    const ak = a[key]
-                    const bk = r(Object.assign(absurdB(), ak))
-                    if (ak === bk) return a
-                    return Object.assign(absurdA(), a, {[key]: bk})
-                  })
+
+                  putStateProxy.event(
+                    scheduler.currentTime(),
+                    mapRb2Ra(key, absurdA, absurdB)(r)
+                  )
                   return false
                 }, tree(absurdB, tag, data)(pith)).run(sink, scheduler)
               )

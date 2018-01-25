@@ -6,6 +6,7 @@ declare export default class M<A> {
   static of<A>(a: ?Stream<A>): M<A>;
   static switchLatest<B>(m: M<M<B>>): M<B>;
   multicast(): M<A>;
+  hold(): M<A>;
   debounce(n: number): M<A>;
   constant<B>(b: B): M<B>;
   scan<B>(f: (b: B, a: A) => B, b: B): M<B>;
