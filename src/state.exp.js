@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable */
 import {inspect} from 'util'
+
 const log = o => console.log(inspect(o))
 
 export interface Pith<A> {(state: StateRay<A>): void}
@@ -9,10 +10,12 @@ export interface StateRay<A: {+[key: string]: mixed}> {
     key: Key,
     absurdB: () => B
   ): (pith: Pith<B>) => void;
-  extendA<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
-    key: Key,
-    absurdB: () => B
-  ): (pith: PithA<B>) => void;
+  extendA<
+    Key: $Keys<A>,
+    ET: $Exact<$ElementType<$ElementType<$Exact<A>, Key>, 0>>
+  >(
+    key: Key
+  ): (pith: PithA<ET>) => void;
   val<Key: $Keys<A>>(
     key: Key,
     r: ($ElementType<$Exact<A>, Key>) => $ElementType<$Exact<A>, Key>
@@ -20,20 +23,17 @@ export interface StateRay<A: {+[key: string]: mixed}> {
   //put(r: RState<$Exact<A>>): void;
 }
 
-export interface PithA<A: $ReadOnlyArray<mixed>> {(state: StateRayA<A>): void}
-export interface StateRayA<A: $ReadOnlyArray<mixed>> {
-  extend<Key: number, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
-    key: Key,
-    absurdB: () => B
-  ): (pith: Pith<B>) => void;
-  extendA<Key: number, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
-    key: Key,
-    absurdB: () => B
-  ): (pith: Pith<B>) => void;
-  val<Key: number>(
-    key: Key,
-    r: ($ElementType<A, Key>) => $ElementType<A, Key>
-  ): void;
+export interface PithA<ET> {(state: StateRayA<ET>): void}
+export interface StateRayA<ET> {
+  // extend<Key: number, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
+  //   key: Key,
+  //   absurdB: () => B
+  // ): (pith: Pith<B>) => void;
+  // extendA<Key: number, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
+  //   key: Key,
+  //   absurdB: () => B
+  // ): (pith: Pith<B>) => void;
+  val<Key: number>(key: Key, r: (ET) => ET): void;
 }
 
 export interface Bark<A> {
@@ -42,18 +42,14 @@ export interface Bark<A> {
 
 declare function tree<A>(absurdA: () => A): Bark<A>
 
-const absurd = () => ({a: 42, b: {a: 1}, arr: ['']})
+const absurd = () => ({a: 42, b: {a: 1}, arr: [{a: 20}]})
 tree(absurd)(s => {
-  s.extendA('arr', () => ['', 1])(sa => {
+  s.extendA('arr')(sa => {
     // sa.extend(0, s => ({a: 42}))(sa => {
     //   sa.val('a', s => s)
     // })
-    sa.val(0, s => s)
-    sa.val(1, s => s)
-    sa.val(2, s => ({a: 98}))
-    sa.val(2, s => s)
-    sa.val(3, s => s)
-    sa.val(4, s => s)
+
+    sa.val(2, s => ({a: 20}))
   })
 })(absurd())
 
