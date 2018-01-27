@@ -5,10 +5,10 @@ import type {Data, VNode} from './types'
 
 export type Action = {type: 'on', action: $FlowTODO, event: Event}
 
-export type Patch = (vnode: VNode, cb: (event: mixed) => void) => VNode
+export type Patch = (vnode: VNode, cb: (event: mixed) => void) => void
 export type ActionRay = Stream<Action>
 
-export interface VNodeRay extends PutRay<Stream<Patch>> {
+export interface VNodeRay extends PutRay<Patch> {
   node(
     tag: string,
     data?: Data | Stream<Data>,
