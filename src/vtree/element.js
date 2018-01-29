@@ -1,6 +1,8 @@
-import {map, tap} from '@most/core'
+import {newStream} from '@most/core'
+import {disposeBoth, disposeWith} from '@most/disposable'
 import rvnodeTree from './rvnode'
 import toVNode from './to-vnode'
+import M from '../m'
 
 export default function (element, data) {
   return pith => {
@@ -12,14 +14,23 @@ export default function (element, data) {
       patch(vnode, cb)
       requestId = undefined
     }
-    return map(
-      () => vnode,
-      tap(r => {
+    const $ = M.of(rvnodeTree(element.tagName.toLowerCase(), data)(pith))
+      .tap(r => {
         patch = r
         if (typeof requestId === 'undefined') {
-          requestId = global.window.requestAnimationFrame(frame)
+          requestId = window.requestAnimationFrame(frame)
         }
-      }, rvnodeTree(element.tagName.toLowerCase(), data)(pith))
+      })
+      .filter(x => false)
+      .multicast()
+      .valueOf()
+    return newStream((sink, scheduler) =>
+      disposeBoth(
+        $.run(sink, scheduler),
+        disposeWith(() => {
+          window.cancelAnimationFrame(requestId)
+        }, null)
+      )
     )
   }
 }
