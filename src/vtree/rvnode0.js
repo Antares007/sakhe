@@ -1,40 +1,9 @@
-// @flow
-import type {Stream} from '@most/types'
-
 import {combineArray, map, now} from '@most/core'
 
-import mostTree, {type Pith as MostPith} from '../most0'
+import mostTree from '../most0'
 
-export opaque type VNode: {node: Element} = {
-  type: 'node',
-  tag: string,
-  key: ?string,
-  children: VTree[],
-  node: Element
-}
-export opaque type VText: {node: Text} = {
-  type: 'text',
-  node: Text
-}
-export opaque type VComment: {node: Comment} = {
-  type: 'comment',
-  node: Comment
-}
-export type VTree = VNode | VText | VComment
-
-export type Patch<T> = T => mixed
-
-export type VNodeRay = {
-  node(tag: string, key: string, r: Stream<Patch<VNode>>): void,
-  text(r: Stream<Patch<VText>>): void,
-  comment(r: Stream<Patch<VComment>>): void,
-  put(rvnode: Stream<Patch<VNode>>): number
-}
-
-export type Pith = (put: VNodeRay) => void
-
-export default function tree (pith: Pith | Stream<Pith>): Stream<Patch<VNode>> {
-  const ring = (pith: Pith): MostPith<Patch<VNode>> => put => {
+export default function tree (pith) {
+  const ring = pith => put => {
     var currentIndex = 0
 
     const node = (tagB, key, r) => {
@@ -44,7 +13,7 @@ export default function tree (pith: Pith | Stream<Pith>): Stream<Patch<VNode>> {
           patchVNode =>
             function patchChieldVNode (parentVnode, cb) {
               var {children, node} = parentVnode
-              var li: ?VTree = children[index]
+              var li = children[index]
               var vnode
               if (li == null) {
                 vnode = createElement(tagB, key)
@@ -87,56 +56,27 @@ export default function tree (pith: Pith | Stream<Pith>): Stream<Patch<VNode>> {
         )
       )
     }
-    const text = (r: Stream<Patch<VText>>) => {
+    const charData = type => r => {
       const index = currentIndex++
       put.put(
         map(
           r =>
             function patchCharData (parentVnode) {
               var {children, node} = parentVnode
-              var li: ?VTree = children[index]
+              var li = children[index]
               var charData
               if (li == null) {
-                charData = createText()
+                charData = createCharData(type)
                 children.push(charData)
                 node.insertBefore(charData.node, null)
                 r(charData)
                 return
               }
-              if (li.type === 'text') {
+              if (li.type === type) {
                 r(li)
                 return
               }
-              charData = createText()
-              children.splice(index, 0, charData)
-              node.insertBefore(charData.node, li.node)
-              r(charData)
-            },
-          r
-        )
-      )
-    }
-    const comment = (r: Stream<Patch<VComment>>) => {
-      const index = currentIndex++
-      put.put(
-        map(
-          r =>
-            function patchCharData (parentVnode) {
-              var {children, node} = parentVnode
-              var li: ?VTree = children[index]
-              var charData
-              if (li == null) {
-                charData = createComment()
-                children.push(charData)
-                node.insertBefore(charData.node, null)
-                r(charData)
-                return
-              }
-              if (li.type === 'comment') {
-                r(li)
-                return
-              }
-              charData = createComment()
+              charData = createCharData(type)
               children.splice(index, 0, charData)
               node.insertBefore(charData.node, li.node)
               r(charData)
@@ -149,8 +89,8 @@ export default function tree (pith: Pith | Stream<Pith>): Stream<Patch<VNode>> {
     pith({
       ...put,
       node,
-      text,
-      comment: comment
+      text: charData('text'),
+      comment: charData('comment')
     })
 
     put.put(
@@ -167,7 +107,7 @@ export default function tree (pith: Pith | Stream<Pith>): Stream<Patch<VNode>> {
 
   return mostTree(xs =>
     combineArray(
-      (...patches: Array<Patch<VNode>>) =>
+      (...patches) =>
         function patchVNode (vnode, cb) {
           for (var i = 0; i < patches.length; i++) {
             patches[i](vnode)
@@ -178,26 +118,7 @@ export default function tree (pith: Pith | Stream<Pith>): Stream<Patch<VNode>> {
   )(typeof pith === 'function' ? ring(pith) : map(ring, pith))
 }
 
-function createElement (tag: string, key: ?string): VNode {
-  return {
-    type: 'node',
-    tag,
-    key,
-    data: {},
-    children: [],
-    node: document.createElement(tag)
-  }
-}
-
-function createText (): VText {
-  return {type: 'text', node: document.createTextNode('')}
-}
-
-function createComment (): VComment {
-  return {type: 'comment', node: document.createComment('')}
-}
-
-export function toVNode (element: Element): VNode {
+export function toVNode (element) {
   const tag = element.tagName.toLowerCase()
 
   const children = []
@@ -208,12 +129,29 @@ export function toVNode (element: Element): VNode {
   return {type: 'node', tag, key: undefined, children, node: element}
 }
 
-function toVTree (node: Node): VTree {
-  if (node instanceof Element) {
+function createElement (tag, key) {
+  return {
+    type: 'node',
+    tag,
+    key,
+    data: {},
+    children: [],
+    node: document.createElement(tag)
+  }
+}
+
+function createCharData (type) {
+  return type === 'text'
+    ? {type: type, node: document.createTextNode('')}
+    : {type: type, node: document.createComment('')}
+}
+
+function toVTree (node) {
+  if (node instanceof window.Element) {
     return toVNode(node)
-  } else if (node instanceof Text) {
+  } else if (node instanceof window.Text) {
     return {type: 'text', data: node.textContent || '', node}
-  } else if (node instanceof Comment) {
+  } else if (node instanceof window.Comment) {
     return {type: 'comment', data: node.textContent || '', node}
   }
   throw new Error(`unexpected node type [${node.nodeType}]`)

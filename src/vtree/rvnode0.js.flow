@@ -1,0 +1,36 @@
+// @flow
+import type {Stream} from '@most/types'
+
+export opaque type VNode: {node: Element} = {
+  type: 'node',
+  tag: string,
+  key: ?string,
+  children: VTree[],
+  node: Element
+}
+export opaque type VText: {node: Text} = {
+  type: 'text',
+  node: Text
+}
+export opaque type VComment: {node: Comment} = {
+  type: 'comment',
+  node: Comment
+}
+export type VTree = VNode | VText | VComment
+
+export type Patch<T> = T => mixed
+
+export type VNodeRay = {
+  node(tag: string, key: string, r: Stream<Patch<VNode>>): void,
+  text(r: Stream<Patch<VText>>): void,
+  comment(r: Stream<Patch<VComment>>): void,
+  put(rvnode: Stream<Patch<VNode>>): number
+}
+
+export type Pith = (put: VNodeRay) => void
+
+declare export default function tree(
+  pith: Pith | Stream<Pith>
+): Stream<Patch<VNode>>
+
+declare export function toVNode(element: Element): VNode
