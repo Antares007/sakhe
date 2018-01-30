@@ -1,6 +1,19 @@
 // @flow
 /* eslint-disable */
-import {periodic, now, map} from '@most/core'
+import type {Stream} from '@most/types'
+import {
+  periodic,
+  now,
+  map,
+  newStream,
+  propagateEventTask,
+  MulticastSource,
+  startWith,
+  never
+} from '@most/core'
+import {disposeBoth, disposeWith} from '@most/disposable'
+import {asap} from '@most/scheduler'
+
 import M from '../m'
 import tree from './element0'
 import rvnodeTree, {type Pith} from '../vtree/rvnode0'
@@ -35,6 +48,46 @@ const rez = tree(elm)(dom => {
     })
   )
   dom.text(now(vtext => (vtext.node.textContent = 'hello world!')))
+
+  dom.text(
+    map(
+      str => vtext => (vtext.node.textContent = str),
+      startWith('click', map(e => e.clientX + ':' + e.clientY, on('click')))
+    )
+  )
+
+  function on(type: string): Stream<MouseEvent> {
+    const proxy = new MulticastSource(never())
+    dom.put(
+      newStream((sink, scheduler) => {
+        console.log('run')
+        function f(vnode, cb) {
+          if (f.patchedNodes.has(vnode)) return
+
+          const listener = (e: Event) => proxy.event(scheduler.currentTime(), e)
+
+          vnode.node.addEventListener(type, listener)
+          console.log('addEventListener')
+
+          f.patchedNodes.set(vnode, () => {
+            console.log('removeEventListener')
+            vnode.node.removeEventListener(type, listener)
+          })
+        }
+        f.patchedNodes = new Map()
+        return disposeBoth(
+          asap(propagateEventTask(f, sink), scheduler),
+          disposeWith(() => {
+            f.patchedNodes.forEach(d => d())
+            f.patchedNodes.clear()
+          }, null)
+        )
+      })
+    )
+    return proxy
+  }
 })
 
-M.of(rez).drain()
+M.of(rez)
+  .until(M.of(now(1)).delay(3000).$)
+  .drain()
