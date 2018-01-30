@@ -10,7 +10,9 @@ declare var window: {
   cancelAnimationFrame(mixed): void
 }
 
-export default function (element: Element): (pith: RVNodePith) => Stream<void> {
+export default function<T: Element> (
+  element: T
+): (pith: RVNodePith<T>) => Stream<void> {
   return pith => {
     let requestId
     let vnode = toVNode(element)

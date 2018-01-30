@@ -1,12 +1,12 @@
 // @flow
 import type {Stream} from '@most/types'
 
-export opaque type VNode: {node: Element} = {
+export opaque type VNode<T>: {node: T} = {
   type: 'node',
   tag: string,
   key: ?string,
   children: VTree[],
-  node: Element
+  node: T
 }
 export opaque type VText: {node: Text} = {
   type: 'text',
@@ -16,21 +16,121 @@ export opaque type VComment: {node: Comment} = {
   type: 'comment',
   node: Comment
 }
-export type VTree = VNode | VText | VComment
+export type VTree = VNode<Element> | VText | VComment
 
-export type Patch<T> = T => mixed
-
-export type VNodeRay = {
-  node(tag: string, key: string, r: Stream<Patch<VNode>>): void,
-  text(r: Stream<Patch<VText>>): void,
-  comment(r: Stream<Patch<VComment>>): void,
-  put(rvnode: Stream<Patch<VNode>>): number
+export type TagMap = {|
+  div: HTMLDivElement,
+  h1: HTMLHeadingElement,
+  a: HTMLAnchorElement
+|}
+export type R<T> = T => mixed
+export type RootStream<T> = Stream<R<VNode<T>>>
+export type NodeFn = {
+  (tag: 'a', key: string, r: RootStream<HTMLAnchorElement>): void,
+  (tag: 'audio', key: string, r: RootStream<HTMLAudioElement>): void,
+  (tag: 'br', key: string, r: RootStream<HTMLBRElement>): void,
+  (tag: 'button', key: string, r: RootStream<HTMLButtonElement>): void,
+  (tag: 'canvas', key: string, r: RootStream<HTMLCanvasElement>): void,
+  (tag: 'details', key: string, r: RootStream<HTMLDetailsElement>): void,
+  (tag: 'div', key: string, r: RootStream<HTMLDivElement>): void,
+  (tag: 'dl', key: string, r: RootStream<HTMLDListElement>): void,
+  (tag: 'fieldset', key: string, r: RootStream<HTMLFieldSetElement>): void,
+  (tag: 'form', key: string, r: RootStream<HTMLFormElement>): void,
+  (
+    tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6',
+    key: string,
+    r: RootStream<HTMLHeadingElement>
+  ): void,
+  (tag: 'hr', key: string, r: RootStream<HTMLHRElement>): void,
+  (tag: 'iframe', key: string, r: RootStream<HTMLIFrameElement>): void,
+  (tag: 'img', key: string, r: RootStream<HTMLImageElement>): void,
+  (tag: 'input', key: string, r: RootStream<HTMLInputElement>): void,
+  (tag: 'label', key: string, r: RootStream<HTMLLabelElement>): void,
+  (tag: 'legend', key: string, r: RootStream<HTMLLegendElement>): void,
+  (tag: 'li', key: string, r: RootStream<HTMLLIElement>): void,
+  (tag: 'link', key: string, r: RootStream<HTMLLinkElement>): void,
+  (tag: 'meta', key: string, r: RootStream<HTMLMetaElement>): void,
+  (tag: 'ol', key: string, r: RootStream<HTMLOListElement>): void,
+  (tag: 'optgroup', key: string, r: RootStream<HTMLOptGroupElement>): void,
+  (tag: 'option', key: string, r: RootStream<HTMLOptionElement>): void,
+  (tag: 'p', key: string, r: RootStream<HTMLParagraphElement>): void,
+  (tag: 'pre', key: string, r: RootStream<HTMLPreElement>): void,
+  (tag: 'script', key: string, r: RootStream<HTMLScriptElement>): void,
+  (tag: 'select', key: string, r: RootStream<HTMLSelectElement>): void,
+  (tag: 'source', key: string, r: RootStream<HTMLSourceElement>): void,
+  (tag: 'span', key: string, r: RootStream<HTMLSpanElement>): void,
+  (tag: 'style', key: string, r: RootStream<HTMLStyleElement>): void,
+  (tag: 'textarea', key: string, r: RootStream<HTMLTextAreaElement>): void,
+  (tag: 'video', key: string, r: RootStream<HTMLVideoElement>): void,
+  (tag: 'table', key: string, r: RootStream<HTMLTableElement>): void,
+  (tag: 'caption', key: string, r: RootStream<HTMLTableCaptionElement>): void,
+  (
+    tag: 'thead' | 'tfoot' | 'tbody',
+    key: string,
+    r: RootStream<HTMLTableSectionElement>
+  ): void,
+  (tag: 'tr', key: string, r: RootStream<HTMLTableRowElement>): void,
+  (tag: 'td' | 'th', key: string, r: RootStream<HTMLTableCellElement>): void,
+  (tag: 'template', key: string, r: RootStream<HTMLTemplateElement>): void,
+  (tag: 'ul', key: string, r: RootStream<HTMLUListElement>): void,
+  (tag: string, key: string, r: RootStream<HTMLElement>): void
+}
+export type VNodeRay<T> = {
+  node: NodeFn,
+  text(r: Stream<R<VText>>): void,
+  comment(r: Stream<R<VComment>>): void,
+  put(rvnode: Stream<R<VNode<T>>>): number
 }
 
-export type Pith = (put: VNodeRay) => void
+export type Pith<T> = (put: VNodeRay<T>) => void
 
-declare export default function tree(
-  pith: Pith | Stream<Pith>
-): Stream<Patch<VNode>>
+declare export default function tree<T>(
+  Pith<T> | Stream<Pith<T>>
+): Stream<R<VNode<T>>>
 
-declare export function toVNode(element: Element): VNode
+declare export function toVNode<T: Element>(element: T): VNode<T>
+
+// export type Bark<T> = (Pith<T> | Stream<Pith<T>>) => Stream<R<VNode<T>>>
+//
+// export type Tree = {
+//   (tagName: 'a'): Bark<HTMLAnchorElement>,
+//   (tagName: 'audio'): Bark<HTMLAudioElement>,
+//   (tagName: 'br'): Bark<HTMLBRElement>,
+//   (tagName: 'button'): Bark<HTMLButtonElement>,
+//   (tagName: 'canvas'): Bark<HTMLCanvasElement>,
+//   (tagName: 'details'): Bark<HTMLDetailsElement>,
+//   (tagName: 'div'): Bark<HTMLDivElement>,
+//   (tagName: 'dl'): Bark<HTMLDListElement>,
+//   (tagName: 'fieldset'): Bark<HTMLFieldSetElement>,
+//   (tagName: 'form'): Bark<HTMLFormElement>,
+//   (tagName: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'): Bark<HTMLHeadingElement>,
+//   (tagName: 'hr'): Bark<HTMLHRElement>,
+//   (tagName: 'iframe'): Bark<HTMLIFrameElement>,
+//   (tagName: 'img'): Bark<HTMLImageElement>,
+//   (tagName: 'input'): Bark<HTMLInputElement>,
+//   (tagName: 'label'): Bark<HTMLLabelElement>,
+//   (tagName: 'legend'): Bark<HTMLLegendElement>,
+//   (tagName: 'li'): Bark<HTMLLIElement>,
+//   (tagName: 'link'): Bark<HTMLLinkElement>,
+//   (tagName: 'meta'): Bark<HTMLMetaElement>,
+//   (tagName: 'ol'): Bark<HTMLOListElement>,
+//   (tagName: 'optgroup'): Bark<HTMLOptGroupElement>,
+//   (tagName: 'option'): Bark<HTMLOptionElement>,
+//   (tagName: 'p'): Bark<HTMLParagraphElement>,
+//   (tagName: 'pre'): Bark<HTMLPreElement>,
+//   (tagName: 'script'): Bark<HTMLScriptElement>,
+//   (tagName: 'select'): Bark<HTMLSelectElement>,
+//   (tagName: 'source'): Bark<HTMLSourceElement>,
+//   (tagName: 'span'): Bark<HTMLSpanElement>,
+//   (tagName: 'style'): Bark<HTMLStyleElement>,
+//   (tagName: 'textarea'): Bark<HTMLTextAreaElement>,
+//   (tagName: 'video'): Bark<HTMLVideoElement>,
+//   (tagName: 'table'): Bark<HTMLTableElement>,
+//   (tagName: 'caption'): Bark<HTMLTableCaptionElement>,
+//   (tagName: 'thead' | 'tfoot' | 'tbody'): Bark<HTMLTableSectionElement>,
+//   (tagName: 'tr'): Bark<HTMLTableRowElement>,
+//   (tagName: 'td' | 'th'): Bark<HTMLTableCellElement>,
+//   (tagName: 'template'): Bark<HTMLTemplateElement>,
+//   (tagName: 'ul'): Bark<HTMLUListElement>,
+//   (tagName: string): Bark<HTMLElement>
+// }

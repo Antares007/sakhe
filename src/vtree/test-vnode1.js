@@ -36,6 +36,7 @@ const rez = tree(elm)(dom => {
     'div',
     'k1',
     rvnodeTree(dom => {
+      dom.put(now(v => v.node))
       dom.node(
         'h1',
         'k1',
