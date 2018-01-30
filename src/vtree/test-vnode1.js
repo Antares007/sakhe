@@ -16,7 +16,7 @@ import {asap} from '@most/scheduler'
 
 import M from '../m'
 import tree from './element0'
-import rvnodeTree, {type Pith} from '../vtree/rvnode0'
+import r, {type Pith} from '../vtree/rvnode0'
 
 const coll = document.getElementsByTagName('div')
 const elm = [...coll].find(e => e.id === 'root-node')
@@ -34,29 +34,30 @@ const count = () =>
 const rez = tree(elm)(dom => {
   dom.node(
     'div',
-    'k1',
-    rvnodeTree(dom => {
-      dom.put(now(v => v.node))
-      dom.node(
-        'h1',
-        'k1',
-        map(
-          str => vnode => {
-            vnode.node.innerText = str
-          },
-          count()
-        )
-      )
+    '1',
+    r(dom => {
+      dom.node('button', 'p', now(v => (v.node.innerText = '+')))
+      dom.node('button', 'm', now(v => (v.node.innerText = '-')))
     })
   )
   dom.text(now(vtext => (vtext.node.textContent = 'hello world!')))
+
+  const sum = M.of(on('click'))
+    .map(e => {
+      if (e.target instanceof HTMLButtonElement) return e.target
+      //:: throw new Error
+    })
+    .filter(Boolean)
+    .map(b => (b && b.innerText === '+' ? +1 : -1))
+    .scan((c, a) => c + a, 0)
+    .map(String).$
 
   dom.text(
     map(
       str => vtext => {
         vtext.node.textContent = str
       },
-      startWith('click', map(e => e.clientX + ':' + e.clientY, on('click')))
+      sum
     )
   )
 
@@ -93,5 +94,5 @@ const rez = tree(elm)(dom => {
 })
 
 M.of(rez)
-  .until(M.of(now(1)).delay(3000).$)
+  // .until(M.of(now(1)).delay(3000).$)
   .drain()
