@@ -14,12 +14,10 @@ export opaque type VNode: {node: Element} = {
 }
 export opaque type VText: {node: Text} = {
   type: 'text',
-  data: string,
   node: Text
 }
 export opaque type VComment: {node: Comment} = {
   type: 'comment',
-  data: string,
   node: Comment
 }
 export type VTree = VNode | VText | VComment
@@ -191,12 +189,12 @@ function createElement (tag: string, key: ?string): VNode {
   }
 }
 
-function createText (data = ''): VText {
-  return {type: 'text', data, node: document.createTextNode(data)}
+function createText (): VText {
+  return {type: 'text', node: document.createTextNode('')}
 }
 
-function createComment (data = ''): VComment {
-  return {type: 'comment', data, node: document.createComment(data)}
+function createComment (): VComment {
+  return {type: 'comment', node: document.createComment('')}
 }
 
 export function toVNode (element: Element): VNode {
