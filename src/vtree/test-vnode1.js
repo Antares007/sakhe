@@ -18,7 +18,8 @@ import M from '../m'
 import tree from './element0'
 import rvnodeTree, {type Pith} from '../vtree/rvnode0'
 
-const elm = document.getElementById('root-node')
+const coll = document.getElementsByTagName('div')
+const elm = [...coll].find(e => e.id === 'root-node')
 if (!elm) throw new Error()
 
 const count = () =>
