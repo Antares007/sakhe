@@ -52,7 +52,9 @@ const rez = tree(elm)(dom => {
 
   dom.text(
     map(
-      str => vtext => (vtext.node.textContent = str),
+      str => vtext => {
+        vtext.node.textContent = str
+      },
       startWith('click', map(e => e.clientX + ':' + e.clientY, on('click')))
     )
   )

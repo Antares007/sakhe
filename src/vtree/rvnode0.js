@@ -1,10 +1,28 @@
 // @flow
 import type {Stream} from '@most/types'
-import type {VNode, VText, VComment} from './types'
 
 import {combineArray, map, now} from '@most/core'
 
 import mostTree, {type Pith as MostPith} from '../most0'
+
+export opaque type VNode: {node: Element} = {
+  type: 'node',
+  tag: string,
+  key: ?string,
+  children: VTree[],
+  node: Element
+}
+export opaque type VText: {node: Text} = {
+  type: 'text',
+  data: string,
+  node: Text
+}
+export opaque type VComment: {node: Comment} = {
+  type: 'comment',
+  data: string,
+  node: Comment
+}
+export type VTree = VNode | VText | VComment
 
 export type Patch<T> = T => mixed
 
@@ -28,7 +46,7 @@ export default function tree (pith: Pith | Stream<Pith>): Stream<Patch<VNode>> {
           patchVNode =>
             function patchChieldVNode (parentVnode, cb) {
               var {children, node} = parentVnode
-              var li = children[index]
+              var li: ?VTree = children[index]
               var vnode
               if (li == null) {
                 vnode = createElement(tagB, key)
@@ -78,7 +96,7 @@ export default function tree (pith: Pith | Stream<Pith>): Stream<Patch<VNode>> {
           r =>
             function patchCharData (parentVnode) {
               var {children, node} = parentVnode
-              var li = children[index]
+              var li: ?VTree = children[index]
               var charData
               if (li == null) {
                 charData = createText()
@@ -107,7 +125,7 @@ export default function tree (pith: Pith | Stream<Pith>): Stream<Patch<VNode>> {
           r =>
             function patchCharData (parentVnode) {
               var {children, node} = parentVnode
-              var li = children[index]
+              var li: ?VTree = children[index]
               var charData
               if (li == null) {
                 charData = createComment()
@@ -179,4 +197,26 @@ function createText (data = ''): VText {
 
 function createComment (data = ''): VComment {
   return {type: 'comment', data, node: document.createComment(data)}
+}
+
+export function toVNode (element: Element): VNode {
+  const tag = element.tagName.toLowerCase()
+
+  const children = []
+  const elmChildren = element.childNodes
+  for (let i = 0, n = elmChildren.length; i < n; i++) {
+    children.push(toVTree(elmChildren[i]))
+  }
+  return {type: 'node', tag, key: undefined, children, node: element}
+}
+
+function toVTree (node: Node): VTree {
+  if (node instanceof Element) {
+    return toVNode(node)
+  } else if (node instanceof Text) {
+    return {type: 'text', data: node.textContent || '', node}
+  } else if (node instanceof Comment) {
+    return {type: 'comment', data: node.textContent || '', node}
+  }
+  throw new Error(`unexpected node type [${node.nodeType}]`)
 }

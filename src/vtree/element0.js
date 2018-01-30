@@ -2,8 +2,7 @@
 import type {Stream} from '@most/types'
 import {newStream} from '@most/core'
 import {disposeBoth, disposeWith} from '@most/disposable'
-import rvnodeTree, {type Pith as RVNodePith} from './rvnode0'
-import toVNode from './to-vnode'
+import rvnodeTree, {type Pith as RVNodePith, toVNode} from './rvnode0'
 import M from '../m'
 
 declare var window: {
