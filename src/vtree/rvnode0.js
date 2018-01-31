@@ -6,7 +6,7 @@ export default function tree (pith) {
   const ring = pith => put => {
     var currentIndex = 0
 
-    const node = (tagB, key, r) => {
+    const node = (tagB, r, key) => {
       const index = currentIndex++
       put.put(
         map(
@@ -140,19 +140,21 @@ function createElement (tag, key) {
   }
 }
 
-function createCharData (type) {
-  return type === 'text'
-    ? {type: type, node: document.createTextNode('')}
-    : {type: type, node: document.createComment('')}
+function createCharData (type, data = '') {
+  const node =
+    type === 'text'
+      ? document.createTextNode(data)
+      : document.createComment(data)
+  return {type, data, node}
 }
 
 function toVTree (node) {
   if (node instanceof window.Element) {
     return toVNode(node)
   } else if (node instanceof window.Text) {
-    return {type: 'text', data: node.textContent || '', node}
+    return createCharData('text', node.textContent || '')
   } else if (node instanceof window.Comment) {
-    return {type: 'comment', data: node.textContent || '', node}
+    return createCharData('comment', node.textContent || '')
   }
   throw new Error(`unexpected node type [${node.nodeType}]`)
 }

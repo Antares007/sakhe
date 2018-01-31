@@ -8,12 +8,14 @@ export opaque type VNode<T>: {node: T} = {
   children: VTree[],
   node: T
 }
-export opaque type VText: {node: Text} = {
+export opaque type VText: {data: string, node: Text} = {
   type: 'text',
+  data: string,
   node: Text
 }
-export opaque type VComment: {node: Comment} = {
+export opaque type VComment: {data: string, node: Comment} = {
   type: 'comment',
+  data: string,
   node: Comment
 }
 export type VTree = VNode<Element> | VText | VComment
@@ -26,54 +28,54 @@ export type TagMap = {|
 export type R<T> = T => mixed
 export type RootStream<T> = Stream<R<VNode<T>>>
 export type NodeFn = {
-  (tag: 'a', key: string, r: RootStream<HTMLAnchorElement>): void,
-  (tag: 'audio', key: string, r: RootStream<HTMLAudioElement>): void,
-  (tag: 'br', key: string, r: RootStream<HTMLBRElement>): void,
-  (tag: 'button', key: string, r: RootStream<HTMLButtonElement>): void,
-  (tag: 'canvas', key: string, r: RootStream<HTMLCanvasElement>): void,
-  (tag: 'details', key: string, r: RootStream<HTMLDetailsElement>): void,
-  (tag: 'div', key: string, r: RootStream<HTMLDivElement>): void,
-  (tag: 'dl', key: string, r: RootStream<HTMLDListElement>): void,
-  (tag: 'fieldset', key: string, r: RootStream<HTMLFieldSetElement>): void,
-  (tag: 'form', key: string, r: RootStream<HTMLFormElement>): void,
+  (tag: 'a', r: RootStream<HTMLAnchorElement>, key: ?string): void,
+  (tag: 'audio', r: RootStream<HTMLAudioElement>, key: ?string): void,
+  (tag: 'br', r: RootStream<HTMLBRElement>, key: ?string): void,
+  (tag: 'button', r: RootStream<HTMLButtonElement>, key: ?string): void,
+  (tag: 'canvas', r: RootStream<HTMLCanvasElement>, key: ?string): void,
+  (tag: 'details', r: RootStream<HTMLDetailsElement>, key: ?string): void,
+  (tag: 'div', r: RootStream<HTMLDivElement>, key: ?string): void,
+  (tag: 'dl', r: RootStream<HTMLDListElement>, key: ?string): void,
+  (tag: 'fieldset', r: RootStream<HTMLFieldSetElement>, key: ?string): void,
+  (tag: 'form', r: RootStream<HTMLFormElement>, key: ?string): void,
   (
     tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6',
-    key: string,
-    r: RootStream<HTMLHeadingElement>
+    r: RootStream<HTMLHeadingElement>,
+    key: ?string
   ): void,
-  (tag: 'hr', key: string, r: RootStream<HTMLHRElement>): void,
-  (tag: 'iframe', key: string, r: RootStream<HTMLIFrameElement>): void,
-  (tag: 'img', key: string, r: RootStream<HTMLImageElement>): void,
-  (tag: 'input', key: string, r: RootStream<HTMLInputElement>): void,
-  (tag: 'label', key: string, r: RootStream<HTMLLabelElement>): void,
-  (tag: 'legend', key: string, r: RootStream<HTMLLegendElement>): void,
-  (tag: 'li', key: string, r: RootStream<HTMLLIElement>): void,
-  (tag: 'link', key: string, r: RootStream<HTMLLinkElement>): void,
-  (tag: 'meta', key: string, r: RootStream<HTMLMetaElement>): void,
-  (tag: 'ol', key: string, r: RootStream<HTMLOListElement>): void,
-  (tag: 'optgroup', key: string, r: RootStream<HTMLOptGroupElement>): void,
-  (tag: 'option', key: string, r: RootStream<HTMLOptionElement>): void,
-  (tag: 'p', key: string, r: RootStream<HTMLParagraphElement>): void,
-  (tag: 'pre', key: string, r: RootStream<HTMLPreElement>): void,
-  (tag: 'script', key: string, r: RootStream<HTMLScriptElement>): void,
-  (tag: 'select', key: string, r: RootStream<HTMLSelectElement>): void,
-  (tag: 'source', key: string, r: RootStream<HTMLSourceElement>): void,
-  (tag: 'span', key: string, r: RootStream<HTMLSpanElement>): void,
-  (tag: 'style', key: string, r: RootStream<HTMLStyleElement>): void,
-  (tag: 'textarea', key: string, r: RootStream<HTMLTextAreaElement>): void,
-  (tag: 'video', key: string, r: RootStream<HTMLVideoElement>): void,
-  (tag: 'table', key: string, r: RootStream<HTMLTableElement>): void,
-  (tag: 'caption', key: string, r: RootStream<HTMLTableCaptionElement>): void,
+  (tag: 'hr', r: RootStream<HTMLHRElement>, key: ?string): void,
+  (tag: 'iframe', r: RootStream<HTMLIFrameElement>, key: ?string): void,
+  (tag: 'img', r: RootStream<HTMLImageElement>, key: ?string): void,
+  (tag: 'input', r: RootStream<HTMLInputElement>, key: ?string): void,
+  (tag: 'label', r: RootStream<HTMLLabelElement>, key: ?string): void,
+  (tag: 'legend', r: RootStream<HTMLLegendElement>, key: ?string): void,
+  (tag: 'li', r: RootStream<HTMLLIElement>, key: ?string): void,
+  (tag: 'link', r: RootStream<HTMLLinkElement>, key: ?string): void,
+  (tag: 'meta', r: RootStream<HTMLMetaElement>, key: ?string): void,
+  (tag: 'ol', r: RootStream<HTMLOListElement>, key: ?string): void,
+  (tag: 'optgroup', r: RootStream<HTMLOptGroupElement>, key: ?string): void,
+  (tag: 'option', r: RootStream<HTMLOptionElement>, key: ?string): void,
+  (tag: 'p', r: RootStream<HTMLParagraphElement>, key: ?string): void,
+  (tag: 'pre', r: RootStream<HTMLPreElement>, key: ?string): void,
+  (tag: 'script', r: RootStream<HTMLScriptElement>, key: ?string): void,
+  (tag: 'select', r: RootStream<HTMLSelectElement>, key: ?string): void,
+  (tag: 'source', r: RootStream<HTMLSourceElement>, key: ?string): void,
+  (tag: 'span', r: RootStream<HTMLSpanElement>, key: ?string): void,
+  (tag: 'style', r: RootStream<HTMLStyleElement>, key: ?string): void,
+  (tag: 'textarea', r: RootStream<HTMLTextAreaElement>, key: ?string): void,
+  (tag: 'video', r: RootStream<HTMLVideoElement>, key: ?string): void,
+  (tag: 'table', r: RootStream<HTMLTableElement>, key: ?string): void,
+  (tag: 'caption', r: RootStream<HTMLTableCaptionElement>, key: ?string): void,
   (
     tag: 'thead' | 'tfoot' | 'tbody',
-    key: string,
-    r: RootStream<HTMLTableSectionElement>
+    r: RootStream<HTMLTableSectionElement>,
+    key: ?string
   ): void,
-  (tag: 'tr', key: string, r: RootStream<HTMLTableRowElement>): void,
-  (tag: 'td' | 'th', key: string, r: RootStream<HTMLTableCellElement>): void,
-  (tag: 'template', key: string, r: RootStream<HTMLTemplateElement>): void,
-  (tag: 'ul', key: string, r: RootStream<HTMLUListElement>): void,
-  (tag: string, key: string, r: RootStream<HTMLElement>): void
+  (tag: 'tr', r: RootStream<HTMLTableRowElement>, key: ?string): void,
+  (tag: 'td' | 'th', r: RootStream<HTMLTableCellElement>, key: ?string): void,
+  (tag: 'template', r: RootStream<HTMLTemplateElement>, key: ?string): void,
+  (tag: 'ul', r: RootStream<HTMLUListElement>, key: ?string): void,
+  (tag: string, r: RootStream<HTMLElement>, key: ?string): void
 }
 export type VNodeRay<T> = {
   node: NodeFn,
