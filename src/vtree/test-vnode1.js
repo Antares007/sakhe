@@ -36,7 +36,9 @@ const count = () =>
     .take(10)
     .continueWith(count)
     .valueOf()
+
 const rez = tree(elm)(Counter(2))
+
 M.of(rez)
   // .until(M.of(now(1)).delay(3000).$)
   .drain()
@@ -45,15 +47,11 @@ function Counter<T: HTMLElement>(d = 0): Pith<T> {
   return dom => {
     const radius = 10
     const pi2 = Math.PI * 2
-    const cycle$ = M.of(periodic(1000 / 30))
+    const cycle$ = M.of(periodic(1000 / 60))
       .scan(i => (i >= pi2 ? 0 : i + 0.15), 0)
       .multicast().$
-    const sum = M.of(on('click'))
-      .map(e => {
-        if (e.target instanceof HTMLButtonElement) return e.target
-      })
-      .filter(Boolean)
-      .map(b => (b && b.className === 'increment' ? +1 : -1))
+    const proxy = new MulticastSource(never())
+    const sum = M.of(proxy)
       .scan((c, a) => c + a, 0)
       .map(String).$
 
@@ -66,74 +64,57 @@ function Counter<T: HTMLElement>(d = 0): Pith<T> {
             style.textAlign = 'center'
           })
         )
-        dom.node(
-          'button',
-          r(dom => {
-            dom.put(
-              constant(({node}) => {
-                const {style} = node
-                node.textContent = '+'
-                node.className = 'increment'
-                style.position = 'relative'
-                style.outline = 'none'
-              })
-            )
-            dom.put(
-              map(
-                i => ({node: {style}}) => {
-                  style.borderRadius = `${Math.abs(
-                    Math.floor(Math.sin(i) * 20)
-                  )}px`
-                  // style.left = `${Math.floor(Math.sin(i) * radius)}px`
-                  // style.top = `${Math.floor(Math.cos(i) * radius)}px`
-                  style.backgroundColor = `rgb(${100 +
-                    d * 20 +
-                    Math.floor(30 * Math.sin(i))}, ${100 +
-                    d * 20 +
-                    Math.floor(30 * Math.cos(i))}, 255)`
-                },
-                cycle$
-              )
-            )
-            if (d > 0) dom.node('div', r(Counter(d - 1)))
-          })
-        )
-        dom.node(
-          'button',
-          r(dom => {
-            dom.put(
-              constant(({node}) => {
-                const {style} = node
-                node.textContent = '-'
-                node.className = 'decriment'
-                style.position = 'relative'
-                style.outline = 'none'
-              })
-            )
-
-            dom.put(
-              map(
-                i => ({node: {style}}) => {
-                  style.borderRadius = `${Math.abs(
-                    Math.floor(Math.sin(i) * 20)
-                  )}px`
-                  // style.left = `${Math.floor(Math.cos(i) * radius)}px`
-                  // style.top = `${Math.floor(Math.sin(i) * radius)}px`
-                  style.backgroundColor = `rgb(255, ${100 +
-                    d * 20 +
-                    Math.floor(30 * Math.sin(i))}, ${100 +
-                    d * 20 +
-                    Math.floor(30 * Math.cos(i))})`
-                },
-                cycle$
-              )
-            )
-            if (d > 0) dom.node('div', r(Counter(d - 1)))
-          })
-        )
+        button(dom, 1)
+        button(dom, -1)
       })
     )
     dom.node('h3', r(dom => dom.text(textContent(sum))))
+
+    function button(dom, action: 1 | -1 = 1) {
+      const [wave1, wave2] =
+        action > 0 ? [Math.sin, Math.cos] : [Math.cos, Math.sin]
+
+      dom.node(
+        'button',
+        r(dom => {
+          dom.put(
+            constant(({node}, scheduler) => {
+              const {style} = node
+              node.textContent = action > 0 ? '+' : '-'
+              node.className = action > 0 ? 'increment' : 'decriment'
+              style.position = 'relative'
+              style.outline = 'none'
+              const listener = (e: MouseEvent) => {
+                proxy.event(scheduler.currentTime(), action)
+              }
+              node.addEventListener('click', listener)
+              return () => node.removeEventListener('click', listener)
+            })
+          )
+          dom.put(
+            map(
+              i => ({node: {style}}) => {
+                style.borderRadius = `${Math.abs(Math.floor(wave1(i) * 20))}px`
+                style.left = `${Math.floor(wave1(i) * radius)}px`
+                style.top = `${Math.floor(wave2(i) * radius)}px`
+                style.backgroundColor =
+                  action > 0
+                    ? `rgb(${100 + d * 20 + Math.floor(30 * wave1(i))}, ${100 +
+                        d * 20 +
+                        Math.floor(30 * wave2(i))}, 255)`
+                    : `rgb(255, ${100 +
+                        d * 20 +
+                        Math.floor(30 * wave1(i))}, ${100 +
+                        d * 20 +
+                        Math.floor(30 * wave2(i))})`
+              },
+              cycle$
+            )
+          )
+          if (d > 0) dom.node('div', r(Counter(d - 1)))
+        })
+      )
+    }
 
     function textContent<T: VText | VComment>(
       s: string | Stream<string>
@@ -169,18 +150,6 @@ function Counter<T: HTMLElement>(d = 0): Pith<T> {
           }, null)
         )
       })
-    }
-
-    function on(type: string): Stream<MouseEvent> {
-      const proxy = new MulticastSource(never())
-      dom.put(
-        constant((v, scheduler) => {
-          const listener = (e: Event) => proxy.event(scheduler.currentTime(), e)
-          v.node.addEventListener(type, listener)
-          return () => v.node.removeEventListener(type, listener)
-        })
-      )
-      return proxy
     }
   }
 }
