@@ -21,7 +21,8 @@ import r, {
   type VNode,
   type VText,
   type VComment,
-  type R
+  type R,
+  toVNode
 } from '../vtree/rvnode0'
 
 const coll = document.getElementsByTagName('div')
@@ -54,21 +55,11 @@ function Counter<T: HTMLElement>(d = 0): Pith<T> {
     const sum = M.of(proxy)
       .scan((c, a) => c + a, 0)
       .map(String).$
-    // dom.put(
-    //   r(dom => {
-    //     dom.node(
-    //       'h1',
-    //       constant(v => {
-    //         v.node.innerText = 'aaaa'
-    //       })
-    //     )
-    //   })
-    // )
     dom.node(
       'div',
       r(dom => {
         dom.put(
-          constant(({node: {style}}) => {
+          ref(({node: {style}}) => {
             style.padding = '5px 10px'
             style.textAlign = 'center'
           })
@@ -79,12 +70,12 @@ function Counter<T: HTMLElement>(d = 0): Pith<T> {
     )
     dom.node('h3', r(dom => dom.text(textContent(sum))))
 
-    function button(action: 1 | -1 = 1): Stream<R<VNode<HTMLButtonElement>>> {
+    function button<T: HTMLElement>(action: 1 | -1 = 1): Stream<R<VNode<T>>> {
       const [wave1, wave2] =
         action > 0 ? [Math.sin, Math.cos] : [Math.cos, Math.sin]
       return r(dom => {
         dom.put(
-          constant(({node}, scheduler) => {
+          ref(({node}, scheduler) => {
             const {style} = node
             node.textContent = action > 0 ? '+' : '-'
             node.className = action > 0 ? 'increment' : 'decriment'
@@ -128,25 +119,20 @@ function Counter<T: HTMLElement>(d = 0): Pith<T> {
       )
     }
 
-    function constant<T>(
+    function ref<T>(
       cf: (VNode<T>, Scheduler) => (() => void) | void
     ): Stream<R<VNode<T>>> {
       return newStream((sink, scheduler) => {
-        var ref: ?VNode<T>
-        var dispose: ?() => void
+        const patchedVNodes = new Map()
         return disposeBoth(
           asap(
             propagateEventTask(v => {
-              if (ref === v) return
-              if (ref) throw Error('wtf!!!')
-              dispose = cf(v, scheduler)
-              ref = v
+              if (patchedVNodes.has(v)) return
+              patchedVNodes.set(v, cf(v, scheduler))
             }, sink),
             scheduler
           ),
-          disposeWith(() => {
-            dispose && dispose()
-          }, null)
+          disposeWith(() => patchedVNodes.forEach(d => d && d()), null)
         )
       })
     }

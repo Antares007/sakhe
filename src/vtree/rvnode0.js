@@ -105,15 +105,14 @@ export default function tree (pith) {
     )
   }
 
-  return mostTree(xs =>
+  return mostTree(
     combineArray(
       (...patches) =>
         function patchVNode (vnode, cb) {
-          for (var i = 0; i < patches.length; i++) {
+          for (var i = 0, l = patches.length; i < l; i++) {
             patches[i](vnode)
           }
-        },
-      xs
+        }
     )
   )(typeof pith === 'function' ? ring(pith) : map(ring, pith))
 }
