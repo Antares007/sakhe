@@ -25,69 +25,67 @@ export type TagMap = {|
   h1: HTMLHeadingElement,
   a: HTMLAnchorElement
 |}
-export type R<T> = T => mixed
-export type RootStream<T> = Stream<R<VNode<T>>>
+export type R<T> = Stream<(T) => mixed>
+export type RVNode<T> = R<VNode<T>>
 export type NodeFn = {
-  (tag: 'a', r: RootStream<HTMLAnchorElement>, key: ?string): void,
-  (tag: 'audio', r: RootStream<HTMLAudioElement>, key: ?string): void,
-  (tag: 'br', r: RootStream<HTMLBRElement>, key: ?string): void,
-  (tag: 'button', r: RootStream<HTMLButtonElement>, key: ?string): void,
-  (tag: 'canvas', r: RootStream<HTMLCanvasElement>, key: ?string): void,
-  (tag: 'details', r: RootStream<HTMLDetailsElement>, key: ?string): void,
-  (tag: 'div', r: RootStream<HTMLDivElement>, key: ?string): void,
-  (tag: 'dl', r: RootStream<HTMLDListElement>, key: ?string): void,
-  (tag: 'fieldset', r: RootStream<HTMLFieldSetElement>, key: ?string): void,
-  (tag: 'form', r: RootStream<HTMLFormElement>, key: ?string): void,
+  (tag: 'a', r: RVNode<HTMLAnchorElement>, key: ?string): void,
+  (tag: 'audio', r: RVNode<HTMLAudioElement>, key: ?string): void,
+  (tag: 'br', r: RVNode<HTMLBRElement>, key: ?string): void,
+  (tag: 'button', r: RVNode<HTMLButtonElement>, key: ?string): void,
+  (tag: 'canvas', r: RVNode<HTMLCanvasElement>, key: ?string): void,
+  (tag: 'details', r: RVNode<HTMLDetailsElement>, key: ?string): void,
+  (tag: 'div', r: RVNode<HTMLDivElement>, key: ?string): void,
+  (tag: 'dl', r: RVNode<HTMLDListElement>, key: ?string): void,
+  (tag: 'fieldset', r: RVNode<HTMLFieldSetElement>, key: ?string): void,
+  (tag: 'form', r: RVNode<HTMLFormElement>, key: ?string): void,
   (
     tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6',
-    r: RootStream<HTMLHeadingElement>,
+    r: RVNode<HTMLHeadingElement>,
     key: ?string
   ): void,
-  (tag: 'hr', r: RootStream<HTMLHRElement>, key: ?string): void,
-  (tag: 'iframe', r: RootStream<HTMLIFrameElement>, key: ?string): void,
-  (tag: 'img', r: RootStream<HTMLImageElement>, key: ?string): void,
-  (tag: 'input', r: RootStream<HTMLInputElement>, key: ?string): void,
-  (tag: 'label', r: RootStream<HTMLLabelElement>, key: ?string): void,
-  (tag: 'legend', r: RootStream<HTMLLegendElement>, key: ?string): void,
-  (tag: 'li', r: RootStream<HTMLLIElement>, key: ?string): void,
-  (tag: 'link', r: RootStream<HTMLLinkElement>, key: ?string): void,
-  (tag: 'meta', r: RootStream<HTMLMetaElement>, key: ?string): void,
-  (tag: 'ol', r: RootStream<HTMLOListElement>, key: ?string): void,
-  (tag: 'optgroup', r: RootStream<HTMLOptGroupElement>, key: ?string): void,
-  (tag: 'option', r: RootStream<HTMLOptionElement>, key: ?string): void,
-  (tag: 'p', r: RootStream<HTMLParagraphElement>, key: ?string): void,
-  (tag: 'pre', r: RootStream<HTMLPreElement>, key: ?string): void,
-  (tag: 'script', r: RootStream<HTMLScriptElement>, key: ?string): void,
-  (tag: 'select', r: RootStream<HTMLSelectElement>, key: ?string): void,
-  (tag: 'source', r: RootStream<HTMLSourceElement>, key: ?string): void,
-  (tag: 'span', r: RootStream<HTMLSpanElement>, key: ?string): void,
-  (tag: 'style', r: RootStream<HTMLStyleElement>, key: ?string): void,
-  (tag: 'textarea', r: RootStream<HTMLTextAreaElement>, key: ?string): void,
-  (tag: 'video', r: RootStream<HTMLVideoElement>, key: ?string): void,
-  (tag: 'table', r: RootStream<HTMLTableElement>, key: ?string): void,
-  (tag: 'caption', r: RootStream<HTMLTableCaptionElement>, key: ?string): void,
+  (tag: 'hr', r: RVNode<HTMLHRElement>, key: ?string): void,
+  (tag: 'iframe', r: RVNode<HTMLIFrameElement>, key: ?string): void,
+  (tag: 'img', r: RVNode<HTMLImageElement>, key: ?string): void,
+  (tag: 'input', r: RVNode<HTMLInputElement>, key: ?string): void,
+  (tag: 'label', r: RVNode<HTMLLabelElement>, key: ?string): void,
+  (tag: 'legend', r: RVNode<HTMLLegendElement>, key: ?string): void,
+  (tag: 'li', r: RVNode<HTMLLIElement>, key: ?string): void,
+  (tag: 'link', r: RVNode<HTMLLinkElement>, key: ?string): void,
+  (tag: 'meta', r: RVNode<HTMLMetaElement>, key: ?string): void,
+  (tag: 'ol', r: RVNode<HTMLOListElement>, key: ?string): void,
+  (tag: 'optgroup', r: RVNode<HTMLOptGroupElement>, key: ?string): void,
+  (tag: 'option', r: RVNode<HTMLOptionElement>, key: ?string): void,
+  (tag: 'p', r: RVNode<HTMLParagraphElement>, key: ?string): void,
+  (tag: 'pre', r: RVNode<HTMLPreElement>, key: ?string): void,
+  (tag: 'script', r: RVNode<HTMLScriptElement>, key: ?string): void,
+  (tag: 'select', r: RVNode<HTMLSelectElement>, key: ?string): void,
+  (tag: 'source', r: RVNode<HTMLSourceElement>, key: ?string): void,
+  (tag: 'span', r: RVNode<HTMLSpanElement>, key: ?string): void,
+  (tag: 'style', r: RVNode<HTMLStyleElement>, key: ?string): void,
+  (tag: 'textarea', r: RVNode<HTMLTextAreaElement>, key: ?string): void,
+  (tag: 'video', r: RVNode<HTMLVideoElement>, key: ?string): void,
+  (tag: 'table', r: RVNode<HTMLTableElement>, key: ?string): void,
+  (tag: 'caption', r: RVNode<HTMLTableCaptionElement>, key: ?string): void,
   (
     tag: 'thead' | 'tfoot' | 'tbody',
-    r: RootStream<HTMLTableSectionElement>,
+    r: RVNode<HTMLTableSectionElement>,
     key: ?string
   ): void,
-  (tag: 'tr', r: RootStream<HTMLTableRowElement>, key: ?string): void,
-  (tag: 'td' | 'th', r: RootStream<HTMLTableCellElement>, key: ?string): void,
-  (tag: 'template', r: RootStream<HTMLTemplateElement>, key: ?string): void,
-  (tag: 'ul', r: RootStream<HTMLUListElement>, key: ?string): void,
-  (tag: string, r: RootStream<HTMLElement>, key: ?string): void
+  (tag: 'tr', r: RVNode<HTMLTableRowElement>, key: ?string): void,
+  (tag: 'td' | 'th', r: RVNode<HTMLTableCellElement>, key: ?string): void,
+  (tag: 'template', r: RVNode<HTMLTemplateElement>, key: ?string): void,
+  (tag: 'ul', r: RVNode<HTMLUListElement>, key: ?string): void,
+  (tag: string, r: RVNode<HTMLElement>, key: ?string): void
 }
 export type VNodeRay<T> = {
   node: NodeFn,
-  text(r: Stream<R<VText>>): void,
-  comment(r: Stream<R<VComment>>): void,
-  put(rvnode: Stream<R<VNode<T>>>): number
+  text(r: R<VText>): void,
+  comment(r: R<VComment>): void,
+  put(rvnode: R<VNode<T>>): number
 }
 
 export type Pith<T> = (put: VNodeRay<T>) => void
 
-declare export default function tree<T>(
-  Pith<T> | Stream<Pith<T>>
-): Stream<R<VNode<T>>>
+declare export default function tree<T>(Pith<T> | Stream<Pith<T>>): R<VNode<T>>
 
 declare export function toVNode<T: Element>(element: T): VNode<T>
