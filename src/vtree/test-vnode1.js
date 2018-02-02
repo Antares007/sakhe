@@ -56,7 +56,16 @@ const rez = tree(elm)(dom => {
     })
   }
   dom.text(map(i => v => (v.node.textContent = i), startWith(0, proxy)))
-  dom.node('div', r(map(i => Counter2(i), startWith(0, proxy))))
+  dom.node(
+    'div',
+    r(
+      map(i => {
+        if (i === 0) return Counter(1)
+        if (i === 1) return Counter2(1)
+        return Counter(i)
+      }, startWith(0, proxy))
+    )
+  )
 })
 
 M.of(rez)
@@ -72,8 +81,8 @@ function Counter2<T: HTMLElement>(d = 0): Pith<T> {
     dom.node(
       'div',
       r(dom => {
-        dom.node('button', button(1), 'k2')
-        dom.node('button', button(-1), 'k3')
+        dom.node('button', button(1))
+        dom.node('button', button(-1))
         dom.put(
           ref(({node: {style}}) => {
             style.padding = '5px 10px'
@@ -89,15 +98,16 @@ function Counter2<T: HTMLElement>(d = 0): Pith<T> {
         if (d > 0) dom.node('div', r(Counter2(d - 1)))
         dom.put(
           ref(({node}, scheduler) => {
-            const tn = document.createTextNode((action > 0 ? '+' : '-') + d)
-            node.insertBefore(tn, null)
             node.className = action > 0 ? 'increment' : 'decriment'
+            const span = document.createElement('span')
+            span.innerHTML = `<b>${action > 0 ? '+' : '-'}</b>`
+            node.insertBefore(span, node.children[0])
             const listener = (e: MouseEvent) =>
               proxy.event(scheduler.currentTime(), action)
             node.addEventListener('click', listener)
             return () => {
               node.removeEventListener('click', listener)
-              node.removeChild(tn)
+              node.removeChild(span)
             }
           })
         )
@@ -114,33 +124,23 @@ function Counter<T: HTMLElement>(d = 0): Pith<T> {
       .scan(i => (i >= pi2 ? 0 : i + 0.15), 0)
       .multicast().$
     const proxy = new MulticastSource(never())
-
+    const sum = M.of(proxy)
+      .scan((c, a) => c + a, 0)
+      .map(String).$
     dom.node(
       'div',
       r(dom => {
-        dom.node('button', button(1), 'k2')
-        dom.node('button', button(-1), 'k3')
+        dom.node('button', button(1))
+        dom.node('button', button(-1))
         dom.put(
           ref(({node: {style}}) => {
             style.padding = '5px 10px'
             style.textAlign = 'center'
           })
         )
-      }),
-      'k1'
+      })
     )
-    dom.node(
-      'h3',
-      r(dom =>
-        dom.text(
-          textContent(
-            M.of(proxy)
-              .scan((c, a) => c + a, 0)
-              .map(String).$
-          )
-        )
-      )
-    )
+    dom.node('h3', r(dom => dom.text(textContent(sum))))
 
     function button<T: HTMLElement>(action: 1 | -1 = 1): R<VNode<T>> {
       const [wave1, wave2] =
@@ -149,18 +149,21 @@ function Counter<T: HTMLElement>(d = 0): Pith<T> {
         dom.put(
           ref(({node}, scheduler) => {
             const {style} = node
-            const tn = document.createTextNode(action > 0 ? '+' : '-')
-            node.appendChild(tn)
-            node.className = action > 0 ? 'increment' : 'decriment'
             style.position = 'relative'
             style.outline = 'none'
+
+            node.className = action > 0 ? 'increment' : 'decriment'
+            const span = document.createElement('span')
+            span.innerHTML = `<b>${action > 0 ? '+' : '-'}</b>`
+            node.insertBefore(span, node.children[0])
+
             const listener = (e: MouseEvent) => {
               proxy.event(scheduler.currentTime(), action)
             }
             node.addEventListener('click', listener)
             return () => {
               node.removeEventListener('click', listener)
-              node.removeChild(tn)
+              node.removeChild(span)
             }
           })
         )
