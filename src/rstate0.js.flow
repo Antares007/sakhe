@@ -1,0 +1,25 @@
+// @flow
+import type {Stream} from '@most/types'
+
+export type Obj = {+[string]: mixed}
+
+export type R<S> = S => S
+
+export type StateRay<A> = {
+  extend<Key: $Keys<A>, B: $Subtype<$ElementType<$Exact<A>, Key>>>(
+    key: Key,
+    b: B,
+    r: Stream<R<$Exact<B>>>
+  ): void,
+  val<Key: $Keys<A>>(
+    key: Key,
+    r: Stream<R<$ElementType<$Exact<A>, Key>>>
+  ): void,
+  put(r: Stream<R<A>>): number
+}
+
+export type Pith<A> = (state: StateRay<A>) => void
+
+declare export default function tree<A: Obj>(
+  pith: Pith<A> | Stream<Pith<A>>
+): Stream<R<A>>
