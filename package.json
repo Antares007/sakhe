@@ -21,7 +21,7 @@
     ]
   },
   "dependencies": {
-    "@most/core": "^1.2.0",
+    "@most/core": "^1.2.3",
     "@most/disposable": "^1.1.0",
     "@most/hold": "^3.0.0",
     "@most/prelude": "^1.7.0",
@@ -33,21 +33,21 @@
     "babel-preset-flow": "^6.23.0",
     "babel-register": "^6.26.0",
     "debug": "^3.1.0",
-    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-config-standard": "^11.0.0",
     "eslint-plugin-standard": "^3.0.1",
-    "most": "^1.7.2",
+    "most": "^1.7.3",
     "most-subject": "^5.3.0",
     "snabbdom": "^0.7.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.1.2",
-    "eslint": "^4.16.0",
-    "eslint-plugin-flowtype": "^2.42.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-node": "^5.2.1",
-    "eslint-plugin-promise": "^3.6.0",
-    "flow-bin": "^0.64.0"
+    "babel-eslint": "^8.2.2",
+    "eslint": "^4.19.0",
+    "eslint-plugin-flowtype": "^2.46.1",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "flow-bin": "^0.68.0"
   },
   "scripts": {
     "lint": "eslint src && flow",

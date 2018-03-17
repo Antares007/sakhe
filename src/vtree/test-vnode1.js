@@ -55,7 +55,9 @@ const rez = tree(elm)(dom => {
       )
     })
   }
-  dom.text(map(i => v => (v.node.textContent = i), startWith(0, proxy)))
+  dom.text(
+    map(i => v => (v.node.textContent = i.toString()), startWith(0, proxy))
+  )
   dom.node(
     'div',
     r(
