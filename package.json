@@ -1,0 +1,25 @@
+{
+  "name": "sakhecore",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "dotnet restore",
+    "start": "cd tools && dotnet fable start",
+    "rollup": "rollup -c rollup-config.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "rollup": "^0.58.2",
+    "rollup-plugin-fable": "^1.1.1",
+    "rollup-plugin-node-resolve": "^3.3.0"
+  },
+  "dependencies": {
+    "@most/core": "^1.2.3",
+    "@most/scheduler": "^1.1.0",
+    "@most/types": "^1.0.0"
+  }
+}
