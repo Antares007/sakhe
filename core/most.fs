@@ -90,8 +90,8 @@ module rec Core =
         abstract ``event``: time: Time * value: 'A -> unit
         abstract error: time: Time * error: Error -> unit
         abstract ``end``: time: Time -> unit
-        abstract add: sink: Sink<'A> -> float
-        abstract remove: sink: Sink<'A> -> float
+        abstract add: sink: Sink<'A> -> int
+        abstract remove: sink: Sink<'A> -> int
         abstract dispose: unit -> unit
 
     type [<AllowNullLiteral>] MulticastSourceStatic =
@@ -148,8 +148,8 @@ module rec Core =
         abstract continueWith: f: (obj option -> Stream<'A>) * s: Stream<'A> -> Stream<'A>
         abstract continueWith: f: (obj option -> Stream<'A>) -> (Stream<'A> -> Stream<'A>)
 
-        abstract delay: dt: float * s: Stream<'A> -> Stream<'A>
-        abstract delay: dt: float -> (Stream<'A> -> Stream<'A>)
+        abstract delay: dt: int * s: Stream<'A> -> Stream<'A>
+        abstract delay: dt: int -> (Stream<'A> -> Stream<'A>)
 
         abstract recoverWith: p: ('E -> Stream<'A>) * s: Stream<'A> -> Stream<'A>
         abstract recoverWith: p: ('E -> Stream<'A>) -> (Stream<'A> -> Stream<'A>)
@@ -161,10 +161,10 @@ module rec Core =
         abstract skipRepeatsWith: eq: ('A -> 'A -> bool) * s: Stream<'A> -> Stream<'A>
         abstract skipRepeatsWith: eq: ('A -> 'A -> bool) -> (Stream<'A> -> Stream<'A>)
 
-        abstract throttle: period: float * s: Stream<'A> -> Stream<'A>
-        abstract throttle: period: float -> (Stream<'A> -> Stream<'A>)
-        abstract debounce: period: float * s: Stream<'A> -> Stream<'A>
-        abstract debounce: period: float -> (Stream<'A> -> Stream<'A>)
+        abstract throttle: period: int * s: Stream<'A> -> Stream<'A>
+        abstract throttle: period: int -> (Stream<'A> -> Stream<'A>)
+        abstract debounce: period: int * s: Stream<'A> -> Stream<'A>
+        abstract debounce: period: int -> (Stream<'A> -> Stream<'A>)
 
         abstract loop: f: ('S -> 'A -> SeedValue<'S, 'B>) * seed: 'S * s: Stream<'A> -> Stream<'B>
         abstract loop: f: ('S -> 'A -> SeedValue<'S, 'B>) -> ('S -> Stream<'A> -> Stream<'B>)
@@ -174,8 +174,8 @@ module rec Core =
         abstract merge: s1: Stream<'A> -> (Stream<'A> -> Stream<'A>)
         abstract mergeArray: streams: Stream<'A>[] -> Stream<'A>
 
-        abstract mergeConcurrently: concurrency: float * s: Stream<Stream<'A>> -> Stream<'A>
-        abstract mergeConcurrently: concurrency: float -> (Stream<Stream<'A>> -> Stream<'A>)
+        abstract mergeConcurrently: concurrency: int * s: Stream<Stream<'A>> -> Stream<'A>
+        abstract mergeConcurrently: concurrency: int -> (Stream<Stream<'A>> -> Stream<'A>)
 
         abstract multicast: s: Stream<'A> -> Stream<'A>
         abstract MulticastSource: MulticastSourceStatic
@@ -187,19 +187,19 @@ module rec Core =
         abstract scan: f: ('B -> 'A -> 'B) -> ('B -> Stream<'A> -> Stream<'B>)
         abstract scan: f: ('B -> 'A -> 'B) * b: 'B -> (Stream<'A> -> Stream<'B>)
 
-        abstract take: n: float * s: Stream<'A> -> Stream<'A>
-        abstract take: n: float -> (Stream<'A> -> Stream<'A>)
-        abstract skip: n: float * s: Stream<'A> -> Stream<'A>
-        abstract skip: n: float -> (Stream<'A> -> Stream<'A>)
+        abstract take: n: int * s: Stream<'A> -> Stream<'A>
+        abstract take: n: int -> (Stream<'A> -> Stream<'A>)
+        abstract skip: n: int * s: Stream<'A> -> Stream<'A>
+        abstract skip: n: int -> (Stream<'A> -> Stream<'A>)
         abstract takeWhile: p: ('A -> bool) * s: Stream<'A> -> Stream<'A>
         abstract takeWhile: p: ('A -> bool) -> (Stream<'A> -> Stream<'A>)
         abstract skipWhile: p: ('A -> bool) * s: Stream<'A> -> Stream<'A>
         abstract skipWhile: p: ('A -> bool) -> (Stream<'A> -> Stream<'A>)
         abstract skipAfter: p: ('A -> bool) * s: Stream<'A> -> Stream<'A>
         abstract skipAfter: p: ('A -> bool) -> (Stream<'A> -> Stream<'A>)
-        abstract slice: start: float * ``end``: float * s: Stream<'A> -> Stream<'A>
-        abstract slice: start: float -> (float -> Stream<'A> -> Stream<'A>)
-        abstract slice: start: float * ``end``: float -> (Stream<'A> -> Stream<'A>)
+        abstract slice: start: int * ``end``: int * s: Stream<'A> -> Stream<'A>
+        abstract slice: start: int -> (int -> Stream<'A> -> Stream<'A>)
+        abstract slice: start: int * ``end``: int -> (Stream<'A> -> Stream<'A>)
 
         abstract sample: values: Stream<'A> * sampler: Stream<'B> -> Stream<'A>
         abstract sample: values: Stream<'A> -> (Stream<'B> -> Stream<'A>)
@@ -260,7 +260,7 @@ module rec Core =
 
         abstract newStream: run: RunStream<'A> -> Stream<'A>
 
-        abstract periodic: period: float -> Stream<unit>
+        abstract periodic: period: int -> Stream<unit>
 
     let require: IExports = Fable.Core.JsInterop.importAll "@most/core"
 
