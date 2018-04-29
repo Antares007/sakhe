@@ -2,7 +2,6 @@
 
 open Most
 
-[<Fable.Core.Erase>]
 type M<'a> =
     | Value of 'a
     | OValue of Stream<'a>
