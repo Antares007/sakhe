@@ -7,6 +7,5 @@ obj/
 out/
 Debug/
 node_modules/
-/.paket/Paket.Restore.targets
 /paket-files
 *.fsproj.user
