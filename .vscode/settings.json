@@ -6,11 +6,11 @@
     "editor.fontFamily": "PragmataPro",
     "editor.fontSize": 16,
     "editor.lineHeight": 24,
-    "window.zoomLevel": 1,
+    "window.zoomLevel": -1,
     "FSharp.lineLens.enabled": "replaceCodeLens",
     "workbench.colorTheme": "Solarized Dark",
     "workbench.activityBar.visible": true,
     "window.menuBarVisibility": "toggle",
-    "editor.renderIndentGuides": false,
+    "editor.renderIndentGuides": true,
     // "editor.renderWhitespace": "boundary",
 }
