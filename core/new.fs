@@ -44,17 +44,22 @@ let inline private (|   IndexOutOfBounds                |
             | Some foundNode    -> SameNodeAtDifferentPosition (foundNode, childAtIndex)
             | None              -> OtherNodeAtPosition childAtIndex
 
-let patch create eq patch (node: Node, index: int) =
+let patch create eq (patch:Node -> unit) (node: Node, index: int) =
     match index, eq, node with
     | IndexOutOfBounds ->
-        node.insertBefore (patch (create ())) |> ignore
+        let child = create ()
+        patch child
+        node.insertBefore child |> ignore
     | SameNodeAtPosition childAtIndex ->
         patch (childAtIndex) |> ignore
     | SameNodeAtDifferentPosition (foundNode, childAtIndex) ->
+        patch foundNode
         node.insertBefore (foundNode, childAtIndex) |> ignore
     | OtherNodeAtPosition childAtIndex ->
-        node.insertBefore (patch (create ()), childAtIndex) |> ignore
-    
+        let child = create ()
+        patch child
+        node.insertBefore (child, childAtIndex) |> ignore
+
 let private cmb xs n = xs |> Array.iteri (fun i p -> p (n, i))
 
 let private create (f: (unit -> #Node), key: string Option) (): #Node =
@@ -66,14 +71,12 @@ let private create (f: (unit -> #Node), key: string Option) (): #Node =
 let tree (pith: R<Ray<'a>>): R<'a> =
     let ring (pith: Ray<'a> -> unit) (mRay: M.Ray<'a * int -> unit>): unit =
         let patch (cf: unit -> #Node, key: string Option, r: R<#Node>) =
-            let z = create (cf, key) ()
-            // let b = z ()
-            ()
+            mRay (most.map (patch cf (fun n -> true)) r)
+            // failwith ""
 
         let ray (lang, key) =
             match lang with
             | A r -> patch (document.createElement_a, key, r)
-            | Div r -> mRay (most.map (fun r (n, i) -> ()) r)
             | Text r -> patch ((fun () -> document.createTextNode ""), key, r)
             | Patch r -> mRay (most.map (fun r (n, i) -> ()) r)
             | _ -> ()
@@ -82,8 +85,8 @@ let tree (pith: R<Ray<'a>>): R<'a> =
 
 let t f = tree (most.now f)
 
-let rez: R<HTMLElement> = t (fun o -> 
+let rez: R<HTMLElement> = t (fun o ->
     o (Div (most.now (fun x -> ())), Some "as")
-    o (Patch (t (fun o -> 
+    o (Patch (t (fun o ->
                     o (Div (most.now (fun x -> ())), Some "as")
                     o (Patch (most.now (fun x -> ())), Some "as"))), Some "as"))
