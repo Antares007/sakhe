@@ -23,7 +23,7 @@ type Pith<'a when 'a :> Element> = Ray<'a> -> unit
 let inline private (|   IndexOutOfBounds                |
                         SameNodeAtPosition              |
                         SameNodeAtDifferentPosition     |
-                        OtherNodeAtPosition             |) (i, eq, node: Node) =
+                        OtherNodeAtPosition             |) (i: int, eq: 'a -> bool, node: 'b when 'a :> Node and 'b :> Node) =
     let childNodes = node.childNodes
     let length = int childNodes.length
 
@@ -44,7 +44,7 @@ let inline private (|   IndexOutOfBounds                |
             | Some foundNode    -> SameNodeAtDifferentPosition (foundNode, childAtIndex)
             | None              -> OtherNodeAtPosition childAtIndex
 
-let patch create eq (patch:Node -> unit) (node: Node, index: int) =
+let patch create eq (patch: Node -> unit) (node: Node, index: int) =
     match index, eq, node with
     | IndexOutOfBounds ->
         let child = create ()
@@ -62,7 +62,7 @@ let patch create eq (patch:Node -> unit) (node: Node, index: int) =
 
 let private cmb xs n = xs |> Array.iteri (fun i p -> p (n, i))
 
-let private create (f: (unit -> #Node), key: string Option) (): #Node =
+let private create (f: (unit -> 'a), key: string Option when 'a :> Node) () =
     let e = f ()
     match key with
     | Some _ -> e
@@ -71,13 +71,13 @@ let private create (f: (unit -> #Node), key: string Option) (): #Node =
 let tree (pith: R<Ray<'a>>): R<'a> =
     let ring (pith: Ray<'a> -> unit) (mRay: M.Ray<'a * int -> unit>): unit =
         let patch (cf: unit -> #Node, key: string Option, r: R<#Node>) =
-            mRay (most.map (patch cf (fun n -> true)) r)
-            // failwith ""
+            // mRay (most.map (patch cf (fun n -> true)) r)
+            failwith ""
 
         let ray (lang, key) =
             match lang with
             | A r -> patch (document.createElement_a, key, r)
-            | Text r -> patch ((fun () -> document.createTextNode ""), key, r)
+            // | Text r -> patch ((fun () -> document.createTextNode ""), key, r)
             | Patch r -> mRay (most.map (fun r (n, i) -> ()) r)
             | _ -> ()
         pith ray
