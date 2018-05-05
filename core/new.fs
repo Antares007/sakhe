@@ -20,14 +20,6 @@ type Ray<'a when 'a :> Element> = Lang<'a> * Key option -> unit
 
 type Pith<'a when 'a :> Element> = Ray<'a> -> unit
 
-let private cmb xs n = xs |> Array.iteri (fun i p -> p (n, i))
-
-let private create (f: (unit -> #Element), key: string Option) (): #Element =
-    let e = f ()
-    match key with
-    | Some _ -> e
-    | None -> e
-
 let inline private (|   IndexOutOfBounds                |
                         SameNodeAtPosition              |
                         SameNodeAtDifferentPosition     |
@@ -63,10 +55,17 @@ let patch create eq patch (node: Node, index: int) =
     | OtherNodeAtPosition childAtIndex ->
         node.insertBefore (patch (create ()), childAtIndex) |> ignore
     
+let private cmb xs n = xs |> Array.iteri (fun i p -> p (n, i))
+
+let private create (f: (unit -> #Node), key: string Option) (): #Node =
+    let e = f ()
+    match key with
+    | Some _ -> e
+    | None -> e
 
 let tree (pith: R<Ray<'a>>): R<'a> =
     let ring (pith: Ray<'a> -> unit) (mRay: M.Ray<'a * int -> unit>): unit =
-        let patch (cf: unit -> #Element, key: string Option, r: R<#Element>) =
+        let patch (cf: unit -> #Node, key: string Option, r: R<#Node>) =
             let z = create (cf, key) ()
             // let b = z ()
             ()
@@ -75,7 +74,7 @@ let tree (pith: R<Ray<'a>>): R<'a> =
             match lang with
             | A r -> patch (document.createElement_a, key, r)
             | Div r -> mRay (most.map (fun r (n, i) -> ()) r)
-            | Text r -> mRay (most.map (fun r (n, i) -> ()) r)
+            | Text r -> patch ((fun () -> document.createTextNode ""), key, r)
             | Patch r -> mRay (most.map (fun r (n, i) -> ()) r)
             | _ -> ()
         pith ray
