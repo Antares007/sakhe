@@ -10,6 +10,7 @@ type Lang<'a when 'a :> Element> =
     | Div of R<HTMLDivElement>
     | H1 of R<HTMLHeadElement>
     | H2 of R<HTMLHeadElement>
+    | H3 of R<HTMLHeadElement>
     | Text of R<Text>
     | Comment of R<Comment>
     | Patch of R<'a>
@@ -71,48 +72,46 @@ let private create (f: (unit -> 'a), key: string Option when 'a :> Node) () =
 // let inline instanceOf(_, _: 'a when 'a : (abstract prototype: 't)) : 't option = jsNative
 
 
-let inline mkCheker (
-        create: (unit -> 'a),
-        key: string option
-    ): ((unit -> 'a) * (Node -> 'a option)) =
+
+let private mkCheker (create: (unit -> 'a), key: string option): ((unit -> 'a) * (Node -> 'a option)) =
     let cr () = 
         let e = create ()
         e
     let eq node = None
     (cr, eq)
 
-let (cr, eq) = mkCheker (document.createElement_a, Some "")
+let private mkPatcher (create, eq) patch (node: #Node, i: int) =
+    let childNodes = node.childNodes
+    let length = int childNodes.length
+    if i >= length then
+        () // IndexOutOfBounds
+    else
+        let childAtIndex = childNodes.[i]
+        match eq childAtIndex with
+        | Some childAtIndex -> ()
+        | None ->
+            let rec findNode index =
+                if index < length then
+                    match eq node.childNodes.[index] with
+                    | Some child ->  Some child
+                    | None -> findNode (index + 1)
+                else
+                    None
+            match findNode i with
+            | Some foundNode    -> () // SameNodeAtDifferentPosition (foundNode, childAtIndex)
+            | None              -> () // OtherNodeAtPosition childAtIndex
 
 let tree (pith: R<Ray<'a>>): R<'a> =
     let ring (pith: Ray<'a> -> unit) (mRay: M.Ray<'a * int -> unit>): unit =
         let ray (lang, key) =
+            let map f = mkCheker (f, key) |> mkPatcher |> most.map
             match lang with
-            | A r -> mRay (r |> most.map (fun patch (node, i) -> 
-                let create = document.createElement_a
-                let eq (n: Node): HTMLAnchorElement option =
-                    failwith ""
-                let childNodes = node.childNodes
-                let length = int childNodes.length
-                if i >= length then
-                    () // IndexOutOfBounds
-                else
-                    let childAtIndex = childNodes.[i]
-                    match eq childAtIndex with
-                    | Some childAtIndex -> ()
-                    | None ->
-                        let rec findNode index =
-                            if index < length then
-                                match eq node.childNodes.[index] with
-                                | Some child ->  Some child
-                                | None -> findNode (index + 1)
-                            else
-                                None
-                        match findNode i with
-                        | Some foundNode    -> () // SameNodeAtDifferentPosition (foundNode, childAtIndex)
-                        | None              -> () // OtherNodeAtPosition childAtIndex
-                ()))
-            // | Text r -> patch ((fun () -> document.createTextNode ""), key, r)
-            // | Patch r -> mRay (most.map (fun r (n, i) -> ()) r)
+            | A r       -> r |> map document.createElement_a |> mRay
+            | H1 r      -> r |> map document.createElement_h1 |> mRay
+            | Div r     -> r |> map document.createElement_div |> mRay
+            | Text r    -> r |> map (fun () -> document.createTextNode "") |> mRay
+            | Comment r -> r |> map (fun () -> document.createComment "") |> mRay
+            | Patch r   -> r |> most.map (fun patch (n, _) -> patch n) |> mRay 
             | _ -> ()
         pith ray
     M.tree (most.combineArray cmb) (pith |> most.map ring)
