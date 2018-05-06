@@ -63,33 +63,43 @@ let private mkPatcher (create, eq) patch (node: #Node, index: int) =
 
 let private cmb xs n = xs |> Array.iteri (fun i p -> p (n, i))
 
-[<Emit "$0 instanceof $1 ? $0 : null">] 
-let inline instanceOf(_, _: 'a when 'a : (abstract prototype: 't)) : 't option = jsNative
+[<Emit "$1 instanceof $0 ? $1 : null">] 
+let inline private instanceOf (_: 'a when 'a : (member prototype: 't)) _ : 't option = jsNative
 
-let private mkCheker (create: (unit -> 'a), key: string option): ((unit -> 'a) * (Node -> 'a option)) =
-    let cr () = 
-        let e = create ()
-        e
-    let eq (node: Node) =
-        None
-    (cr, eq)
+type HTMLElement with
+    [<Emit "if ($1) {$0.dataset['key'] = $1}">]
+    member __.setKey(_: string option): unit = jsNative
+    [<Emit "$0.dataset['key']">]
+    member __.getKey(): string option = jsNative
 
 let tree (pith: R<Ray<'a>>): R<'a> =
     let ring (pith: Ray<'a> -> unit) (o: M.Ray<'a * int -> unit>): unit =
         let ray (lang, key) =
-            let map f = mkCheker (f, key) |> mkPatcher |> most.map
-            let inline map2 f t = (f, (fun n -> instanceOf (n, t))) |> mkPatcher |> most.map
+            let inline setKey (n: #HTMLElement) =
+                n.setKey key
+                n
+            let inline checkKey (no: _ option) =
+                let check (n:#HTMLElement) = if n.getKey() = key then Some n else None
+                no |> Core.Option.bind check
+            let inline mape (f: unit -> #HTMLElement) t =
+                (f >> setKey, instanceOf t >> checkKey)
+                |> mkPatcher
+                |> most.map
+            let inline mapc f t =
+                (f, instanceOf t)
+                |> mkPatcher
+                |> most.map
             match lang with
-            | A r       -> r |> map2 document.createElement_a   HTMLAnchorElement   |> o
-            | H1 r      -> r |> map2 document.createElement_h1  HTMLHeadingElement  |> o
-            | Div r     -> r |> map2 document.createElement_div HTMLDivElement      |> o
-            | Text r    -> r |> map (fun () -> document.createTextNode "")      |> o
-            | Comment r -> r |> map (fun () -> document.createComment "")       |> o
+            | A r       -> r |> mape document.createElement_a   HTMLAnchorElement  |> o
+            | H1 r      -> r |> mape document.createElement_h1  HTMLHeadingElement |> o
+            | Div r     -> r |> mape document.createElement_div HTMLDivElement     |> o
+            | Text r    -> r |> mapc (fun () -> document.createTextNode "") Fable.Import.Browser.Text   |> o
+            | Comment r -> r |> mapc (fun () -> document.createComment "") Fable.Import.Browser.Comment |> o
             | Patch r   -> r |> most.map (fun patch (n, _) -> patch n)          |> o 
             | _ -> ()
         pith ray
     M.tree (most.combineArray cmb) (pith |> most.map ring)
-
+    
 let t f = tree (most.now f)
 
 let rez: R<HTMLElement> = t (fun o ->
