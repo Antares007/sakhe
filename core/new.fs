@@ -66,6 +66,22 @@ let private create (f: (unit -> 'a), key: string Option when 'a :> Node) () =
     match key with
     | Some _ -> e
     | None -> e
+    
+// [<Emit "$0 instanceof $1 ? $0 : null">]
+// let inline instanceOf(_, _: 'a when 'a : (abstract prototype: 't)) : 't option = jsNative
+
+
+let inline mkCheker (
+        create: (unit -> 'a),
+        key: string option
+    ): ((unit -> 'a) * (Node -> 'a option)) =
+    let cr () = 
+        let e = create ()
+        e
+    let eq node = None
+    (cr, eq)
+
+let (cr, eq) = mkCheker (document.createElement_a, Some "")
 
 let tree (pith: R<Ray<'a>>): R<'a> =
     let ring (pith: Ray<'a> -> unit) (mRay: M.Ray<'a * int -> unit>): unit =
@@ -73,21 +89,22 @@ let tree (pith: R<Ray<'a>>): R<'a> =
             match lang with
             | A r -> mRay (r |> most.map (fun patch (node, i) -> 
                 let create = document.createElement_a
-                let eq (n: HTMLAnchorElement) = true
+                let eq (n: Node): HTMLAnchorElement option =
+                    failwith ""
                 let childNodes = node.childNodes
                 let length = int childNodes.length
-
                 if i >= length then
                     () // IndexOutOfBounds
                 else
-                    let childAtIndex = childNodes.[i] :?> HTMLAnchorElement
-                    if eq childAtIndex then
-                        () // SameNodeAtPosition childAtIndex
-                    else
+                    let childAtIndex = childNodes.[i]
+                    match eq childAtIndex with
+                    | Some childAtIndex -> ()
+                    | None ->
                         let rec findNode index =
                             if index < length then
-                                let child = node.childNodes.[index] :?> HTMLAnchorElement
-                                if eq child then Some child else findNode (index + 1)
+                                match eq node.childNodes.[index] with
+                                | Some child ->  Some child
+                                | None -> findNode (index + 1)
                             else
                                 None
                         match findNode i with
