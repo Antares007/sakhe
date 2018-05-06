@@ -34,7 +34,6 @@ let private (|IndexOutOfBounds           |
         match eq childAtIndex with
         | Some childAtIndex -> SameNodeAtPosition childAtIndex
         | None ->
-        
             let rec findNode index =
                 if index < length then
                     match eq childNodes.[index] with
@@ -50,9 +49,9 @@ let private mkPatcher (create, eq) patch (node: #Node, index: int) =
     | IndexOutOfBounds ->
         let child = create ()
         patch child
-        node.insertBefore child |> ignore
+        node.appendChild child |> ignore
     | SameNodeAtPosition childAtIndex ->
-        patch (childAtIndex) |> ignore
+        patch childAtIndex |> ignore
     | SameNodeAtDifferentPosition (foundNode, childAtIndex) ->
         patch foundNode
         node.insertBefore (foundNode, childAtIndex) |> ignore
@@ -61,10 +60,9 @@ let private mkPatcher (create, eq) patch (node: #Node, index: int) =
         patch child
         node.insertBefore (child, childAtIndex) |> ignore
 
-let private cmb xs n = xs |> Array.iteri (fun i p -> p (n, i))
 
 [<Emit "$1 instanceof $0 ? $1 : null">] 
-let inline private instanceOf (_: 'a when 'a : (member prototype: 't)) _ : 't option = jsNative
+let inline private instanceOf (_: 'a when 'a : (member prototype: 't)) _: 't option = jsNative
 
 type HTMLElement with
     [<Emit "if ($1) {$0.dataset['key'] = $1}">]
@@ -98,12 +96,17 @@ let tree (pith: R<Ray<'a>>): R<'a> =
             | Patch r   -> r |> most.map (fun patch (n, _) -> patch n)          |> o 
             | _ -> ()
         pith ray
-    M.tree (most.combineArray cmb) (pith |> most.map ring)
+    M.tree (most.combineArray (fun xs n -> xs |> Array.iteri (fun i p -> p(n, i)))) (most.map ring pith)
     
 let t f = tree (most.now f)
 
-let rez: R<HTMLElement> = t (fun o ->
-    o (Div (most.now (fun x -> ())), Some "as")
-    o (Patch (t (fun o ->
-                    o (Div (most.now (fun x -> ())), Some "as")
-                    o (Patch (most.now (fun x -> ())), Some "as"))), Some "as"))
+let rez: R<HTMLElement> = (fun o ->
+    (H1 (most.now (fun x -> x.innerText <- "Hello World!1";())), Some "as") |> o
+    (Div ((fun o ->
+        (H1 (most.now (fun x -> x.innerText <- "Hello World!2";())), Some "as") |> o
+        (Div (most.now (fun x -> x.innerText <- "Hello World!3";())), Some "as") |> o) |> t), Some "as") |> o) |> t 
+
+let rootNode = document.getElementById "root-node"
+let patches = rez |> most.scan (fun n p -> p(n); n) rootNode
+
+most.runEffects patches (Scheduler.require.newDefaultScheduler ()) |> ignore
