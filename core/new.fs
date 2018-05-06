@@ -44,21 +44,6 @@ let inline private (|   IndexOutOfBounds                |
             | Some foundNode    -> SameNodeAtDifferentPosition (foundNode, childAtIndex)
             | None              -> OtherNodeAtPosition childAtIndex
 
-let patch create eq (patch: Node -> unit) (node: Node, index: int) =
-    match index, eq, node with
-    | IndexOutOfBounds ->
-        let child = create ()
-        patch child
-        node.insertBefore child |> ignore
-    | SameNodeAtPosition childAtIndex ->
-        patch (childAtIndex) |> ignore
-    | SameNodeAtDifferentPosition (foundNode, childAtIndex) ->
-        patch foundNode
-        node.insertBefore (foundNode, childAtIndex) |> ignore
-    | OtherNodeAtPosition childAtIndex ->
-        let child = create ()
-        patch child
-        node.insertBefore (child, childAtIndex) |> ignore
 
 let private cmb xs n = xs |> Array.iteri (fun i p -> p (n, i))
 
@@ -70,15 +55,27 @@ let private create (f: (unit -> 'a), key: string Option when 'a :> Node) () =
 
 let tree (pith: R<Ray<'a>>): R<'a> =
     let ring (pith: Ray<'a> -> unit) (mRay: M.Ray<'a * int -> unit>): unit =
-        let patch (cf: unit -> #Node, key: string Option, r: R<#Node>) =
-            // mRay (most.map (patch cf (fun n -> true)) r)
-            failwith ""
-
+        let inline patch (create) eq (patch: #Node -> unit) (node: 'a, index: int) =
+            match index, eq, node with
+            | IndexOutOfBounds ->
+                let child = create ()
+                patch child
+                node.insertBefore child |> ignore
+            | SameNodeAtPosition childAtIndex ->
+                patch (childAtIndex) |> ignore
+            | SameNodeAtDifferentPosition (foundNode, childAtIndex) ->
+                patch foundNode
+                node.insertBefore (foundNode, childAtIndex) |> ignore
+            | OtherNodeAtPosition childAtIndex ->
+                let child = create ()
+                patch child
+                node.insertBefore (child, childAtIndex) |> ignore
+        let p = patch (fun () -> (document.createElement_a ()) :> Node) (fun x -> true)
         let ray (lang, key) =
             match lang with
-            | A r -> patch (document.createElement_a, key, r)
+            | A r -> mRay (r |> most.map p)
             // | Text r -> patch ((fun () -> document.createTextNode ""), key, r)
-            | Patch r -> mRay (most.map (fun r (n, i) -> ()) r)
+            // | Patch r -> mRay (most.map (fun r (n, i) -> ()) r)
             | _ -> ()
         pith ray
     M.tree (most.combineArray cmb) (pith |> most.map ring)
