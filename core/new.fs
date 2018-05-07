@@ -47,21 +47,25 @@ let private (|IndexOutOfBounds           |
 let private mkPatcher (create, eq) patch (node: #Node, index: int) =
     match index, eq, node with
     | IndexOutOfBounds ->
+        console.log "IndexOutOfBounds"
         let child = create ()
         patch child
         node.appendChild child |> ignore
     | SameNodeAtPosition childAtIndex ->
+        console.log "SameNodeAtPosition"
         patch childAtIndex |> ignore
     | SameNodeAtDifferentPosition (foundNode, childAtIndex) ->
+        console.log "SameNodeAtDifferentPosition"
         patch foundNode
         node.insertBefore (foundNode, childAtIndex) |> ignore
     | OtherNodeAtPosition childAtIndex ->
+        console.log "OtherNodeAtPosition"
         let child = create ()
         patch child
         node.insertBefore (child, childAtIndex) |> ignore
 
 
-[<Emit "$1 instanceof $0 ? $1 : null">] 
+[<Emit "((n, t) => n instanceof t ? n : null)($1, $0)">] 
 let inline private instanceOf (_: 'a when 'a : (member prototype: 't)) _: 't option = jsNative
 
 type HTMLElement with
@@ -70,6 +74,9 @@ type HTMLElement with
     [<Emit "$0.dataset['key']">]
     member __.getKey(): string option = jsNative
 
+let inline mkChecker (create: unit -> 't) (nodeName: string) : (unit -> 't) * (Node -> 't option) =
+    (create, (fun n -> if n.nodeName = nodeName then Some (n :?> 't) else None))
+
 let tree (pith: R<Ray<'a>>): R<'a> =
     let ring (pith: Ray<'a> -> unit) (o: M.Ray<'a * int -> unit>): unit =
         let ray (lang, key) =
@@ -77,36 +84,49 @@ let tree (pith: R<Ray<'a>>): R<'a> =
                 n.setKey key
                 n
             let inline checkKey (no: _ option) =
-                let check (n:#HTMLElement) = if n.getKey() = key then Some n else None
+                let check (n: #HTMLElement) = if n.getKey() = key then Some n else None
                 no |> Core.Option.bind check
-            let inline mape (f: unit -> #HTMLElement) t =
-                (f >> setKey, instanceOf t >> checkKey)
+            let inline mape (f: unit -> #HTMLElement) nodeName =
+                mkChecker f nodeName
+                |> fun (create, eq) -> (create >> setKey, eq >> checkKey)
                 |> mkPatcher
                 |> most.map
-            let inline mapc f t =
-                (f, instanceOf t)
+            let inline mapc f nodeName =
+                mkChecker f nodeName
                 |> mkPatcher
                 |> most.map
             match lang with
-            | A r       -> r |> mape document.createElement_a   HTMLAnchorElement  |> o
-            | H1 r      -> r |> mape document.createElement_h1  HTMLHeadingElement |> o
-            | Div r     -> r |> mape document.createElement_div HTMLDivElement     |> o
-            | Text r    -> r |> mapc (fun () -> document.createTextNode "") Fable.Import.Browser.Text   |> o
-            | Comment r -> r |> mapc (fun () -> document.createComment "") Fable.Import.Browser.Comment |> o
-            | Patch r   -> r |> most.map (fun patch (n, _) -> patch n)          |> o 
-            | _ -> ()
+            | A r       -> r |> mape document.createElement_a               "A"         |> o
+            | H1 r      -> r |> mape document.createElement_h1              "H1"        |> o
+            | Div r     -> r |> mape document.createElement_div             "DIV"       |> o
+            | Text r    -> r |> mapc (fun () -> document.createTextNode "") "#text"     |> o
+            | Comment r -> r |> mapc (fun () -> document.createComment "")  "#comment"  |> o
+            | Patch r   -> r |> most.map (fun patch (n, _) -> patch n)                  |> o 
+            | _         -> ()
         pith ray
+        o (most.now (fun (n, index) -> 
+            let childNodes = n.childNodes
+            let length = int childNodes.length
+            for i = index to length - 1 do
+                n.removeChild childNodes.[i]
+                |> ignore))
     M.tree (most.combineArray (fun xs n -> xs |> Array.iteri (fun i p -> p(n, i)))) (most.map ring pith)
     
-let t f = tree (most.now f)
+let t f = tree (most.periodic 1000 |> most.constant f)
 
-let rez: R<HTMLElement> = (fun o ->
-    (H1 (most.now (fun x -> x.innerText <- "Hello World!1";())), Some "as") |> o
-    (Div ((fun o ->
-        (H1 (most.now (fun x -> x.innerText <- "Hello World!2";())), Some "as") |> o
-        (Div (most.now (fun x -> x.innerText <- "Hello World!3";())), Some "as") |> o) |> t), Some "as") |> o) |> t 
+[<Emit("(f)=>{var b;return(a)=>{if(f){b=f(a);f=null;}return b;};}")>]
+let once (_: 'a -> 'b): 'a -> 'b = jsNative
+
+let rez: R<HTMLElement> = t (fun o ->
+    let once f = most.now (once f)
+    (H1 (once (fun x -> x.innerText <- "Hello World!1";())), Some "as1") |> o
+    (Div (t (fun o ->
+        (H1 (once (fun x -> x.innerText <- "Hello World!2";())), Some "as2") |> o
+        (Div (once (fun x -> x.innerText <- "Hello World!3";())), Some "as3") |> o
+        (Text (once (fun x -> x.textContent <- "Hello World!4";())), Some "as4") |> o
+        (Comment (once (fun x -> x.textContent <- "Hello World!5";())), Some "as5") |> o)), Some "as6") |> o) 
 
 let rootNode = document.getElementById "root-node"
-let patches = rez |> most.scan (fun n p -> p(n); n) rootNode
+let patches = rez |> most.scan (fun n p -> p(n); n) rootNode |> most.take 10
 
 most.runEffects patches (Scheduler.require.newDefaultScheduler ()) |> ignore
