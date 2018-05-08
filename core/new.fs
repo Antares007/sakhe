@@ -96,12 +96,12 @@ let tree (pith: R<Ray<'a>>): R<'a> =
                 |> mkPatcher
                 |> most.map
             match lang with
-            | A r       -> r |> mape document.createElement_a               "A"         |> o
-            | H1 r      -> r |> mape document.createElement_h1              "H1"        |> o
-            | Div r     -> r |> mape document.createElement_div             "DIV"       |> o
-            | Text r    -> r |> mapc (fun () -> document.createTextNode "") "#text"     |> o
-            | Comment r -> r |> mapc (fun () -> document.createComment "")  "#comment"  |> o
-            | Patch r   -> r |> most.map (fun patch (n, _) -> patch n)                  |> o 
+            | A r       -> r |> mape document.createElement_a               "A"        |> o
+            | H1 r      -> r |> mape document.createElement_h1              "H1"       |> o
+            | Div r     -> r |> mape document.createElement_div             "DIV"      |> o
+            | Text r    -> r |> mapc (fun () -> document.createTextNode "") "#text"    |> o
+            | Comment r -> r |> mapc (fun () -> document.createComment "")  "#comment" |> o
+            | Patch r   -> r |> most.map (fun patch (n, _) -> patch n)                 |> o
             | _         -> ()
         pith ray
         o (most.now (fun (n, index) -> 
@@ -114,7 +114,7 @@ let tree (pith: R<Ray<'a>>): R<'a> =
     
 let t f = tree (most.periodic 1000 |> most.constant f)
 
-[<Emit("(f)=>{var b;return(a)=>{if(f){b=f(a);f=null;}return b;};}")>]
+[<Emit("((f)=>{var b;return(a)=>{if(f){b=f(a);f=null;}return b;};})($0)")>]
 let once (_: 'a -> 'b): 'a -> 'b = jsNative
 
 let rez: R<HTMLElement> = t (fun o ->
@@ -127,6 +127,22 @@ let rez: R<HTMLElement> = t (fun o ->
         (Comment (once (fun x -> x.textContent <- "Hello World!5";())), Some "as5") |> o)), Some "as6") |> o) 
 
 let rootNode = document.getElementById "root-node"
-let patches = rez |> most.scan (fun n p -> p(n); n) rootNode |> most.take 10
+let patches = rez |> most.scan (fun n p -> p(n); n) rootNode |> most.skip 1 |> most.take 3
 
 most.runEffects patches (Scheduler.require.newDefaultScheduler ()) |> ignore
+open Fable.Core.JsInterop
+
+type Props =
+| A of int
+| B of string
+| C
+let m:int = !! most
+
+let mk = keyValueList CaseRules.None
+let lst = [
+    A 1
+    B "2"
+    C
+]
+let obj = mk lst
+obj |> console.log
