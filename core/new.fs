@@ -47,32 +47,28 @@ let private (|IndexOutOfBounds           |
 let private mkPatcher (create, eq) patch (node: #Node, index: int) =
     match index, eq, node with
     | IndexOutOfBounds ->
-        console.log "IndexOutOfBounds"
         let child = create ()
         patch child
         node.appendChild child |> ignore
+        console.log ("IndexOutOfBounds", child)
     | SameNodeAtPosition childAtIndex ->
-        console.log "SameNodeAtPosition"
         patch childAtIndex |> ignore
+        console.log ("SameNodeAtPosition", childAtIndex)
     | SameNodeAtDifferentPosition (foundNode, childAtIndex) ->
-        console.log "SameNodeAtDifferentPosition"
         patch foundNode
         node.insertBefore (foundNode, childAtIndex) |> ignore
+        console.log ("SameNodeAtDifferentPosition", foundNode)
     | OtherNodeAtPosition childAtIndex ->
-        console.log "OtherNodeAtPosition"
         let child = create ()
         patch child
         node.insertBefore (child, childAtIndex) |> ignore
+        console.log ("OtherNodeAtPosition", child)
 
+[<Emit "if ($1 && $0.dataset) {$0.dataset['key'] = $1}">]
+let trySetKey (_: #Element) (_: string option): unit = jsNative
 
-[<Emit "((n, t) => n instanceof t ? n : null)($1, $0)">] 
-let inline private instanceOf (_: 'a when 'a : (member prototype: 't)) _: 't option = jsNative
-
-type HTMLElement with
-    [<Emit "if ($1) {$0.dataset['key'] = $1}">]
-    member __.setKey(_: string option): unit = jsNative
-    [<Emit "$0.dataset['key']">]
-    member __.getKey(): string option = jsNative
+[<Emit "$0.dataset ? $0.dataset['key'] : null">]
+let tryGetKey (_: #Element): string option = jsNative
 
 let inline mkChecker (create: unit -> 't) (nodeName: string) : (unit -> 't) * (Node -> 't option) =
     (create, (fun n -> if n.nodeName = nodeName then Some (n :?> 't) else None))
@@ -80,18 +76,17 @@ let inline mkChecker (create: unit -> 't) (nodeName: string) : (unit -> 't) * (N
 let tree (pith: R<Ray<'a>>): R<'a> =
     let ring (pith: Ray<'a> -> unit) (o: M.Ray<'a * int -> unit>): unit =
         let ray (lang, key) =
-            let inline setKey (n: #HTMLElement) =
-                n.setKey key
+            let setKey (n: #HTMLElement) =
+                trySetKey n key
                 n
-            let inline checkKey (no: _ option) =
-                let check (n: #HTMLElement) = if n.getKey() = key then Some n else None
-                no |> Core.Option.bind check
-            let inline mape (f: unit -> #HTMLElement) nodeName =
+            let checkKey (no: #HTMLElement option) =
+                no |> Core.Option.bind (fun n -> if (tryGetKey n) = key then Some n else None)
+            let mape (f: unit -> #HTMLElement) nodeName =
                 mkChecker f nodeName
                 |> fun (create, eq) -> (create >> setKey, eq >> checkKey)
                 |> mkPatcher
                 |> most.map
-            let inline mapc f nodeName =
+            let mapc f nodeName =
                 mkChecker f nodeName
                 |> mkPatcher
                 |> most.map
