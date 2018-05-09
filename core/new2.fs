@@ -5,6 +5,7 @@ open M
 open Dom
 open Fable.Core
 open Fable.Core.JsInterop
+open Most
 let t f = tree (most.periodic 1000 |> most.constant f)
 
 [<Emit("((f)=>{var b;return(a)=>{if(f){b=f(a);f=null;}return b;};})($0)")>]
@@ -24,3 +25,25 @@ let rootNode = document.getElementById "root-node"
 let patches = rez |> most.scan (fun n p -> p(n); n) rootNode |> most.skip 1 |> most.take 3
 
 most.runEffects patches (Most.Scheduler.require.newDefaultScheduler ()) |> ignore
+
+type P = 
+    | Width of int
+    | Height of int
+type A = 
+    | Width of int
+    | Height of int
+type Data =
+    | Props of P list
+    | SProps of Stream<P list>
+    | Attrs of A list
+    | Style of int
+    | Class of int
+
+type Lang =
+    | Div of (Data list)
+
+let z = Div [   Props [ P.Width 1
+                        P.Height 2]
+                SProps  (most.now [P.Width 1; P.Height 2])
+                Attrs [ A.Width 1
+                        A.Height 2]]
