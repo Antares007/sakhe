@@ -34,13 +34,28 @@ type A =
     | Height of int
 type Data =
     | Props of P list
-    | SProps of Stream<P list>
+    | SProps of Stream<P list> 
     | Attrs of A list
     | Style of int
     | Class of int
 
 type Lang =
     | Div of (Data list)
+
+type [<AllowNullLiteral>] ILang =
+    abstract member Div: A list -> (ILang -> unit) -> unit
+    abstract member DivS: Stream<A list> -> Stream<ILang -> unit> -> unit
+
+let o = createEmpty<ILang>
+
+let (!^) x = most.now x
+
+let cs (x: Stream<'a>) = ()
+let zzz = cs !^ 2
+o.DivS !^ [Width 1; Height 2] !^ (fun o ->
+    o.Div [] (fun o ->
+        o.Div [] ignore))
+
 
 let z = Div [   Props [ P.Width 1
                         P.Height 2]
