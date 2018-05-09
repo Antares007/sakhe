@@ -1,15 +1,15 @@
-import path from "path";
-import fableUtils from "fable-utils";
-import fable from "rollup-plugin-fable";
-import nodeResolve from "rollup-plugin-node-resolve";
+import path from "path"
+import fableUtils from "fable-utils"
+import fable from "rollup-plugin-fable"
+import nodeResolve from "rollup-plugin-node-resolve"
 
 function resolve(relativePath) {
-  return path.join(__dirname, relativePath);
+  return path.join(__dirname, relativePath)
 }
 
 var babelOptions = fableUtils.resolveBabelOptions({
   presets: [["env", { modules: false, targets: { node: "7.9" } }]]
-});
+})
 
 export default {
   input: resolve("./core/core.fsproj"),
@@ -29,4 +29,4 @@ export default {
       format: "cjs"
     }
   ]
-};
+}

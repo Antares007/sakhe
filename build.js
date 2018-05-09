@@ -1,16 +1,16 @@
-const path = require("path");
-const fableUtils = require("fable-utils");
-const fable = require("rollup-plugin-fable");
-const nodeResolve = require("rollup-plugin-node-resolve");
+const path = require("path")
+const fableUtils = require("fable-utils")
+const fable = require("rollup-plugin-fable")
+const nodeResolve = require("rollup-plugin-node-resolve")
 
 function resolve(relativePath) {
-  return path.join(__dirname, relativePath);
+  return path.join(__dirname, relativePath)
 }
-const rollup = require("rollup");
+const rollup = require("rollup")
 
 var babelOptions = fableUtils.resolveBabelOptions({
   presets: [["es2015", { modules: false }]]
-});
+})
 
 const inputOptions = {
   input: resolve("./core/core.fsproj"),
@@ -24,28 +24,28 @@ const inputOptions = {
       }
     })
   ]
-};
+}
 
 const outputOptions = {
   file: resolve("./out/bundle2.js"),
   format: "cjs"
-};
+}
 
 async function build() {
   // create a bundle
-  const bundle = await rollup.rollup(inputOptions);
+  const bundle = await rollup.rollup(inputOptions)
 
-  console.log(bundle.imports); // an array of external dependencies
-  console.log("^^^^^^^^^^^^^^^^^^^^");
-  console.log(bundle.exports); // an array of names exported by the entry point
-  console.log("^^^^^^^^^^^^^^^^^^^^");
+  console.log(bundle.imports) // an array of external dependencies
+  console.log("^^^^^^^^^^^^^^^^^^^^")
+  console.log(bundle.exports) // an array of names exported by the entry point
+  console.log("^^^^^^^^^^^^^^^^^^^^")
 
   // generate code and a sourcemap
-  const { code, map } = await bundle.generate(outputOptions);
-  console.log(code); // an array of names exported by the entry point
+  const { code, map } = await bundle.generate(outputOptions)
+  console.log(code) // an array of names exported by the entry point
 
   // or write the bundle to disk
-  await bundle.write(outputOptions);
+  await bundle.write(outputOptions)
 }
 
-build();
+build()

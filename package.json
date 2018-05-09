@@ -21,5 +21,8 @@
     "@most/core": "^1.2.3",
     "@most/scheduler": "^1.1.0",
     "@most/types": "^1.0.0"
+  },
+  "prettier": {
+    "semi": false
   }
 }
