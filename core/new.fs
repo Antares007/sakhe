@@ -23,7 +23,7 @@ type Ray<'a when 'a :> Element> = Lang<'a> * Key option -> unit
 
 type Pith<'a when 'a :> Element> = Ray<'a> -> unit
 
-module private Impl = 
+module private Impl =
     let private (|IndexOutOfBounds           |
                   SameNodeAtPosition         |
                   SameNodeAtDifferentPosition|
@@ -46,6 +46,7 @@ module private Impl =
                 match findNode index with
                 | Some foundNode -> SameNodeAtDifferentPosition (foundNode, childAtIndex)
                 | None           -> OtherNodeAtPosition childAtIndex
+
 
     let mkPatcher (create, eq) patch (node: #Node, index: int) =
         match index, eq, node with
@@ -105,11 +106,10 @@ let tree (pith: R<Ray<'a>>): R<'a> =
             | Patch r       -> r |> most.map (fun patch (n, _) -> patch n)                    |> o
             | _             -> ()
         pith ray
-        o (most.now (fun (n, index) -> 
+        o (most.now (fun (n, index) ->
             let childNodes = n.childNodes
             let length = int childNodes.length
             for i = index to length - 1 do
                 n.removeChild childNodes.[i]
                 |> ignore))
     M.tree (most.combineArray (fun xs n -> xs |> Array.iteri (fun i p -> p(n, i)))) (most.map ring pith)
-    

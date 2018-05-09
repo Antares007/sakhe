@@ -138,7 +138,7 @@ module rec Core =
         //abstract combineArray: fn: ('A -> 'B -> 'C -> 'D -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> -> Stream<'R>)
         //abstract combineArray: fn: ('A -> 'B -> 'C -> 'D -> 'E -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> * Stream<'E> -> Stream<'R>)
         //abstract combineArray: fn: (ResizeArray<'V> -> 'R) -> (ResizeArray<Stream<'V>> -> Stream<'R>)
-        
+
         [<Emit("$0.combineArray((...list) => $1(list), $2)")>]
         abstract combineArray: fn: ('V[] -> 'R) -> Stream<'V>[] -> Stream<'R>
 

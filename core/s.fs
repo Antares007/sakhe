@@ -22,7 +22,7 @@ module S =
 
     type DomLang =
         Div of (HTMLDivElement -> unit)
-        
+
     type IRay<'a when 'a :> Element> =
         abstract Element: tagName: Tag * r: Stream<R<HTMLElement>> * ?key: Key -> unit
         abstract Text: r: Stream<R<Text>> -> unit
@@ -37,9 +37,9 @@ module S =
 
     [<Emit "$0 instanceof $1 ? $0 : null">]
     let inline instanceOf(_, _: 'a when 'a : (abstract prototype: 't)) : 't option = jsNative
-    let inline (|IsHTMLElement|_|) (str: obj) = instanceOf(str, HTMLElement) 
-    let inline (|IsSVGElement|_|) (str: obj) = instanceOf(str, HTMLElement) 
-    
+    let inline (|IsHTMLElement|_|) (str: obj) = instanceOf(str, HTMLElement)
+    let inline (|IsSVGElement|_|) (str: obj) = instanceOf(str, HTMLElement)
+
     [<Emit "((ds) => ds ? ds['key'] : null)($0.dataset)">]
     let getKey(_: Node) : string option = jsNative
     let inline createElement (tag: Tag, key: Key option): HTMLElement =
@@ -49,12 +49,12 @@ module S =
             n.dataset.["key"] <- key
             n
         | _ -> n
-    
+
     let tree (mpith: Stream<Pith<'a>>): Stream<'a -> unit> =
         let ring (pith: Pith<'a>) (mray: Sakhe.M.Ray<R<'a>>) =
             let mutable currentIndex = 0
             pith { new IRay<'a> with
-                member __.Element (tag, r, ?key) = 
+                member __.Element (tag, r, ?key) =
                     let index = currentIndex
                     currentIndex <- currentIndex + 1
 
@@ -81,10 +81,10 @@ module S =
 
     let rez = tree (most.now (fun o ->
         o.Element ("div", most.now (fun x -> console.log x; ()))
-        o.Text (most.now (fun x -> console.log x; ())) 
+        o.Text (most.now (fun x -> console.log x; ()))
         o.Comment (most.now (fun x -> console.log x; ()))
         o.Put (most.now (fun x -> console.log x; ()))
-    )) 
+    ))
 
     let patch n p = p(n); n
     let rootDiv = document.createElement_div()
