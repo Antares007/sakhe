@@ -1,6 +1,7 @@
 const { exec } = require('child_process');
+const join = require('path').join
 
-exec(__dirname + '\\node_modules\\.bin\\electron ' + __dirname, (error, stdout, stderr) => {
+exec(join(__dirname, 'node_modules', '.bin', 'electron') + ' ' + __dirname, (error, stdout, stderr) => {
   if (error) {
     console.error(`exec error: ${error}`);
     return;
