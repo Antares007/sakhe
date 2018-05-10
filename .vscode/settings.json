@@ -1,16 +1,1 @@
-{
-  // "editor.fontFamily": "Roboto Mono",
-  // "editor.fontFamily": "Roboto Mono Thin",
-  // "editor.fontFamily": "NovaMono",
-  // "editor.fontFamily": "Inconsolata",
-  "editor.fontFamily": "PragmataPro",
-  "workbench.fontAliasing": "none",
-  "editor.fontSize": 16,
-  "editor.lineHeight": 24,
-  "window.zoomLevel": 0,
-  "FSharp.lineLens.enabled": "never",
-  "workbench.colorTheme": "IR_Black",
-  "workbench.activityBar.visible": true,
-  "editor.renderIndentGuides": false,
-  "editor.renderWhitespace": "none"
-}
+{}
