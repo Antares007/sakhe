@@ -13,6 +13,7 @@ let once (_: 'a -> 'b): 'a -> 'b = jsNative
 
 let rez: R<HTMLElement> = t (fun o ->
     let once f = most.now (once f)
+    (Patch (once (fun x -> console.log x;())), Some "as1") |> o
     (H1 (once (fun x -> x.innerText <- "Hello World!1";())), Some "as1") |> o
     (Custom ("h2", once (fun x -> x.innerText <- "Hello World!1";())), Some "as1") |> o
     (Div (t (fun o ->
