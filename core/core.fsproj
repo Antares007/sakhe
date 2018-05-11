@@ -6,7 +6,9 @@
   <ItemGroup>
     <Compile Include="most.fs" />
     <Compile Include="a.fs" />
+    <Compile Include="m.impl.ts" />
     <Compile Include="m.fs" />
+    <Compile Include="patch.fs" />
     <Compile Include="new.fs" />
     <Compile Include="new2.fs" />
   </ItemGroup>
