@@ -1,22 +1,24 @@
 module Sakhe.Patch
 open Fable.Import.Browser
 
+type AbsurdProve<'A when 'A :> Node> = (unit -> 'A) * (Node -> 'A option)
+
 let private (|IndexOutOfBounds           |
               SameNodeAtPosition         |
               SameNodeAtDifferentPosition|
-              OtherNodeAtPosition        |) (index: int, eq: Node -> 'a option, node: Node) =
+              OtherNodeAtPosition        |) (index: int, prove: Node -> 'a option, node: Node) =
     let childNodes = node.childNodes
     let length = int childNodes.length
     if index >= length then
         IndexOutOfBounds
     else
         let childAtIndex = childNodes.[index]
-        match eq childAtIndex with
+        match prove childAtIndex with
         | Some childAtIndex -> SameNodeAtPosition childAtIndex
         | None ->
             let rec findNode index =
                 if index < length then
-                    match eq childNodes.[index] with
+                    match prove childNodes.[index] with
                     | Some child -> Some child
                     | None       -> findNode (index + 1)
                 else None
@@ -24,10 +26,10 @@ let private (|IndexOutOfBounds           |
             | Some foundNode -> SameNodeAtDifferentPosition (foundNode, childAtIndex)
             | None           -> OtherNodeAtPosition childAtIndex
 
-let mkPatcher (index: int) (create, eq) patch (node: #Node) =
-    match index, eq, node with
+let mkPatcher (index: int) ((absurd, prove): AbsurdProve<_>) patch (node: #Node) =
+    match index, prove, node with
     | IndexOutOfBounds ->
-        let child = create ()
+        let child = absurd ()
         patch child
         node.appendChild child |> ignore
         console.log ("IndexOutOfBounds", child)
@@ -39,7 +41,7 @@ let mkPatcher (index: int) (create, eq) patch (node: #Node) =
         node.insertBefore (foundNode, childAtIndex) |> ignore
         console.log ("SameNodeAtDifferentPosition", foundNode)
     | OtherNodeAtPosition childAtIndex ->
-        let child = create ()
+        let child = absurd ()
         patch child
         node.insertBefore (child, childAtIndex) |> ignore
         console.log ("OtherNodeAtPosition", child)
