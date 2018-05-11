@@ -4,24 +4,16 @@ open Most
 open M
 open Fable.Core
 
-type R<'a> = Stream<'a -> unit>
-
-type Lang<'a when 'a :> Element> =
-    | A of R<HTMLAnchorElement>
-    | Div of R<HTMLDivElement>
-    | H1 of R<HTMLHeadingElement>
-    | H2 of R<HTMLHeadingElement>
-    | H3 of R<HTMLHeadingElement>
-    | Custom of (string * R<HTMLElement>)
-    | Text of R<Text>
-    | Comment of R<Comment>
-    | Patch of R<'a>
-
-type Key = string
-
-type Ray<'a when 'a :> Element> = Lang<'a> * Key option -> unit
-
-type Pith<'a when 'a :> Element> = Ray<'a> -> unit
+type Lang<'A when 'A :> Element> =
+    | A of Stream<HTMLAnchorElement -> unit> * string option
+    | Div of Stream<HTMLDivElement -> unit> * string option
+    | H1 of Stream<HTMLHeadingElement -> unit> * string option
+    | H2 of Stream<HTMLHeadingElement -> unit> * string option
+    | H3 of Stream<HTMLHeadingElement -> unit> * string option
+    | Custom of string * Stream<HTMLElement -> unit> * string option
+    | Text of Stream<Text -> unit>
+    | Comment of Stream<Comment -> unit>
+    | Patch of Stream<'A -> unit>
 
 module private Impl =
     let private (|IndexOutOfBounds           |
@@ -47,7 +39,6 @@ module private Impl =
                 | Some foundNode -> SameNodeAtDifferentPosition (foundNode, childAtIndex)
                 | None           -> OtherNodeAtPosition childAtIndex
 
-
     let mkPatcher (create, eq) patch (node: #Node, index: int) =
         match index, eq, node with
         | IndexOutOfBounds ->
@@ -72,44 +63,50 @@ module private Impl =
     let trySetKey (_: #Element) (_: string option): unit = jsNative
 
     [<Emit "$0.dataset ? $0.dataset['key'] : null">]
-    let  tryGetKey (_: #Element): string option = jsNative
+    let tryGetKey (_: #Element): string option = jsNative
 
-    let inline mkTypeChecker (create: unit -> 't) (nodeName: string) : (unit -> 't) * (Node -> 't option) =
+    let mkTypeChecker (create: unit -> 't) (nodeName: string) : (unit -> 't) * (Node -> 't option) =
         (create, (fun n -> if n.nodeName = nodeName then Some (n :?> 't) else None))
 
+    let setKey key (n: #HTMLElement) =
+        trySetKey n key
+        n
+
+    let checkKey key (no: #HTMLElement option) =
+        no |> Core.Option.bind (fun n -> if (tryGetKey n) = key then Some n else None)
+
+    let mape (f: unit -> #HTMLElement) nodeName key =
+        mkTypeChecker f nodeName
+        |> fun (create, eq) -> (create >> (setKey key), eq >> (checkKey key))
+        |> mkPatcher
+        |> most.map
+
+    let mapc f nodeName =
+        mkTypeChecker f nodeName
+        |> mkPatcher
+        |> most.map
 open Impl
 
-let tree (pith: R<Ray<'a>>): R<'a> =
-    let ring (pith: Ray<'a> -> unit) (o: M.Ray<'a * int -> unit>): unit =
-        let ray (lang, key) =
-            let setKey (n: #HTMLElement) =
-                trySetKey n key
-                n
-            let checkKey (no: #HTMLElement option) =
-                no |> Core.Option.bind (fun n -> if (tryGetKey n) = key then Some n else None)
-            let mape (f: unit -> #HTMLElement) nodeName =
-                mkTypeChecker f nodeName
-                |> fun (create, eq) -> (create >> setKey, eq >> checkKey)
-                |> mkPatcher
-                |> most.map
-            let mapc f nodeName =
-                mkTypeChecker f nodeName
-                |> mkPatcher
-                |> most.map
-            match lang with
-            | A r           -> r |> mape document.createElement_a               "A"           |> o
-            | H1 r          -> r |> mape document.createElement_h1              "H1"          |> o
-            | Div r         -> r |> mape document.createElement_div             "DIV"         |> o
-            | Custom (t, r) -> r |> mape (fun () -> document.createElement t)   (t.ToUpper()) |> o
-            | Text r        -> r |> mapc (fun () -> document.createTextNode "") "#text"       |> o
-            | Comment r     -> r |> mapc (fun () -> document.createComment "")  "#comment"    |> o
-            | Patch r       -> r |> most.map (fun patch (n, _) -> patch n)                    |> o
-            | _             -> ()
-        pith ray
-        o (most.now (fun (n, index) ->
-            let childNodes = n.childNodes
-            let length = int childNodes.length
-            for i = index to length - 1 do
-                n.removeChild childNodes.[i]
-                |> ignore))
-    M.tree (most.combineArray (fun xs n -> xs |> Array.iteri (fun i p -> p(n, i)))) (most.map ring pith)
+open A
+
+let tree (pith: Stream<Pith<Lang<'A>>> when 'A :> Element): Stream<'A -> unit> =
+    let ring (pith: Pith<Lang<'A>>): Pith<Stream<'A * int -> unit>> =
+        fun o ->
+            let ray (lang) =
+                match lang with
+                | A (r, key)            -> r |> mape document.createElement_a               "A"           key |> o
+                | H1 (r, key)           -> r |> mape document.createElement_h1              "H1"          key |> o
+                | Div (r, key)          -> r |> mape document.createElement_div             "DIV"         key |> o
+                | Custom (t, r, key)    -> r |> mape (fun () -> document.createElement t)   (t.ToUpper()) key |> o
+                | Text r                -> r |> mapc (fun () -> document.createTextNode "") "#text"           |> o
+                | Comment r             -> r |> mapc (fun () -> document.createComment "")  "#comment"        |> o
+                | Patch r               -> r |> most.map (fun patch (n, _) -> patch n)                        |> o
+                | _                     -> ()
+            pith ray
+            o (most.now (fun (n, index) ->
+                let childNodes = n.childNodes
+                let length = int childNodes.length
+                for i = index to length - 1 do
+                    n.removeChild childNodes.[i]
+                    |> ignore))
+    M.tree (most.combineArray (fun xs -> fun (n: 'A) -> xs |> Array.iteri (fun i p -> p(n, i)))) (most.map ring pith)
