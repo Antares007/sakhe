@@ -35,9 +35,3 @@ let rec tree<'A when 'A :> Element> (pith: Stream<ILang<'A> -> unit>): Stream<'A
                     n.removeChild childNodes.[i]
                     |> ignore))
     M.tree (most.combineArray (fun xs -> fun (n: 'A) -> xs |> Array.iter (fun p -> p n))) (most.map ring pith)
-
-let a = (document.createElement_a, fun _ -> None)
-
-let rez: Stream<HTMLDivElement -> unit> = tree (most.now (fun o ->
-    o.Node (a, most.now (fun a -> console.log a; ()))
-    failwith ""))
