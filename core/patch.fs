@@ -1,8 +1,6 @@
 module Sakhe.Patch
 open Fable.Import.Browser
-open Fable.Core
 
-let private most = Most.Core.require
 let private (|IndexOutOfBounds           |
               SameNodeAtPosition         |
               SameNodeAtDifferentPosition|
@@ -45,30 +43,3 @@ let mkPatcher (index: int) (create, eq) patch (node: #Node) =
         patch child
         node.insertBefore (child, childAtIndex) |> ignore
         console.log ("OtherNodeAtPosition", child)
-
-[<Emit "if ($1 && $0.dataset) {$0.dataset['key'] = $1}">]
-let inline private trySetKey (_: #Element) (_: string option): unit = jsNative
-
-[<Emit "$0.dataset ? $0.dataset['key'] : null">]
-let inline private tryGetKey (_: #Element): string option = jsNative
-
-let inline private mkTypeChecker (create: unit -> 't) (nodeName: string): (unit -> 't) * (Node -> 't option) =
-    (create, (fun n -> if n.nodeName = nodeName then Some (n :?> 't) else None))
-
-let inline private setKey key (n: #HTMLElement) =
-    trySetKey n key
-    n
-
-let inline private checkKey key (no: #HTMLElement option) =
-    no |> Core.Option.bind (fun n -> if (tryGetKey n) = key then Some n else None)
-
-let mape (f: unit -> #HTMLElement, nodeName, key, index) =
-    mkTypeChecker f nodeName
-    |> fun (create, eq) -> (create >> (setKey key), eq >> (checkKey key))
-    |> mkPatcher index
-    |> most.map
-
-let mapc (f, nodeName, index) =
-    mkTypeChecker f nodeName
-    |> mkPatcher index
-    |> most.map
