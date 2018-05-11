@@ -39,7 +39,7 @@ module private Impl =
                 | Some foundNode -> SameNodeAtDifferentPosition (foundNode, childAtIndex)
                 | None           -> OtherNodeAtPosition childAtIndex
 
-    let mkPatcher (index: int) (create, eq) patch (node: #Node) =
+    let private mkPatcher (index: int) (create, eq) patch (node: #Node) =
         match index, eq, node with
         | IndexOutOfBounds ->
             let child = create ()
@@ -60,19 +60,19 @@ module private Impl =
             console.log ("OtherNodeAtPosition", child)
 
     [<Emit "if ($1 && $0.dataset) {$0.dataset['key'] = $1}">]
-    let inline trySetKey (_: #Element) (_: string option): unit = jsNative
+    let inline private trySetKey (_: #Element) (_: string option): unit = jsNative
 
     [<Emit "$0.dataset ? $0.dataset['key'] : null">]
-    let inline tryGetKey (_: #Element): string option = jsNative
+    let inline private tryGetKey (_: #Element): string option = jsNative
 
-    let inline mkTypeChecker (create: unit -> 't) (nodeName: string): (unit -> 't) * (Node -> 't option) =
+    let inline private mkTypeChecker (create: unit -> 't) (nodeName: string): (unit -> 't) * (Node -> 't option) =
         (create, (fun n -> if n.nodeName = nodeName then Some (n :?> 't) else None))
 
-    let inline setKey key (n: #HTMLElement) =
+    let inline private setKey key (n: #HTMLElement) =
         trySetKey n key
         n
 
-    let inline checkKey key (no: #HTMLElement option) =
+    let inline private checkKey key (no: #HTMLElement option) =
         no |> Core.Option.bind (fun n -> if (tryGetKey n) = key then Some n else None)
 
     let mape (f: unit -> #HTMLElement) nodeName key index =
@@ -92,23 +92,23 @@ open A
 let tree (pith: Stream<Pith<Lang<'A>>> when 'A :> Element): Stream<'A -> unit> =
     let ring (pith: Pith<Lang<'A>>): Pith<Stream<'A -> unit>> =
         fun o ->
-            let mutable counter = 0
-            let cpp a = counter <- counter + 1; a
+            let mutable c = 0
+            let cpp a = c <- c + 1; a
             let ray (lang) =
                 match lang with
-                | A (key, r)            -> r |> mape document.createElement_a               "A"           key counter |> cpp |> o
-                | H1 (key, r)           -> r |> mape document.createElement_h1              "H1"          key counter |> cpp |> o
-                | Div (key, r)          -> r |> mape document.createElement_div             "DIV"         key counter |> cpp |> o
-                | Custom (t, key, r)    -> r |> mape (fun () -> document.createElement t)   (t.ToUpper()) key counter |> cpp |> o
-                | Text r                -> r |> mapc (fun () -> document.createTextNode "") "#text"           counter |> cpp |> o
-                | Comment r             -> r |> mapc (fun () -> document.createComment "")  "#comment"        counter |> cpp |> o
+                | A (key, r)            -> r |> mape document.createElement_a               "A"           key c |> cpp |> o
+                | H1 (key, r)           -> r |> mape document.createElement_h1              "H1"          key c |> cpp |> o
+                | Div (key, r)          -> r |> mape document.createElement_div             "DIV"         key c |> cpp |> o
+                | Custom (t, key, r)    -> r |> mape (fun () -> document.createElement t)   (t.ToUpper()) key c |> cpp |> o
+                | Text r                -> r |> mapc (fun () -> document.createTextNode "") "#text"           c |> cpp |> o
+                | Comment r             -> r |> mapc (fun () -> document.createComment "")  "#comment"        c |> cpp |> o
                 | Patch r               -> r |> most.map (fun patch n -> patch n)                                            |> o
                 | _                     -> ()
             pith ray
             o (most.now (fun n ->
                 let childNodes = n.childNodes
                 let length = int childNodes.length
-                for i = counter to length - 1 do
+                for i = c to length - 1 do
                     n.removeChild childNodes.[i]
                     |> ignore))
     M.tree (most.combineArray (fun xs -> fun (n: 'A) -> xs |> Array.iter (fun p -> p n))) (most.map ring pith)
