@@ -14,13 +14,13 @@ let once (_: 'a -> 'b): 'a -> 'b = jsNative
 let rez: Stream<HTMLElement -> unit> = t (fun o ->
     let once f = most.now (once f)
     (Patch (once (fun x -> console.log x;()))) |> o
-    (H1 (once (fun x -> x.innerText <- "Hello World!1";()), Some "as1")) |> o
-    (Custom ("h2", once (fun x -> x.innerText <- "Hello World!1";()), Some "as11")) |> o
-    (Div (t (fun o ->
-        (H1 (once (fun x -> x.innerText <- "Hello World!2";()), Some "as2")) |> o
-        (Div (once (fun x -> x.innerText <- "Hello World!3";()), Some "as3")) |> o
-        (Text (once (fun x -> x.textContent <- "Hello World!4";()))) |> o
-        (Comment (once (fun x -> x.textContent <- "Hello World!5";()))) |> o), Some "as6")) |> o)
+    (H1 (Some "as1", once (fun x -> x.innerText <- "Hello World!1";()))) |> o
+    (Custom ("h2", Some "as2", once (fun x -> x.innerText <- "Hello World!2";()))) |> o
+    (Div (Some "as5", t (fun o ->
+        (H1 (Some "as3", once (fun x -> x.innerText <- "Hello World!3";()))) |> o
+        (Div (Some "as4", once (fun x -> x.innerText <- "Hello World!4";()))) |> o
+        (Text (once (fun x -> x.textContent <- "Hello World!5";()))) |> o
+        (Comment (once (fun x -> x.textContent <- "Hello World!6";()))) |> o))) |> o)
 
 let rootNode = document.getElementById "root-node"
 let patches = rez |> most.scan (fun n p -> p(n); n) rootNode |> most.skip 1 |> most.take 3
