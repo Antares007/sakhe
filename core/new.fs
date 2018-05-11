@@ -4,34 +4,32 @@ open Most
 open M
 open Patch
 open A
+open System.IO
 
-type Lang<'A when 'A :> Element> =
-    | A of string option * Stream<HTMLAnchorElement -> unit>
-    | Div of string option * Stream<HTMLDivElement -> unit>
-    | H1 of string option * Stream<HTMLHeadingElement -> unit>
-    | H2 of string option * Stream<HTMLHeadingElement -> unit>
-    | H3 of string option * Stream<HTMLHeadingElement -> unit>
-    | Custom of string * string option * Stream<HTMLElement -> unit>
-    | Text of Stream<Text -> unit>
-    | Comment of Stream<Comment -> unit>
-    | Patch of Stream<'A -> unit>
+type Patch<'a> =
+    private
+    | New of 'a
+    | Old of 'a
 
-let tree (pith: Stream<Pith<Lang<'A>>> when 'A :> Element): Stream<'A -> unit> =
-    let ring (pith: Pith<Lang<'A>>): Pith<Stream<'A -> unit>> =
+
+type ILang<'A when 'A :> Element> =
+    abstract Div: pith: Stream<ILang<HTMLDivElement> -> unit> * ?key: string -> unit
+    abstract CharData<'C when 'C :> CharacterData> : (unit -> 'C) * (Node -> 'C option) * Stream<'C -> unit> -> unit
+    abstract Patch: Stream<'A -> unit> -> unit
+
+#nowarn "64"
+
+let rec tree (pith: Stream<ILang<'A> -> unit>): Stream<'A -> unit> =
+    let ring (pith: ILang<'A> -> unit): Pith<Stream<'A -> unit>> =
         fun o ->
             let mutable c = 0
             let cpp a = c <- c + 1; a
-            let ray (lang) =
-                match lang with
-                | A (key, r)            -> r |> mape (document.createElement_a,               "A",           key, c) |> cpp |> o
-                | H1 (key, r)           -> r |> mape (document.createElement_h1,              "H1",          key, c) |> cpp |> o
-                | Div (key, r)          -> r |> mape (document.createElement_div,             "DIV",         key, c) |> cpp |> o
-                | Custom (t, key, r)    -> r |> mape ((fun () -> document.createElement t),   t.ToUpper(),   key, c) |> cpp |> o
-                | Text r                -> r |> mapc ((fun () -> document.createTextNode ""), "#text",            c) |> cpp |> o
-                | Comment r             -> r |> mapc ((fun () -> document.createComment ""),  "#comment",         c) |> cpp |> o
-                | Patch r               -> r |> most.map (fun patch n -> patch n)                                           |> o
-                | _                     -> ()
-            pith ray
+            pith { new ILang<'A> with
+
+                member __.Div (pith, key) = tree pith |> mape (document.createElement_div,             "DIV",         key, c) |> cpp |> o
+                member __.CharData (absurd, eq, s) = s |> most.map (Patch.mkPatcher c (absurd, eq)) |> o
+                member __.Patch (s) = s |> most.map (fun patch n -> patch n) |> o }
+
             o (most.now (fun n ->
                 let childNodes = n.childNodes
                 let length = int childNodes.length
@@ -39,3 +37,8 @@ let tree (pith: Stream<Pith<Lang<'A>>> when 'A :> Element): Stream<'A -> unit> =
                     n.removeChild childNodes.[i]
                     |> ignore))
     M.tree (most.combineArray (fun xs -> fun (n: 'A) -> xs |> Array.iter (fun p -> p n))) (most.map ring pith)
+
+let a = (document.createElement_a, fun _ -> None)
+
+let rez: Stream<HTMLDivElement -> unit> = tree (most.now (fun o ->
+    ()))

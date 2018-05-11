@@ -26,7 +26,7 @@ let private (|IndexOutOfBounds           |
             | Some foundNode -> SameNodeAtDifferentPosition (foundNode, childAtIndex)
             | None           -> OtherNodeAtPosition childAtIndex
 
-let private mkPatcher (index: int) (create, eq) patch (node: #Node) =
+let mkPatcher (index: int) (create, eq) patch (node: #Node) =
     match index, eq, node with
     | IndexOutOfBounds ->
         let child = create ()
