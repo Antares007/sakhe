@@ -5,6 +5,14 @@ open Dom
 open Most
 open Patch
 
+type IDom<'a when 'a :> Element> =
+    inherit ILang<'a>
+    abstract Div<'b when 'b :> Element> : Stream<IDom<'b> -> unit> -> unit
+
+let a: IDom<HTMLElement> = unbox 1
+a.Div (most.now (fun a -> a.Div (most.now (fun a -> a.Div (most.now (fun a -> ()))))))
+
+
 let mkAbsurdProve (create: unit -> 't) (prove: _ -> bool): (unit -> 't) * (Node -> 't option) =
     (create, fun n -> if prove n then Some (unbox n) else None)
 let inline NodeName nodeName (node: #Node) = node.nodeName = nodeName
