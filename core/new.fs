@@ -6,9 +6,11 @@ open Patch
 open A
 
 type Patch<'a> =
-    private
-    | New of 'a
-    | Old of 'a
+    | Created of 'a
+    | Inserted of 'a
+    | Proved of 'a
+    | Found of 'a * Node
+    | Moved of 'a * Node
 
 
 type ILang<'A when 'A :> Element> =
