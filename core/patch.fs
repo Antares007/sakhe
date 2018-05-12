@@ -31,7 +31,7 @@ let mkPatcher (index: int) ((absurd, prove): AbsurdProve<_>) patch (node: #Node)
     | IndexOutOfBounds ->
         let child = absurd ()
         patch child
-        node.appendChild child |> ignore
+        node.insertBefore (child, unbox None) |> ignore
         console.log ("IndexOutOfBounds", child)
     | SameNodeAtPosition childAtIndex ->
         patch childAtIndex |> ignore
