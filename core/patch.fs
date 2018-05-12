@@ -3,6 +3,13 @@ open Fable.Import.Browser
 
 type AbsurdProve<'A when 'A :> Node> = (unit -> 'A) * (Node -> 'A option)
 
+type Patch<'a> =
+    | Created of 'a
+    | Inserted of 'a
+    | Proved of 'a
+    | Found of 'a * Node
+    | Moved of 'a * Node
+
 let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, prove: Node -> 'a option, node: Node) =
     let childNodes = node.childNodes
     let length = int childNodes.length

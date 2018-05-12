@@ -5,14 +5,6 @@ open M
 open Patch
 open A
 
-type Patch<'a> =
-    | Created of 'a
-    | Inserted of 'a
-    | Proved of 'a
-    | Found of 'a * Node
-    | Moved of 'a * Node
-
-
 type ILang<'A when 'A :> Element> =
     abstract Node<'B when 'B :> Element> : AbsurdProve<'B> * Stream<ILang<'B> -> unit>  -> unit
     abstract Leaf<'C when 'C :> CharacterData> : AbsurdProve<'C> * Stream<'C -> unit> -> unit
