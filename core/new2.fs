@@ -19,8 +19,8 @@ let div = mkAbsurdProve document.createElement_div (NodeName "DIV")
 let button = mkAbsurdProve document.createElement_button (NodeName "BUTTON")
 let text = mkAbsurdProve (fun () -> document.createTextNode ("")) (NodeName "#text")
 
-let Div f = elm div (most.now f)
-let Button f = elm button (most.now f)
+let Div f = elm div f
+let Button f = elm button f
 let Text f = chr text f
 
 let (!^) x = most.now x
@@ -28,30 +28,15 @@ let (<|>) a b = a (most.now b)
 let (:=) a b = a (most.now b)
 
 let rez: Stream<HTMLElement -> unit> = tree := fun o ->
-    o.Node << Div <| fun o ->
-        o.Node << Div <| fun o ->
-            o.Node << Div <| fun o ->
-                o.Node << Div <| fun o ->
+    o.Node << Div := fun o ->
+        o.Node << Div := fun o ->
+            o.Node << Div := fun o ->
+                o.Node << Div := fun o ->
                     o.Leaf << Text := fun text -> text.textContent <- "deeep text"
 
-    o.Node (div, !^ (fun o ->
-        o.Leaf (text, !^ (fun o -> o.textContent <- "a"))
-        o.Node (div, !^ (fun o ->
-            o.Leaf (text, !^ (fun o -> o.textContent <- "b"))
-            o.Node (h1, !^ (fun o ->
-                o.Leaf (text, !^ (fun o -> o.textContent <- "c"))
-            ))
-        ))
-    ))
-    o.Node (Button <| fun o ->
-        o.Leaf (text, !^ (fun o -> o.textContent <- "hmmmm"))
-    )
-    o.Node (button, !^ (fun o ->
+    o.Node << Button := fun o ->
         o.Leaf (text, !^ (fun o -> o.textContent <- "click me"))
-    ))
-    o.Node (button, !^ (fun o ->
-        o.Leaf (text, !^ (fun o -> o.textContent <- "click me"))
-    ))
+
 
 let rootNode = document.getElementById "root-node"
 let patches = rez |> most.scan (fun n p -> p(n); n) rootNode |> most.skip 1 |> most.take 3
