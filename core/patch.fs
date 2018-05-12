@@ -1,7 +1,7 @@
 module Sakhe.Patch
 open Fable.Import.Browser
 
-type AbsurdProve<'A when 'A :> Node> = (unit -> 'A) * (Node -> 'A option)
+type AbsurdProve<'a when 'a :> Node> = (unit -> 'a) * (Node -> 'a option)
 
 type Patch<'a> =
     | Created of 'a

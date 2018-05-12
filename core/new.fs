@@ -5,17 +5,17 @@ open M
 open Patch
 open A
 
-type ILang<'A when 'A :> Element> =
-    abstract Node<'B when 'B :> Element> : AbsurdProve<'B> * Stream<ILang<'B> -> unit>  -> unit
-    abstract Leaf<'C when 'C :> CharacterData> : AbsurdProve<'C> * Stream<'C -> unit> -> unit
-    abstract Patch: Stream<'A -> unit> -> unit
+type ILang<'a when 'a :> Element> =
+    abstract Node<'b when 'b :> Element> : AbsurdProve<'b> * Stream<ILang<'b> -> unit>  -> unit
+    abstract Leaf<'b when 'b :> CharacterData> : AbsurdProve<'b> * Stream<'b -> unit> -> unit
+    abstract Patch: Stream<'a -> unit> -> unit
 
-let rec tree<'A when 'A :> Element> (pith: Stream<ILang<'A> -> unit>): Stream<'A -> unit> =
-    let ring (pith: ILang<'A> -> unit): Pith<Stream<'A -> unit>> =
+let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a -> unit> =
+    let ring (pith: ILang<'a> -> unit): Pith<Stream<'a -> unit>> =
         fun o ->
             let mutable c = 0
             let cpp a = c <- c + 1; a
-            pith { new ILang<'A> with
+            pith { new ILang<'a> with
                 member __.Node (absurdProve, pith) =
                     tree pith |> most.map (mkPatcher c absurdProve) |> cpp |> o
                 member __.Leaf (absurdProve, s) =
@@ -31,7 +31,7 @@ let rec tree<'A when 'A :> Element> (pith: Stream<ILang<'A> -> unit>): Stream<'A
     M.tree
         (most.combineArray (
             fun xs ->
-                fun (n: 'A) ->
+                fun (n: 'a) ->
                     xs |> Array.iter (fun p -> p n)
         ))
         (most.map ring pith)
