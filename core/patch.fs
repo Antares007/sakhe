@@ -30,22 +30,23 @@ let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, pro
             | Some foundNode -> FoundNode (foundNode, childAtIndex)
             | None           -> OtherNode childAtIndex
 
-let mkPatcher (index: int) ((absurd, prove): AbsurdProve<_>) patch (node: #Node) =
-    match index, prove, node with
-    | IndexOutOfBounds ->
-        let child = absurd ()
-        patch child
-        node.insertBefore (child, unbox None) |> ignore
-        console.log ("IndexOutOfBounds", child)
-    | ProvedNode childAtIndex ->
-        patch childAtIndex |> ignore
-        console.log ("ProvedNode", childAtIndex)
-    | FoundNode (foundNode, childAtIndex) ->
-        patch foundNode
-        node.insertBefore (foundNode, childAtIndex) |> ignore
-        console.log ("FoundNode", foundNode)
-    | OtherNode childAtIndex ->
-        let child = absurd ()
-        patch child
-        node.insertBefore (child, childAtIndex) |> ignore
-        console.log ("OtherNodeAtPosition", child)
+let mkPatcher (index: int) ((absurd, prove): AbsurdProve<_>) patch =
+    fun (node: #Node) ->
+        match index, prove, node with
+        | IndexOutOfBounds ->
+            let child = absurd ()
+            patch child
+            node.insertBefore (child, unbox None) |> ignore
+            console.log ("IndexOutOfBounds", child)
+        | ProvedNode childAtIndex ->
+            patch childAtIndex |> ignore
+            console.log ("ProvedNode", childAtIndex)
+        | FoundNode (foundNode, childAtIndex) ->
+            patch foundNode
+            node.insertBefore (foundNode, childAtIndex) |> ignore
+            console.log ("FoundNode", foundNode)
+        | OtherNode childAtIndex ->
+            let child = absurd ()
+            patch child
+            node.insertBefore (child, childAtIndex) |> ignore
+            console.log ("OtherNodeAtPosition", child)

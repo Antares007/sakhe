@@ -28,4 +28,10 @@ let rec tree<'A when 'A :> Element> (pith: Stream<ILang<'A> -> unit>): Stream<'A
                 for i = c to length - 1 do
                     n.removeChild childNodes.[i]
                     |> ignore))
-    M.tree (most.combineArray (fun xs -> fun (n: 'A) -> xs |> Array.iter (fun p -> p n))) (most.map ring pith)
+    M.tree
+        (most.combineArray (
+            fun xs ->
+                fun (n: 'A) ->
+                    xs |> Array.iter (fun p -> p n)
+        ))
+        (most.map ring pith)
