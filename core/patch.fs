@@ -3,10 +3,7 @@ open Fable.Import.Browser
 
 type AbsurdProve<'A when 'A :> Node> = (unit -> 'A) * (Node -> 'A option)
 
-let private (|IndexOutOfBounds           |
-              SameNodeAtPosition         |
-              SameNodeAtDifferentPosition|
-              OtherNodeAtPosition        |) (index: int, prove: Node -> 'a option, node: Node) =
+let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, prove: Node -> 'a option, node: Node) =
     let childNodes = node.childNodes
     let length = int childNodes.length
     if index >= length then
@@ -14,7 +11,7 @@ let private (|IndexOutOfBounds           |
     else
         let childAtIndex = childNodes.[index]
         match prove childAtIndex with
-        | Some childAtIndex -> SameNodeAtPosition childAtIndex
+        | Some childAtIndex -> ProvedNode childAtIndex
         | None ->
             let rec findNode index =
                 if index < length then
@@ -23,8 +20,8 @@ let private (|IndexOutOfBounds           |
                     | None       -> findNode (index + 1)
                 else None
             match findNode index with
-            | Some foundNode -> SameNodeAtDifferentPosition (foundNode, childAtIndex)
-            | None           -> OtherNodeAtPosition childAtIndex
+            | Some foundNode -> FoundNode (foundNode, childAtIndex)
+            | None           -> OtherNode childAtIndex
 
 let mkPatcher (index: int) ((absurd, prove): AbsurdProve<_>) patch (node: #Node) =
     match index, prove, node with
@@ -33,14 +30,14 @@ let mkPatcher (index: int) ((absurd, prove): AbsurdProve<_>) patch (node: #Node)
         patch child
         node.insertBefore (child, unbox None) |> ignore
         console.log ("IndexOutOfBounds", child)
-    | SameNodeAtPosition childAtIndex ->
+    | ProvedNode childAtIndex ->
         patch childAtIndex |> ignore
-        console.log ("SameNodeAtPosition", childAtIndex)
-    | SameNodeAtDifferentPosition (foundNode, childAtIndex) ->
+        console.log ("ProvedNode", childAtIndex)
+    | FoundNode (foundNode, childAtIndex) ->
         patch foundNode
         node.insertBefore (foundNode, childAtIndex) |> ignore
-        console.log ("SameNodeAtDifferentPosition", foundNode)
-    | OtherNodeAtPosition childAtIndex ->
+        console.log ("FoundNode", foundNode)
+    | OtherNode childAtIndex ->
         let child = absurd ()
         patch child
         node.insertBefore (child, childAtIndex) |> ignore
