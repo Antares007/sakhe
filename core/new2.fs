@@ -27,7 +27,20 @@ let (!^) x = most.now x
 let (<|>) a b = a (most.now b)
 let (:=) a b = a (most.now b)
 
-let rez: Stream<HTMLElement -> unit> = tree := fun o ->
+let rec counter (d: int) (o:ILang<_>) =
+    o.Node << Div := fun o ->
+
+        o.Node << Button := fun o ->
+            o.Leaf << Text := fun text -> text.textContent <- "+"
+            if d > 0 then o.Node << Div := (counter (d - 1))
+
+        o.Node << Button := fun o ->
+            o.Leaf << Text := fun text -> text.textContent <- "-"
+            if d > 0 then o.Node << Div := (counter (d - 1))
+
+        o.Leaf << Text := fun text -> text.textContent <- "0"
+
+let sample (o:ILang<_>) =
     o.Node << Div := fun o ->
         o.Node << Div := fun o ->
             o.Node << Div := fun o ->
@@ -38,7 +51,11 @@ let rez: Stream<HTMLElement -> unit> = tree := fun o ->
         o.Leaf (text, !^ (fun o -> o.textContent <- "click me"))
 
 
-let rootNode = document.getElementById "root-node"
+
+let rez = tree := (counter 3)
+
+
+let rootNode: HTMLDivElement = unbox document.getElementById "root-node"
 let patches = rez |> most.scan (fun n p -> p(n); n) rootNode |> most.skip 1 |> most.take 3
 
 most.runEffects patches (Most.Scheduler.require.newDefaultScheduler ()) |> ignore
