@@ -4,14 +4,12 @@ open M
 open Dom
 open Most
 open Patch
+open Most.Core
+open System
 
 type IDom<'a when 'a :> Element> =
     inherit ILang<'a>
     abstract Div<'b when 'b :> Element> : Stream<IDom<'b> -> unit> -> unit
-
-let a: IDom<HTMLElement> = unbox 1
-a.Div (most.now (fun a -> a.Div (most.now (fun a -> a.Div (most.now (fun a -> ()))))))
-
 
 let mkAbsurdProve (create: unit -> 't) (prove: _ -> bool): (unit -> 't) * (Node -> 't option) =
     (create, fun n -> if prove n then Some (unbox n) else None)
@@ -38,6 +36,23 @@ let Button f = elm button f
 let Text f = chr text f
 
 let (:=) a b = a (most.now b)
+
+
+let disposable = Most.Disposable.require
+let asap (t, s) = Most.Scheduler.require.asap (t, s)
+
+let ns42 = most.newStream  (fun (sink: Sink<int>) scheduler ->
+    disposable.disposeAll [|
+        (disposable.disposeWith ((fun _ -> console.log ("disposed!!!!!!!!!!!!!!")), ()))
+        ((asap (most.propagateEventTask (42, sink), scheduler)) :> IDisposable)
+    |]
+)
+
+most.runEffects
+    (ns42 |> most.tap console.log |> most.take 1)
+    (Most.Scheduler.require.newDefaultScheduler ())
+    |> ignore
+
 
 let rec counter (d: int) (o:ILang<_>) =
     o.Node << Div := fun o ->
