@@ -296,6 +296,8 @@ module Disposable =
         abstract disposeBoth: d1: IDisposable * d2: IDisposable -> IDisposable
         abstract disposeBoth: d1: IDisposable -> (IDisposable -> IDisposable)
         abstract disposeAll: ds: IDisposable [] -> IDisposable
+        [<Emit("$0.disposeWith($1, void 0)")>]
+        abstract create: dispose: (unit -> unit) -> IDisposable
         abstract dispose: d: IDisposable -> unit
         abstract tryDispose: t: Time * disposable: IDisposable * sink: Sink<obj option> -> unit
         abstract tryDispose: t: Time -> (IDisposable -> Sink<obj option> -> unit)

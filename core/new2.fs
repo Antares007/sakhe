@@ -4,7 +4,6 @@ open M
 open Dom
 open Most
 open Patch
-open Most.Core
 open System
 
 type IDom<'a when 'a :> Element> =
@@ -37,22 +36,19 @@ let Text f = chr text f
 
 let (:=) a b = a (most.now b)
 
-
 let disposable = Most.Disposable.require
 let asap (t, s) = Most.Scheduler.require.asap (t, s)
 
-let ns42 = most.newStream  (fun (sink: Sink<int>) scheduler ->
+let ns42 = most.newStream <| fun (sink: Sink<int>) scheduler ->
     disposable.disposeAll [|
-        (disposable.disposeWith ((fun _ -> console.log ("disposed!!!!!!!!!!!!!!")), ()))
-        ((asap (most.propagateEventTask (42, sink), scheduler)) :> IDisposable)
+        disposable.create (fun _ -> console.log ("disposed!!!!!!!!!!!!!!"))
+        asap (most.propagateEventTask (42, sink), scheduler) :> IDisposable
     |]
-)
 
 most.runEffects
     (ns42 |> most.tap console.log |> most.take 1)
     (Most.Scheduler.require.newDefaultScheduler ())
     |> ignore
-
 
 let rec counter (d: int) (o:ILang<_>) =
     o.Node << Div := fun o ->
@@ -71,7 +67,6 @@ let rec counter (d: int) (o:ILang<_>) =
             o.Leaf << Text := fun text -> text.textContent <- "0"
 
 let rez = tree := (counter 2)
-
 
 let rootNode = unbox document.getElementById "root-node"
 let patches = rez |> most.scan (fun n p -> p(n); n) rootNode |> most.skip 1 |> most.take 3
