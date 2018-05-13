@@ -1,5 +1,6 @@
 module Sakhe.Dom2
 open Fable.Import.Browser
+open Fable.Core
 open M
 open Dom
 open Most
@@ -17,13 +18,17 @@ let inline NodeName nodeName (node: #Node) = node.nodeName = nodeName
 let elm (ap: AbsurdProve<'a>) (pith: Stream<ILang<'a> -> unit>) = (ap, pith)
 let chr (ap: AbsurdProve<'a>) (pith: Stream<'a -> unit>) = (ap, pith)
 
-let a = mkAbsurdProve document.createElement_a (NodeName "A")
-let h1 = mkAbsurdProve document.createElement_h1 (NodeName "H1")
-let h2 = mkAbsurdProve document.createElement_h2 (NodeName "H2")
-let h3 = mkAbsurdProve document.createElement_h3 (NodeName "H3")
-let span = mkAbsurdProve document.createElement_span (NodeName "SPAN")
-let div = mkAbsurdProve document.createElement_div (NodeName "DIV")
-let button = mkAbsurdProve document.createElement_button (NodeName "BUTTON")
+[<Emit("((tag) => [() => document.createElement(tag), (n) => n && n.nodeName === tag ? n : null])($0.toUpperCase())")>]
+let createAP<'a when 'a :> Node> (_: string) : (unit -> 'a) * (Node -> 'a option) = jsNative
+
+let a = createAP<HTMLAnchorElement> "a"
+let h1 = createAP<HTMLHeadingElement> "h1"
+let h2 = createAP<HTMLHeadingElement> "h2"
+let h3 = createAP<HTMLHeadingElement> "h3"
+let h4 = createAP<HTMLHeadingElement> "h4"
+let span = createAP<HTMLSpanElement> "span"
+let div = createAP<HTMLDivElement> "div"
+let button = createAP<HTMLButtonElement> "button"
 let text = mkAbsurdProve (fun () -> document.createTextNode ("")) (NodeName "#text")
 
 let H1 f = elm h1 f
