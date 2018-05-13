@@ -22,16 +22,16 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                     s |> most.map (mkPatcher c absurdProve) |> cpp |> o
                 member __.Patch (s) =
                     s |> most.map (fun patch n -> patch n) |> o }
-            o (most.now (fun n ->
-                let childNodes = n.childNodes
+            o (most.now (fun element ->
+                let childNodes = element.childNodes
                 let length = int childNodes.length
                 for i = c to length - 1 do
-                    n.removeChild childNodes.[i]
+                    element.removeChild childNodes.[i]
                     |> ignore))
     M.tree
         (most.combineArray (
-            fun xs ->
-                fun (n: 'a) ->
-                    xs |> Array.iter (fun p -> p n)
+            fun patches ->
+                fun (element: 'a) ->
+                    patches |> Array.iter (fun patch -> patch element)
         ))
         (most.map ring pith)

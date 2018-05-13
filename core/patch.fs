@@ -10,8 +10,8 @@ type Patch<'a> =
     | Found of 'a * Node
     | Moved of 'a * Node
 
-let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, prove: Node -> 'a option, node: Node) =
-    let childNodes = node.childNodes
+let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, prove: Node -> 'a option, parentElement: Element) =
+    let childNodes = parentElement.childNodes
     let length = int childNodes.length
     if index >= length then
         IndexOutOfBounds
@@ -30,23 +30,22 @@ let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, pro
             | Some foundNode -> FoundNode (foundNode, childAtIndex)
             | None           -> OtherNode childAtIndex
 
-let mkPatcher (index: int) ((absurd, prove): AbsurdProve<_>) patch =
-    fun (node: #Node) ->
-        match index, prove, node with
-        | IndexOutOfBounds ->
-            let child = absurd ()
-            patch child
-            node.insertBefore (child, unbox None) |> ignore
-            console.log ("IndexOutOfBounds", child)
-        | ProvedNode childAtIndex ->
-            patch childAtIndex |> ignore
-            console.log ("ProvedNode", childAtIndex)
-        | FoundNode (foundNode, childAtIndex) ->
-            patch foundNode
-            node.insertBefore (foundNode, childAtIndex) |> ignore
-            console.log ("FoundNode", foundNode)
-        | OtherNode childAtIndex ->
-            let child = absurd ()
-            patch child
-            node.insertBefore (child, childAtIndex) |> ignore
-            console.log ("OtherNodeAtPosition", child)
+let mkPatcher (index: int) ((absurd, prove): AbsurdProve<_>) childNodePatch (parentElement: #Element) =
+    match index, prove, parentElement with
+    | IndexOutOfBounds ->
+        let child = absurd ()
+        childNodePatch child
+        parentElement.insertBefore (child, unbox None) |> ignore
+        console.log ("IndexOutOfBounds", child)
+    | ProvedNode childAtIndex ->
+        childNodePatch childAtIndex |> ignore
+        console.log ("ProvedNode", childAtIndex)
+    | FoundNode (foundNode, childAtIndex) ->
+        childNodePatch foundNode
+        parentElement.insertBefore (foundNode, childAtIndex) |> ignore
+        console.log ("FoundNode", foundNode)
+    | OtherNode childAtIndex ->
+        let child = absurd ()
+        childNodePatch child
+        parentElement.insertBefore (child, childAtIndex) |> ignore
+        console.log ("OtherNodeAtPosition", child)
