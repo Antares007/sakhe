@@ -2,14 +2,37 @@ module Sakhe.Dom
 open Fable.Import.Browser
 open Most
 open M
-open Patch
 open A
 open Fable.Core
+
+type T<'a, 'b> =
+    | Absurd of (unit -> 'a)
+    | Prove of ('a -> 'b option)
 
 type ILang<'a when 'a :> Element> =
     abstract Node<'b when 'b :> Element> : ((unit -> 'b) * (Node -> 'b option)) * Stream<ILang<'b> -> unit>  -> unit
     abstract Leaf<'b when 'b :> CharacterData> : ((unit -> 'b) * (Node -> 'b option)) * Stream<'b -> unit> -> unit
     abstract Patch: Stream<'a -> unit> -> unit
+
+let (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, prove: Node -> 'a option, parentElement: Element) =
+    let childNodes = parentElement.childNodes
+    let length = int childNodes.length
+    if index >= length then
+        IndexOutOfBounds
+    else
+        let childAtIndex = childNodes.[index]
+        match prove childAtIndex with
+        | Some childAtIndex -> ProvedNode childAtIndex
+        | None ->
+            let rec findNode index =
+                if index < length then
+                    match prove childNodes.[index] with
+                    | Some child -> Some child
+                    | None       -> findNode (index + 1)
+                else None
+            match findNode index with
+            | Some foundNode -> FoundNode (foundNode, childAtIndex)
+            | None           -> OtherNode childAtIndex
 
 let private disposable = Most.Disposable.require
 
@@ -30,16 +53,44 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
         fun o ->
             let mutable c = 0
             pith { new ILang<'a> with
-                member __.Node ((absurdNode, prove): (unit -> 'b) * (Node -> 'b option) when 'b :> Node, pith) =
+                member __.Node ((absurd, prove): (unit -> 'b) * (Node -> 'b option) when 'b :> Node, pith) =
                     let index = c
                     c <- c + 1
-                    tree pith |> most.map ((mkPatcher index (absurdNode, prove)) >> once)  |> o
-                member __.Leaf (absurdProve, s) =
+                    tree pith |> most.map (fun childNodePatch  -> once (fun parentElement ->
+                            match index, prove, parentElement with
+                            | IndexOutOfBounds ->
+                                let child = absurd ()
+                                childNodePatch child
+                                parentElement.insertBefore (child, unbox None) |> ignore
+                            | ProvedNode childAtIndex ->
+                                childNodePatch childAtIndex |> ignore
+                            | FoundNode (foundNode, childAtIndex) ->
+                                childNodePatch foundNode
+                                parentElement.insertBefore (foundNode, childAtIndex) |> ignore
+                            | OtherNode childAtIndex ->
+                                let child = absurd ()
+                                childNodePatch child
+                                parentElement.insertBefore (child, childAtIndex) |> ignore)) |> o
+                member __.Leaf ((absurd, prove), s) =
                     let index = c
                     c <- c + 1
-                    s |> most.map ((mkPatcher index absurdProve) >> once) |> o
+                    s |> most.map (fun childNodePatch  -> once (fun parentElement ->
+                            match index, prove, parentElement with
+                            | IndexOutOfBounds ->
+                                let child = absurd ()
+                                childNodePatch child
+                                parentElement.insertBefore (child, unbox None) |> ignore
+                            | ProvedNode childAtIndex ->
+                                childNodePatch childAtIndex |> ignore
+                            | FoundNode (foundNode, childAtIndex) ->
+                                childNodePatch foundNode
+                                parentElement.insertBefore (foundNode, childAtIndex) |> ignore
+                            | OtherNode childAtIndex ->
+                                let child = absurd ()
+                                childNodePatch child
+                                parentElement.insertBefore (child, childAtIndex) |> ignore)) |> o
                 member __.Patch (s) =
-                    s |> most.map ((fun patch n -> patch n) >> once) |> o }
+                    s |> most.map (once (fun patch n -> patch n)) |> o }
             o (most.now (once (fun element ->
                 let childNodes = element.childNodes
                 let length = int childNodes.length
@@ -59,15 +110,18 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                     element.removeChild element.childNodes.[i] |> ignore)
             )
         let s =
-            M.tree (most.combineArray (fun ps (e: 'a) -> ps |> Array.iter (fun p -> p e))) (most.map ring pith)
+            M.tree
+                (most.combineArray (fun ps (e: 'a) -> ps |> Array.iter (fun p -> p e)))
+                (most.map ring pith)
             |> most.map (fun patch (element: 'a) ->
                 f element
                 patch element
             )
         let dispble = most.run sink scheduler s
-        let d1 () = dispble.dispose ()
-        let d2 () =
+        disposable.create (once (fun () ->
+            let d1 () = dispble.dispose ()
+            d1 ()
             let dispose = !restore
             dispose ()
-        (d1 >> d2) |> once |> disposable.create
+        ))
     )
