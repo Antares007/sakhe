@@ -4,7 +4,6 @@ open Fable.Core
 open M
 open Dom
 open Most
-open Patch
 
 type IDom<'a when 'a :> Element> =
     inherit ILang<'a>
@@ -14,8 +13,8 @@ let mkAbsurdProve (create: unit -> 't) (prove: _ -> bool): (unit -> 't) * (Node 
     (create, fun n -> if prove n then Some (unbox n) else None)
 let inline NodeName nodeName (node: #Node) = node.nodeName = nodeName
 
-let elm (ap: AbsurdProve<'a>) (pith: Stream<ILang<'a> -> unit>) = (ap, pith)
-let chr (ap: AbsurdProve<'a>) (pith: Stream<'a -> unit>) = (ap, pith)
+let elm (ap: ((unit -> 'a) * (Node -> 'a option))) (pith: Stream<ILang<'a> -> unit>) = (ap, pith)
+let chr (ap: ((unit -> 'a) * (Node -> 'a option))) (pith: Stream<'a -> unit>) = (ap, pith)
 
 [<Emit("((tag) => [() => document.createElement(tag), (n) => n && n.nodeName === tag ? n : null])($0.toUpperCase())")>]
 let createAP<'a when 'a :> Node> (_: string) : (unit -> 'a) * (Node -> 'a option) = jsNative
@@ -44,7 +43,10 @@ let intS = most.periodic 1000 |> most.scan (fun c _ -> c + 1) 0
 
 let rec counter (d: int) (o:ILang<_>) =
     o.Node << Div := fun o ->
-        o.Patch := fun d -> d.style.padding <- "5px 10px"; d.style.textAlign <- "center"
+        o.Patch := fun d ->
+            d.style.padding <- "5px 10px"
+            d.style.textAlign <- "center"
+            console.log ("patch", d)
         o.Node << Button := fun o ->
             (o.Node << Span) := fun o ->
                 o.Leaf << Text := fun text -> text.textContent <- "+"

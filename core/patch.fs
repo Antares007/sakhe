@@ -1,7 +1,9 @@
 module Sakhe.Patch
 open Fable.Import.Browser
 
-type AbsurdProve<'a when 'a :> Node> = (unit -> 'a) * (Node -> 'a option)
+type T<'a, 'b> =
+    | Absurd of (unit -> 'a)
+    | Prove of ('a -> 'b option)
 
 let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, prove: Node -> 'a option, parentElement: Element) =
     let childNodes = parentElement.childNodes
@@ -23,22 +25,18 @@ let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, pro
             | Some foundNode -> FoundNode (foundNode, childAtIndex)
             | None           -> OtherNode childAtIndex
 
-let mkPatcher index (absurd, prove) childNodePatch =
-    let mutable executed = false
-    fun parentElement ->
-        if not executed then
-            executed <- true
-            match index, prove, parentElement with
-            | IndexOutOfBounds ->
-                let child = absurd ()
-                childNodePatch child
-                parentElement.insertBefore (child, unbox None) |> ignore
-            | ProvedNode childAtIndex ->
-                childNodePatch childAtIndex |> ignore
-            | FoundNode (foundNode, childAtIndex) ->
-                childNodePatch foundNode
-                parentElement.insertBefore (foundNode, childAtIndex) |> ignore
-            | OtherNode childAtIndex ->
-                let child = absurd ()
-                childNodePatch child
-                parentElement.insertBefore (child, childAtIndex) |> ignore
+let mkPatcher index (absurd, prove) childNodePatch  parentElement =
+    match index, prove, parentElement with
+    | IndexOutOfBounds ->
+        let child = absurd ()
+        childNodePatch child
+        parentElement.insertBefore (child, unbox None) |> ignore
+    | ProvedNode childAtIndex ->
+        childNodePatch childAtIndex |> ignore
+    | FoundNode (foundNode, childAtIndex) ->
+        childNodePatch foundNode
+        parentElement.insertBefore (foundNode, childAtIndex) |> ignore
+    | OtherNode childAtIndex ->
+        let child = absurd ()
+        childNodePatch child
+        parentElement.insertBefore (child, childAtIndex) |> ignore
