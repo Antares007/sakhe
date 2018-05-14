@@ -40,6 +40,8 @@ let Text f = chr text f
 
 let (:=) a b = a (most.merge (most.now b) (most.never ()))
 
+let intS = most.periodic 1000 |> most.scan (fun c _ -> c + 1) 0
+
 let rec counter (d: int) (o:ILang<_>) =
     o.Node << Div := fun o ->
         o.Patch := fun d -> d.style.padding <- "5px 10px"; d.style.textAlign <- "center"
@@ -52,14 +54,14 @@ let rec counter (d: int) (o:ILang<_>) =
                 o.Leaf << Text := fun text -> text.textContent <- "-"
             if d > 0 then o.Node << Div := (counter (d - 1))
         o.Node << H3 := fun o ->
-            (o.Leaf << Text) (most.periodic 1000 |> most.take 3 |> most.scan (fun c _ -> c + 1) 0 |> most.map (fun i -> fun text -> text.textContent <- string i))
+            (o.Leaf << Text) (intS |> most.map (fun i -> fun text -> text.textContent <- string i))
 
-let rez = tree := (counter 0)
+let rez = tree := (counter 3)
 
 let rootNode = unbox document.getElementById "root-node"
 let patches =
     rez
     |> most.scan (fun n p -> p(n); n) rootNode
-    |> most.until (most.periodic 4000 |> most.skip 1)
+    |> most.until (most.periodic 10000 |> most.skip 1)
 
 most.runEffects patches (Most.Scheduler.require.newDefaultScheduler ()) |> ignore
