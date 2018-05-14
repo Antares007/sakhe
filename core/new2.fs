@@ -39,14 +39,13 @@ let Text f = chr text f
 
 let (:=) a b = a (most.merge (most.now b) (most.never ()))
 
-let intS = most.periodic 1000 |> most.scan (fun c _ -> c + 1) 0
+let intS = most.periodic 10 |> most.scan (fun c _ -> c + 1) 0
 
 let rec counter (d: int) (o:ILang<_>) =
     o.Node << Div := fun o ->
         o.Patch := fun d ->
             d.style.padding <- "5px 10px"
             d.style.textAlign <- "center"
-            console.log ("patch", d)
         o.Node << Button := fun o ->
             (o.Node << Span) := fun o ->
                 o.Leaf << Text := fun text -> text.textContent <- "+"
@@ -64,6 +63,13 @@ let rootNode = unbox document.getElementById "root-node"
 let patches =
     rez
     |> most.scan (fun n p -> p(n); n) rootNode
-    |> most.until (most.periodic 30000 |> most.skip 1)
+    |> most.until (most.periodic 10000 |> most.skip 1)
 
-most.runEffects patches (Most.Scheduler.require.newDefaultScheduler ()) |> ignore
+
+let sink = { new Sink<_> with
+    member __.``event`` (time, value) = ()
+    member __.``end`` (time) = console.info (time, "|")
+    member __.error (time, err) = console.error (time, err)
+}
+// most.run (sink, Most.Scheduler.require.newDefaultScheduler (), patches) |> ignore
+most.runEffects (patches, Most.Scheduler.require.newDefaultScheduler ()) |> ignore
