@@ -2,7 +2,7 @@
 
 open Fable.Core
 open Fable.Import.JS
-open System
+
 
 type Time = float
 
@@ -20,13 +20,16 @@ type Period = float
 type Offset = float
 type Handle = obj option
 
+type [<AllowNullLiteral>] Disposable =
+    abstract dispose: unit -> unit
+
 type [<AllowNullLiteral>] Task =
-    inherit IDisposable
+    inherit Disposable
     abstract run: time: Time -> unit
     abstract error: time: Time * e: Error -> unit
 
 type [<AllowNullLiteral>] ScheduledTask =
-    inherit IDisposable
+    inherit Disposable
     abstract task: Task with get, set
     abstract run: unit -> unit
     abstract error: err: Error -> unit
@@ -39,7 +42,7 @@ type [<AllowNullLiteral>] Scheduler =
     abstract cancelAll: predicate: (ScheduledTask -> bool) -> unit
 
 type [<AllowNullLiteral>] Stream<'A> =
-    abstract run: sink: Sink<'A> * scheduler: Scheduler -> IDisposable
+    abstract run: sink: Sink<'A> * scheduler: Scheduler -> Disposable
 
 type [<AllowNullLiteral>] Timer =
     abstract now: unit -> Time
@@ -57,18 +60,14 @@ type [<AllowNullLiteral>] Timeline =
     abstract nextArrival: unit -> Time
     abstract runTasks: time: Time * runTask: TaskRunner -> unit
 
-module rec Core =
+module Core =
     type PropagateTaskRun<'A, 'B> = Time * 'A * Sink<'B> -> unit
-
-    type PropagateTask<'B> =
-        PropagateTask<obj, 'B>
 
     type [<AllowNullLiteral>] PropagateTask<'A, 'B> =
         inherit Task
         abstract value: 'A with get, set
         abstract sink: Sink<'B> with get, set
         abstract active: bool with get, set
-
 
     type [<AllowNullLiteral>] SeedValue<'S, 'V> =
         abstract seed: 'S with get, set
@@ -77,11 +76,11 @@ module rec Core =
     type [<AllowNullLiteral>] MulticastSource<'A> =
         inherit Stream<'A>
         inherit Sink<'A>
-        inherit IDisposable
+        inherit Disposable
         abstract source: Stream<'A> with get, set
         abstract sinks: Array<Sink<'A>> with get, set
-        abstract disposable: IDisposable with get, set
-        abstract run: sink: Sink<'A> * scheduler: Scheduler -> IDisposable
+        abstract disposable: Disposable with get, set
+        abstract run: sink: Sink<'A> * scheduler: Scheduler -> Disposable
         abstract ``event``: time: Time * value: 'A -> unit
         abstract error: time: Time * error: Error -> unit
         abstract ``end``: time: Time -> unit
@@ -92,24 +91,24 @@ module rec Core =
     type [<AllowNullLiteral>] MulticastSourceStatic =
         [<Emit "new $0($1...)">] abstract Create: source: Stream<'A> -> MulticastSource<'A>
 
-    type RunStream<'A> = Sink<'A> -> Scheduler -> IDisposable
+    type RunStream<'A> = Sink<'A> -> Scheduler -> Disposable
 
     type [<AllowNullLiteral>] IExports =
         abstract runEffects: stream: Stream<'T> * scheduler: Scheduler -> Promise<unit>
         abstract runEffects: stream: Stream<'T> -> (Scheduler -> Promise<unit>)
 
-        abstract run: sink: Sink<'A> * scheduler: Scheduler * s: Stream<'A> -> IDisposable
-        abstract run: sink: Sink<'A> -> (Scheduler -> Stream<'A> -> IDisposable)
-        abstract run: sink: Sink<'A> * scheduler: Scheduler -> (Stream<'A> -> IDisposable)
+        abstract run: sink: Sink<'A> * scheduler: Scheduler * s: Stream<'A> -> Disposable
+        abstract run: sink: Sink<'A> -> (Scheduler -> Stream<'A> -> Disposable)
+        abstract run: sink: Sink<'A> * scheduler: Scheduler -> (Stream<'A> -> Disposable)
 
         abstract propagateTask: run: PropagateTaskRun<'A, 'B> * value: 'A * sink: Sink<'B> -> PropagateTask<'A, 'B>
         abstract propagateTask: run: PropagateTaskRun<'A, 'B> * value: 'A -> (Sink<'B> -> PropagateTask<'A, 'B>)
         abstract propagateTask: run: PropagateTaskRun<'A, 'B> -> ('A -> Sink<'B> -> PropagateTask<'A, 'B>)
-        abstract propagateEventTask: value: 'T * sink: Sink<'T> -> PropagateTask<'T>
-        abstract propagateEventTask: value: 'T -> (Sink<'T> -> PropagateTask<'T>)
-        abstract propagateEndTask: sink: Sink<'T> -> PropagateTask<unit>
-        abstract propagateErrorTask: error: Error * sink: Sink<obj option> -> PropagateTask<obj option>
-        abstract propagateErrorTask: error: Error -> (Sink<obj option> -> PropagateTask<obj option>)
+        abstract propagateEventTask: value: 'T * sink: Sink<'T> -> PropagateTask<'T, 'T>
+        abstract propagateEventTask: value: 'T -> (Sink<'T> -> PropagateTask<'T, 'T>)
+        abstract propagateEndTask: sink: Sink<'T> -> PropagateTask<unit, 'T>
+        abstract propagateErrorTask: error: Error * sink: Sink<'T> -> PropagateTask<unit, 'T>
+        abstract propagateErrorTask: error: Error -> (Sink<'T> -> PropagateTask<unit, 'T>)
 
         abstract ap: streamofFunctions: Stream<('A -> 'B)> * streamOfValues: Stream<'A> -> Stream<'B>
         abstract ap: streamofFunctions: Stream<('A -> 'B)> -> (Stream<'A> -> Stream<'B>)
@@ -206,12 +205,12 @@ module rec Core =
 
         abstract switchLatest: s: Stream<Stream<'A>> -> Stream<'A>
 
-        abstract until: signal: Stream<obj option> * s: Stream<'A> -> Stream<'A>
-        abstract until: signal: Stream<obj option> -> (Stream<'A> -> Stream<'A>)
-        abstract since: signal: Stream<obj option> * s: Stream<'A> -> Stream<'A>
-        abstract since: signal: Stream<obj option> -> (Stream<'A> -> Stream<'A>)
-        abstract during: timeWindow: Stream<Stream<obj option>> * s: Stream<'A> -> Stream<'A>
-        abstract during: timeWindow: Stream<Stream<obj option>> -> (Stream<'A> -> Stream<'A>)
+        abstract until: signal: Stream<'B> * s: Stream<'A> -> Stream<'A>
+        abstract until: signal: Stream<'B> -> (Stream<'A> -> Stream<'A>)
+        abstract since: signal: Stream<'B> * s: Stream<'A> -> Stream<'A>
+        abstract since: signal: Stream<'B> -> (Stream<'A> -> Stream<'A>)
+        abstract during: timeWindow: Stream<Stream<'B>> * s: Stream<'A> -> Stream<'A>
+        abstract during: timeWindow: Stream<Stream<'B>> -> (Stream<'A> -> Stream<'A>)
 
         abstract map: f: ('A -> 'B) * s: Stream<'A> -> Stream<'B>
         abstract map: f: ('A -> 'B) -> (Stream<'A> -> Stream<'B>)
@@ -243,9 +242,9 @@ module rec Core =
         abstract withItems: a: Array<'A> * s: Stream<obj option> -> Stream<'A>
         abstract withItems: a: Array<'A> -> (Stream<obj option> -> Stream<'A>)
 
-        abstract never: unit -> Stream<obj option>
+        abstract never: unit -> Stream<'A>
 
-        abstract empty: unit -> Stream<obj option>
+        abstract empty: unit -> Stream<'A>
 
         abstract now: a: 'A -> Stream<'A>
 
@@ -289,18 +288,18 @@ module Scheduler =
 
 module Disposable =
     type [<AllowNullLiteral>] IExports =
-        abstract disposeNone: unit -> IDisposable
-        abstract disposeWith: dispose: ('R -> unit) * resource: 'R -> IDisposable
-        abstract disposeWith: dispose: ('R -> unit) -> ('R -> IDisposable)
-        abstract disposeOnce: d: IDisposable -> IDisposable
-        abstract disposeBoth: d1: IDisposable * d2: IDisposable -> IDisposable
-        abstract disposeBoth: d1: IDisposable -> (IDisposable -> IDisposable)
-        abstract disposeAll: ds: IDisposable [] -> IDisposable
+        abstract disposeNone: unit -> Disposable
+        abstract disposeWith: dispose: ('R -> unit) * resource: 'R -> Disposable
+        abstract disposeWith: dispose: ('R -> unit) -> ('R -> Disposable)
+        abstract disposeOnce: d: Disposable -> Disposable
+        abstract disposeBoth: d1: Disposable * d2: Disposable -> Disposable
+        abstract disposeBoth: d1: Disposable -> (Disposable -> Disposable)
+        abstract disposeAll: ds: Disposable [] -> Disposable
         [<Emit("$0.disposeWith($1, void 0)")>]
-        abstract create: dispose: (unit -> unit) -> IDisposable
-        abstract dispose: d: IDisposable -> unit
-        abstract tryDispose: t: Time * disposable: IDisposable * sink: Sink<obj option> -> unit
-        abstract tryDispose: t: Time -> (IDisposable -> Sink<obj option> -> unit)
-        abstract tryDispose: t: Time * disposable: IDisposable -> (Sink<obj option> -> unit)
+        abstract create: dispose: (unit -> unit) -> Disposable
+        abstract dispose: d: Disposable -> unit
+        abstract tryDispose: t: Time * disposable: Disposable * sink: Sink<obj option> -> unit
+        abstract tryDispose: t: Time -> (Disposable -> Sink<obj option> -> unit)
+        abstract tryDispose: t: Time * disposable: Disposable -> (Sink<obj option> -> unit)
 
     let require: IExports = Fable.Core.JsInterop.importAll "@most/disposable"
