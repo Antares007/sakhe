@@ -15,7 +15,7 @@ let private disposable = Most.Disposable.require
 
 [<Emit("(function makeOnce (f) {
     var b
-    return function once (a) {
+    return function onceAtoBtoAtoB (a) {
         if (f) {
             b = f.call(this, a)
             f = null
@@ -48,24 +48,26 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                     |> ignore)))
 
     most.newStream (fun sink scheduler ->
-        let mutable executed = false
-        let restoreOldChilds = ref (disposable.disposeNone ())
+        let restore = ref (fun () -> ())
+        let f = once(fun (element: 'a) ->
+            let oldNodes = [| for i in [0 .. int element.childNodes.length - 1] -> element.childNodes.[i] |]
+            restore := (fun () ->
+                oldNodes
+                    |> Array.fold (fun ref child -> element.insertBefore (child, ref) |> ignore; ref) element.childNodes.[0]
+                    |> ignore
+                for i = oldNodes.Length to int element.childNodes.length - 1 do
+                    element.removeChild element.childNodes.[i] |> ignore)
+            )
         let s =
             M.tree (most.combineArray (fun ps (e: 'a) -> ps |> Array.iter (fun p -> p e))) (most.map ring pith)
             |> most.map (fun patch (element: 'a) ->
-                if not executed then
-                    executed <- true
-                    let oldNodes = [| for i in [0 .. int element.childNodes.length - 1] -> element.childNodes.[i] |]
-                    let restore () =
-                        oldNodes
-                            |> Array.fold (fun ref child -> element.insertBefore (child, ref) |> ignore; ref) element.childNodes.[0]
-                            |> ignore
-                        for i = oldNodes.Length to int element.childNodes.length - 1 do
-                            element.removeChild element.childNodes.[i] |> ignore
-                    restoreOldChilds := disposable.create restore
+                f element
                 patch element
             )
-        let d1 = (most.run sink scheduler s).dispose
-        let d2 = (!restoreOldChilds).dispose
+        let dispble = most.run sink scheduler s
+        let d1 () = dispble.dispose ()
+        let d2 () =
+            let dispose = !restore
+            dispose ()
         (d1 >> d2) |> once |> disposable.create
     )

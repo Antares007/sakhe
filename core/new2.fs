@@ -58,12 +58,12 @@ let rec counter (d: int) (o:ILang<_>) =
         o.Node << H3 := fun o ->
             (o.Leaf << Text) (intS |> most.map (fun i -> fun text -> text.textContent <- string i))
 
-let rez = tree := (counter 3)
+let rez = tree := (counter 4)
 
 let rootNode = unbox document.getElementById "root-node"
 let patches =
     rez
     |> most.scan (fun n p -> p(n); n) rootNode
-    |> most.until (most.periodic 10000 |> most.skip 1)
+    |> most.until (most.periodic 30000 |> most.skip 1)
 
 most.runEffects patches (Most.Scheduler.require.newDefaultScheduler ()) |> ignore
