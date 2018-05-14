@@ -5,7 +5,6 @@ open M
 open Dom
 open Most
 open Patch
-open System
 
 type IDom<'a when 'a :> Element> =
     inherit ILang<'a>
@@ -39,27 +38,11 @@ let Div f = elm div f
 let Button f = elm button f
 let Text f = chr text f
 
-let (:=) a b = a (most.now b)
-
-let disposable = Most.Disposable.require
-let asap (t, s) = Most.Scheduler.require.asap (t, s)
-
-let ns42 = most.newStream <| fun (sink: Sink<int>) scheduler ->
-    disposable.disposeAll [|
-        disposable.create (fun _ -> console.log ("disposed!!!!!!!!!!!!!!"))
-        asap (most.propagateEventTask (42, sink), scheduler) :> IDisposable
-    |]
-
-most.runEffects
-    (ns42 |> most.tap console.log |> most.take 1)
-    (Most.Scheduler.require.newDefaultScheduler ())
-    |> ignore
+let (:=) a b = a (most.merge (most.now b) (most.never ()))
 
 let rec counter (d: int) (o:ILang<_>) =
     o.Node << Div := fun o ->
-        o.Patch := fun d ->
-            d.style.padding <- "5px 10px"
-            d.style.textAlign <- "center"
+        o.Patch := fun d -> d.style.padding <- "5px 10px"; d.style.textAlign <- "center"
         o.Node << Button := fun o ->
             (o.Node << Span) := fun o ->
                 o.Leaf << Text := fun text -> text.textContent <- "+"
@@ -69,11 +52,14 @@ let rec counter (d: int) (o:ILang<_>) =
                 o.Leaf << Text := fun text -> text.textContent <- "-"
             if d > 0 then o.Node << Div := (counter (d - 1))
         o.Node << H3 := fun o ->
-            o.Leaf << Text := fun text -> text.textContent <- "0"
+            (o.Leaf << Text) (most.periodic 1000 |> most.take 3 |> most.scan (fun c _ -> c + 1) 0 |> most.map (fun i -> fun text -> text.textContent <- string i))
 
-let rez = tree := (counter 2)
+let rez = tree := (counter 0)
 
 let rootNode = unbox document.getElementById "root-node"
-let patches = rez |> most.scan (fun n p -> p(n); n) rootNode |> most.skip 1 |> most.take 3
+let patches =
+    rez
+    |> most.scan (fun n p -> p(n); n) rootNode
+    |> most.until (most.periodic 4000 |> most.skip 1)
 
 most.runEffects patches (Most.Scheduler.require.newDefaultScheduler ()) |> ignore
