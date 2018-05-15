@@ -49,7 +49,7 @@ let private disposable = Most.Disposable.require
 let private once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
 
 [<Emit("[...$0]")>]
-let private toArray (_: NodeList): Node [] = Exceptions.jsNative
+let private spreadToArray (_: NodeList): Node [] = Exceptions.jsNative
 
 let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a -> unit> =
     let ring (pith: ILang<'a> -> unit): Pith<Stream<'a -> unit>> =
@@ -104,7 +104,7 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
     most.newStream (fun sink scheduler ->
         let restore = ref (fun () -> ())
         let f = once(fun (element: 'a) ->
-            let oldNodes = toArray(element.childNodes)
+            let oldNodes = spreadToArray(element.childNodes)
             restore := (fun () ->
                 let ref = element.childNodes.[0]
                 for i = 0 to oldNodes.Length - 1 do
