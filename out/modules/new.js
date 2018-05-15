@@ -243,6 +243,19 @@ function tree(pith) {
     })));
   };
 
+  const s = (0, _m.tree)(function (xs) {
+    return (0, _CurriedLambda2.default)(function (arg00, arg10) {
+      return _m.most.combineArray((...list) => ($var9 => $var10 => {
+        arg00($var9, $var10);
+      })(list), arg10);
+    })(function (ps, e) {
+      ps.forEach(function (p) {
+        p(e);
+      });
+    })(Array.from(xs).slice().reverse());
+  }, _m.most.map($var11 => $var12 => {
+    ring($var11, $var12);
+  })(pith));
   return _m.most.newStream(function (sink, scheduler) {
     const restore = {
       contents: function () {}
@@ -274,24 +287,14 @@ function tree(pith) {
       };
     });
 
-    const s = _m.most.map($var9 => $var10 => {
+    const s_1 = _m.most.map($var13 => $var14 => {
       (function (patch, element_2) {
         f(element_2);
         patch(element_2);
-      })($var9, $var10);
-    })((0, _m.tree)((0, _CurriedLambda2.default)(function (arg00, arg10) {
-      return _m.most.combineArray((...list) => ($var11 => $var12 => {
-        arg00($var11, $var12);
-      })(list), arg10);
-    })(function (ps, e) {
-      ps.forEach(function (p) {
-        p(e);
-      });
-    }), _m.most.map($var13 => $var14 => {
-      ring($var13, $var14);
-    })(pith)));
+      })($var13, $var14);
+    })(s);
 
-    const dispble = _m.most.run(sink)(scheduler, s);
+    const dispble = _m.most.run(sink)(scheduler, s_1);
 
     return disposable.disposeWith(function makeOnce(f) {
       var b;

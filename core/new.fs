@@ -107,7 +107,10 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                 for i = c to length - 1 do
                     element.removeChild childNodes.[i]
                     |> ignore)))
-
+    let s =
+        M.tree
+            (fun xs -> xs |> Array.ofList |> Array.rev |> most.combineArray (fun ps (e: 'a) -> ps |> Array.iter (fun p -> p e)))
+            (most.map ring pith)
     most.newStream (fun sink scheduler ->
         let restore = ref (fun () -> ())
         let f = once(fun (element: 'a) ->
@@ -120,9 +123,7 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                     element.removeChild element.childNodes.[i] |> ignore)
             )
         let s =
-            M.tree
-                (most.combineArray (fun ps (e: 'a) -> ps |> Array.iter (fun p -> p e)))
-                (most.map ring pith)
+            s
             |> most.map (fun patch (element: 'a) ->
                 f element
                 patch element
