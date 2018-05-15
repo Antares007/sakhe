@@ -48,6 +48,9 @@ let private disposable = Most.Disposable.require
 })($0)")>]
 let private once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
 
+[<Emit("[...$0]")>]
+let private toArray (_: NodeList): Node [] = Exceptions.jsNative
+
 let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a -> unit> =
     let ring (pith: ILang<'a> -> unit): Pith<Stream<'a -> unit>> =
         fun o ->
@@ -101,11 +104,11 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
     most.newStream (fun sink scheduler ->
         let restore = ref (fun () -> ())
         let f = once(fun (element: 'a) ->
-            let oldNodes = [| for i in [0 .. int element.childNodes.length - 1] -> element.childNodes.[i] |]
+            let oldNodes = toArray(element.childNodes)
             restore := (fun () ->
-                oldNodes
-                    |> Array.fold (fun ref child -> element.insertBefore (child, ref) |> ignore; ref) element.childNodes.[0]
-                    |> ignore
+                let ref = element.childNodes.[0]
+                for i = 0 to oldNodes.Length - 1 do
+                    element.insertBefore (oldNodes.[i], ref) |> ignore
                 for i = oldNodes.Length to int element.childNodes.length - 1 do
                     element.removeChild element.childNodes.[i] |> ignore)
             )
