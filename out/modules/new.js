@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.T = undefined;
-exports.ap2 = ap2;
 exports.tree = tree;
 
 var _Symbol2 = require("./fable-core/Symbol");
@@ -136,63 +135,25 @@ function tree(pith) {
             return b;
           };
         }(parentElement => {
-          const $var1 = _arg2[1];
-          const childNodes = parentElement.childNodes;
-          const length = ~~childNodes.length | 0;
+          ap2(() => {
+            const child = _arg2[0]();
 
-          if (index >= length) {
-            (() => {
-              const child = _arg2[0]();
+            childNodePatch(child);
+            parentElement.insertBefore(child, null), void 0;
+          }, childNodePatch, tupledArg => {
+            childNodePatch(tupledArg[0]);
+            parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
+          }, childAtIndex => {
+            const child_1 = _arg2[0]();
 
-              childNodePatch(child);
-              parentElement.insertBefore(child, null), void 0;
-            })();
-          } else {
-            const childAtIndex_1 = childNodes[index];
-            const matchValue = $var1(childAtIndex_1);
-
-            if (matchValue == null) {
-              const findNode = index_1 => {
-                findNode: while (true) {
-                  if (index_1 < length) {
-                    const matchValue_1 = $var1(childNodes[index_1]);
-
-                    if (matchValue_1 == null) {
-                      index_1 = index_1 + 1;
-                      continue findNode;
-                    } else {
-                      return (0, _Option.makeSome)((0, _Option.getValue)(matchValue_1));
-                    }
-                  } else {
-                    return null;
-                  }
-                }
-              };
-
-              const matchValue_2 = findNode(index);
-
-              if (matchValue_2 == null) {
-                (childAtIndex => {
-                  const child_1 = _arg2[0]();
-
-                  childNodePatch(child_1);
-                  parentElement.insertBefore(child_1, childAtIndex), void 0;
-                })(childAtIndex_1);
-              } else {
-                (tupledArg => {
-                  childNodePatch(tupledArg[0]);
-                  parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
-                })([(0, _Option.getValue)(matchValue_2), childAtIndex_1]);
-              }
-            } else {
-              childNodePatch((0, _Option.getValue)(matchValue));
-            }
-          }
+            childNodePatch(child_1);
+            parentElement.insertBefore(child_1, childAtIndex), void 0;
+          }, index, i => i <= ~~parentElement.childNodes.length ? parentElement.childNodes[i] : null, _arg2[1]);
         })))(s));
       },
 
       Patch(s) {
-        o(_m.most.map($var4 => $var5 => {
+        o(_m.most.map($var3 => $var4 => {
           (function makeOnce(f) {
             var b;
             return function onceAtoBtoAtoB(a) {
@@ -203,11 +164,11 @@ function tree(pith) {
 
               return b;
             };
-          })($var2 => $var3 => {
+          })($var1 => $var2 => {
             ((patch, n) => {
               patch(n);
-            })($var2, $var3);
-          })($var4, $var5);
+            })($var1, $var2);
+          })($var3, $var4);
         })(s));
       },
 
@@ -269,21 +230,21 @@ function tree(pith) {
       };
     });
 
-    const s = _m.most.map($var6 => $var7 => {
+    const s = _m.most.map($var5 => $var6 => {
       (function (patch, element_2) {
         f(element_2);
         patch(element_2);
-      })($var6, $var7);
+      })($var5, $var6);
     })((0, _m.tree)((0, _CurriedLambda2.default)(function (arg00, arg10) {
-      return _m.most.combineArray((...list) => ($var8 => $var9 => {
-        arg00($var8, $var9);
+      return _m.most.combineArray((...list) => ($var7 => $var8 => {
+        arg00($var7, $var8);
       })(list), arg10);
     })(function (ps, e) {
       ps.forEach(function (p) {
         p(e);
       });
-    }), _m.most.map($var10 => $var11 => {
-      ring($var10, $var11);
+    }), _m.most.map($var9 => $var10 => {
+      ring($var9, $var10);
     })(pith)));
 
     const dispble = _m.most.run(sink)(scheduler, s);

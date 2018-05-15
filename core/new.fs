@@ -14,7 +14,7 @@ type ILang<'a when 'a :> Element> =
     abstract Leaf<'b when 'b :> CharacterData> : ((unit -> 'b) * (Node -> 'b option)) * Stream<'b -> unit> -> unit
     abstract Patch: Stream<'a -> unit> -> unit
 
-let inline private ap2
+let private ap2
     (fIndexOutOfBounds, fProvedNode, fFoundNode, fOtherNode)
     (index: int, at: int -> 'b option, prove: 'b -> 'a option): unit =
     match at index with
