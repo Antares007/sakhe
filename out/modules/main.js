@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.patches = exports.rootNode = exports.rez = exports.intS = exports.Text = exports.text = exports.button = exports.div = exports.span = exports.h4 = exports.h3 = exports.h2 = exports.h1 = exports.a = undefined;
+exports.scheduler = exports.patches = exports.rootNode = exports.rez = exports.intS = exports.Text = exports.text = exports.button = exports.div = exports.span = exports.h4 = exports.h3 = exports.h2 = exports.h1 = exports.a = undefined;
 exports.mkAbsurdProve = mkAbsurdProve;
 exports.elm = elm;
 exports.chr = chr;
@@ -16,10 +16,13 @@ exports.Button = Button;
 exports.op_ColonEquals = op_ColonEquals;
 exports.counter = counter;
 exports.sink = sink;
+exports.combineArray = combineArray;
 
 var _Option = require("./fable-core/Option");
 
-var _m = require("./m");
+var _core = require("@most/core");
+
+var core = _interopRequireWildcard(_core);
 
 var _new = require("./new");
 
@@ -27,9 +30,17 @@ var _Symbol2 = require("./fable-core/Symbol");
 
 var _Symbol3 = _interopRequireDefault(_Symbol2);
 
-var _most = require("./most");
+var _mosttypes = require("./mosttypes");
+
+var _Seq = require("./fable-core/Seq");
+
+var _List = require("./fable-core/List");
+
+var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function mkAbsurdProve(create, prove) {
   return [create, function (n) {
@@ -114,12 +125,12 @@ function _Text(f) {
 exports.Text = _Text;
 
 function op_ColonEquals(a_1, b) {
-  return a_1(_m.most.merge(_m.most.now(b))(_m.most.never()));
+  return a_1(core.merge(core.now(b), core.never()));
 }
 
-const intS = exports.intS = _m.most.scan(function (c, _arg1) {
+const intS = exports.intS = core.scan(function (c, _arg1) {
   return c + 1;
-})(0)(_m.most.periodic(10));
+}, 0, core.periodic(10));
 
 function counter(d, o) {
   op_ColonEquals($var1 => function (tupledArg) {
@@ -178,11 +189,11 @@ function counter(d, o) {
     }(H3($var10)), function (o_8) {
       ($var11 => function (tupledArg_10) {
         o_8.Leaf(tupledArg_10[0], tupledArg_10[1]);
-      }(_Text($var11)))(_m.most.map($var12 => $var13 => {
+      }(_Text($var11)))(core.map($var12 => $var13 => {
         (function (i, text_3) {
           text_3.textContent = i.toString();
         })($var12, $var13);
-      })(intS));
+      }, intS));
     });
   });
 }
@@ -191,11 +202,16 @@ const rez = exports.rez = op_ColonEquals(_new.tree, function (o) {
   counter(4, o);
 });
 const rootNode = exports.rootNode = document.getElementById.bind(document)("root-node");
+const patches = exports.patches = core.until(core.skip(1, core.periodic(3000)), (() => {
+  const arg00_ = function (n, p) {
+    p(n);
+    return n;
+  };
 
-const patches = exports.patches = _m.most.until(_m.most.skip(1)(_m.most.periodic(3000)))(_m.most.scan(function (n, p) {
-  p(n);
-  return n;
-})(rootNode)(rez));
+  return function (arg20_) {
+    return core.scan(arg00_, rootNode, arg20_);
+  };
+})()(rez));
 
 function sink() {
   return {
@@ -211,11 +227,30 @@ function sink() {
 
     [_Symbol3.default.reflection]() {
       return {
-        interfaces: ["Most.Sink"]
+        interfaces: ["MostTypes.Sink"]
       };
     }
 
   };
 }
 
-_m.most.runEffects(patches, _most.SchedulerModule.require.newDefaultScheduler()), void 0;
+const scheduler = exports.scheduler = _mosttypes.SchedulerModule.require.newDefaultScheduler();
+
+core.runEffects(patches, scheduler), void 0;
+
+function combineArray(f, s) {
+  return function (arg10_) {
+    return core.map(f, arg10_);
+  }((0, _Seq.fold)(function (alS, aS) {
+    return core.combine(function (aList, a_1) {
+      return new _List2.default(a_1, aList);
+    }, alS, aS);
+  }, core.now(new _List2.default()), s));
+}
+
+(() => {
+  const arg00_ = sink();
+  return function (arg20_) {
+    return core.run(arg00_, scheduler, arg20_);
+  };
+})()(core.tap(console.log.bind(console), combineArray(Int32Array.from.bind(Int32Array), (0, _List.ofArray)([core.now(1), core.now(2)])))), void 0;

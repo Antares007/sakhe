@@ -12,15 +12,21 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
-var _most = require("./most");
+var _mosttypes = require("./mosttypes");
 
-var _m = require("./m");
+var _core = require("@most/core");
+
+var core = _interopRequireWildcard(_core);
 
 var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _Option = require("./fable-core/Option");
+
+var _m = require("./m");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -42,7 +48,7 @@ class T {
 
 exports.T = T;
 (0, _Symbol2.setType)("Sakhe.Dom.T", T);
-const disposable = _most.DisposableModule.require;
+const disposable = _mosttypes.DisposableModule.require;
 
 function tree(pith) {
   const ring = function (pith_1, o) {
@@ -51,7 +57,7 @@ function tree(pith) {
       Node(_arg1, pith_2) {
         const index = c | 0;
         c = c + 1 | 0;
-        o(_m.most.map((0, _CurriedLambda2.default)(childNodePatch => function makeOnce(f) {
+        o(core.map((0, _CurriedLambda2.default)(childNodePatch => function makeOnce(f) {
           var b;
           return function onceAtoBtoAtoB(a) {
             if (f) {
@@ -119,13 +125,13 @@ function tree(pith) {
               parentElement.insertBefore(child, null), void 0;
             })();
           }
-        })))(tree(pith_2)));
+        })), tree(pith_2)));
       },
 
       Leaf(_arg2, s) {
         const index = c | 0;
         c = c + 1 | 0;
-        o(_m.most.map((0, _CurriedLambda2.default)(childNodePatch => function makeOnce(f) {
+        o(core.map((0, _CurriedLambda2.default)(childNodePatch => function makeOnce(f) {
           var b;
           return function onceAtoBtoAtoB(a) {
             if (f) {
@@ -193,11 +199,11 @@ function tree(pith) {
               parentElement.insertBefore(child, null), void 0;
             })();
           }
-        })))(s));
+        })), s));
       },
 
       Patch(s) {
-        o(_m.most.map($var7 => $var8 => {
+        o(core.map($var7 => $var8 => {
           (function makeOnce(f) {
             var b;
             return function onceAtoBtoAtoB(a) {
@@ -213,7 +219,7 @@ function tree(pith) {
               patch(n);
             })($var5, $var6);
           })($var7, $var8);
-        })(s));
+        }, s));
       },
 
       [_Symbol3.default.reflection]() {
@@ -223,7 +229,7 @@ function tree(pith) {
       }
 
     });
-    o(_m.most.now(function makeOnce(f) {
+    o(core.now(function makeOnce(f) {
       var b;
       return function onceAtoBtoAtoB(a) {
         if (f) {
@@ -245,7 +251,7 @@ function tree(pith) {
 
   const s = (0, _m.tree)(function (xs) {
     return (0, _CurriedLambda2.default)(function (arg00, arg10) {
-      return _m.most.combineArray((...list) => ($var9 => $var10 => {
+      return _mosttypes.Core.require.combineArray((...list) => ($var9 => $var10 => {
         arg00($var9, $var10);
       })(list), arg10);
     })(function (ps, e) {
@@ -253,10 +259,10 @@ function tree(pith) {
         p(e);
       });
     })(Array.from(xs).slice().reverse());
-  }, _m.most.map($var11 => $var12 => {
+  }, core.map($var11 => $var12 => {
     ring($var11, $var12);
-  })(pith));
-  return _m.most.newStream(function (sink, scheduler) {
+  }, pith));
+  return core.newStream(function (sink, scheduler) {
     const restore = {
       contents: function () {}
     };
@@ -287,15 +293,13 @@ function tree(pith) {
       };
     });
 
-    const s_1 = _m.most.map($var13 => $var14 => {
+    const s_1 = core.map($var13 => $var14 => {
       (function (patch, element_2) {
         f(element_2);
         patch(element_2);
       })($var13, $var14);
-    })(s);
-
-    const dispble = _m.most.run(sink)(scheduler, s_1);
-
+    }, s);
+    const dispble = core.run(sink, scheduler, s_1);
     return disposable.disposeWith(function makeOnce(f) {
       var b;
       return function onceAtoBtoAtoB(a) {

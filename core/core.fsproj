@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="mosttypes.fs" />
     <Compile Include="most.fs" />
     <Compile Include="a.fs" />
     <Compile Include="m.fs" />

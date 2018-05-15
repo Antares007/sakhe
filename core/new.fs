@@ -1,6 +1,6 @@
 module Sakhe.Dom
 open Fable.Import.Browser
-open Most
+open MostTypes
 open M
 open A
 open Fable.Core
@@ -34,7 +34,7 @@ let inline private matchChildren
             | Some a -> fFoundNode (a, childAtIndex)
             | None -> fOtherNode childAtIndex
 
-let private disposable = Most.Disposable.require
+let private disposable = MostTypes.Disposable.require
 
 [<Emit("(function makeOnce (f) {
     var b
@@ -59,7 +59,7 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                 member __.Node ((absurd, prove): (unit -> 'b) * (Node -> 'b option) when 'b :> Node, pith) =
                     let index = c
                     c <- c + 1
-                    tree pith |> most.map (fun childNodePatch  -> once (fun (parentElement: 'a) ->
+                    tree pith |> Most.map (fun childNodePatch  -> once (fun (parentElement: 'a) ->
                             matchChildren
                                 (
                                     (fun () ->
@@ -80,7 +80,7 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                 member __.Leaf ((absurd, prove), s) =
                     let index = c
                     c <- c + 1
-                    s |> most.map (fun childNodePatch -> once (fun (parentElement: 'a) ->
+                    s |> Most.map (fun childNodePatch -> once (fun (parentElement: 'a) ->
                             matchChildren
                                 (
                                     (fun () ->
@@ -100,8 +100,8 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                     )) |> o
 
                 member __.Patch (s) =
-                    s |> most.map (once (fun patch n -> patch n)) |> o }
-            o (most.now (once (fun element ->
+                    s |> Most.map (once (fun patch n -> patch n)) |> o }
+            o (Most.now (once (fun element ->
                 let childNodes = element.childNodes
                 let length = int childNodes.length
                 for i = c to length - 1 do
@@ -109,9 +109,9 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                     |> ignore)))
     let s =
         M.tree
-            (fun xs -> xs |> Array.ofList |> Array.rev |> most.combineArray (fun ps (e: 'a) -> ps |> Array.iter (fun p -> p e)))
-            (most.map ring pith)
-    most.newStream (fun sink scheduler ->
+            (fun xs -> xs |> Array.ofList |> Array.rev |> MostTypes.Core.require.combineArray (fun ps (e: 'a) -> ps |> Array.iter (fun p -> p e)))
+            (Most.map ring pith)
+    Most.newStream (fun sink scheduler ->
         let restore = ref (fun () -> ())
         let f = once(fun (element: 'a) ->
             let oldNodes = spreadToArray(element.childNodes)
@@ -124,11 +124,11 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
             )
         let s =
             s
-            |> most.map (fun patch (element: 'a) ->
+            |> Most.map (fun patch (element: 'a) ->
                 f element
                 patch element
             )
-        let dispble = most.run sink scheduler s
+        let dispble = Most.run sink scheduler s
         disposable.create (once (fun () ->
             let d1 () = dispble.dispose ()
             d1 ()

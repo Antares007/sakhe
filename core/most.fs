@@ -1,305 +1,49 @@
-﻿namespace Most
-
+[<Fable.Core.Import("*", "@most/core")>]
+module Most
 open Fable.Core
 open Fable.Import.JS
+open MostTypes
+
+let archilBolkvadze = ("არჩილ ბოლქვაძე", 42)
+
+let now (_:'a): 'a Stream = JsInterop.importMember "@most/core"
+
+let never (_: unit): 'a Stream = jsNative
+let empty (_: unit): 'a Stream = jsNative
+let at (_: Time) (_:'a) : 'a Stream = jsNative
+let newStream (_: 'a Sink -> Scheduler -> Disposable): 'a Stream = jsNative
+let periodic (_: int): unit Stream = jsNative
+
+let startWith (_: 'a) (_: 'a Stream): Stream<'a> = jsNative
+
+let switchLatest (_: 'a Stream Stream): 'a Stream = jsNative
+
+let until (_: 'b Stream) (_: 'a Stream): 'a Stream = jsNative
+let since (_: 'b Stream) (_: 'a Stream): 'a Stream = jsNative
+let during (_: 'b Stream Stream) (_: 'a Stream): 'a Stream = jsNative
+let map (_: 'a -> 'b)  (_:'a Stream): 'b Stream = jsNative
+let tap (_: 'a -> unit)  (_: 'a Stream): 'a Stream = jsNative
+let constant (_: 'b)  (_: 'a Stream): 'b Stream = jsNative
 
 
-type Time = float
-
-type [<AllowNullLiteral>] Clock =
-    abstract now: unit -> Time
-
-type [<AllowNullLiteral>] Sink<'A> =
-    abstract ``event``: time: Time * value: 'A -> unit
-    abstract ``end``: time: Time -> unit
-    abstract error: time: Time * err: Error -> unit
+let scan (_: 'b -> 'a -> 'b)  (_: 'b) (_: 'a Stream): 'b Stream = jsNative
 
 
-type Delay = float
-type Period = float
-type Offset = float
-type Handle = obj option
+let take (_: int) (_: 'a Stream): 'a Stream = jsNative
+let skip (_: int) (_: 'a Stream): 'a Stream = jsNative
+let takeWhile (_: 'a -> bool) (_: 'a Stream): 'a Stream = jsNative
+let skipWhile (_: 'a -> bool) (_: 'a Stream): 'a Stream = jsNative
+let skipAfter (_: 'a -> bool) (_: 'a Stream): 'a Stream = jsNative
+let slice (_: int) (_: int) (_: 'a Stream): 'a Stream = jsNative
 
-type [<AllowNullLiteral>] Disposable =
-    abstract dispose: unit -> unit
 
-type [<AllowNullLiteral>] Task =
-    inherit Disposable
-    abstract run: time: Time -> unit
-    abstract error: time: Time * e: Error -> unit
+let merge (_: 'A Stream) (_: 'A Stream): 'A Stream = jsNative
+let mergeConcurrently (_: int) (_: 'a Stream Stream): 'a Stream = jsNative
+let multicast (_: Stream<'A>): Stream<'A> = jsNative
 
-type [<AllowNullLiteral>] ScheduledTask =
-    inherit Disposable
-    abstract task: Task with get, set
-    abstract run: unit -> unit
-    abstract error: err: Error -> unit
 
-type [<AllowNullLiteral>] Scheduler =
-    abstract currentTime: unit -> Time
-    abstract scheduleTask: offset: Offset * delay: Delay * period: Period * task: Task -> ScheduledTask
-    abstract relative: offset: Offset -> Scheduler
-    abstract cancel: task: ScheduledTask -> unit
-    abstract cancelAll: predicate: (ScheduledTask -> bool) -> unit
+let combine  (_: 'a -> 'b -> 'ab) (_: 'a Stream) (_:'b Stream): 'ab Stream = jsNative
 
-type [<AllowNullLiteral>] Stream<'A> =
-    abstract run: sink: Sink<'A> * scheduler: Scheduler -> Disposable
 
-type [<AllowNullLiteral>] Timer =
-    abstract now: unit -> Time
-    abstract setTimer: f: (unit -> obj option) * delayTime: Delay -> Handle
-    abstract clearTimer: timerHandle: Handle -> unit
-
-type [<AllowNullLiteral>] TaskRunner =
-    [<Emit "$0($1...)">] abstract Invoke: st: ScheduledTask -> obj option
-
-type [<AllowNullLiteral>] Timeline =
-    abstract add: scheduledTask: ScheduledTask -> unit
-    abstract remove: scheduledTask: ScheduledTask -> bool
-    abstract removeAll: f: (ScheduledTask -> bool) -> unit
-    abstract isEmpty: unit -> bool
-    abstract nextArrival: unit -> Time
-    abstract runTasks: time: Time * runTask: TaskRunner -> unit
-
-module Core =
-    type PropagateTaskRun<'A, 'B> = Time * 'A * Sink<'B> -> unit
-
-    type [<AllowNullLiteral>] PropagateTask<'A, 'B> =
-        inherit Task
-        abstract value: 'A with get, set
-        abstract sink: Sink<'B> with get, set
-        abstract active: bool with get, set
-
-    type [<AllowNullLiteral>] SeedValue<'S, 'V> =
-        abstract seed: 'S with get, set
-        abstract value: 'V with get, set
-
-    type [<AllowNullLiteral>] MulticastSource<'A> =
-        inherit Stream<'A>
-        inherit Sink<'A>
-        inherit Disposable
-        abstract source: Stream<'A> with get, set
-        abstract sinks: Array<Sink<'A>> with get, set
-        abstract disposable: Disposable with get, set
-        abstract run: sink: Sink<'A> * scheduler: Scheduler -> Disposable
-        abstract ``event``: time: Time * value: 'A -> unit
-        abstract error: time: Time * error: Error -> unit
-        abstract ``end``: time: Time -> unit
-        abstract add: sink: Sink<'A> -> int
-        abstract remove: sink: Sink<'A> -> int
-        abstract dispose: unit -> unit
-
-    type [<AllowNullLiteral>] MulticastSourceStatic =
-        [<Emit "new $0($1...)">] abstract Create: source: Stream<'A> -> MulticastSource<'A>
-
-    type RunStream<'A> = Sink<'A> -> Scheduler -> Disposable
-
-    type [<AllowNullLiteral>] IExports =
-        abstract runEffects: stream: Stream<'T> * scheduler: Scheduler -> Promise<unit>
-        abstract runEffects: stream: Stream<'T> -> (Scheduler -> Promise<unit>)
-
-        abstract run: sink: Sink<'A> * scheduler: Scheduler * s: Stream<'A> -> Disposable
-        abstract run: sink: Sink<'A> -> (Scheduler -> Stream<'A> -> Disposable)
-        abstract run: sink: Sink<'A> * scheduler: Scheduler -> (Stream<'A> -> Disposable)
-
-        abstract propagateTask: run: PropagateTaskRun<'A, 'B> * value: 'A * sink: Sink<'B> -> PropagateTask<'A, 'B>
-        abstract propagateTask: run: PropagateTaskRun<'A, 'B> * value: 'A -> (Sink<'B> -> PropagateTask<'A, 'B>)
-        abstract propagateTask: run: PropagateTaskRun<'A, 'B> -> ('A -> Sink<'B> -> PropagateTask<'A, 'B>)
-        abstract propagateEventTask: value: 'T * sink: Sink<'T> -> PropagateTask<'T, 'T>
-        abstract propagateEventTask: value: 'T -> (Sink<'T> -> PropagateTask<'T, 'T>)
-        abstract propagateEndTask: sink: Sink<'T> -> PropagateTask<unit, 'T>
-        abstract propagateErrorTask: error: Error * sink: Sink<'T> -> PropagateTask<unit, 'T>
-        abstract propagateErrorTask: error: Error -> (Sink<'T> -> PropagateTask<unit, 'T>)
-
-        abstract ap: streamofFunctions: Stream<('A -> 'B)> * streamOfValues: Stream<'A> -> Stream<'B>
-        abstract ap: streamofFunctions: Stream<('A -> 'B)> -> (Stream<'A> -> Stream<'B>)
-
-        abstract chain: f: ('A -> Stream<'B>) * stream: Stream<'A> -> Stream<'B>
-        abstract chain: f: ('A -> Stream<'B>) -> (Stream<'A> -> Stream<'B>)
-        abstract join: higherOrderStream: Stream<Stream<'A>> -> Stream<'A>
-
-        abstract combine: fn: ('A -> 'B -> 'R) * a: Stream<'A> * b: Stream<'B> -> Stream<'R>
-        abstract combine: fn: ('A -> 'B -> 'R) -> (Stream<'A> -> Stream<'B> -> Stream<'R>)
-        abstract combine: fn: ('A -> 'B -> 'R) * a: Stream<'A> -> (Stream<'B> -> Stream<'R>)
-
-        //abstract combineArray: fn: ('A -> 'B -> 'R) * streams: Stream<'A> * Stream<'B> -> Stream<'R>
-        //abstract combineArray: fn: ('A -> 'B -> 'C -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> -> Stream<'R>
-        //abstract combineArray: fn: ('A -> 'B -> 'C -> 'D -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> -> Stream<'R>
-        //abstract combineArray: fn: ('A -> 'B -> 'C -> 'D -> 'E -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> * Stream<'E> -> Stream<'R>
-        //abstract combineArray: fn: (ResizeArray<'V> -> 'R) * items: ResizeArray<Stream<'V>> -> Stream<'R>
-        //abstract combineArray: fn: ('A -> 'B -> 'R) -> (Stream<'A> * Stream<'B> -> Stream<'R>)
-        //abstract combineArray: fn: ('A -> 'B -> 'C -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> -> Stream<'R>)
-        //abstract combineArray: fn: ('A -> 'B -> 'C -> 'D -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> -> Stream<'R>)
-        //abstract combineArray: fn: ('A -> 'B -> 'C -> 'D -> 'E -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> * Stream<'E> -> Stream<'R>)
-        //abstract combineArray: fn: (ResizeArray<'V> -> 'R) -> (ResizeArray<Stream<'V>> -> Stream<'R>)
-
-        [<Emit("$0.combineArray((...list) => $1(list), $2)")>]
-        abstract combineArray: fn: ('V[] -> 'R) -> Stream<'V>[] -> Stream<'R>
-
-        abstract concatMap: f: ('A -> Stream<'B>) * stream: Stream<'A> -> Stream<'B>
-        abstract concatMap: f: ('A -> Stream<'B>) -> (Stream<'A> -> Stream<'B>)
-
-        abstract continueWith: f: (obj option -> Stream<'A>) * s: Stream<'A> -> Stream<'A>
-        abstract continueWith: f: (obj option -> Stream<'A>) -> (Stream<'A> -> Stream<'A>)
-
-        abstract delay: dt: int * s: Stream<'A> -> Stream<'A>
-        abstract delay: dt: int -> (Stream<'A> -> Stream<'A>)
-
-        abstract recoverWith: p: ('E -> Stream<'A>) * s: Stream<'A> -> Stream<'A>
-        abstract recoverWith: p: ('E -> Stream<'A>) -> (Stream<'A> -> Stream<'A>)
-        abstract throwError: e: Error -> Stream<obj option>
-
-        abstract filter: p: ('A -> bool) * s: Stream<'A> -> Stream<'A>
-        abstract filter: p: ('A -> bool) -> (Stream<'A> -> Stream<'A>)
-        abstract skipRepeats: s: Stream<'A> -> Stream<'A>
-        abstract skipRepeatsWith: eq: ('A -> 'A -> bool) * s: Stream<'A> -> Stream<'A>
-        abstract skipRepeatsWith: eq: ('A -> 'A -> bool) -> (Stream<'A> -> Stream<'A>)
-
-        abstract throttle: period: int * s: Stream<'A> -> Stream<'A>
-        abstract throttle: period: int -> (Stream<'A> -> Stream<'A>)
-        abstract debounce: period: int * s: Stream<'A> -> Stream<'A>
-        abstract debounce: period: int -> (Stream<'A> -> Stream<'A>)
-
-        abstract loop: f: ('S -> 'A -> SeedValue<'S, 'B>) * seed: 'S * s: Stream<'A> -> Stream<'B>
-        abstract loop: f: ('S -> 'A -> SeedValue<'S, 'B>) -> ('S -> Stream<'A> -> Stream<'B>)
-        abstract loop: f: ('S -> 'A -> SeedValue<'S, 'B>) * seed: 'S -> (Stream<'A> -> Stream<'B>)
-
-        abstract merge: s1: Stream<'A> * s2: Stream<'A> -> Stream<'A>
-        abstract merge: s1: Stream<'A> -> (Stream<'A> -> Stream<'A>)
-        abstract mergeArray: streams: Stream<'A>[] -> Stream<'A>
-
-        abstract mergeConcurrently: concurrency: int * s: Stream<Stream<'A>> -> Stream<'A>
-        abstract mergeConcurrently: concurrency: int -> (Stream<Stream<'A>> -> Stream<'A>)
-
-        abstract multicast: s: Stream<'A> -> Stream<'A>
-        abstract MulticastSource: MulticastSourceStatic
-
-        abstract awaitPromises: stream: Stream<Promise<'A>> -> Stream<'A>
-        abstract fromPromise: promise: Promise<'A> -> Stream<'A>
-
-        abstract scan: f: ('B -> 'A -> 'B) * b: 'B * s: Stream<'A> -> Stream<'B>
-        abstract scan: f: ('B -> 'A -> 'B) -> ('B -> Stream<'A> -> Stream<'B>)
-        abstract scan: f: ('B -> 'A -> 'B) * b: 'B -> (Stream<'A> -> Stream<'B>)
-
-        abstract take: n: int * s: Stream<'A> -> Stream<'A>
-        abstract take: n: int -> (Stream<'A> -> Stream<'A>)
-        abstract skip: n: int * s: Stream<'A> -> Stream<'A>
-        abstract skip: n: int -> (Stream<'A> -> Stream<'A>)
-        abstract takeWhile: p: ('A -> bool) * s: Stream<'A> -> Stream<'A>
-        abstract takeWhile: p: ('A -> bool) -> (Stream<'A> -> Stream<'A>)
-        abstract skipWhile: p: ('A -> bool) * s: Stream<'A> -> Stream<'A>
-        abstract skipWhile: p: ('A -> bool) -> (Stream<'A> -> Stream<'A>)
-        abstract skipAfter: p: ('A -> bool) * s: Stream<'A> -> Stream<'A>
-        abstract skipAfter: p: ('A -> bool) -> (Stream<'A> -> Stream<'A>)
-        abstract slice: start: int * ``end``: int * s: Stream<'A> -> Stream<'A>
-        abstract slice: start: int -> (int -> Stream<'A> -> Stream<'A>)
-        abstract slice: start: int * ``end``: int -> (Stream<'A> -> Stream<'A>)
-
-        abstract sample: values: Stream<'A> * sampler: Stream<'B> -> Stream<'A>
-        abstract sample: values: Stream<'A> -> (Stream<'B> -> Stream<'A>)
-        abstract snapshot: f: ('A -> 'B -> 'C) * values: Stream<'A> * sampler: Stream<'B> -> Stream<'C>
-        abstract snapshot: f: ('A -> 'B -> 'C) -> (Stream<'A> -> Stream<'B> -> Stream<'C>)
-        abstract snapshot: f: ('A -> 'B -> 'C) * values: Stream<'A> -> (Stream<'B> -> Stream<'C>)
-
-        abstract startWith: value: 'A * stream: Stream<'A> -> Stream<'A>
-        abstract startWith: value: 'A -> (Stream<'A> -> Stream<'A>)
-
-        abstract switchLatest: s: Stream<Stream<'A>> -> Stream<'A>
-
-        abstract until: signal: Stream<'B> * s: Stream<'A> -> Stream<'A>
-        abstract until: signal: Stream<'B> -> (Stream<'A> -> Stream<'A>)
-        abstract since: signal: Stream<'B> * s: Stream<'A> -> Stream<'A>
-        abstract since: signal: Stream<'B> -> (Stream<'A> -> Stream<'A>)
-        abstract during: timeWindow: Stream<Stream<'B>> * s: Stream<'A> -> Stream<'A>
-        abstract during: timeWindow: Stream<Stream<'B>> -> (Stream<'A> -> Stream<'A>)
-
-        abstract map: f: ('A -> 'B) * s: Stream<'A> -> Stream<'B>
-        abstract map: f: ('A -> 'B) -> (Stream<'A> -> Stream<'B>)
-        abstract tap: f: ('A -> unit) * s: Stream<'A> -> Stream<'A>
-        abstract tap: f: ('A -> unit) -> (Stream<'A> -> Stream<'A>)
-        abstract constant: b: 'B * s: Stream<'A> -> Stream<'B>
-        abstract constant: b: 'B -> (Stream<'A> -> Stream<'B>)
-
-        abstract withLocalTime: origin: Time * s: Stream<'A> -> Stream<'A>
-        abstract withLocalTime: origin: Time -> (Stream<'A> -> Stream<'A>)
-
-        abstract zip: fn: ('A -> 'B -> 'R) * a: Stream<'A> * b: Stream<'B> -> Stream<'R>
-        abstract zip: fn: ('A -> 'B -> 'R) -> (Stream<'A> -> Stream<'B> -> Stream<'R>)
-        abstract zip: fn: ('A -> 'B -> 'R) * a: Stream<'A> -> (Stream<'B> -> Stream<'R>)
-        abstract zipArray: fn: ('A -> 'B -> 'R) * streams: Stream<'A> * Stream<'B> -> Stream<'R>
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> -> Stream<'R>
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> -> Stream<'R>
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'E -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> * Stream<'E> -> Stream<'R>
-        abstract zipArray: fn: (ResizeArray<'V> -> 'R) * items: ResizeArray<Stream<'V>> -> Stream<'R>
-        abstract zipArray: fn: ('A -> 'B -> 'R) -> (Stream<'A> * Stream<'B> -> Stream<'R>)
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> -> Stream<'R>)
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> -> Stream<'R>)
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'E -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> * Stream<'E> -> Stream<'R>)
-        abstract zipArray: fn: (ResizeArray<'V> -> 'R) -> (ResizeArray<Stream<'V>> -> Stream<'R>)
-
-        abstract zipItems: f: ('A -> 'B -> 'C) * a: Array<'A> * s: Stream<'B> -> Stream<'C>
-        abstract zipItems: f: ('A -> 'B -> 'C) -> (Array<'A> -> Stream<'B> -> Stream<'C>)
-        abstract zipItems: f: ('A -> 'B -> 'C) * a: Array<'A> -> (Stream<'B> -> Stream<'C>)
-        abstract withItems: a: Array<'A> * s: Stream<obj option> -> Stream<'A>
-        abstract withItems: a: Array<'A> -> (Stream<obj option> -> Stream<'A>)
-
-        abstract never: unit -> Stream<'A>
-
-        abstract empty: unit -> Stream<'A>
-
-        abstract now: a: 'A -> Stream<'A>
-
-        abstract at: t: Time * a: 'A -> Stream<'A>
-        abstract at: t: Time -> ('A -> Stream<'A>)
-
-        abstract newStream: run: RunStream<'A> -> Stream<'A>
-
-        abstract periodic: period: int -> Stream<unit>
-
-    let require: IExports = Fable.Core.JsInterop.importAll "@most/core"
-
-module Scheduler =
-    type [<AllowNullLiteral>] IExports =
-        abstract newScheduler: timer: Timer * timeline: Timeline -> Scheduler
-        abstract newScheduler: timer: Timer -> (Timeline -> Scheduler)
-        abstract newDefaultScheduler: unit -> Scheduler
-        abstract schedulerRelativeTo: offset: Offset * scheduler: Scheduler -> Scheduler
-        abstract schedulerRelativeTo: offset: Offset -> (Scheduler -> Scheduler)
-        abstract newClockTimer: clock: Clock -> Timer
-        abstract newTimeline: unit -> Timeline
-        abstract newPlatformClock: unit -> Clock
-        abstract newPerformanceClock: unit -> Clock
-        abstract newDateClock: unit -> Clock
-        abstract newHRTimeClock: unit -> Clock
-        abstract clockRelativeTo: clock: Clock -> Clock
-        abstract currentTime: scheduler: Scheduler -> Time
-        abstract asap: task: Task * scheduler: Scheduler -> ScheduledTask
-        abstract asap: task: Task -> (Scheduler -> ScheduledTask)
-        abstract delay: delay: Delay * task: Task * scheduler: Scheduler -> ScheduledTask
-        abstract delay: delay: Delay -> (Task -> Scheduler -> ScheduledTask)
-        abstract delay: delay: Delay * task: Task -> (Scheduler -> ScheduledTask)
-        abstract periodic: period: Period * task: Task * scheduler: Scheduler -> ScheduledTask
-        abstract periodic: period: Period -> (Task -> Scheduler -> ScheduledTask)
-        abstract periodic: period: Period * task: Task -> (Scheduler -> ScheduledTask)
-        abstract cancelTask: scheduledTask: ScheduledTask -> unit
-        abstract cancelAllTasks: predicate: (ScheduledTask -> bool) * scheduler: Scheduler -> unit
-        abstract cancelAllTasks: predicate: (ScheduledTask -> bool) -> (Scheduler -> unit)
-
-    let require: IExports = Fable.Core.JsInterop.importAll "@most/scheduler"
-
-module Disposable =
-    type [<AllowNullLiteral>] IExports =
-        abstract disposeNone: unit -> Disposable
-        abstract disposeWith: dispose: ('R -> unit) * resource: 'R -> Disposable
-        abstract disposeWith: dispose: ('R -> unit) -> ('R -> Disposable)
-        abstract disposeOnce: d: Disposable -> Disposable
-        abstract disposeBoth: d1: Disposable * d2: Disposable -> Disposable
-        abstract disposeBoth: d1: Disposable -> (Disposable -> Disposable)
-        abstract disposeAll: ds: Disposable [] -> Disposable
-        [<Emit("$0.disposeWith($1, void 0)")>]
-        abstract create: dispose: (unit -> unit) -> Disposable
-        abstract dispose: d: Disposable -> unit
-        abstract tryDispose: t: Time * disposable: Disposable * sink: Sink<obj option> -> unit
-        abstract tryDispose: t: Time -> (Disposable -> Sink<obj option> -> unit)
-        abstract tryDispose: t: Time * disposable: Disposable -> (Sink<obj option> -> unit)
-
-    let require: IExports = Fable.Core.JsInterop.importAll "@most/disposable"
+let runEffects (_: 'a Stream) (_: Scheduler): Promise<unit> = jsNative
+let run (_: 'a Sink) (_: Scheduler) (_: 'a Stream): Disposable = jsNative

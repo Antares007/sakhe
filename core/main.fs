@@ -3,7 +3,7 @@ open Fable.Import.Browser
 open Fable.Core
 open M
 open Dom
-open Most
+open MostTypes
 
 type IDom<'a when 'a :> Element> =
     inherit ILang<'a>
@@ -37,9 +37,9 @@ let Div f = elm div f
 let Button f = elm button f
 let Text f = chr text f
 
-let (:=) a b = a (most.merge (most.now b) (most.never ()))
+let (:=) a b = a (Most.merge (Most.now b) (Most.never ()))
 
-let intS = most.periodic 10 |> most.scan (fun c _ -> c + 1) 0
+let intS = Most.periodic 10 |> Most.scan (fun c _ -> c + 1) 0
 
 let rec counter (d: int) (o:ILang<_>) =
     o.Node << Div := fun o ->
@@ -55,15 +55,15 @@ let rec counter (d: int) (o:ILang<_>) =
                 o.Leaf << Text := fun text -> text.textContent <- "-"
             if d > 0 then o.Node << Div := (counter (d - 1))
         o.Node << H3 := fun o ->
-            (o.Leaf << Text) (intS |> most.map (fun i -> fun text -> text.textContent <- string i))
+            (o.Leaf << Text) (intS |> Most.map (fun i -> fun text -> text.textContent <- string i))
 
 let rez = tree := (counter 4)
 
-let rootNode = unbox document.getElementById "root-node"
+let rootNode: HTMLDivElement = unbox document.getElementById "root-node"
 let patches =
     rez
-    |> most.scan (fun n p -> p(n); n) rootNode
-    |> most.until (most.periodic 3000 |> most.skip 1)
+    |> Most.scan (fun n p -> p(n); n) rootNode
+    |> Most.until (Most.periodic 3000 |> Most.skip 1)
 
 
 let sink = { new Sink<_> with
@@ -72,4 +72,20 @@ let sink = { new Sink<_> with
     member __.error (time, err) = console.error (time, err)
 }
 // most.run (sink, Most.Scheduler.require.newDefaultScheduler (), patches) |> ignore
-most.runEffects (patches, Most.Scheduler.require.newDefaultScheduler ()) |> ignore
+let scheduler = MostTypes.Scheduler.require.newDefaultScheduler ()
+Most.runEffects patches scheduler
+    |> ignore
+
+open Most
+let combineArray (f: 'a list -> 'b)  (s: 'a Stream seq): 'b Stream =
+    s
+    |> Seq.fold
+        (fun alS aS -> (combine (fun aList a -> a :: aList) alS aS))
+        (now [])
+    |> map f
+
+
+(combineArray (fun a -> a |> Array.ofList) [(now 1); (now 2)])
+    |> tap console.log
+    |> run sink scheduler
+    |> ignore
