@@ -14,7 +14,7 @@ type ILang<'a when 'a :> Element> =
     abstract Leaf<'b when 'b :> CharacterData> : ((unit -> 'b) * (Node -> 'b option)) * Stream<'b -> unit> -> unit
     abstract Patch: Stream<'a -> unit> -> unit
 
-let inline private ap2
+let inline private matchChildren
     (fIndexOutOfBounds, fProvedNode, fFoundNode, fOtherNode)
     (index: int, at: int -> 'b option, prove: 'b -> 'a option): unit =
     match at index with
@@ -60,7 +60,7 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                     let index = c
                     c <- c + 1
                     tree pith |> most.map (fun childNodePatch  -> once (fun (parentElement: 'a) ->
-                            ap2
+                            matchChildren
                                 (
                                     (fun () ->
                                         let child = absurd ()
@@ -75,13 +75,13 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                                         childNodePatch child
                                         parentElement.insertBefore (child, childAtIndex) |> ignore)
                                 )
-                                (index, (fun i -> if i <= int parentElement.childNodes.length then Some parentElement.childNodes.[i] else None), prove)
+                                (index, (fun i -> unbox parentElement.childNodes.[i]), prove)
                     )) |> o
                 member __.Leaf ((absurd, prove), s) =
                     let index = c
                     c <- c + 1
                     s |> most.map (fun childNodePatch -> once (fun (parentElement: 'a) ->
-                            ap2
+                            matchChildren
                                 (
                                     (fun () ->
                                         let child = absurd ()
@@ -96,7 +96,7 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                                         childNodePatch child
                                         parentElement.insertBefore (child, childAtIndex) |> ignore)
                                 )
-                                (index, (fun i -> if i <= int parentElement.childNodes.length then Some parentElement.childNodes.[i] else None), prove)
+                                (index, (fun i -> unbox parentElement.childNodes.[i]), prove)
                     )) |> o
 
                 member __.Patch (s) =

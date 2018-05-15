@@ -65,11 +65,7 @@ function tree(pith) {
           const $var2 = _arg1[1];
 
           const $var1 = i => {
-            if (i <= ~~parentElement.childNodes.length) {
-              return parentElement.childNodes[i];
-            } else {
-              return null;
-            }
+            return parentElement.childNodes[i];
           };
 
           const matchValue = $var1(index);
@@ -143,11 +139,7 @@ function tree(pith) {
           const $var4 = _arg2[1];
 
           const $var3 = i => {
-            if (i <= ~~parentElement.childNodes.length) {
-              return parentElement.childNodes[i];
-            } else {
-              return null;
-            }
+            return parentElement.childNodes[i];
           };
 
           const matchValue = $var3(index);
