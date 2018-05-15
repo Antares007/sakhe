@@ -23,7 +23,8 @@
     "@most/core": "^1.2.3",
     "@most/scheduler": "^1.1.0",
     "@most/types": "^1.0.0",
-    "fable-splitter": "^0.1.21"
+    "fable-splitter": "^0.1.21",
+    "rmrf": "^2.0.0"
   },
   "prettier": {
     "semi": false

@@ -1595,6 +1595,10 @@ rimraf@2, rimraf@^2.5.1, rimraf@^2.6.1:
   dependencies:
     glob "^7.0.5"
 
+rmrf@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/rmrf/-/rmrf-2.0.0.tgz#ed9430b72e277f3ca0905adeaa7245eaa6530f86"
+
 rollup-plugin-fable@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/rollup-plugin-fable/-/rollup-plugin-fable-1.1.1.tgz#22dc14212b67dede148f1983dde0a5a139cdbfbe"

@@ -8,7 +8,7 @@
     <Compile Include="a.fs" />
     <Compile Include="m.fs" />
     <Compile Include="new.fs" />
-    <Compile Include="new2.fs" />
+    <Compile Include="main.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

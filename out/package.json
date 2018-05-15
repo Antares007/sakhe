@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@most/core": "^1.2.3",
+    "@most/disposable": "^1.1.0",
+    "@most/scheduler": "^1.1.0",
     "electron": "^2.0.0"
   }
 }
