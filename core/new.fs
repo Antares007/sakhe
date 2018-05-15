@@ -15,7 +15,7 @@ type ILang<'a when 'a :> Element> =
     abstract Patch: Stream<'a -> unit> -> unit
 
 
-let private ap
+let inline private ap
     (fIndexOutOfBounds, fProvedNode, fFoundNode, fOtherNode)
     (index: int, prove: Node -> 'a option, parentElement: Element): unit =
     let childNodes = parentElement.childNodes
