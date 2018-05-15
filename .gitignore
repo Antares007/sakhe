@@ -4,8 +4,6 @@
 
 .vs/
 obj/
-out/bundle.js
-out/bundle.js.map
 Debug/
 node_modules/
 /paket-files
