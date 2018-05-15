@@ -76,4 +76,3 @@ function defaultArgWith(arg, defThunk) {
 function filter(predicate, arg) {
   return arg != null ? !predicate(getValue(arg)) ? null : arg : arg;
 }
-//# sourceMappingURL=Option.js.map

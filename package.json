@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "fable-splitter -w --config splitter.config.js",
     "postinstall": "dotnet restore",
-    "start": "cd tools && dotnet fable start",
+    "daemon": "cd tools && dotnet fable start",
+    "start": "cd tools && dotnet fable npm-build",
     "rollup": "rollup -c rollup-config.js"
   },
   "author": "",
@@ -20,7 +22,8 @@
   "dependencies": {
     "@most/core": "^1.2.3",
     "@most/scheduler": "^1.1.0",
-    "@most/types": "^1.0.0"
+    "@most/types": "^1.0.0",
+    "fable-splitter": "^0.1.21"
   },
   "prettier": {
     "semi": false

@@ -17,4 +17,3 @@ function tree(deltac, mpith) {
     return (0, _a.tree)(deltac, pith);
   })(mpith));
 }
-//# sourceMappingURL=m.js.map

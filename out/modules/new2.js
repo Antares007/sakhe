@@ -288,4 +288,3 @@ function sink() {
 }
 
 _m.most.runEffects(patches, _most.SchedulerModule.require.newDefaultScheduler()), void 0;
-//# sourceMappingURL=new2.js.map

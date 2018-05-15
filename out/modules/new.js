@@ -126,18 +126,18 @@ function tree(pith) {
           }(function (parentElement) {
             var matchValue = [index, _arg1[1], parentElement];
 
-            var activePatternResult73 = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(matchValue[0], matchValue[1], matchValue[2]);
+            var activePatternResult3173 = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(matchValue[0], matchValue[1], matchValue[2]);
 
-            if (activePatternResult73.tag === 1) {
-              childNodePatch(activePatternResult73.data), void 0;
-            } else if (activePatternResult73.tag === 2) {
-              childNodePatch(activePatternResult73.data[0]);
-              parentElement.insertBefore(activePatternResult73.data[0], activePatternResult73.data[1]), void 0;
-            } else if (activePatternResult73.tag === 3) {
+            if (activePatternResult3173.tag === 1) {
+              childNodePatch(activePatternResult3173.data), void 0;
+            } else if (activePatternResult3173.tag === 2) {
+              childNodePatch(activePatternResult3173.data[0]);
+              parentElement.insertBefore(activePatternResult3173.data[0], activePatternResult3173.data[1]), void 0;
+            } else if (activePatternResult3173.tag === 3) {
               var child = _arg1[0]();
 
               childNodePatch(child);
-              parentElement.insertBefore(child, activePatternResult73.data), void 0;
+              parentElement.insertBefore(child, activePatternResult3173.data), void 0;
             } else {
               var child_1 = _arg1[0]();
 
@@ -164,18 +164,18 @@ function tree(pith) {
           }(function (parentElement) {
             var matchValue = [index, _arg2[1], parentElement];
 
-            var activePatternResult78 = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(matchValue[0], matchValue[1], matchValue[2]);
+            var activePatternResult3178 = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(matchValue[0], matchValue[1], matchValue[2]);
 
-            if (activePatternResult78.tag === 1) {
-              childNodePatch(activePatternResult78.data), void 0;
-            } else if (activePatternResult78.tag === 2) {
-              childNodePatch(activePatternResult78.data[0]);
-              parentElement.insertBefore(activePatternResult78.data[0], activePatternResult78.data[1]), void 0;
-            } else if (activePatternResult78.tag === 3) {
+            if (activePatternResult3178.tag === 1) {
+              childNodePatch(activePatternResult3178.data), void 0;
+            } else if (activePatternResult3178.tag === 2) {
+              childNodePatch(activePatternResult3178.data[0]);
+              parentElement.insertBefore(activePatternResult3178.data[0], activePatternResult3178.data[1]), void 0;
+            } else if (activePatternResult3178.tag === 3) {
               var child = _arg2[0]();
 
               childNodePatch(child);
-              parentElement.insertBefore(child, activePatternResult78.data), void 0;
+              parentElement.insertBefore(child, activePatternResult3178.data), void 0;
             } else {
               var child_1 = _arg2[0]();
 
@@ -313,4 +313,3 @@ function tree(pith) {
     }), void 0);
   });
 }
-//# sourceMappingURL=new.js.map

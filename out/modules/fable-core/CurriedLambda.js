@@ -43,4 +43,3 @@ function CurriedLambda(f, expectedArgsLength) {
   curriedFn.curried = true;
   return curriedFn;
 }
-//# sourceMappingURL=CurriedLambda.js.map

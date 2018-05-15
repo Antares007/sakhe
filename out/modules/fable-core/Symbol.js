@@ -15,4 +15,3 @@ function getType(fullName) {
 exports.default = {
   reflection: Symbol("reflection")
 };
-//# sourceMappingURL=Symbol.js.map

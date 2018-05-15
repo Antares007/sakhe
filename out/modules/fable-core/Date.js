@@ -374,4 +374,3 @@ function isDaylightSavingTime(x) {
 function isDST(janOffset, julOffset, tOffset) {
   return Math.min(janOffset, julOffset) === tOffset;
 }
-//# sourceMappingURL=Date.js.map

@@ -69,4 +69,3 @@ var Choice = function () {
 }();
 
 exports.default = Choice;
-//# sourceMappingURL=Choice.js.map

@@ -11,4 +11,3 @@ function tree(deltac, pith) {
   pith(put);
   return deltac(Array.from(lst));
 }
-//# sourceMappingURL=a.js.map
