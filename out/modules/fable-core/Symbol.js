@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setType = setType;
 exports.getType = getType;
-var types = new Map();
+const types = new Map();
 function setType(fullName, cons) {
   types.set(fullName, cons);
 }

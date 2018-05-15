@@ -4,11 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ObjectRef = exports.Function = exports.Array = exports.Unit = exports.Any = exports.NonDeclaredType = undefined;
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 exports.Option = Option;
 exports.Tuple = Tuple;
 exports.GenericParam = GenericParam;
@@ -56,44 +51,30 @@ var _Symbol2 = _interopRequireDefault(_Symbol);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var NonDeclaredType = exports.NonDeclaredType = function () {
-  function NonDeclaredType(kind, definition, generics) {
-    _classCallCheck(this, NonDeclaredType);
-
+class NonDeclaredType {
+  constructor(kind, definition, generics) {
     this.kind = kind;
     this.definition = definition;
     this.generics = generics;
   }
-
-  _createClass(NonDeclaredType, [{
-    key: "Equals",
-    value: function Equals(other) {
-      if (this.kind === other.kind && this.definition === other.definition) {
-        return _typeof(this.generics) === "object"
-        // equalsRecords should also work for Type[] (tuples)
-        ? equalsRecords(this.generics, other.generics) : this.generics === other.generics;
-      }
-      return false;
+  Equals(other) {
+    if (this.kind === other.kind && this.definition === other.definition) {
+      return typeof this.generics === "object"
+      // equalsRecords should also work for Type[] (tuples)
+      ? equalsRecords(this.generics, other.generics) : this.generics === other.generics;
     }
-  }]);
-
-  return NonDeclaredType;
-}();
-
-var Any = exports.Any = new NonDeclaredType("Any");
-var Unit = exports.Unit = new NonDeclaredType("Unit");
+    return false;
+  }
+}
+exports.NonDeclaredType = NonDeclaredType;
+const Any = exports.Any = new NonDeclaredType("Any");
+const Unit = exports.Unit = new NonDeclaredType("Unit");
 function Option(t) {
   return new NonDeclaredType("Option", null, [t]);
 }
-function FableArray(t) {
-  var isTypedArray = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-  var def = null;
-  var genArg = null;
+function FableArray(t, isTypedArray = false) {
+  let def = null;
+  let genArg = null;
   if (isTypedArray) {
     def = t;
   } else {
@@ -129,13 +110,13 @@ function getDefinition(typ) {
   return isGeneric(typ) ? typ.definition : typ;
 }
 function extendInfo(cons, info) {
-  var parent = Object.getPrototypeOf(cons.prototype);
+  const parent = Object.getPrototypeOf(cons.prototype);
   if (typeof parent[_Symbol2.default.reflection] === "function") {
-    var newInfo = {};
-    var parentInfo = parent[_Symbol2.default.reflection]();
-    Object.getOwnPropertyNames(info).forEach(function (k) {
-      var i = info[k];
-      if ((typeof i === "undefined" ? "undefined" : _typeof(i)) === "object") {
+    const newInfo = {};
+    const parentInfo = parent[_Symbol2.default.reflection]();
+    Object.getOwnPropertyNames(info).forEach(k => {
+      const i = info[k];
+      if (typeof i === "object") {
         newInfo[k] = Array.isArray(i) ? (parentInfo[k] || []).concat(i) : Object.assign(parentInfo[k] || {}, i);
       } else {
         newInfo[k] = i;
@@ -149,7 +130,7 @@ function hasInterface(obj, interfaceName) {
   if (interfaceName === "System.Collections.Generic.IEnumerable") {
     return typeof obj[Symbol.iterator] === "function";
   } else if (typeof obj[_Symbol2.default.reflection] === "function") {
-    var interfaces = obj[_Symbol2.default.reflection]().interfaces;
+    const interfaces = obj[_Symbol2.default.reflection]().interfaces;
     return Array.isArray(interfaces) && interfaces.indexOf(interfaceName) > -1;
   }
   return false;
@@ -165,17 +146,15 @@ function getPropertyNames(obj) {
   if (obj == null) {
     return [];
   }
-  var propertyMap = typeof obj[_Symbol2.default.reflection] === "function" ? obj[_Symbol2.default.reflection]().properties || [] : obj;
+  const propertyMap = typeof obj[_Symbol2.default.reflection] === "function" ? obj[_Symbol2.default.reflection]().properties || [] : obj;
   return Object.getOwnPropertyNames(propertyMap);
 }
 function isArray(obj) {
   return Array.isArray(obj) || ArrayBuffer.isView(obj);
 }
-function toString(obj) {
-  var quoteStrings = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
+function toString(obj, quoteStrings = false) {
   function isObject(x) {
-    return x !== null && (typeof x === "undefined" ? "undefined" : _typeof(x)) === "object" && !(x instanceof Number) && !(x instanceof String) && !(x instanceof Boolean);
+    return x !== null && typeof x === "object" && !(x instanceof Number) && !(x instanceof String) && !(x instanceof Boolean);
   }
   if (obj == null || typeof obj === "number") {
     return String(obj);
@@ -190,8 +169,8 @@ function toString(obj) {
     return obj.ToString();
   }
   if (hasInterface(obj, "FSharpUnion")) {
-    var info = obj[_Symbol2.default.reflection]();
-    var uci = info.cases[obj.tag];
+    const info = obj[_Symbol2.default.reflection]();
+    const uci = info.cases[obj.tag];
     switch (uci.length) {
       case 1:
         return uci[0];
@@ -199,57 +178,43 @@ function toString(obj) {
         // For simplicity let's always use parens, in .NET they're ommitted in some cases
         return uci[0] + " (" + toString(obj.data, true) + ")";
       default:
-        return uci[0] + " (" + obj.data.map(function (x) {
-          return toString(x, true);
-        }).join(",") + ")";
+        return uci[0] + " (" + obj.data.map(x => toString(x, true)).join(",") + ")";
     }
   }
   try {
-    return JSON.stringify(obj, function (k, v) {
+    return JSON.stringify(obj, (k, v) => {
       return v && v[Symbol.iterator] && !Array.isArray(v) && isObject(v) ? Array.from(v) : v && typeof v.ToString === "function" ? toString(v) : v;
     });
   } catch (err) {
     // Fallback for objects with circular references
-    return "{" + Object.getOwnPropertyNames(obj).map(function (k) {
-      return k + ": " + String(obj[k]);
-    }).join(", ") + "}";
+    return "{" + Object.getOwnPropertyNames(obj).map(k => k + ": " + String(obj[k])).join(", ") + "}";
   }
 }
-
-var ObjectRef = exports.ObjectRef = function () {
-  function ObjectRef() {
-    _classCallCheck(this, ObjectRef);
-  }
-
-  _createClass(ObjectRef, null, [{
-    key: "id",
-    value: function id(o) {
-      if (!ObjectRef.idMap.has(o)) {
-        ObjectRef.idMap.set(o, ++ObjectRef.count);
-      }
-      return ObjectRef.idMap.get(o);
+class ObjectRef {
+  static id(o) {
+    if (!ObjectRef.idMap.has(o)) {
+      ObjectRef.idMap.set(o, ++ObjectRef.count);
     }
-  }]);
-
-  return ObjectRef;
-}();
-
+    return ObjectRef.idMap.get(o);
+  }
+}
+exports.ObjectRef = ObjectRef;
 ObjectRef.idMap = new WeakMap();
 ObjectRef.count = 0;
 function getHashCode(x) {
   return ObjectRef.id(x) * 2654435761 | 0;
 }
 function hash(x) {
-  if ((typeof x === "undefined" ? "undefined" : _typeof(x)) === _typeof(1)) {
+  if (typeof x === typeof 1) {
     return x * 2654435761 | 0;
   }
   if (x != null && typeof x.GetHashCode === "function") {
     return x.GetHashCode();
   } else {
-    var s = toString(x);
-    var h = 5381;
-    var i = 0;
-    var len = s.length;
+    const s = toString(x);
+    let h = 5381;
+    let i = 0;
+    const len = s.length;
     while (i < len) {
       h = h * 33 ^ s.charCodeAt(i++);
     }
@@ -264,7 +229,7 @@ function equals(x, y) {
     return y == null;
   } else if (y == null) {
     return false;
-  } else if ((typeof x === "undefined" ? "undefined" : _typeof(x)) !== "object" || (typeof y === "undefined" ? "undefined" : _typeof(y)) !== "object") {
+  } else if (typeof x !== "object" || typeof y !== "object") {
     return x === y;
     // Equals override or IEquatable implementation
   } else if (typeof x.Equals === "function") {
@@ -277,7 +242,7 @@ function equals(x, y) {
     if (x.length !== y.length) {
       return false;
     }
-    for (var i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
       if (!equals(x[i], y[i])) {
         return false;
       }
@@ -287,10 +252,10 @@ function equals(x, y) {
     if (x.byteLength !== y.byteLength) {
       return false;
     }
-    var dv1 = new DataView(x.buffer);
-    var dv2 = new DataView(y.buffer);
-    for (var _i = 0; _i < x.byteLength; _i++) {
-      if (dv1.getUint8(_i) !== dv2.getUint8(_i)) {
+    const dv1 = new DataView(x.buffer);
+    const dv2 = new DataView(y.buffer);
+    for (let i = 0; i < x.byteLength; i++) {
+      if (dv1.getUint8(i) !== dv2.getUint8(i)) {
         return false;
       }
     }
@@ -312,7 +277,7 @@ function compare(x, y) {
     return y == null ? 0 : -1;
   } else if (y == null) {
     return 1; // everything is bigger than null
-  } else if ((typeof x === "undefined" ? "undefined" : _typeof(x)) !== "object" || (typeof y === "undefined" ? "undefined" : _typeof(y)) !== "object") {
+  } else if (typeof x !== "object" || typeof y !== "object") {
     return x === y ? 0 : x < y ? -1 : 1;
     // Some types (see Long.ts) may just implement the function and not the interface
     // else if (hasInterface(x, "System.IComparable"))
@@ -326,7 +291,7 @@ function compare(x, y) {
     if (x.length !== y.length) {
       return x.length < y.length ? -1 : 1;
     }
-    for (var i = 0, j = 0; i < x.length; i++) {
+    for (let i = 0, j = 0; i < x.length; i++) {
       j = compare(x[i], y[i]);
       if (j !== 0) {
         return j;
@@ -337,10 +302,10 @@ function compare(x, y) {
     if (x.byteLength !== y.byteLength) {
       return x.byteLength < y.byteLength ? -1 : 1;
     }
-    var dv1 = new DataView(x.buffer);
-    var dv2 = new DataView(y.buffer);
-    for (var _i2 = 0, b1 = 0, b2 = 0; _i2 < x.byteLength; _i2++) {
-      b1 = dv1.getUint8(_i2), b2 = dv2.getUint8(_i2);
+    const dv1 = new DataView(x.buffer);
+    const dv2 = new DataView(y.buffer);
+    for (let i = 0, b1 = 0, b2 = 0; i < x.byteLength; i++) {
+      b1 = dv1.getUint8(i), b2 = dv2.getUint8(i);
       if (b1 < b2) {
         return -1;
       }
@@ -351,9 +316,9 @@ function compare(x, y) {
     return 0;
   } else if (x instanceof Date) {
     return (0, _Date.compare)(x, y);
-  } else if ((typeof x === "undefined" ? "undefined" : _typeof(x)) === "object") {
-    var xhash = hash(x);
-    var yhash = hash(y);
+  } else if (typeof x === "object") {
+    const xhash = hash(x);
+    const yhash = hash(y);
     if (xhash === yhash) {
       return equals(x, y) ? 0 : -1;
     } else {
@@ -380,34 +345,12 @@ function equalsRecords(x, y) {
   if (x === y) {
     return true;
   } else {
-    var keys = getPropertyNames(x);
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var key = _step.value;
-
-        if (!equals(x[key], y[key])) {
-          return false;
-        }
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
+    const keys = getPropertyNames(x);
+    for (const key of keys) {
+      if (!equals(x[key], y[key])) {
+        return false;
       }
     }
-
     return true;
   }
 }
@@ -416,35 +359,13 @@ function compareRecords(x, y) {
   if (x === y) {
     return 0;
   } else {
-    var keys = getPropertyNames(x);
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-      for (var _iterator2 = keys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var key = _step2.value;
-
-        var res = compare(x[key], y[key]);
-        if (res !== 0) {
-          return res;
-        }
-      }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-          _iterator2.return();
-        }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
+    const keys = getPropertyNames(x);
+    for (const key of keys) {
+      const res = compare(x[key], y[key]);
+      if (res !== 0) {
+        return res;
       }
     }
-
     return 0;
   }
 }
@@ -455,28 +376,29 @@ function compareUnions(x, y) {
   if (x === y) {
     return 0;
   } else {
-    var res = x.tag < y.tag ? -1 : x.tag > y.tag ? 1 : 0;
+    const res = x.tag < y.tag ? -1 : x.tag > y.tag ? 1 : 0;
     return res !== 0 ? res : compare(x.data, y.data);
   }
 }
 function createDisposable(f) {
-  return _defineProperty({
-    Dispose: f
-  }, _Symbol2.default.reflection, function () {
-    return { interfaces: ["System.IDisposable"] };
-  });
+  return {
+    Dispose: f,
+    [_Symbol2.default.reflection]() {
+      return { interfaces: ["System.IDisposable"] };
+    }
+  };
 }
 // tslint forbids non-arrow functions, but it's
 // necessary here to use the arguments object
 /* tslint:disable */
 function createAtom(value) {
-  var atom = value;
+  let atom = value;
   return function () {
     return arguments.length === 0 ? atom : (atom = arguments[0], void 0);
   };
 }
 /* tslint:enable */
-var CaseRules = {
+const CaseRules = {
   None: 0,
   LowerFirst: 1
 };
@@ -488,30 +410,27 @@ function isList(o) {
   }
   return false;
 }
-function createObj(fields) {
-  var caseRule = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CaseRules.None;
-  var casesCache = arguments[2];
-
-  var iter = fields[Symbol.iterator]();
-  var cur = iter.next();
-  var o = {};
+function createObj(fields, caseRule = CaseRules.None, casesCache) {
+  const iter = fields[Symbol.iterator]();
+  let cur = iter.next();
+  const o = {};
   while (!cur.done) {
-    var value = cur.value;
+    const value = cur.value;
     if (Array.isArray(value)) {
       o[value[0]] = value[1];
     } else {
       casesCache = casesCache || new Map();
-      var proto = Object.getPrototypeOf(value);
-      var cases = casesCache.get(proto);
+      const proto = Object.getPrototypeOf(value);
+      let cases = casesCache.get(proto);
       if (cases == null) {
         if (typeof proto[_Symbol2.default.reflection] === "function") {
           cases = proto[_Symbol2.default.reflection]().cases;
           casesCache.set(proto, cases);
         }
       }
-      var caseInfo = cases != null ? cases[value.tag] : null;
+      const caseInfo = cases != null ? cases[value.tag] : null;
       if (Array.isArray(caseInfo)) {
-        var key = caseInfo[0];
+        let key = caseInfo[0];
         if (caseRule === CaseRules.LowerFirst) {
           key = key[0].toLowerCase() + key.substr(1);
         }
@@ -526,64 +445,21 @@ function createObj(fields) {
 }
 function toPlainJsObj(source) {
   if (source != null && source.constructor !== Object) {
-    var target = {};
-    var props = Object.getOwnPropertyNames(source);
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
-
-    try {
-      for (var _iterator3 = props[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-        var p = _step3.value;
-
-        target[p] = source[p];
-      }
-      // Copy also properties from prototype, see #192
-    } catch (err) {
-      _didIteratorError3 = true;
-      _iteratorError3 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion3 && _iterator3.return) {
-          _iterator3.return();
-        }
-      } finally {
-        if (_didIteratorError3) {
-          throw _iteratorError3;
-        }
-      }
+    const target = {};
+    let props = Object.getOwnPropertyNames(source);
+    for (const p of props) {
+      target[p] = source[p];
     }
-
-    var proto = Object.getPrototypeOf(source);
+    // Copy also properties from prototype, see #192
+    const proto = Object.getPrototypeOf(source);
     if (proto != null) {
       props = Object.getOwnPropertyNames(proto);
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
-
-      try {
-        for (var _iterator4 = props[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var _p = _step4.value;
-
-          var prop = Object.getOwnPropertyDescriptor(proto, _p);
-          if (prop.value) {
-            target[_p] = prop.value;
-          } else if (prop.get) {
-            target[_p] = prop.get.apply(source);
-          }
-        }
-      } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return) {
-            _iterator4.return();
-          }
-        } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
-          }
+      for (const p of props) {
+        const prop = Object.getOwnPropertyDescriptor(proto, p);
+        if (prop.value) {
+          target[p] = prop.value;
+        } else if (prop.get) {
+          target[p] = prop.get.apply(source);
         }
       }
     }
@@ -593,19 +469,17 @@ function toPlainJsObj(source) {
   }
 }
 function jsOptions(mutator) {
-  var opts = {};
+  const opts = {};
   mutator(opts);
   return opts;
 }
-function round(value) {
-  var digits = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-  var m = Math.pow(10, digits);
-  var n = +(digits ? value * m : value).toFixed(8);
-  var i = Math.floor(n);
-  var f = n - i;
-  var e = 1e-8;
-  var r = f > 0.5 - e && f < 0.5 + e ? i % 2 === 0 ? i : i + 1 : Math.round(n);
+function round(value, digits = 0) {
+  const m = Math.pow(10, digits);
+  const n = +(digits ? value * m : value).toFixed(8);
+  const i = Math.floor(n);
+  const f = n - i;
+  const e = 1e-8;
+  const r = f > 0.5 - e && f < 0.5 + e ? i % 2 === 0 ? i : i + 1 : Math.round(n);
   return digits ? r / m : r;
 }
 function sign(x) {
@@ -616,15 +490,15 @@ function randomNext(min, max) {
 }
 function applyOperator(x, y, operator) {
   function getMethod(obj) {
-    if ((typeof obj === "undefined" ? "undefined" : _typeof(obj)) === "object") {
-      var cons = Object.getPrototypeOf(obj).constructor;
+    if (typeof obj === "object") {
+      const cons = Object.getPrototypeOf(obj).constructor;
       if (typeof cons[operator] === "function") {
         return cons[operator];
       }
     }
     return null;
   }
-  var meth = getMethod(x);
+  let meth = getMethod(x);
   if (meth != null) {
     return meth(x, y);
   }

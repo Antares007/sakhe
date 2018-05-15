@@ -10,7 +10,7 @@ var _most = require("./most");
 
 var _a = require("./a");
 
-var most = exports.most = _most.Core.require;
+const most = exports.most = _most.Core.require;
 
 function tree(deltac, mpith) {
   return most.switchLatest.bind(most)(most.map(function (pith) {

@@ -14,28 +14,25 @@ type ILang<'a when 'a :> Element> =
     abstract Leaf<'b when 'b :> CharacterData> : ((unit -> 'b) * (Node -> 'b option)) * Stream<'b -> unit> -> unit
     abstract Patch: Stream<'a -> unit> -> unit
 
-
-let inline private ap
+let inline private ap2
     (fIndexOutOfBounds, fProvedNode, fFoundNode, fOtherNode)
-    (index: int, prove: Node -> 'a option, parentElement: Element): unit =
-    let childNodes = parentElement.childNodes
-    let length = int childNodes.length
-    if index >= length then
-        fIndexOutOfBounds ()
-    else
-        let childAtIndex = childNodes.[index]
+    (index: int, at: int -> 'b option, prove: 'b -> 'a option): unit =
+    match at index with
+    | None -> fIndexOutOfBounds ()
+    | Some childAtIndex ->
         match prove childAtIndex with
-        | Some childAtIndex -> fProvedNode childAtIndex
+        | Some a -> fProvedNode a
         | None ->
             let rec findNode index =
-                if index < length then
-                    match prove childNodes.[index] with
-                    | Some child -> Some child
-                    | None       -> findNode (index + 1)
-                else None
-            match findNode index with
-            | Some foundNode -> fFoundNode (foundNode, childAtIndex)
-            | None           -> fOtherNode childAtIndex
+                match at index with
+                | None -> None
+                | Some b ->
+                    match prove b with
+                    | Some a -> Some a
+                    | None -> findNode (index + 1)
+            match findNode (index + 1) with
+            | Some a -> fFoundNode (a, childAtIndex)
+            | None -> fOtherNode childAtIndex
 
 let private disposable = Most.Disposable.require
 
@@ -63,7 +60,7 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                     let index = c
                     c <- c + 1
                     tree pith |> most.map (fun childNodePatch  -> once (fun (parentElement: 'a) ->
-                            ap
+                            ap2
                                 (
                                     (fun () ->
                                         let child = absurd ()
@@ -78,13 +75,13 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                                         childNodePatch child
                                         parentElement.insertBefore (child, childAtIndex) |> ignore)
                                 )
-                                (index, prove, parentElement)
+                                (index, (fun i -> if i <= int parentElement.childNodes.length then Some parentElement.childNodes.[i] else None), prove)
                     )) |> o
                 member __.Leaf ((absurd, prove), s) =
                     let index = c
                     c <- c + 1
                     s |> most.map (fun childNodePatch -> once (fun (parentElement: 'a) ->
-                            ap
+                            ap2
                                 (
                                     (fun () ->
                                         let child = absurd ()
@@ -99,7 +96,7 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                                         childNodePatch child
                                         parentElement.insertBefore (child, childAtIndex) |> ignore)
                                 )
-                                (index, prove, parentElement)
+                                (index, (fun i -> if i <= int parentElement.childNodes.length then Some parentElement.childNodes.[i] else None), prove)
                     )) |> o
 
                 member __.Patch (s) =

@@ -4,9 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Some = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 exports.makeSome = makeSome;
 exports.getValue = getValue;
 exports.defaultArg = defaultArg;
@@ -15,45 +12,30 @@ exports.filter = filter;
 
 var _Util = require("./Util");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Some = exports.Some = function () {
-  function Some(value) {
-    _classCallCheck(this, Some);
-
+class Some {
+  constructor(value) {
     this.value = value;
   }
   // We don't prefix it with "Some" for consistency with erased options
-
-
-  _createClass(Some, [{
-    key: "ToString",
-    value: function ToString() {
-      return (0, _Util.toString)(this.value);
+  ToString() {
+    return (0, _Util.toString)(this.value);
+  }
+  Equals(other) {
+    if (other == null) {
+      return false;
+    } else {
+      return (0, _Util.equals)(this.value, other instanceof Some ? other.value : other);
     }
-  }, {
-    key: "Equals",
-    value: function Equals(other) {
-      if (other == null) {
-        return false;
-      } else {
-        return (0, _Util.equals)(this.value, other instanceof Some ? other.value : other);
-      }
+  }
+  CompareTo(other) {
+    if (other == null) {
+      return 1;
+    } else {
+      return (0, _Util.compare)(this.value, other instanceof Some ? other.value : other);
     }
-  }, {
-    key: "CompareTo",
-    value: function CompareTo(other) {
-      if (other == null) {
-        return 1;
-      } else {
-        return (0, _Util.compare)(this.value, other instanceof Some ? other.value : other);
-      }
-    }
-  }]);
-
-  return Some;
-}();
-
+  }
+}
+exports.Some = Some;
 function makeSome(x) {
   return x == null || x instanceof Some ? new Some(x) : x;
 }

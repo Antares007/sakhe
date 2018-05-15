@@ -11,7 +11,7 @@ module.exports = {
   port: 61225, // Fable daemon port (61225 by default)
   babel: fableUtils.resolveBabelOptions({
     presets: [
-      ["env", { modules: "commonjs" }]
+      ["env", { modules: "commonjs", targets: { node: "8.9" } }]
     ],
     sourceMaps: false,
   }),
