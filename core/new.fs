@@ -14,7 +14,7 @@ type ILang<'a when 'a :> Element> =
     abstract Leaf<'b when 'b :> CharacterData> : ((unit -> 'b) * (Node -> 'b option)) * Stream<'b -> unit> -> unit
     abstract Patch: Stream<'a -> unit> -> unit
 
-let (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, prove: Node -> 'a option, parentElement: Element) =
+let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, prove: Node -> 'a option, parentElement: Element) =
     let childNodes = parentElement.childNodes
     let length = int childNodes.length
     if index >= length then

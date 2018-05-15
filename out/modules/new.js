@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.$7C$IndexOutOfBounds$7C$ProvedNode$7C$FoundNode$7C$OtherNode$7C$ = exports.T = undefined;
+exports.T = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -102,7 +102,6 @@ function _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(index, prove, parentE
   }
 }
 
-exports.$7C$IndexOutOfBounds$7C$ProvedNode$7C$FoundNode$7C$OtherNode$7C$ = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_;
 var disposable = _most.DisposableModule.require;
 
 function tree(pith) {
@@ -126,18 +125,18 @@ function tree(pith) {
           }(function (parentElement) {
             var matchValue = [index, _arg1[1], parentElement];
 
-            var activePatternResult9373 = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(matchValue[0], matchValue[1], matchValue[2]);
+            var activePatternResult24873 = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(matchValue[0], matchValue[1], matchValue[2]);
 
-            if (activePatternResult9373.tag === 1) {
-              childNodePatch(activePatternResult9373.data), void 0;
-            } else if (activePatternResult9373.tag === 2) {
-              childNodePatch(activePatternResult9373.data[0]);
-              parentElement.insertBefore(activePatternResult9373.data[0], activePatternResult9373.data[1]), void 0;
-            } else if (activePatternResult9373.tag === 3) {
+            if (activePatternResult24873.tag === 1) {
+              childNodePatch(activePatternResult24873.data), void 0;
+            } else if (activePatternResult24873.tag === 2) {
+              childNodePatch(activePatternResult24873.data[0]);
+              parentElement.insertBefore(activePatternResult24873.data[0], activePatternResult24873.data[1]), void 0;
+            } else if (activePatternResult24873.tag === 3) {
               var child = _arg1[0]();
 
               childNodePatch(child);
-              parentElement.insertBefore(child, activePatternResult9373.data), void 0;
+              parentElement.insertBefore(child, activePatternResult24873.data), void 0;
             } else {
               var child_1 = _arg1[0]();
 
@@ -164,18 +163,18 @@ function tree(pith) {
           }(function (parentElement) {
             var matchValue = [index, _arg2[1], parentElement];
 
-            var activePatternResult9378 = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(matchValue[0], matchValue[1], matchValue[2]);
+            var activePatternResult24878 = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(matchValue[0], matchValue[1], matchValue[2]);
 
-            if (activePatternResult9378.tag === 1) {
-              childNodePatch(activePatternResult9378.data), void 0;
-            } else if (activePatternResult9378.tag === 2) {
-              childNodePatch(activePatternResult9378.data[0]);
-              parentElement.insertBefore(activePatternResult9378.data[0], activePatternResult9378.data[1]), void 0;
-            } else if (activePatternResult9378.tag === 3) {
+            if (activePatternResult24878.tag === 1) {
+              childNodePatch(activePatternResult24878.data), void 0;
+            } else if (activePatternResult24878.tag === 2) {
+              childNodePatch(activePatternResult24878.data[0]);
+              parentElement.insertBefore(activePatternResult24878.data[0], activePatternResult24878.data[1]), void 0;
+            } else if (activePatternResult24878.tag === 3) {
               var child = _arg2[0]();
 
               childNodePatch(child);
-              parentElement.insertBefore(child, activePatternResult9378.data), void 0;
+              parentElement.insertBefore(child, activePatternResult24878.data), void 0;
             } else {
               var child_1 = _arg2[0]();
 
