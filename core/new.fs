@@ -14,15 +14,18 @@ type ILang<'a when 'a :> Element> =
     abstract Leaf<'b when 'b :> CharacterData> : ((unit -> 'b) * (Node -> 'b option)) * Stream<'b -> unit> -> unit
     abstract Patch: Stream<'a -> unit> -> unit
 
-let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, prove: Node -> 'a option, parentElement: Element) =
+
+let private ap
+    (fIndexOutOfBounds, fProvedNode, fFoundNode, fOtherNode)
+    (index: int, prove: Node -> 'a option, parentElement: Element): unit =
     let childNodes = parentElement.childNodes
     let length = int childNodes.length
     if index >= length then
-        IndexOutOfBounds
+        fIndexOutOfBounds ()
     else
         let childAtIndex = childNodes.[index]
         match prove childAtIndex with
-        | Some childAtIndex -> ProvedNode childAtIndex
+        | Some childAtIndex -> fProvedNode childAtIndex
         | None ->
             let rec findNode index =
                 if index < length then
@@ -31,8 +34,8 @@ let private (|IndexOutOfBounds|ProvedNode|FoundNode|OtherNode|) (index: int, pro
                     | None       -> findNode (index + 1)
                 else None
             match findNode index with
-            | Some foundNode -> FoundNode (foundNode, childAtIndex)
-            | None           -> OtherNode childAtIndex
+            | Some foundNode -> fFoundNode (foundNode, childAtIndex)
+            | None           -> fOtherNode childAtIndex
 
 let private disposable = Most.Disposable.require
 
@@ -59,39 +62,46 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                 member __.Node ((absurd, prove): (unit -> 'b) * (Node -> 'b option) when 'b :> Node, pith) =
                     let index = c
                     c <- c + 1
-                    tree pith |> most.map (fun childNodePatch  -> once (fun parentElement ->
-                            match index, prove, parentElement with
-                            | IndexOutOfBounds ->
-                                let child = absurd ()
-                                childNodePatch child
-                                parentElement.insertBefore (child, unbox None) |> ignore
-                            | ProvedNode childAtIndex ->
-                                childNodePatch childAtIndex |> ignore
-                            | FoundNode (foundNode, childAtIndex) ->
-                                childNodePatch foundNode
-                                parentElement.insertBefore (foundNode, childAtIndex) |> ignore
-                            | OtherNode childAtIndex ->
-                                let child = absurd ()
-                                childNodePatch child
-                                parentElement.insertBefore (child, childAtIndex) |> ignore)) |> o
+                    tree pith |> most.map (fun childNodePatch  -> once (fun (parentElement: 'a) ->
+                            ap
+                                (
+                                    (fun () ->
+                                        let child = absurd ()
+                                        childNodePatch child
+                                        parentElement.insertBefore (child, unbox None) |> ignore),
+                                    (childNodePatch),
+                                    (fun (foundNode, childAtIndex) ->
+                                        childNodePatch foundNode
+                                        parentElement.insertBefore (foundNode, childAtIndex) |> ignore),
+                                    (fun childAtIndex ->
+                                        let child = absurd ()
+                                        childNodePatch child
+                                        parentElement.insertBefore (child, childAtIndex) |> ignore)
+                                )
+                                (index, prove, parentElement)
+                    )) |> o
                 member __.Leaf ((absurd, prove), s) =
                     let index = c
                     c <- c + 1
-                    s |> most.map (fun childNodePatch  -> once (fun parentElement ->
-                            match index, prove, parentElement with
-                            | IndexOutOfBounds ->
-                                let child = absurd ()
-                                childNodePatch child
-                                parentElement.insertBefore (child, unbox None) |> ignore
-                            | ProvedNode childAtIndex ->
-                                childNodePatch childAtIndex |> ignore
-                            | FoundNode (foundNode, childAtIndex) ->
-                                childNodePatch foundNode
-                                parentElement.insertBefore (foundNode, childAtIndex) |> ignore
-                            | OtherNode childAtIndex ->
-                                let child = absurd ()
-                                childNodePatch child
-                                parentElement.insertBefore (child, childAtIndex) |> ignore)) |> o
+                    s |> most.map (fun childNodePatch -> once (fun (parentElement: 'a) ->
+                            ap
+                                (
+                                    (fun () ->
+                                        let child = absurd ()
+                                        childNodePatch child
+                                        parentElement.insertBefore (child, unbox None) |> ignore),
+                                    (childNodePatch),
+                                    (fun (foundNode, childAtIndex) ->
+                                        childNodePatch foundNode
+                                        parentElement.insertBefore (foundNode, childAtIndex) |> ignore),
+                                    (fun childAtIndex ->
+                                        let child = absurd ()
+                                        childNodePatch child
+                                        parentElement.insertBefore (child, childAtIndex) |> ignore)
+                                )
+                                (index, prove, parentElement)
+                    )) |> o
+
                 member __.Patch (s) =
                     s |> most.map (once (fun patch n -> patch n)) |> o }
             o (most.now (once (fun element ->

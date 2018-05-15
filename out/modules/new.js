@@ -15,10 +15,6 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
-var _Choice = require("./fable-core/Choice");
-
-var _Choice2 = _interopRequireDefault(_Choice);
-
 var _Option = require("./fable-core/Option");
 
 var _most = require("./most");
@@ -61,12 +57,12 @@ var T = exports.T = function () {
 
 (0, _Symbol2.setType)("Sakhe.Dom.T", T);
 
-function _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(index, prove, parentElement) {
+function ap(fIndexOutOfBounds, fProvedNode, fFoundNode, fOtherNode, index, prove, parentElement) {
   var childNodes = parentElement.childNodes;
   var length = ~~childNodes.length | 0;
 
   if (index >= length) {
-    return new _Choice2.default(0, null);
+    fIndexOutOfBounds();
   } else {
     var childAtIndex = childNodes[index];
     var matchValue = prove(childAtIndex);
@@ -92,12 +88,12 @@ function _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(index, prove, parentE
       var matchValue_2 = findNode(index);
 
       if (matchValue_2 == null) {
-        return new _Choice2.default(3, childAtIndex);
+        fOtherNode(childAtIndex);
       } else {
-        return new _Choice2.default(2, [(0, _Option.getValue)(matchValue_2), childAtIndex]);
+        fFoundNode([(0, _Option.getValue)(matchValue_2), childAtIndex]);
       }
     } else {
-      return new _Choice2.default(1, (0, _Option.getValue)(matchValue));
+      fProvedNode((0, _Option.getValue)(matchValue));
     }
   }
 }
@@ -123,26 +119,20 @@ function tree(pith) {
               return b;
             };
           }(function (parentElement) {
-            var matchValue = [index, _arg1[1], parentElement];
-
-            var activePatternResult24873 = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(matchValue[0], matchValue[1], matchValue[2]);
-
-            if (activePatternResult24873.tag === 1) {
-              childNodePatch(activePatternResult24873.data), void 0;
-            } else if (activePatternResult24873.tag === 2) {
-              childNodePatch(activePatternResult24873.data[0]);
-              parentElement.insertBefore(activePatternResult24873.data[0], activePatternResult24873.data[1]), void 0;
-            } else if (activePatternResult24873.tag === 3) {
+            ap(function () {
               var child = _arg1[0]();
 
               childNodePatch(child);
-              parentElement.insertBefore(child, activePatternResult24873.data), void 0;
-            } else {
+              parentElement.insertBefore(child, null), void 0;
+            }, childNodePatch, function (tupledArg) {
+              childNodePatch(tupledArg[0]);
+              parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
+            }, function (childAtIndex) {
               var child_1 = _arg1[0]();
 
               childNodePatch(child_1);
-              parentElement.insertBefore(child_1, null), void 0;
-            }
+              parentElement.insertBefore(child_1, childAtIndex), void 0;
+            }, index, _arg1[1], parentElement);
           });
         }))(tree(pith_2)));
       },
@@ -161,26 +151,20 @@ function tree(pith) {
               return b;
             };
           }(function (parentElement) {
-            var matchValue = [index, _arg2[1], parentElement];
-
-            var activePatternResult24878 = _IndexOutOfBounds_ProvedNode_FoundNode_OtherNode_(matchValue[0], matchValue[1], matchValue[2]);
-
-            if (activePatternResult24878.tag === 1) {
-              childNodePatch(activePatternResult24878.data), void 0;
-            } else if (activePatternResult24878.tag === 2) {
-              childNodePatch(activePatternResult24878.data[0]);
-              parentElement.insertBefore(activePatternResult24878.data[0], activePatternResult24878.data[1]), void 0;
-            } else if (activePatternResult24878.tag === 3) {
+            ap(function () {
               var child = _arg2[0]();
 
               childNodePatch(child);
-              parentElement.insertBefore(child, activePatternResult24878.data), void 0;
-            } else {
+              parentElement.insertBefore(child, null), void 0;
+            }, childNodePatch, function (tupledArg) {
+              childNodePatch(tupledArg[0]);
+              parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
+            }, function (childAtIndex) {
               var child_1 = _arg2[0]();
 
               childNodePatch(child_1);
-              parentElement.insertBefore(child_1, null), void 0;
-            }
+              parentElement.insertBefore(child_1, childAtIndex), void 0;
+            }, index, _arg2[1], parentElement);
           });
         }))(s));
       },
