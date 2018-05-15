@@ -12,8 +12,6 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
-var _Option = require("./fable-core/Option");
-
 var _most = require("./most");
 
 var _m = require("./m");
@@ -21,6 +19,8 @@ var _m = require("./m");
 var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
+
+var _Option = require("./fable-core/Option");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -42,48 +42,6 @@ class T {
 
 exports.T = T;
 (0, _Symbol2.setType)("Sakhe.Dom.T", T);
-
-function ap2(fIndexOutOfBounds, fProvedNode, fFoundNode, fOtherNode, index, at, prove) {
-  const matchValue = at(index);
-
-  if (matchValue != null) {
-    const matchValue_1 = prove((0, _Option.getValue)(matchValue));
-
-    if (matchValue_1 == null) {
-      const findNode = function (index_1) {
-        findNode: while (true) {
-          const matchValue_2 = at(index_1);
-
-          if (matchValue_2 != null) {
-            const matchValue_3 = prove((0, _Option.getValue)(matchValue_2));
-
-            if (matchValue_3 == null) {
-              index_1 = index_1 + 1;
-              continue findNode;
-            } else {
-              return (0, _Option.makeSome)((0, _Option.getValue)(matchValue_3));
-            }
-          } else {
-            return null;
-          }
-        }
-      };
-
-      const matchValue_4 = findNode(index + 1);
-
-      if (matchValue_4 == null) {
-        fOtherNode((0, _Option.getValue)(matchValue));
-      } else {
-        fFoundNode([(0, _Option.getValue)(matchValue_4), (0, _Option.getValue)(matchValue)]);
-      }
-    } else {
-      fProvedNode((0, _Option.getValue)(matchValue_1));
-    }
-  } else {
-    fIndexOutOfBounds();
-  }
-}
-
 const disposable = _most.DisposableModule.require;
 
 function tree(pith) {
@@ -104,20 +62,67 @@ function tree(pith) {
             return b;
           };
         }(parentElement => {
-          ap2(() => {
-            const child = _arg1[0]();
+          const $var2 = _arg1[1];
 
-            childNodePatch(child);
-            parentElement.insertBefore(child, null), void 0;
-          }, childNodePatch, tupledArg => {
-            childNodePatch(tupledArg[0]);
-            parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
-          }, childAtIndex => {
-            const child_1 = _arg1[0]();
+          const $var1 = i => {
+            if (i <= ~~parentElement.childNodes.length) {
+              return parentElement.childNodes[i];
+            } else {
+              return null;
+            }
+          };
 
-            childNodePatch(child_1);
-            parentElement.insertBefore(child_1, childAtIndex), void 0;
-          }, index, i => i <= ~~parentElement.childNodes.length ? parentElement.childNodes[i] : null, _arg1[1]);
+          const matchValue = $var1(index);
+
+          if (matchValue != null) {
+            const matchValue_1 = $var2((0, _Option.getValue)(matchValue));
+
+            if (matchValue_1 == null) {
+              const findNode = index_1 => {
+                findNode: while (true) {
+                  const matchValue_2 = $var1(index_1);
+
+                  if (matchValue_2 != null) {
+                    const matchValue_3 = $var2((0, _Option.getValue)(matchValue_2));
+
+                    if (matchValue_3 == null) {
+                      index_1 = index_1 + 1;
+                      continue findNode;
+                    } else {
+                      return (0, _Option.makeSome)((0, _Option.getValue)(matchValue_3));
+                    }
+                  } else {
+                    return null;
+                  }
+                }
+              };
+
+              const matchValue_4 = findNode(index + 1);
+
+              if (matchValue_4 == null) {
+                (childAtIndex => {
+                  const child_1 = _arg1[0]();
+
+                  childNodePatch(child_1);
+                  parentElement.insertBefore(child_1, childAtIndex), void 0;
+                })((0, _Option.getValue)(matchValue));
+              } else {
+                (tupledArg => {
+                  childNodePatch(tupledArg[0]);
+                  parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
+                })([(0, _Option.getValue)(matchValue_4), (0, _Option.getValue)(matchValue)]);
+              }
+            } else {
+              childNodePatch((0, _Option.getValue)(matchValue_1));
+            }
+          } else {
+            (() => {
+              const child = _arg1[0]();
+
+              childNodePatch(child);
+              parentElement.insertBefore(child, null), void 0;
+            })();
+          }
         })))(tree(pith_2)));
       },
 
@@ -135,25 +140,72 @@ function tree(pith) {
             return b;
           };
         }(parentElement => {
-          ap2(() => {
-            const child = _arg2[0]();
+          const $var4 = _arg2[1];
 
-            childNodePatch(child);
-            parentElement.insertBefore(child, null), void 0;
-          }, childNodePatch, tupledArg => {
-            childNodePatch(tupledArg[0]);
-            parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
-          }, childAtIndex => {
-            const child_1 = _arg2[0]();
+          const $var3 = i => {
+            if (i <= ~~parentElement.childNodes.length) {
+              return parentElement.childNodes[i];
+            } else {
+              return null;
+            }
+          };
 
-            childNodePatch(child_1);
-            parentElement.insertBefore(child_1, childAtIndex), void 0;
-          }, index, i => i <= ~~parentElement.childNodes.length ? parentElement.childNodes[i] : null, _arg2[1]);
+          const matchValue = $var3(index);
+
+          if (matchValue != null) {
+            const matchValue_1 = $var4((0, _Option.getValue)(matchValue));
+
+            if (matchValue_1 == null) {
+              const findNode = index_1 => {
+                findNode: while (true) {
+                  const matchValue_2 = $var3(index_1);
+
+                  if (matchValue_2 != null) {
+                    const matchValue_3 = $var4((0, _Option.getValue)(matchValue_2));
+
+                    if (matchValue_3 == null) {
+                      index_1 = index_1 + 1;
+                      continue findNode;
+                    } else {
+                      return (0, _Option.makeSome)((0, _Option.getValue)(matchValue_3));
+                    }
+                  } else {
+                    return null;
+                  }
+                }
+              };
+
+              const matchValue_4 = findNode(index + 1);
+
+              if (matchValue_4 == null) {
+                (childAtIndex => {
+                  const child_1 = _arg2[0]();
+
+                  childNodePatch(child_1);
+                  parentElement.insertBefore(child_1, childAtIndex), void 0;
+                })((0, _Option.getValue)(matchValue));
+              } else {
+                (tupledArg => {
+                  childNodePatch(tupledArg[0]);
+                  parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
+                })([(0, _Option.getValue)(matchValue_4), (0, _Option.getValue)(matchValue)]);
+              }
+            } else {
+              childNodePatch((0, _Option.getValue)(matchValue_1));
+            }
+          } else {
+            (() => {
+              const child = _arg2[0]();
+
+              childNodePatch(child);
+              parentElement.insertBefore(child, null), void 0;
+            })();
+          }
         })))(s));
       },
 
       Patch(s) {
-        o(_m.most.map($var3 => $var4 => {
+        o(_m.most.map($var7 => $var8 => {
           (function makeOnce(f) {
             var b;
             return function onceAtoBtoAtoB(a) {
@@ -164,11 +216,11 @@ function tree(pith) {
 
               return b;
             };
-          })($var1 => $var2 => {
+          })($var5 => $var6 => {
             ((patch, n) => {
               patch(n);
-            })($var1, $var2);
-          })($var3, $var4);
+            })($var5, $var6);
+          })($var7, $var8);
         })(s));
       },
 
@@ -230,21 +282,21 @@ function tree(pith) {
       };
     });
 
-    const s = _m.most.map($var5 => $var6 => {
+    const s = _m.most.map($var9 => $var10 => {
       (function (patch, element_2) {
         f(element_2);
         patch(element_2);
-      })($var5, $var6);
+      })($var9, $var10);
     })((0, _m.tree)((0, _CurriedLambda2.default)(function (arg00, arg10) {
-      return _m.most.combineArray((...list) => ($var7 => $var8 => {
-        arg00($var7, $var8);
+      return _m.most.combineArray((...list) => ($var11 => $var12 => {
+        arg00($var11, $var12);
       })(list), arg10);
     })(function (ps, e) {
       ps.forEach(function (p) {
         p(e);
       });
-    }), _m.most.map($var9 => $var10 => {
-      ring($var9, $var10);
+    }), _m.most.map($var13 => $var14 => {
+      ring($var13, $var14);
     })(pith)));
 
     const dispble = _m.most.run(sink)(scheduler, s);
