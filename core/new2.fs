@@ -63,7 +63,7 @@ let rootNode = unbox document.getElementById "root-node"
 let patches =
     rez
     |> most.scan (fun n p -> p(n); n) rootNode
-    |> most.until (most.periodic 10000 |> most.skip 1)
+    |> most.until (most.periodic 3000 |> most.skip 1)
 
 
 let sink = { new Sink<_> with
