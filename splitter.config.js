@@ -8,6 +8,7 @@ function resolve(relativePath) {
 module.exports = {
   entry: resolve("core/core.fsproj"),
   outDir: resolve("out/modules"),
+  port: 61225, // Fable daemon port (61225 by default)
   babel: fableUtils.resolveBabelOptions({
     presets: [
       ["env", { modules: "commonjs" }]
