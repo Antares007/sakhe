@@ -7,7 +7,7 @@ and Delay = float
 and Period = float
 and Offset = float
 and Stream<'a> =
-    abstract run: Sink<'a> * IScheduler -> IDisposable
+    abstract run: 'a Sink * IScheduler -> IDisposable
 and Sink<'a> =
     abstract ``event``: Time * 'a -> unit
     abstract ``error``: Time * Error -> unit
@@ -93,8 +93,8 @@ module M =
     let continueWith (_: (unit -> 'a Stream)) (_: 'a Stream): Stream<'a> = jsNative
 
     ///Apply a function to each event value.
-    ///-1-2-3-> = stream
-    ///-2-3-4-> = map ((+) 1) stream
+    ///  * `-1-2-3-> = stream`
+    ///  * `-2-3-4-> = map ((+) 1) stream`
     let map (_: 'a -> 'b)  (_:'a Stream): 'b Stream = jsNative
 
     ///Replace each event value with x.
@@ -121,9 +121,7 @@ module M =
     /// * `01-3-6-> = scan (+) 0 stream`
     let scan (_: 'b -> 'a -> 'b)  (_: 'b) (_: 'a Stream): 'b Stream = jsNative
 
-    type [<AllowNullLiteral>] SeedValue<'S, 'V> =
-        abstract seed: 'S with get, set
-        abstract value: 'V with get, set
+    type [<Pojo>] SeedValue<'b, 'c> = {seed: 'b; value: 'c}
 
     ///Accumulate results using a feedback loop that emits one value and feeds back another to be used in the next iteration.
     ///It allows you to maintain and update a “state” (a.k.a. feedback, a.k.a. seed for the next iteration) while emitting a different value. In contrast, scan feeds back and produces the same value.
@@ -144,21 +142,21 @@ module M =
     ///`      // value will be propagated.`
     ///`      return { seed: values, value: avg }`
     ///`}, [], stream)`
-    let loop (_: 's -> 'a -> SeedValue<'s, 'b>) (_: 's) (_: Stream<'a>): Stream<'b> = jsNative
+    let loop (_: 'b -> 'a -> SeedValue<'b, 'c>) (_: 'b) (_: Stream<'a>): Stream<'c> = jsNative
 
     ///Apply a function to the latest event and the array value at the respective index.
     /// * `[ 1, 2, 3 ] ________________ = array`
     /// * `--10---10---10---10---10---> = stream`
     /// * `--11---12---13| ____________ = zipItems (+) array stream`
     ///The resulting Stream will contain the same number of events as the input Stream, or array.length events, whichever is less.
-    let zipItems (_: 'a -> 'b -> 'ab) (_: 'a Array) (_: 'b Stream): 'ab Stream = jsNative
+    let zipItems (_: 'a -> 'b -> 'c) (_: 'a []) (_: 'b Stream): 'c Stream = jsNative
 
     ///Replace each event value with the array item at the respective index.
     /// * `[ 1, 2, 3 ] ______ = array`
     /// * `--x--x--x--x--x--> = stream`
     /// * `--1--2--3| _______ = withItems array stream`
     ///The resulting Stream will contain the same number of events as the input Stream, or array.length events, whichever is less.
-    let withItems (_: 'a Array) (_: 'b Stream): 'a Stream = jsNative
+    let withItems (_: 'a []) (_: 'b Stream): 'a Stream = jsNative
 
     ///Given a higher-order Stream, return a new Stream that adopts the behavior of (i.e., emits the events of) the most recent inner Stream.
     /// * `-a-b-c-d-e-f-> = s`
@@ -238,7 +236,7 @@ module M =
     /// * `--3---4-5--6-> = s2`
     /// * `--3-4-5-67-8-> = combine (+) s1 s2`
     ///Note that combine waits for at least one event to arrive on all input Streams before it produces any events.
-    let combine  (_: 'a -> 'b -> 'ab) (_: 'a Stream) (_:'b Stream): 'ab Stream = jsNative
+    let combine  (_: 'a -> 'b -> 'c) (_: 'a Stream) (_:'b Stream): 'c Stream = jsNative
 
 
     ///Apply a function to corresponding pairs of events from the inputs Streams.
@@ -247,7 +245,7 @@ module M =
     /// * `-2---4---6---8-> = zip (+) s1 s2`
     ///Zipping correlates by index-corresponding events from two input streams. Note that zipping a “fast” Stream and a “slow” Stream will cause buffering. Events from the fast Stream must be buffered in memory until an event at the corresponding index arrives on the slow Stream.
     ///A zipped Stream ends when any one of its input Streams ends.
-    let zip (_: 'a -> 'b -> 'ab) (_: Stream<'a>) (_: Stream<'b>): Stream<'ab> = jsNative
+    let zip (_: 'a -> 'b -> 'c) (_: Stream<'a>) (_: Stream<'b>): Stream<'c> = jsNative
 
     ///For each event in a sampler Stream, replace the event value with the latest value in another Stream. The resulting Stream will contain the same number of events as the sampler Stream.
     /// * `-1--2--3--4--5-> = values`
@@ -288,14 +286,13 @@ module M =
     /// The equals function should return true if the two values are equal, or false if they are not equal.
     let skipRepeatsWith (_: ('a -> 'a -> bool)) (_: 'a Stream): 'a Stream = jsNative
 
-    ///Discard all events in one Stream until the first event occurs in another.
+    ///Keep only events in a range, where start <= index < end, and index is the ordinal index of an event in stream.
     /// * `-a-b-c-d-e-f-> = stream`
-    /// * `------z-> ____ = startSignal`
-    /// * `-------d-e-f-> = since startSignal stream`
-    ///Note that if startSignal has no events, then the returned Stream will effectively be equivalent to never.
-    ///Discard events for 3 seconds, keep the rest.
-    /// * `since (at 3000. ()) stream`
-    let since (_: 'b Stream) (_: 'a Stream): 'a Stream = jsNative
+    /// * `---b-c-d| = slice 1 4 stream`
+    /// * `-a-b-c| = stream`
+    /// * `---b-c| = slice 1 4 stream`
+    ///If stream contains fewer than start events, the returned Stream will be empty.
+    let slice (_: int) (_: int) (_: 'a Stream): 'a Stream = jsNative
 
     ///Keep at most the first n events from stream.
     /// * `-a-b-c-d-e-f-> = stream`
@@ -338,13 +335,14 @@ module M =
     ///Keep only 3 seconds of events, discard the rest.
     let until (_: 'b Stream) (_: 'a Stream): 'a Stream = jsNative
 
-    ///Keep only events in a range, where start <= index < end, and index is the ordinal index of an event in stream.
+    ///Discard all events in one Stream until the first event occurs in another.
     /// * `-a-b-c-d-e-f-> = stream`
-    /// * `---b-c-d| = slice 1 4 stream`
-    /// * `-a-b-c| = stream`
-    /// * `---b-c| = slice 1 4 stream`
-    ///If stream contains fewer than start events, the returned Stream will be empty.
-    let slice (_: int) (_: int) (_: 'a Stream): 'a Stream = jsNative
+    /// * `------z-> ____ = startSignal`
+    /// * `-------d-e-f-> = since startSignal stream`
+    ///Note that if startSignal has no events, then the returned Stream will effectively be equivalent to never.
+    ///Discard events for 3 seconds, keep the rest.
+    /// * `since (at 3000. ()) stream`
+    let since (_: 'b Stream) (_: 'a Stream): 'a Stream = jsNative
 
     ///Keep events that occur during a time window defined by a higher-order Stream.
     /// * `-a-b-c-d-e-f-g-> = stream`
