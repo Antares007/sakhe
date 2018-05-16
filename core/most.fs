@@ -3,74 +3,46 @@ open Fable.Core
 open Fable.Import.JS
 
 type Time = float
-
-type Clock =
-    abstract now: unit -> Time
-
-type Sink<'A> =
-    abstract ``event``: time: Time * value: 'A -> unit
-    abstract ``end``: time: Time -> unit
-    abstract error: time: Time * err: Error -> unit
-
-type Delay = float
-type Period = float
-type Offset = float
-type Handle = obj option
-
-type IDisposable =
+and Delay = float
+and Period = float
+and Offset = float
+and Stream<'a> =
+    abstract run: Sink<'a> * IScheduler -> IDisposable
+and Sink<'a> =
+    abstract ``event``: Time * 'a -> unit
+    abstract ``error``: Time * Error -> unit
+    abstract ``end``: Time -> unit
+and IDisposable =
     abstract dispose: unit -> unit
-
-type Task =
+and IScheduler =
+    abstract currentTime: unit -> Time
+    abstract scheduleTask: Offset * Delay * Period * Task -> ScheduledTask
+    abstract relative: Offset -> IScheduler
+    abstract cancel: ScheduledTask -> unit
+    abstract cancelAll: (ScheduledTask -> bool) -> unit
+and Clock =
+    abstract now: unit -> Time
+and Timer =
+    abstract now: unit -> Time
+    abstract setTimer: (unit -> unit) * Delay -> Handle
+    abstract clearTimer: Handle -> unit
+and Timeline =
+    abstract add: ScheduledTask -> unit
+    abstract remove: ScheduledTask -> bool
+    abstract removeAll: (ScheduledTask -> bool) -> unit
+    abstract isEmpty: unit -> bool
+    abstract nextArrival: unit -> Time
+    abstract runTasks: Time * (ScheduledTask -> unit) -> unit
+and Task =
     inherit IDisposable
-    abstract run: time: Time -> unit
-    abstract error: time: Time * e: Error -> unit
-
-type ScheduledTask =
+    abstract run: Time -> unit
+    abstract error: Time * Error -> unit
+and ScheduledTask =
     inherit IDisposable
     abstract task: Task with get, set
     abstract run: unit -> unit
-    abstract error: err: Error -> unit
-
-type IScheduler =
-    abstract currentTime: unit -> Time
-    abstract scheduleTask: offset: Offset * delay: Delay * period: Period * task: Task -> ScheduledTask
-    abstract relative: offset: Offset -> IScheduler
-    abstract cancel: task: ScheduledTask -> unit
-    abstract cancelAll: predicate: (ScheduledTask -> bool) -> unit
-
-type Stream<'A> =
-    abstract run: sink: Sink<'A> * scheduler: IScheduler -> IDisposable
-
-type Timer =
-    abstract now: unit -> Time
-    abstract setTimer: f: (unit -> obj option) * delayTime: Delay -> Handle
-    abstract clearTimer: timerHandle: Handle -> unit
-
-type Timeline =
-    abstract add: scheduledTask: ScheduledTask -> unit
-    abstract remove: scheduledTask: ScheduledTask -> bool
-    abstract removeAll: f: (ScheduledTask -> bool) -> unit
-    abstract isEmpty: unit -> bool
-    abstract nextArrival: unit -> Time
-    abstract runTasks: time: Time * runTask: (ScheduledTask -> obj option) -> unit
-
-type MulticastSource<'A> =
-    inherit Stream<'A>
-    inherit Sink<'A>
-    inherit IDisposable
-    abstract source: Stream<'A> with get, set
-    abstract sinks: Array<Sink<'A>> with get, set
-    abstract disposable: IDisposable with get, set
-    abstract run: sink: Sink<'A> * scheduler: IScheduler -> IDisposable
-    abstract ``event``: time: Time * value: 'A -> unit
-    abstract error: time: Time * error: Error -> unit
-    abstract ``end``: time: Time -> unit
-    abstract add: sink: Sink<'A> -> int
-    abstract remove: sink: Sink<'A> -> int
-    abstract dispose: unit -> unit
-
-type MulticastSourceStatic =
-    [<Emit "new $0($1...)">] abstract Create: source: Stream<'A> -> MulticastSource<'A>
+    abstract error: Error -> unit
+and Handle = obj
 
 [<Fable.Core.Import("*", "@most/core")>]
 module M =
@@ -98,7 +70,7 @@ module M =
 
     ///Create an infinite Stream containing events that occur at a specified Period. The first event occurs at time 0, and the event values are undefined.
     /// * `x--x--x--x--> = periodic 3`
-    let periodic (_: int): unit Stream = jsNative
+    let periodic (_: Period): unit Stream = jsNative
 
     ///Create a Stream that fails with the provided Error at time 0. This can be useful for functions that need to return a Stream and also need to propagate an error.
     /// * `X = throwError (Error.Create "")`
@@ -366,13 +338,12 @@ module M =
     ///Keep only 3 seconds of events, discard the rest.
     let until (_: 'b Stream) (_: 'a Stream): 'a Stream = jsNative
 
-    ///Discard all events in one Stream until the first event occurs in another.
+    ///Keep only events in a range, where start <= index < end, and index is the ordinal index of an event in stream.
     /// * `-a-b-c-d-e-f-> = stream`
-    /// * `------z-> ____ = startSignal`
-    /// * `-------d-e-f-> = since startSignal stream`
-    ///Note that if startSignal has no events, then the returned Stream will effectively be equivalent to never.
-    ///Discard events for 3 seconds, keep the rest.
-    ///`since (at 3000. ()), stream`
+    /// * `---b-c-d| = slice 1 4 stream`
+    /// * `-a-b-c| = stream`
+    /// * `---b-c| = slice 1 4 stream`
+    ///If stream contains fewer than start events, the returned Stream will be empty.
     let slice (_: int) (_: int) (_: 'a Stream): 'a Stream = jsNative
 
     ///Keep events that occur during a time window defined by a higher-order Stream.
@@ -466,7 +437,7 @@ module M =
     ///Multicast allows you to build up a stream of maps, filters, and other transformations, and then share it efficiently with multiple observers.
     let multicast (_: Stream<'A>): Stream<'A> = jsNative
 
-    type [<AllowNullLiteral>] PropagateTask<'A, 'B> =
+    type PropagateTask<'A, 'B> =
         inherit Task
         abstract value: 'A with get, set
         abstract sink: Sink<'B> with get, set

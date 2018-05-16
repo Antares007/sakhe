@@ -39,7 +39,7 @@ let Text f = chr text f
 
 let (:=) a b = a (M.merge (M.now b) (M.never ()))
 
-let intS = M.periodic 10 |> M.scan (fun c _ -> c + 1) 0
+let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0
 
 let rec counter (d: int) (o:ILang<_>) =
     o.Node << Div := fun o ->
@@ -63,7 +63,7 @@ let rootNode: HTMLDivElement = unbox document.getElementById "root-node"
 let patches =
     rez
     |> M.scan (fun n p -> p(n); n) rootNode
-    |> M.until (M.periodic 3000 |> M.skip 1)
+    |> M.until (M.periodic 3000. |> M.skip 1)
 
 
 let sink = { new Sink<_> with
