@@ -104,12 +104,7 @@ module Core =
         abstract propagateErrorTask: error: Error * sink: Sink<'T> -> PropagateTask<unit, 'T>
         abstract propagateErrorTask: error: Error -> (Sink<'T> -> PropagateTask<unit, 'T>)
 
-        abstract ap: streamofFunctions: Stream<('A -> 'B)> * streamOfValues: Stream<'A> -> Stream<'B>
-        abstract ap: streamofFunctions: Stream<('A -> 'B)> -> (Stream<'A> -> Stream<'B>)
 
-        abstract chain: f: ('A -> Stream<'B>) * stream: Stream<'A> -> Stream<'B>
-        abstract chain: f: ('A -> Stream<'B>) -> (Stream<'A> -> Stream<'B>)
-        abstract join: higherOrderStream: Stream<Stream<'A>> -> Stream<'A>
 
         //abstract combineArray: fn: ('A -> 'B -> 'R) * streams: Stream<'A> * Stream<'B> -> Stream<'R>
         //abstract combineArray: fn: ('A -> 'B -> 'C -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> -> Stream<'R>
@@ -126,29 +121,6 @@ module Core =
         abstract combineArray: f: ('a[] -> 'b) -> Stream<'a>[] -> Stream<'b>
 
 
-        abstract concatMap: f: ('A -> Stream<'B>) * stream: Stream<'A> -> Stream<'B>
-        abstract concatMap: f: ('A -> Stream<'B>) -> (Stream<'A> -> Stream<'B>)
-
-        abstract continueWith: f: (obj option -> Stream<'A>) * s: Stream<'A> -> Stream<'A>
-        abstract continueWith: f: (obj option -> Stream<'A>) -> (Stream<'A> -> Stream<'A>)
-
-        abstract delay: dt: int * s: Stream<'A> -> Stream<'A>
-        abstract delay: dt: int -> (Stream<'A> -> Stream<'A>)
-
-        abstract recoverWith: p: ('E -> Stream<'A>) * s: Stream<'A> -> Stream<'A>
-        abstract recoverWith: p: ('E -> Stream<'A>) -> (Stream<'A> -> Stream<'A>)
-        abstract throwError: e: Error -> Stream<obj option>
-
-        abstract filter: p: ('A -> bool) * s: Stream<'A> -> Stream<'A>
-        abstract filter: p: ('A -> bool) -> (Stream<'A> -> Stream<'A>)
-        abstract skipRepeats: s: Stream<'A> -> Stream<'A>
-        abstract skipRepeatsWith: eq: ('A -> 'A -> bool) * s: Stream<'A> -> Stream<'A>
-        abstract skipRepeatsWith: eq: ('A -> 'A -> bool) -> (Stream<'A> -> Stream<'A>)
-
-        abstract throttle: period: int * s: Stream<'A> -> Stream<'A>
-        abstract throttle: period: int -> (Stream<'A> -> Stream<'A>)
-        abstract debounce: period: int * s: Stream<'A> -> Stream<'A>
-        abstract debounce: period: int -> (Stream<'A> -> Stream<'A>)
 
         abstract loop: f: ('S -> 'A -> SeedValue<'S, 'B>) * seed: 'S * s: Stream<'A> -> Stream<'B>
         abstract loop: f: ('S -> 'A -> SeedValue<'S, 'B>) -> ('S -> Stream<'A> -> Stream<'B>)
