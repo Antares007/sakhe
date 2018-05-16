@@ -1,3 +1,4 @@
 ﻿module Sakhe.M
+open Most
 
-let tree deltac mpith = mpith |> Most.map (A.tree deltac) |> Most.switchLatest
+let tree deltac mpith = mpith |> M.map (A.tree deltac) |> M.switchLatest
