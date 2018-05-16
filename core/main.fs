@@ -3,7 +3,6 @@ open Fable.Import.Browser
 open Fable.Core
 open M
 open Dom
-open MostTypes
 open Most
 
 type IDom<'a when 'a :> Element> =

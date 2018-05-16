@@ -12,8 +12,6 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
-var _mosttypes = require("./mosttypes");
-
 var _core = require("@most/core");
 
 var core = _interopRequireWildcard(_core);
@@ -25,6 +23,12 @@ var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 var _Option = require("./fable-core/Option");
 
 var _m = require("./m");
+
+var _Seq = require("./fable-core/Seq");
+
+var _disposable = require("@most/disposable");
+
+var disposable = _interopRequireWildcard(_disposable);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -48,7 +52,6 @@ class T {
 
 exports.T = T;
 (0, _Symbol2.setType)("Sakhe.Dom.T", T);
-const disposable = _mosttypes.DisposableModule.require;
 
 function tree(pith) {
   const ring = function (pith_1, o) {
@@ -250,15 +253,19 @@ function tree(pith) {
   };
 
   const s = (0, _m.tree)(function (xs) {
-    return (0, _CurriedLambda2.default)(function (arg00, arg10) {
-      return _mosttypes.Core.require.combineArray((...list) => ($var9 => $var10 => {
-        arg00($var9, $var10);
-      })(list), arg10);
-    })(function (ps, e) {
-      ps.forEach(function (p) {
-        p(e);
-      });
-    })(Array.from(xs).slice().reverse());
+    return function (arg10_) {
+      return core.map($var9 => $var10 => {
+        (function (ps, e) {
+          ps.forEach(function (p) {
+            p(e);
+          });
+        })($var9, $var10);
+      }, arg10_);
+    }((0, _Seq.fold)(function (alS, aS) {
+      return core.combine(function (aList, a) {
+        return aList.concat([a]);
+      }, alS, aS);
+    }, core.now([]), Array.from(xs).slice().reverse()));
   }, core.map($var11 => $var12 => {
     ring($var11, $var12);
   }, pith));
@@ -315,6 +322,6 @@ function tree(pith) {
       d1();
       const dispose = restore.contents;
       dispose();
-    }), void 0);
+    }), null);
   });
 }

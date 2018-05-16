@@ -1,7 +1,76 @@
 namespace Most
 open Fable.Core
 open Fable.Import.JS
-open MostTypes
+
+type Time = float
+
+type Clock =
+    abstract now: unit -> Time
+
+type Sink<'A> =
+    abstract ``event``: time: Time * value: 'A -> unit
+    abstract ``end``: time: Time -> unit
+    abstract error: time: Time * err: Error -> unit
+
+type Delay = float
+type Period = float
+type Offset = float
+type Handle = obj option
+
+type IDisposable =
+    abstract dispose: unit -> unit
+
+type Task =
+    inherit IDisposable
+    abstract run: time: Time -> unit
+    abstract error: time: Time * e: Error -> unit
+
+type ScheduledTask =
+    inherit IDisposable
+    abstract task: Task with get, set
+    abstract run: unit -> unit
+    abstract error: err: Error -> unit
+
+type IScheduler =
+    abstract currentTime: unit -> Time
+    abstract scheduleTask: offset: Offset * delay: Delay * period: Period * task: Task -> ScheduledTask
+    abstract relative: offset: Offset -> IScheduler
+    abstract cancel: task: ScheduledTask -> unit
+    abstract cancelAll: predicate: (ScheduledTask -> bool) -> unit
+
+type Stream<'A> =
+    abstract run: sink: Sink<'A> * scheduler: IScheduler -> IDisposable
+
+type Timer =
+    abstract now: unit -> Time
+    abstract setTimer: f: (unit -> obj option) * delayTime: Delay -> Handle
+    abstract clearTimer: timerHandle: Handle -> unit
+
+type Timeline =
+    abstract add: scheduledTask: ScheduledTask -> unit
+    abstract remove: scheduledTask: ScheduledTask -> bool
+    abstract removeAll: f: (ScheduledTask -> bool) -> unit
+    abstract isEmpty: unit -> bool
+    abstract nextArrival: unit -> Time
+    abstract runTasks: time: Time * runTask: (ScheduledTask -> obj option) -> unit
+
+type MulticastSource<'A> =
+    inherit Stream<'A>
+    inherit Sink<'A>
+    inherit IDisposable
+    abstract source: Stream<'A> with get, set
+    abstract sinks: Array<Sink<'A>> with get, set
+    abstract disposable: IDisposable with get, set
+    abstract run: sink: Sink<'A> * scheduler: IScheduler -> IDisposable
+    abstract ``event``: time: Time * value: 'A -> unit
+    abstract error: time: Time * error: Error -> unit
+    abstract ``end``: time: Time -> unit
+    abstract add: sink: Sink<'A> -> int
+    abstract remove: sink: Sink<'A> -> int
+    abstract dispose: unit -> unit
+
+type MulticastSourceStatic =
+    [<Emit "new $0($1...)">] abstract Create: source: Stream<'A> -> MulticastSource<'A>
 
 [<Fable.Core.Import("*", "@most/core")>]
 module M =
@@ -9,11 +78,11 @@ module M =
 
     ///**Description**
     ///Activate an event `Stream` and consume all its events.
-    let runEffects (_: 'a Stream) (_: Scheduler): Promise<unit> = jsNative
+    let runEffects (_: 'a Stream) (_: IScheduler): Promise<unit> = jsNative
 
     ///**Description**
     ///Run a `Stream`, sending all events to the provided `Sink`. The Stream’s `Time` values come from the provided `Scheduler`.
-    let run (_: 'a Sink) (_: Scheduler) (_: 'a Stream): Disposable = jsNative
+    let run (_: 'a Sink) (_: IScheduler) (_: 'a Stream): IDisposable = jsNative
 
 
     ///**Description**
@@ -472,22 +541,22 @@ module M =
     ///Create a `Task` that can be scheduled to propagate an `error` to a `Sink`. When the Task executes, it will call the Sink’s error method with the current time (from the Scheduler with which it was scheduled) and the error.
     let propagateErrorTask (_: Error) (_: 'a Sink): PropagateTask<unit, 'a> = jsNative
 
-    let newStream (_: 'a Sink -> Scheduler -> Disposable): 'a Stream = jsNative
+    let newStream (_: 'a Sink -> IScheduler -> IDisposable): 'a Stream = jsNative
 
-[<Fable.Core.Import("*", "@most/scheduler")>]
+[<Import("*", "@most/scheduler")>]
 module Scheduler =
 
     ///**Description**
     ///Schedule a Task to execute as soon as possible, but still asynchronously.
-    let asap (_: Task) (_: Scheduler): ScheduledTask = jsNative
+    let asap (_: Task) (_: IScheduler): ScheduledTask = jsNative
 
     ///**Description**
     ///Schedule a Task to execute after a specified Delay.
-    let delay (_: Delay) (_: Task) (_: Scheduler): ScheduledTask = jsNative
+    let delay (_: Delay) (_: Task) (_: IScheduler): ScheduledTask = jsNative
 
     ///**Description**
     ///Schedule a Task to execute periodically with the specified Period.
-    let periodic (_: Period) (_: Task) (_: Scheduler): ScheduledTask = jsNative
+    let periodic (_: Period) (_: Task) (_: IScheduler): ScheduledTask = jsNative
 
     ///**Description**
     ///Cancel all future scheduled executions of a ScheduledTask.
@@ -495,15 +564,15 @@ module Scheduler =
 
     ///**Description**
     ///Cancel all future scheduled executions of all ScheduledTasks for which the provided predicate is true.
-    let cancelAllTasks (_: ScheduledTask -> bool)  (_: Scheduler): unit = jsNative
+    let cancelAllTasks (_: ScheduledTask -> bool)  (_: IScheduler): unit = jsNative
 
     ///**Description**
     ///Create a new Scheduler that uses the provided Timer and Timeline for scheduling Tasks.
-    let newScheduler (_: Timer) (_: Timeline): Scheduler = jsNative
+    let newScheduler (_: Timer) (_: Timeline): IScheduler = jsNative
 
     ///**Description**
     ///Create a new Scheduler that uses a default platform-specific Timer and a new, empty Timeline.
-    let newDefaultScheduler (_: unit): Scheduler = jsNative
+    let newDefaultScheduler (_: unit): IScheduler = jsNative
 
     ///**Description**
     ///Create a new Scheduler with origin (i.e., zero time) at the specified Offset with the provided Scheduler.
@@ -517,7 +586,7 @@ module Scheduler =
     ///``
     ///`currentTime(scheduler) //> 3929`
     ///`currentTime(relativeScheduler) //> 2292`
-    let schedulerRelativeTo (_: Offset) (_: Scheduler): Scheduler = jsNative
+    let schedulerRelativeTo (_: Offset) (_: IScheduler): IScheduler = jsNative
 
     ///**Description**
     ///Create a new Timer that uses the provided Clock as a source of the current Time.
@@ -547,4 +616,36 @@ module Scheduler =
     ///Create a new Clock whose origin is at the current time (at the instant of calling clockRelativeTime) of the provided Clock.
     let clockRelativeTo (_: Clock): Clock = jsNative
 
-    let currentTime (_: Scheduler): Time = jsNative
+    let currentTime (_: IScheduler): Time = jsNative
+
+[<Import("*", "@most/disposable")>]
+module Disposable =
+
+    ///**Description**
+    ///Create a no-op Disposable.
+    let disposeNone (_: unit): IDisposable = jsNative
+
+    ///**Description**
+    ///Create a Disposable which, when disposed of, will call the provided function, passing the provided value.
+    let disposeWith (_: 'a -> unit)  (_: 'a): IDisposable = jsNative
+
+    ///**Description**
+    ///Wrap a Disposable so the underlying Disposable will only be disposed of once—even if the returned Disposable is disposed of multiple times.
+    let disposeOnce (_: IDisposable): IDisposable = jsNative
+
+    ///**Description**
+    ///Combine two Disposables into a single Disposable which will dispose of both.
+    let disposeBoth (_: IDisposable) (_: IDisposable): IDisposable = jsNative
+
+    ///**Description**
+    ///Combine an array of Disposables into a single Disposable which will dispose of all the Disposables in the array.
+    let disposeAll (_: IDisposable []): IDisposable = jsNative
+
+    ///**Description**
+    ///Dispose of the provided Disposable. Note that dispose does not catch exceptions. If the Disposable throws an exception, the exception will propagate out of dispose.
+    let dispose (_: IDisposable): unit = jsNative
+
+    ///**Description**
+    ///Attempt to dispose of the provided Disposable. If the Disposable throws an exception, catch and propagate it to the provided Sink with the provided Time.
+    ///Note: Only an exception thrown by the Disposable will be caught. If the act of propagating an error to the Sink throws an exception, that exception will not be caught.
+    let tryDispose (_: Time) (_: IDisposable) (_: Sink<'a>): unit = jsNative

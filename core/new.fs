@@ -1,9 +1,9 @@
 module Sakhe.Dom
 open Fable.Import.Browser
-open MostTypes
 open Most
 open A
 open Fable.Core
+open Fable.Import.Node.Stream
 
 type T<'a, 'b> =
     | Absurd of (unit -> 'a)
@@ -34,8 +34,6 @@ let inline private matchChildren
             | Some a -> fFoundNode (a, childAtIndex)
             | None -> fOtherNode childAtIndex
 
-let private disposable = MostTypes.Disposable.require
-
 [<Emit("(function makeOnce (f) {
     var b
     return function onceAtoBtoAtoB (a) {
@@ -51,6 +49,12 @@ let private once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
 [<Emit("[...$0]")>]
 let private spreadToArray (_: NodeList): Node [] = Exceptions.jsNative
 
+let inline private combineArray (f: 'a [] -> 'b) (s: 'a Stream []): 'b Stream =
+    s
+    |> Seq.fold
+        (fun alS aS -> (M.combine (fun aList a -> Array.append aList [|a|]) alS aS))
+        (M.now [||])
+    |> M.map f
 let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a -> unit> =
     let ring (pith: ILang<'a> -> unit): Pith<Stream<'a -> unit>> =
         fun o ->
@@ -109,7 +113,7 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                     |> ignore)))
     let s =
         M.tree
-            (fun xs -> xs |> Array.ofList |> Array.rev |> MostTypes.Core.require.combineArray (fun ps (e: 'a) -> ps |> Array.iter (fun p -> p e)))
+            (fun xs -> xs |> Array.ofList |> Array.rev |> combineArray (fun ps (e: 'a) -> ps |> Array.iter (fun p -> p e)))
             (M.map ring pith)
     M.newStream (fun sink scheduler ->
         let restore = ref (fun () -> ())
@@ -129,10 +133,12 @@ let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a
                 patch element
             )
         let dispble = M.run sink scheduler s
-        disposable.create (once (fun () ->
-            let d1 () = dispble.dispose ()
-            d1 ()
-            let dispose = !restore
-            dispose ()
-        ))
+        Disposable.disposeWith
+            (once (fun () ->
+                let d1 () = dispble.dispose ()
+                d1 ()
+                let dispose = !restore
+                dispose ()
+            ))
+            ()
     )

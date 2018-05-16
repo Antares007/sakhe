@@ -229,7 +229,7 @@ function sink() {
 
     [_Symbol3.default.reflection]() {
       return {
-        interfaces: ["MostTypes.Sink"]
+        interfaces: ["Most.Sink"]
       };
     }
 
