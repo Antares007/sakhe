@@ -72,8 +72,8 @@ let sink = { new Sink<_> with
     member __.``end`` (time) = console.info (time, "|")
     member __.error (time, err) = console.error (time, err)
 }
-// most.run (sink, M.Scheduler.require.newDefaultScheduler (), patches) |> ignore
-let scheduler = MostTypes.Scheduler.require.newDefaultScheduler ()
+// most.run (sink, Most.Scheduler.newDefaultScheduler (), patches) |> ignore
+let scheduler = Most.Scheduler.newDefaultScheduler ()
 M.runEffects patches scheduler
     |> ignore
 

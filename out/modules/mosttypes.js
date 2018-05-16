@@ -3,15 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DisposableModule = exports.SchedulerModule = exports.Core = undefined;
+exports.DisposableModule = exports.Core = undefined;
 
 var _core = require("@most/core");
 
 var core = _interopRequireWildcard(_core);
-
-var _scheduler = require("@most/scheduler");
-
-var scheduler = _interopRequireWildcard(_scheduler);
 
 var _disposable = require("@most/disposable");
 
@@ -25,12 +21,7 @@ const Core = exports.Core = function (__exports) {
   return __exports;
 }({});
 
-const SchedulerModule = exports.SchedulerModule = function (__exports) {
-  const require_1 = __exports.require = scheduler;
-  return __exports;
-}({});
-
 const DisposableModule = exports.DisposableModule = function (__exports) {
-  const require_2 = __exports.require = disposable;
+  const require_1 = __exports.require = disposable;
   return __exports;
 }({});

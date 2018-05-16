@@ -30,7 +30,9 @@ var _Symbol2 = require("./fable-core/Symbol");
 
 var _Symbol3 = _interopRequireDefault(_Symbol2);
 
-var _mosttypes = require("./mosttypes");
+var _scheduler = require("@most/scheduler");
+
+var scheduler_1 = _interopRequireWildcard(_scheduler);
 
 var _Seq = require("./fable-core/Seq");
 
@@ -234,8 +236,7 @@ function sink() {
   };
 }
 
-const scheduler = exports.scheduler = _mosttypes.SchedulerModule.require.newDefaultScheduler();
-
+const scheduler = exports.scheduler = scheduler_1.newDefaultScheduler();
 core.runEffects(patches, scheduler), void 0;
 
 function combineArray(f, s) {

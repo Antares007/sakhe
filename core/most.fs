@@ -1,11 +1,10 @@
 namespace Most
+open Fable.Core
+open Fable.Import.JS
+open MostTypes
 
 [<Fable.Core.Import("*", "@most/core")>]
 module M =
-    open Fable.Core
-    open Fable.Import.JS
-    open MostTypes
-
     let archilBolkvadze = ("არჩილ ბოლქვაძე", 42)
 
     ///**Description**
@@ -474,3 +473,78 @@ module M =
     let propagateErrorTask (_: Error) (_: 'a Sink): PropagateTask<unit, 'a> = jsNative
 
     let newStream (_: 'a Sink -> Scheduler -> Disposable): 'a Stream = jsNative
+
+[<Fable.Core.Import("*", "@most/scheduler")>]
+module Scheduler =
+
+    ///**Description**
+    ///Schedule a Task to execute as soon as possible, but still asynchronously.
+    let asap (_: Task) (_: Scheduler): ScheduledTask = jsNative
+
+    ///**Description**
+    ///Schedule a Task to execute after a specified Delay.
+    let delay (_: Delay) (_: Task) (_: Scheduler): ScheduledTask = jsNative
+
+    ///**Description**
+    ///Schedule a Task to execute periodically with the specified Period.
+    let periodic (_: Period) (_: Task) (_: Scheduler): ScheduledTask = jsNative
+
+    ///**Description**
+    ///Cancel all future scheduled executions of a ScheduledTask.
+    let cancelTask (_: ScheduledTask): unit = jsNative
+
+    ///**Description**
+    ///Cancel all future scheduled executions of all ScheduledTasks for which the provided predicate is true.
+    let cancelAllTasks (_: ScheduledTask -> bool)  (_: Scheduler): unit = jsNative
+
+    ///**Description**
+    ///Create a new Scheduler that uses the provided Timer and Timeline for scheduling Tasks.
+    let newScheduler (_: Timer) (_: Timeline): Scheduler = jsNative
+
+    ///**Description**
+    ///Create a new Scheduler that uses a default platform-specific Timer and a new, empty Timeline.
+    let newDefaultScheduler (_: unit): Scheduler = jsNative
+
+    ///**Description**
+    ///Create a new Scheduler with origin (i.e., zero time) at the specified Offset with the provided Scheduler.
+    ///When implementing higher-order Stream combinators, this function can be used to create a Scheduler with local time for each “inner” Stream.
+    ///
+    ///`currentTime(scheduler) //> 1637`
+    ///`const relativeScheduler = schedulerRelativeTo(1234, scheduler)`
+    ///`currentTime(relativeScheduler) //> 0`
+    ///``
+    ///`// ... later ...`
+    ///``
+    ///`currentTime(scheduler) //> 3929`
+    ///`currentTime(relativeScheduler) //> 2292`
+    let schedulerRelativeTo (_: Offset) (_: Scheduler): Scheduler = jsNative
+
+    ///**Description**
+    ///Create a new Timer that uses the provided Clock as a source of the current Time.
+    let newClockTimer (_: Clock): Timer = jsNative
+
+    ///**Description**
+    ///Create an empty Timeline.
+    let newTimeline: unit -> Timeline = jsNative
+
+    ///**Description**
+    ///Create a new Clock by auto detecting the best platform-specific source of Time. In modern browsers, it uses performance.now, and on Node, process.hrtime. If neither is available, it falls back to Date.now.
+    let newPlatformClock (_: unit): Clock = jsNative
+
+    ///**Description**
+    ///Create a new Clock using performance.now.
+    let newPerformanceClock (_: unit): Clock = jsNative
+
+    ///**Description**
+    ///Create a new Clock using process.hrtime.
+    let newHRTimeClock (_: unit): Clock = jsNative
+
+    ///**Description**
+    ///Create a new Clock using Date.now. Note that a Clock using Date.now is not guaranteed to be monotonic and is subject to system clock changes, e.g., NTP can change your system clock.
+    let newDateClock (_: unit): Clock = jsNative
+
+    ///**Description**
+    ///Create a new Clock whose origin is at the current time (at the instant of calling clockRelativeTime) of the provided Clock.
+    let clockRelativeTo (_: Clock): Clock = jsNative
+
+    let currentTime (_: Scheduler): Time = jsNative

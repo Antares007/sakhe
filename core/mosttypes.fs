@@ -112,35 +112,6 @@ module Core =
 
     let require: IExports = Fable.Core.JsInterop.importAll "@most/core"
 
-module Scheduler =
-    type [<AllowNullLiteral>] IExports =
-        abstract newScheduler: timer: Timer * timeline: Timeline -> Scheduler
-        abstract newScheduler: timer: Timer -> (Timeline -> Scheduler)
-        abstract newDefaultScheduler: unit -> Scheduler
-        abstract schedulerRelativeTo: offset: Offset * scheduler: Scheduler -> Scheduler
-        abstract schedulerRelativeTo: offset: Offset -> (Scheduler -> Scheduler)
-        abstract newClockTimer: clock: Clock -> Timer
-        abstract newTimeline: unit -> Timeline
-        abstract newPlatformClock: unit -> Clock
-        abstract newPerformanceClock: unit -> Clock
-        abstract newDateClock: unit -> Clock
-        abstract newHRTimeClock: unit -> Clock
-        abstract clockRelativeTo: clock: Clock -> Clock
-        abstract currentTime: scheduler: Scheduler -> Time
-        abstract asap: task: Task * scheduler: Scheduler -> ScheduledTask
-        abstract asap: task: Task -> (Scheduler -> ScheduledTask)
-        abstract delay: delay: Delay * task: Task * scheduler: Scheduler -> ScheduledTask
-        abstract delay: delay: Delay -> (Task -> Scheduler -> ScheduledTask)
-        abstract delay: delay: Delay * task: Task -> (Scheduler -> ScheduledTask)
-        abstract periodic: period: Period * task: Task * scheduler: Scheduler -> ScheduledTask
-        abstract periodic: period: Period -> (Task -> Scheduler -> ScheduledTask)
-        abstract periodic: period: Period * task: Task -> (Scheduler -> ScheduledTask)
-        abstract cancelTask: scheduledTask: ScheduledTask -> unit
-        abstract cancelAllTasks: predicate: (ScheduledTask -> bool) * scheduler: Scheduler -> unit
-        abstract cancelAllTasks: predicate: (ScheduledTask -> bool) -> (Scheduler -> unit)
-
-    let require: IExports = Fable.Core.JsInterop.importAll "@most/scheduler"
-
 module Disposable =
     type [<AllowNullLiteral>] IExports =
         abstract disposeNone: unit -> Disposable
