@@ -61,18 +61,6 @@ type [<AllowNullLiteral>] Timeline =
     abstract runTasks: time: Time * runTask: TaskRunner -> unit
 
 module Core =
-    type PropagateTaskRun<'A, 'B> = Time * 'A * Sink<'B> -> unit
-
-    type [<AllowNullLiteral>] PropagateTask<'A, 'B> =
-        inherit Task
-        abstract value: 'A with get, set
-        abstract sink: Sink<'B> with get, set
-        abstract active: bool with get, set
-
-    type [<AllowNullLiteral>] SeedValue<'S, 'V> =
-        abstract seed: 'S with get, set
-        abstract value: 'V with get, set
-
     type [<AllowNullLiteral>] MulticastSource<'A> =
         inherit Stream<'A>
         inherit Sink<'A>
@@ -95,17 +83,6 @@ module Core =
 
     type [<AllowNullLiteral>] IExports =
 
-        abstract propagateTask: run: PropagateTaskRun<'A, 'B> * value: 'A * sink: Sink<'B> -> PropagateTask<'A, 'B>
-        abstract propagateTask: run: PropagateTaskRun<'A, 'B> * value: 'A -> (Sink<'B> -> PropagateTask<'A, 'B>)
-        abstract propagateTask: run: PropagateTaskRun<'A, 'B> -> ('A -> Sink<'B> -> PropagateTask<'A, 'B>)
-        abstract propagateEventTask: value: 'T * sink: Sink<'T> -> PropagateTask<'T, 'T>
-        abstract propagateEventTask: value: 'T -> (Sink<'T> -> PropagateTask<'T, 'T>)
-        abstract propagateEndTask: sink: Sink<'T> -> PropagateTask<unit, 'T>
-        abstract propagateErrorTask: error: Error * sink: Sink<'T> -> PropagateTask<unit, 'T>
-        abstract propagateErrorTask: error: Error -> (Sink<'T> -> PropagateTask<unit, 'T>)
-
-
-
         //abstract combineArray: fn: ('A -> 'B -> 'R) * streams: Stream<'A> * Stream<'B> -> Stream<'R>
         //abstract combineArray: fn: ('A -> 'B -> 'C -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> -> Stream<'R>
         //abstract combineArray: fn: ('A -> 'B -> 'C -> 'D -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> -> Stream<'R>
@@ -120,48 +97,19 @@ module Core =
         [<Emit("$0.combineArray((...list) => $1(list), $2)")>]
         abstract combineArray: f: ('a[] -> 'b) -> Stream<'a>[] -> Stream<'b>
 
-
-
-        abstract loop: f: ('S -> 'A -> SeedValue<'S, 'B>) * seed: 'S * s: Stream<'A> -> Stream<'B>
-        abstract loop: f: ('S -> 'A -> SeedValue<'S, 'B>) -> ('S -> Stream<'A> -> Stream<'B>)
-        abstract loop: f: ('S -> 'A -> SeedValue<'S, 'B>) * seed: 'S -> (Stream<'A> -> Stream<'B>)
-
-
         abstract MulticastSource: MulticastSourceStatic
 
-        abstract awaitPromises: stream: Stream<Promise<'A>> -> Stream<'A>
-        abstract fromPromise: promise: Promise<'A> -> Stream<'A>
+        // abstract zipArray: fn: ('A -> 'B -> 'R) * streams: Stream<'A> * Stream<'B> -> Stream<'R>
+        // abstract zipArray: fn: ('A -> 'B -> 'C -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> -> Stream<'R>
+        // abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> -> Stream<'R>
+        // abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'E -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> * Stream<'E> -> Stream<'R>
+        // abstract zipArray: fn: (ResizeArray<'V> -> 'R) * items: ResizeArray<Stream<'V>> -> Stream<'R>
+        // abstract zipArray: fn: ('A -> 'B -> 'R) -> (Stream<'A> * Stream<'B> -> Stream<'R>)
+        // abstract zipArray: fn: ('A -> 'B -> 'C -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> -> Stream<'R>)
+        // abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> -> Stream<'R>)
+        // abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'E -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> * Stream<'E> -> Stream<'R>)
+        // abstract zipArray: fn: (ResizeArray<'V> -> 'R) -> (ResizeArray<Stream<'V>> -> Stream<'R>)
 
-
-        abstract sample: values: Stream<'A> * sampler: Stream<'B> -> Stream<'A>
-        abstract sample: values: Stream<'A> -> (Stream<'B> -> Stream<'A>)
-        abstract snapshot: f: ('A -> 'B -> 'C) * values: Stream<'A> * sampler: Stream<'B> -> Stream<'C>
-        abstract snapshot: f: ('A -> 'B -> 'C) -> (Stream<'A> -> Stream<'B> -> Stream<'C>)
-        abstract snapshot: f: ('A -> 'B -> 'C) * values: Stream<'A> -> (Stream<'B> -> Stream<'C>)
-
-
-        abstract withLocalTime: origin: Time * s: Stream<'A> -> Stream<'A>
-        abstract withLocalTime: origin: Time -> (Stream<'A> -> Stream<'A>)
-
-        abstract zip: fn: ('A -> 'B -> 'R) * a: Stream<'A> * b: Stream<'B> -> Stream<'R>
-        abstract zip: fn: ('A -> 'B -> 'R) -> (Stream<'A> -> Stream<'B> -> Stream<'R>)
-        abstract zip: fn: ('A -> 'B -> 'R) * a: Stream<'A> -> (Stream<'B> -> Stream<'R>)
-        abstract zipArray: fn: ('A -> 'B -> 'R) * streams: Stream<'A> * Stream<'B> -> Stream<'R>
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> -> Stream<'R>
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> -> Stream<'R>
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'E -> 'R) * streams: Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> * Stream<'E> -> Stream<'R>
-        abstract zipArray: fn: (ResizeArray<'V> -> 'R) * items: ResizeArray<Stream<'V>> -> Stream<'R>
-        abstract zipArray: fn: ('A -> 'B -> 'R) -> (Stream<'A> * Stream<'B> -> Stream<'R>)
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> -> Stream<'R>)
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> -> Stream<'R>)
-        abstract zipArray: fn: ('A -> 'B -> 'C -> 'D -> 'E -> 'R) -> (Stream<'A> * Stream<'B> * Stream<'C> * Stream<'D> * Stream<'E> -> Stream<'R>)
-        abstract zipArray: fn: (ResizeArray<'V> -> 'R) -> (ResizeArray<Stream<'V>> -> Stream<'R>)
-
-        abstract zipItems: f: ('A -> 'B -> 'C) * a: Array<'A> * s: Stream<'B> -> Stream<'C>
-        abstract zipItems: f: ('A -> 'B -> 'C) -> (Array<'A> -> Stream<'B> -> Stream<'C>)
-        abstract zipItems: f: ('A -> 'B -> 'C) * a: Array<'A> -> (Stream<'B> -> Stream<'C>)
-        abstract withItems: a: Array<'A> * s: Stream<obj option> -> Stream<'A>
-        abstract withItems: a: Array<'A> -> (Stream<obj option> -> Stream<'A>)
     let require: IExports = Fable.Core.JsInterop.importAll "@most/core"
 
 module Scheduler =
