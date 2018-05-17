@@ -12,6 +12,8 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
+var _Option = require("./fable-core/Option");
+
 var _core = require("@most/core");
 
 var core = _interopRequireWildcard(_core);
@@ -20,11 +22,11 @@ var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
-var _Option = require("./fable-core/Option");
-
 var _m = require("./m");
 
 var _Seq = require("./fable-core/Seq");
+
+var _List = require("./fable-core/List");
 
 var _disposable = require("@most/disposable");
 
@@ -60,169 +62,145 @@ function tree(pith) {
       Node(_arg1, pith_2) {
         const index = c | 0;
         c = c + 1 | 0;
-        o(core.map((0, _CurriedLambda2.default)(childNodePatch => function makeOnce(f) {
-          var b;
-          return function onceAtoBtoAtoB(a) {
-            if (f) {
-              b = f.call(this, a);
-              f = null;
-            }
 
-            return b;
-          };
-        }(parentElement => {
-          const $var2 = _arg1[1];
+        ($var5 => {
+          var arg00_;
+          return o((arg00_ = (childNodePatch, parentElement) => {
+            const $var2 = _arg1[1];
 
-          const $var1 = i => {
-            return parentElement.childNodes[i];
-          };
+            const $var1 = i => {
+              return parentElement.childNodes[i];
+            };
 
-          const matchValue = $var1(index);
+            const matchValue = $var1(index);
 
-          if (matchValue != null) {
-            const matchValue_1 = $var2((0, _Option.getValue)(matchValue));
+            if (matchValue != null) {
+              const matchValue_1 = $var2((0, _Option.getValue)(matchValue));
 
-            if (matchValue_1 == null) {
-              const findNode = index_1 => {
-                findNode: while (true) {
-                  const matchValue_2 = $var1(index_1);
+              if (matchValue_1 == null) {
+                const findNode = index_1 => {
+                  findNode: while (true) {
+                    const matchValue_2 = $var1(index_1);
 
-                  if (matchValue_2 != null) {
-                    const matchValue_3 = $var2((0, _Option.getValue)(matchValue_2));
+                    if (matchValue_2 != null) {
+                      const matchValue_3 = $var2((0, _Option.getValue)(matchValue_2));
 
-                    if (matchValue_3 == null) {
-                      index_1 = index_1 + 1;
-                      continue findNode;
+                      if (matchValue_3 == null) {
+                        index_1 = index_1 + 1;
+                        continue findNode;
+                      } else {
+                        return (0, _Option.makeSome)((0, _Option.getValue)(matchValue_3));
+                      }
                     } else {
-                      return (0, _Option.makeSome)((0, _Option.getValue)(matchValue_3));
+                      return null;
                     }
-                  } else {
-                    return null;
                   }
+                };
+
+                const matchValue_4 = findNode(index + 1);
+
+                if (matchValue_4 == null) {
+                  (childAtIndex => {
+                    const child_1 = _arg1[0]();
+
+                    childNodePatch(child_1);
+                    parentElement.insertBefore(child_1, childAtIndex), void 0;
+                  })((0, _Option.getValue)(matchValue));
+                } else {
+                  (tupledArg => {
+                    childNodePatch(tupledArg[0]);
+                    parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
+                  })([(0, _Option.getValue)(matchValue_4), (0, _Option.getValue)(matchValue)]);
                 }
-              };
-
-              const matchValue_4 = findNode(index + 1);
-
-              if (matchValue_4 == null) {
-                (childAtIndex => {
-                  const child_1 = _arg1[0]();
-
-                  childNodePatch(child_1);
-                  parentElement.insertBefore(child_1, childAtIndex), void 0;
-                })((0, _Option.getValue)(matchValue));
               } else {
-                (tupledArg => {
-                  childNodePatch(tupledArg[0]);
-                  parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
-                })([(0, _Option.getValue)(matchValue_4), (0, _Option.getValue)(matchValue)]);
+                childNodePatch((0, _Option.getValue)(matchValue_1));
               }
             } else {
-              childNodePatch((0, _Option.getValue)(matchValue_1));
-            }
-          } else {
-            (() => {
-              const child = _arg1[0]();
+              (() => {
+                const child = _arg1[0]();
 
-              childNodePatch(child);
-              parentElement.insertBefore(child, null), void 0;
-            })();
-          }
-        })), tree(pith_2)));
+                childNodePatch(child);
+                parentElement.insertBefore(child, null), void 0;
+              })();
+            }
+          }, arg10_ => core.map($var3 => $var4 => {
+            arg00_($var3, $var4);
+          }, arg10_))($var5));
+        })(tree(pith_2));
       },
 
       Leaf(_arg2, s) {
         const index = c | 0;
         c = c + 1 | 0;
-        o(core.map((0, _CurriedLambda2.default)(childNodePatch => function makeOnce(f) {
-          var b;
-          return function onceAtoBtoAtoB(a) {
-            if (f) {
-              b = f.call(this, a);
-              f = null;
-            }
 
-            return b;
-          };
-        }(parentElement => {
-          const $var4 = _arg2[1];
+        ($var10 => {
+          var arg00_;
+          return o((arg00_ = (childNodePatch, parentElement) => {
+            const $var7 = _arg2[1];
 
-          const $var3 = i => {
-            return parentElement.childNodes[i];
-          };
+            const $var6 = i => {
+              return parentElement.childNodes[i];
+            };
 
-          const matchValue = $var3(index);
+            const matchValue = $var6(index);
 
-          if (matchValue != null) {
-            const matchValue_1 = $var4((0, _Option.getValue)(matchValue));
+            if (matchValue != null) {
+              const matchValue_1 = $var7((0, _Option.getValue)(matchValue));
 
-            if (matchValue_1 == null) {
-              const findNode = index_1 => {
-                findNode: while (true) {
-                  const matchValue_2 = $var3(index_1);
+              if (matchValue_1 == null) {
+                const findNode = index_1 => {
+                  findNode: while (true) {
+                    const matchValue_2 = $var6(index_1);
 
-                  if (matchValue_2 != null) {
-                    const matchValue_3 = $var4((0, _Option.getValue)(matchValue_2));
+                    if (matchValue_2 != null) {
+                      const matchValue_3 = $var7((0, _Option.getValue)(matchValue_2));
 
-                    if (matchValue_3 == null) {
-                      index_1 = index_1 + 1;
-                      continue findNode;
+                      if (matchValue_3 == null) {
+                        index_1 = index_1 + 1;
+                        continue findNode;
+                      } else {
+                        return (0, _Option.makeSome)((0, _Option.getValue)(matchValue_3));
+                      }
                     } else {
-                      return (0, _Option.makeSome)((0, _Option.getValue)(matchValue_3));
+                      return null;
                     }
-                  } else {
-                    return null;
                   }
+                };
+
+                const matchValue_4 = findNode(index + 1);
+
+                if (matchValue_4 == null) {
+                  (childAtIndex => {
+                    const child_1 = _arg2[0]();
+
+                    childNodePatch(child_1);
+                    parentElement.insertBefore(child_1, childAtIndex), void 0;
+                  })((0, _Option.getValue)(matchValue));
+                } else {
+                  (tupledArg => {
+                    childNodePatch(tupledArg[0]);
+                    parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
+                  })([(0, _Option.getValue)(matchValue_4), (0, _Option.getValue)(matchValue)]);
                 }
-              };
-
-              const matchValue_4 = findNode(index + 1);
-
-              if (matchValue_4 == null) {
-                (childAtIndex => {
-                  const child_1 = _arg2[0]();
-
-                  childNodePatch(child_1);
-                  parentElement.insertBefore(child_1, childAtIndex), void 0;
-                })((0, _Option.getValue)(matchValue));
               } else {
-                (tupledArg => {
-                  childNodePatch(tupledArg[0]);
-                  parentElement.insertBefore(tupledArg[0], tupledArg[1]), void 0;
-                })([(0, _Option.getValue)(matchValue_4), (0, _Option.getValue)(matchValue)]);
+                childNodePatch((0, _Option.getValue)(matchValue_1));
               }
             } else {
-              childNodePatch((0, _Option.getValue)(matchValue_1));
-            }
-          } else {
-            (() => {
-              const child = _arg2[0]();
+              (() => {
+                const child = _arg2[0]();
 
-              childNodePatch(child);
-              parentElement.insertBefore(child, null), void 0;
-            })();
-          }
-        })), s));
+                childNodePatch(child);
+                parentElement.insertBefore(child, null), void 0;
+              })();
+            }
+          }, arg10_ => core.map($var8 => $var9 => {
+            arg00_($var8, $var9);
+          }, arg10_))($var10));
+        })(s);
       },
 
       Patch(s) {
-        o(core.map($var7 => $var8 => {
-          (function makeOnce(f) {
-            var b;
-            return function onceAtoBtoAtoB(a) {
-              if (f) {
-                b = f.call(this, a);
-                f = null;
-              }
-
-              return b;
-            };
-          })($var5 => $var6 => {
-            ((patch, n) => {
-              patch(n);
-            })($var5, $var6);
-          })($var7, $var8);
-        }, s));
+        o(core.map((0, _CurriedLambda2.default)(x => x), s));
       },
 
       [_Symbol3.default.reflection]() {
@@ -232,42 +210,47 @@ function tree(pith) {
       }
 
     });
-    o(core.now(function makeOnce(f) {
-      var b;
-      return function onceAtoBtoAtoB(a) {
-        if (f) {
-          b = f.call(this, a);
-          f = null;
-        }
 
-        return b;
-      };
-    }(function (element) {
+    ($var11 => o(core.now.bind(core)($var11)))(function (element) {
       const childNodes = element.childNodes;
       const length = ~~childNodes.length | 0;
 
       for (let i = c; i <= length - 1; i++) {
         element.removeChild(childNodes[i]), void 0;
       }
-    })));
+    });
   };
 
-  const s = (0, _m.tree)(function (xs) {
+  const s_1 = (0, _m.tree)(function (rays) {
     return function (arg10_) {
-      return core.map($var9 => $var10 => {
+      return core.map($var12 => $var13 => {
         (function (ps, e) {
           ps.forEach(function (p) {
             p(e);
           });
-        })($var9, $var10);
+        })($var12, $var13);
       }, arg10_);
     }((0, _Seq.fold)(function (alS, aS) {
       return core.combine(function (aList, a) {
         return aList.concat([a]);
       }, alS, aS);
-    }, core.now([]), Array.from(xs).slice().reverse()));
-  }, core.map($var11 => $var12 => {
-    ring($var11, $var12);
+    }, core.now([]), Array.from((0, _List.map)(function (s) {
+      return core.map((0, _CurriedLambda2.default)(function (arg00__1) {
+        return function makeOnce(f) {
+          var b;
+          return function onceAtoBtoAtoB(a) {
+            if (f) {
+              b = f.call(this, a);
+              f = null;
+            }
+
+            return b;
+          };
+        }(arg00__1);
+      }), s);
+    }, rays)).slice().reverse()));
+  }, core.map($var14 => $var15 => {
+    ring($var14, $var15);
   }, pith));
   return core.newStream(function (sink, scheduler) {
     const restore = {
@@ -300,13 +283,13 @@ function tree(pith) {
       };
     });
 
-    const s_1 = core.map($var13 => $var14 => {
+    const s_2 = core.map($var16 => $var17 => {
       (function (patch, element_2) {
         f(element_2);
         patch(element_2);
-      })($var13, $var14);
-    }, s);
-    const dispble = core.run(sink, scheduler, s_1);
+      })($var16, $var17);
+    }, s_1);
+    const dispble = core.run(sink, scheduler, s_2);
     return disposable.disposeWith(function makeOnce(f) {
       var b;
       return function onceAtoBtoAtoB(a) {

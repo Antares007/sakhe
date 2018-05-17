@@ -42,7 +42,7 @@ let inline private matchChildren
         return b
     }
 })($0)")>]
-let private once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
+let inline private once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
 
 [<Emit("[...$0]")>]
 let private spreadToArray (_: NodeList): Node [] = Exceptions.jsNative
@@ -61,7 +61,7 @@ let rec tree<'a when 'a :> Element> (pith: IStream<ILang<'a> -> unit>): IStream<
                 member __.Node ((absurd, prove): (unit -> 'b) * (Node -> 'b option) when 'b :> Node, pith) =
                     let index = c
                     c <- c + 1
-                    tree pith |> M.map (fun childNodePatch  -> once (fun (parentElement: 'a) ->
+                    o << M.map (fun childNodePatch -> (fun (parentElement: 'a) ->
                             matchChildren
                                 (
                                     (fun () ->
@@ -78,11 +78,11 @@ let rec tree<'a when 'a :> Element> (pith: IStream<ILang<'a> -> unit>): IStream<
                                         parentElement.insertBefore (child, childAtIndex) |> ignore)
                                 )
                                 (index, (fun i -> unbox parentElement.childNodes.[i]), prove)
-                    )) |> o
+                    )) <| tree pith
                 member __.Leaf ((absurd, prove), s) =
                     let index = c
                     c <- c + 1
-                    s |> M.map (fun childNodePatch -> once (fun (parentElement: 'a) ->
+                    o << M.map (fun childNodePatch -> (fun (parentElement: 'a) ->
                             matchChildren
                                 (
                                     (fun () ->
@@ -99,19 +99,27 @@ let rec tree<'a when 'a :> Element> (pith: IStream<ILang<'a> -> unit>): IStream<
                                         parentElement.insertBefore (child, childAtIndex) |> ignore)
                                 )
                                 (index, (fun i -> unbox parentElement.childNodes.[i]), prove)
-                    )) |> o
+                    )) <| s
 
                 member __.Patch (s) =
-                    s |> M.map (once (fun patch n -> patch n)) |> o }
-            o (M.now (once (fun element ->
+                    s |> M.map id |>  o }
+
+            o << M.now <| fun element ->
                 let childNodes = element.childNodes
                 let length = int childNodes.length
                 for i = c to length - 1 do
-                    element.removeChild childNodes.[i]
-                    |> ignore)))
+                    element.removeChild childNodes.[i] |> ignore
     let s =
         M.tree
-            (fun xs -> xs |> Array.ofList |> Array.rev |> combineArray (fun ps (e: 'a) -> ps |> Array.iter (fun p -> p e)))
+            (fun rays ->
+                rays
+                |> List.map (fun s -> M.map once s)
+                |> Array.ofList
+                |> Array.rev
+                |> combineArray (fun ps (e: 'a) ->
+                    ps |> Array.iter (fun p -> p e)
+                )
+            )
             (M.map ring pith)
     M.newStream (fun sink scheduler ->
         let restore = ref (fun () -> ())
