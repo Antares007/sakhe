@@ -9,6 +9,17 @@
       "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceFolder}/out/launch.js"
+    },
+    {
+      "name": "Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/out",
+      "runtimeExecutable": "${workspaceRoot}/out/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/out/node_modules/.bin/electron.cmd"
+      },
+      "args" : ["."]
     }
   ]
 }
