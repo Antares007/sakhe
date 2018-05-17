@@ -50,16 +50,16 @@ let rec counter (d: int) (o:ILang<_>) =
             (o.Node << Span) << M.now <| fun o ->
                 o.Leaf << Text << M.now <| fun text -> text.textContent <- "+"
             if d > 0 then
-                o.Node << Div << M.now <| (counter (d - 1))
+                o.Node << Div << M.now <| counter (d - 1)
 
         o.Node << Button << M.now <| fun o ->
             (o.Node << Span) << M.now <| fun o ->
                 o.Leaf << Text << M.now <| fun text -> text.textContent <- "-"
             if d > 0 then
-                o.Node << Div << M.now <| (counter (d - 1))
+                o.Node << Div << M.now <| counter (d - 1)
 
         o.Node << H3 << M.now <| fun o ->
-            (o.Leaf << Text) (intS |> M.map (fun i -> fun text -> text.textContent <- string i))
+            o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
 
 let patches =
     counter 3

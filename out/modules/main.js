@@ -174,13 +174,18 @@ function counter(d, o) {
     ($var21 => ($var20 => function (tupledArg_9) {
       o_1.Node(tupledArg_9[0], tupledArg_9[1]);
     }(H3($var20)))(core.now.bind(core)($var21)))(function (o_8) {
-      ($var22 => function (tupledArg_10) {
-        o_8.Leaf(tupledArg_10[0], tupledArg_10[1]);
-      }(_Text($var22)))(core.map($var23 => $var24 => {
-        (function (i, text_3) {
+      ($var25 => {
+        var arg00__11;
+        return ($var22 => function (tupledArg_10) {
+          o_8.Leaf(tupledArg_10[0], tupledArg_10[1]);
+        }(_Text($var22)))((arg00__11 = function (i, text_3) {
           text_3.textContent = i.toString();
-        })($var23, $var24);
-      }, intS));
+        }, function (arg10_) {
+          return core.map($var23 => $var24 => {
+            arg00__11($var23, $var24);
+          }, arg10_);
+        })($var25));
+      })(intS);
     });
   });
 }
