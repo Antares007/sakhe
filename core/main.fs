@@ -57,13 +57,13 @@ let rec counter (d: int) (o:ILang<_>) =
         o.Node << H3 := fun o ->
             (o.Leaf << Text) (intS |> M.map (fun i -> fun text -> text.textContent <- string i))
 
-let rez = tree := (counter 4)
+let rez = tree := (counter 3)
 
 let rootNode: HTMLDivElement = unbox document.getElementById "root-node"
 let patches =
     rez
+    |> M.during (M.at 1000. (M.at 3000. ()))
     |> M.scan (fun n p -> p(n); n) rootNode
-    |> M.until (M.periodic 3000. |> M.skip 1)
 
 
 let sink = { new Sink<_> with

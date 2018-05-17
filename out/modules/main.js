@@ -201,10 +201,11 @@ function counter(d, o) {
 }
 
 const rez = exports.rez = op_ColonEquals(_new.tree, function (o) {
-  counter(4, o);
+  counter(3, o);
 });
 const rootNode = exports.rootNode = document.getElementById.bind(document)("root-node");
-const patches = exports.patches = core.until(core.skip(1, core.periodic(3000)), (() => {
+
+const patches = exports.patches = (() => {
   const arg00_ = function (n, p) {
     p(n);
     return n;
@@ -213,7 +214,7 @@ const patches = exports.patches = core.until(core.skip(1, core.periodic(3000)), 
   return function (arg20_) {
     return core.scan(arg00_, rootNode, arg20_);
   };
-})()(rez));
+})()(core.during(core.at(1000, core.at(3000, null)), rez));
 
 function sink() {
   return {
