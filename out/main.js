@@ -1,3 +1,4 @@
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
 const electron = require("electron")
 // Module to control application life.
 const app = electron.app
