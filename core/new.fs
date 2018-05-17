@@ -1,9 +1,7 @@
 module Sakhe.Dom
 open Fable.Import.Browser
 open Most
-open A
 open Fable.Core
-open Fable.Import.Node.Stream
 
 type T<'a, 'b> =
     | Absurd of (unit -> 'a)
@@ -56,7 +54,7 @@ let inline private combineArray (f: 'a [] -> 'b) (s: 'a Stream []): 'b Stream =
         (M.now [||])
     |> M.map f
 let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a -> unit> =
-    let ring (pith: ILang<'a> -> unit): Pith<Stream<'a -> unit>> =
+    let ring (pith: ILang<'a> -> unit): (Stream<'a -> unit> -> unit) -> unit =
         fun o ->
             let mutable c = 0
             pith { new ILang<'a> with

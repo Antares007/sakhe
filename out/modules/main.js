@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.scheduler = exports.patches = exports.rootNode = exports.rez = exports.intS = exports.Text = exports.text = exports.button = exports.div = exports.span = exports.h4 = exports.h3 = exports.h2 = exports.h1 = exports.a = undefined;
+exports.scheduler = exports.patches = exports.intS = exports.Text = exports.text = exports.button = exports.div = exports.span = exports.h4 = exports.h3 = exports.h2 = exports.h1 = exports.a = undefined;
 exports.mkAbsurdProve = mkAbsurdProve;
 exports.elm = elm;
 exports.chr = chr;
@@ -13,10 +13,7 @@ exports.H3 = H3;
 exports.Span = Span;
 exports.Div = Div;
 exports.Button = Button;
-exports.op_ColonEquals = op_ColonEquals;
 exports.counter = counter;
-exports.sink = sink;
-exports.combineArray = combineArray;
 
 var _Option = require("./fable-core/Option");
 
@@ -26,21 +23,9 @@ var core = _interopRequireWildcard(_core);
 
 var _new = require("./new");
 
-var _Symbol2 = require("./fable-core/Symbol");
-
-var _Symbol3 = _interopRequireDefault(_Symbol2);
-
 var _scheduler = require("@most/scheduler");
 
 var scheduler_1 = _interopRequireWildcard(_scheduler);
-
-var _Seq = require("./fable-core/Seq");
-
-var _List = require("./fable-core/List");
-
-var _List2 = _interopRequireDefault(_List);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -125,134 +110,86 @@ function _Text(f) {
 }
 
 exports.Text = _Text;
-
-function op_ColonEquals(a_1, b) {
-  return a_1(core.merge(core.now(b), core.never()));
-}
-
 const intS = exports.intS = core.scan(function (c, _arg1) {
   return c + 1;
 }, 0, core.periodic(10));
 
 function counter(d, o) {
-  op_ColonEquals($var1 => function (tupledArg) {
+  ($var2 => ($var1 => function (tupledArg) {
     o.Node(tupledArg[0], tupledArg[1]);
-  }(Div($var1)), function (o_1) {
-    op_ColonEquals(o_1.Patch.bind(o_1), function (d_1) {
+  }(Div($var1)))(core.now.bind(core)($var2)))(function (o_1) {
+    ($var3 => o_1.Patch.bind(o_1)(core.now.bind(core)($var3)))(function (d_1) {
       d_1.style.padding = "5px 10px";
       d_1.style.textAlign = "center";
     });
-    op_ColonEquals($var2 => function (tupledArg_1) {
+
+    ($var5 => ($var4 => function (tupledArg_1) {
       o_1.Node(tupledArg_1[0], tupledArg_1[1]);
-    }(Button($var2)), function (o_2) {
+    }(Button($var4)))(core.now.bind(core)($var5)))(function (o_2) {
       var d_2;
-      op_ColonEquals($var3 => function (tupledArg_2) {
+
+      ($var7 => ($var6 => function (tupledArg_2) {
         o_2.Node(tupledArg_2[0], tupledArg_2[1]);
-      }(Span($var3)), function (o_3) {
-        op_ColonEquals($var4 => function (tupledArg_3) {
+      }(Span($var6)))(core.now.bind(core)($var7)))(function (o_3) {
+        ($var9 => ($var8 => function (tupledArg_3) {
           o_3.Leaf(tupledArg_3[0], tupledArg_3[1]);
-        }(_Text($var4)), function (text_1) {
+        }(_Text($var8)))(core.now.bind(core)($var9)))(function (text_1) {
           text_1.textContent = "+";
         });
       });
 
       if (d > 0) {
-        op_ColonEquals($var5 => function (tupledArg_4) {
+        ($var11 => ($var10 => function (tupledArg_4) {
           o_2.Node(tupledArg_4[0], tupledArg_4[1]);
-        }(Div($var5)), (d_2 = d - 1 | 0, function (o_4) {
+        }(Div($var10)))(core.now.bind(core)($var11)))((d_2 = d - 1 | 0, function (o_4) {
           counter(d_2, o_4);
         }));
       }
     });
-    op_ColonEquals($var6 => function (tupledArg_5) {
+
+    ($var13 => ($var12 => function (tupledArg_5) {
       o_1.Node(tupledArg_5[0], tupledArg_5[1]);
-    }(Button($var6)), function (o_5) {
+    }(Button($var12)))(core.now.bind(core)($var13)))(function (o_5) {
       var d_3;
-      op_ColonEquals($var7 => function (tupledArg_6) {
+
+      ($var15 => ($var14 => function (tupledArg_6) {
         o_5.Node(tupledArg_6[0], tupledArg_6[1]);
-      }(Span($var7)), function (o_6) {
-        op_ColonEquals($var8 => function (tupledArg_7) {
+      }(Span($var14)))(core.now.bind(core)($var15)))(function (o_6) {
+        ($var17 => ($var16 => function (tupledArg_7) {
           o_6.Leaf(tupledArg_7[0], tupledArg_7[1]);
-        }(_Text($var8)), function (text_2) {
+        }(_Text($var16)))(core.now.bind(core)($var17)))(function (text_2) {
           text_2.textContent = "-";
         });
       });
 
       if (d > 0) {
-        op_ColonEquals($var9 => function (tupledArg_8) {
+        ($var19 => ($var18 => function (tupledArg_8) {
           o_5.Node(tupledArg_8[0], tupledArg_8[1]);
-        }(Div($var9)), (d_3 = d - 1 | 0, function (o_7) {
+        }(Div($var18)))(core.now.bind(core)($var19)))((d_3 = d - 1 | 0, function (o_7) {
           counter(d_3, o_7);
         }));
       }
     });
-    op_ColonEquals($var10 => function (tupledArg_9) {
+
+    ($var21 => ($var20 => function (tupledArg_9) {
       o_1.Node(tupledArg_9[0], tupledArg_9[1]);
-    }(H3($var10)), function (o_8) {
-      ($var11 => function (tupledArg_10) {
+    }(H3($var20)))(core.now.bind(core)($var21)))(function (o_8) {
+      ($var22 => function (tupledArg_10) {
         o_8.Leaf(tupledArg_10[0], tupledArg_10[1]);
-      }(_Text($var11)))(core.map($var12 => $var13 => {
+      }(_Text($var22)))(core.map($var23 => $var24 => {
         (function (i, text_3) {
           text_3.textContent = i.toString();
-        })($var12, $var13);
+        })($var23, $var24);
       }, intS));
     });
   });
 }
 
-const rez = exports.rez = op_ColonEquals(_new.tree, function (o) {
+const patches = exports.patches = core.scan(function (n, p) {
+  p(n);
+  return n;
+}, document.getElementById.bind(document)("root-node"), core.during(core.at(1000, core.at(3000, null)), (0, _new.tree)(core.now(function (o) {
   counter(3, o);
-});
-const rootNode = exports.rootNode = document.getElementById.bind(document)("root-node");
-
-const patches = exports.patches = (() => {
-  const arg00_ = function (n, p) {
-    p(n);
-    return n;
-  };
-
-  return function (arg20_) {
-    return core.scan(arg00_, rootNode, arg20_);
-  };
-})()(core.during(core.at(1000, core.at(3000, null)), rez));
-
-function sink() {
-  return {
-    event(time, value) {},
-
-    end(time) {
-      console.info(time, "|");
-    },
-
-    error(time, err) {
-      console.error(time, err);
-    },
-
-    [_Symbol3.default.reflection]() {
-      return {
-        interfaces: ["Most.Sink"]
-      };
-    }
-
-  };
-}
-
+}))));
 const scheduler = exports.scheduler = scheduler_1.newDefaultScheduler();
 core.runEffects(patches, scheduler), void 0;
-
-function combineArray(f, s) {
-  return function (arg10_) {
-    return core.map(f, arg10_);
-  }((0, _Seq.fold)(function (alS, aS) {
-    return core.combine(function (aList, a_1) {
-      return new _List2.default(a_1, aList);
-    }, alS, aS);
-  }, core.now(new _List2.default()), s));
-}
-
-(() => {
-  const arg00_ = sink();
-  return function (arg20_) {
-    return core.run(arg00_, scheduler, arg20_);
-  };
-})()(core.tap(console.log.bind(console), combineArray(Int32Array.from.bind(Int32Array), (0, _List.ofArray)([core.now(1), core.now(2)])))), void 0;

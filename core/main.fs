@@ -1,7 +1,6 @@
 module Sakhe.Dom2
 open Fable.Import.Browser
 open Fable.Core
-open M
 open Dom
 open Most
 
@@ -37,55 +36,37 @@ let Div f = elm div f
 let Button f = elm button f
 let Text f = chr text f
 
-let (:=) a b = a (M.merge (M.now b) (M.never ()))
-
 let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0
 
 let rec counter (d: int) (o:ILang<_>) =
-    o.Node << Div := fun o ->
-        o.Patch := fun d ->
+
+    o.Node << Div << M.now <| fun o ->
+
+        o.Patch << M.now <| fun d ->
             d.style.padding <- "5px 10px"
             d.style.textAlign <- "center"
-        o.Node << Button := fun o ->
-            (o.Node << Span) := fun o ->
-                o.Leaf << Text := fun text -> text.textContent <- "+"
-            if d > 0 then o.Node << Div := (counter (d - 1))
-        o.Node << Button := fun o ->
-            (o.Node << Span) := fun o ->
-                o.Leaf << Text := fun text -> text.textContent <- "-"
-            if d > 0 then o.Node << Div := (counter (d - 1))
-        o.Node << H3 := fun o ->
+
+        o.Node << Button << M.now <| fun o ->
+            (o.Node << Span) << M.now <| fun o ->
+                o.Leaf << Text << M.now <| fun text -> text.textContent <- "+"
+            if d > 0 then
+                o.Node << Div << M.now <| (counter (d - 1))
+
+        o.Node << Button << M.now <| fun o ->
+            (o.Node << Span) << M.now <| fun o ->
+                o.Leaf << Text << M.now <| fun text -> text.textContent <- "-"
+            if d > 0 then
+                o.Node << Div << M.now <| (counter (d - 1))
+
+        o.Node << H3 << M.now <| fun o ->
             (o.Leaf << Text) (intS |> M.map (fun i -> fun text -> text.textContent <- string i))
 
-let rez = tree := (counter 3)
-
-let rootNode: HTMLDivElement = unbox document.getElementById "root-node"
 let patches =
-    rez
+    counter 3
+    |> M.now
+    |> tree
     |> M.during (M.at 1000. (M.at 3000. ()))
-    |> M.scan (fun n p -> p(n); n) rootNode
+    |> M.scan (fun n p -> p(n); n) (unbox document.getElementById "root-node": HTMLDivElement)
 
-
-let sink = { new Sink<_> with
-    member __.``event`` (time, value) = ()
-    member __.``end`` (time) = console.info (time, "|")
-    member __.error (time, err) = console.error (time, err)
-}
-// most.run (sink, Most.Scheduler.newDefaultScheduler (), patches) |> ignore
 let scheduler = Most.Scheduler.newDefaultScheduler ()
-M.runEffects patches scheduler
-    |> ignore
-
-open M
-let combineArray (f: 'a list -> 'b)  (s: 'a Stream seq): 'b Stream =
-    s
-    |> Seq.fold
-        (fun alS aS -> (combine (fun aList a -> a :: aList) alS aS))
-        (now [])
-    |> map f
-
-
-(combineArray (fun a -> a |> Array.ofList) [(now 1); (now 2)])
-    |> tap console.log
-    |> run sink scheduler
-    |> ignore
+M.runEffects patches scheduler |> ignore
