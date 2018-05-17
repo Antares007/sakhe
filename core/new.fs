@@ -8,9 +8,9 @@ type T<'a, 'b> =
     | Prove of ('a -> 'b option)
 
 type ILang<'a when 'a :> Element> =
-    abstract Node<'b when 'b :> Element> : ((unit -> 'b) * (Node -> 'b option)) * Stream<ILang<'b> -> unit>  -> unit
-    abstract Leaf<'b when 'b :> CharacterData> : ((unit -> 'b) * (Node -> 'b option)) * Stream<'b -> unit> -> unit
-    abstract Patch: Stream<'a -> unit> -> unit
+    abstract Node<'b when 'b :> Element> : ((unit -> 'b) * (Node -> 'b option)) * IStream<ILang<'b> -> unit>  -> unit
+    abstract Leaf<'b when 'b :> CharacterData> : ((unit -> 'b) * (Node -> 'b option)) * IStream<'b -> unit> -> unit
+    abstract Patch: IStream<'a -> unit> -> unit
 
 let inline private matchChildren
     (fIndexOutOfBounds, fProvedNode, fFoundNode, fOtherNode)
@@ -47,14 +47,14 @@ let private once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
 [<Emit("[...$0]")>]
 let private spreadToArray (_: NodeList): Node [] = Exceptions.jsNative
 
-let inline private combineArray (f: 'a [] -> 'b) (s: 'a Stream []): 'b Stream =
+let inline private combineArray (f: 'a [] -> 'b) (s: 'a IStream []): 'b IStream =
     s
     |> Seq.fold
         (fun alS aS -> (M.combine (fun aList a -> Array.append aList [|a|]) alS aS))
         (M.now [||])
     |> M.map f
-let rec tree<'a when 'a :> Element> (pith: Stream<ILang<'a> -> unit>): Stream<'a -> unit> =
-    let ring (pith: ILang<'a> -> unit): (Stream<'a -> unit> -> unit) -> unit =
+let rec tree<'a when 'a :> Element> (pith: IStream<ILang<'a> -> unit>): IStream<'a -> unit> =
+    let ring (pith: ILang<'a> -> unit): (IStream<'a -> unit> -> unit) -> unit =
         fun o ->
             let mutable c = 0
             pith { new ILang<'a> with
