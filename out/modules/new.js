@@ -317,9 +317,8 @@ function tryFind($var33, $var34, $var35) {
     const f = $var33;
     const i = $var34;
     const nlist = $var35;
-    const length = ~~nlist.length | 0;
 
-    if (i >= length) {
+    if (i >= nlist.length) {
       return null;
     } else {
       const n = nlist[i];
@@ -406,15 +405,11 @@ function tree2(pith) {
   const deltaC = function (rays) {
     return core.map($var27 => $var28 => {
       (function (patches, element) {
-        const childs = [];
-        const sq = (0, _Seq.delay)(function () {
-          return (0, _Seq.map)(function (i) {
-            return childs[i];
-          }, (0, _Seq.range)(~~childs.length, ~~element.childNodes.length - 1));
-        });
+        console.log(patches);
+        let index = 0;
         const rev = {
           TryFind(_typeof) {
-            return (0, _Seq.tryFind)(_typeof, sq);
+            return tryFind(_typeof, index, element.childNodes);
           },
 
           Apply(patch) {
@@ -422,7 +417,8 @@ function tree2(pith) {
           },
 
           Append(n) {
-            childs.push(n), void 0;
+            element.insertBefore(n, element.childNodes[index]), void 0;
+            index = index + 1 | 0;
           },
 
           [_Symbol3.default.reflection]() {
@@ -436,17 +432,8 @@ function tree2(pith) {
           p(rev);
         }, patches);
 
-        for (let i_1 = 0; i_1 <= ~~childs.length - 1; i_1++) {
-          const cn = element.childNodes[i_1];
-          const nn = childs[i_1];
-
-          if (!(cn === nn)) {
-            element.insertBefore(nn, cn), void 0;
-          }
-        }
-
-        for (let i_2 = ~~childs.length; i_2 <= ~~element.childNodes.length - 1; i_2++) {
-          element.removeChild(element.childNodes[i_2]), void 0;
+        for (let i = index; i <= ~~element.childNodes.length - 1; i++) {
+          element.removeChild(element.childNodes[i]), void 0;
         }
       })($var27, $var28);
     }, (0, _Seq.fold)(function (ls, rs) {

@@ -204,25 +204,17 @@ let rec tree2<'a when 'a :> Element> (pith: IStream<IElm<'a> -> unit>): IStream<
     let deltaC (rays: IStream<IRev<'a> -> unit> list): IStream<'a -> unit> =
         List.fold (fun ls rs -> M.combine (fun l r -> r :: l) ls (M.map once rs)) (M.now []) rays
         |> M.map (fun patches (element) ->
-            let childs: JS.Array<Node> = unbox [||]
-            let sq = seq {
-                for i = int childs.length to (int element.childNodes.length - 1) do
-                    yield childs.[i]
-            }
+            let mutable index = 0
             let rev = { new IRev<'a> with
-                        member __.TryFind (typeof) = Seq.tryFind typeof sq
+                        member __.TryFind (typeof) = tryFind typeof index element.childNodes
                         member __.Apply patch = patch (element)
-                        member __.Append (n) = childs.push n |> ignore }
+                        member __.Append (n) =
+                            element.insertBefore (n, unbox element.childNodes.[index]) |> ignore
+                            index <- index + 1 }
 
             List.iter (fun p -> p rev) patches
 
-            for i = 0 to int childs.length - 1 do
-                let cn = element.childNodes.[i]
-                let nn = childs.[i]
-                if not (LanguagePrimitives.PhysicalEquality cn nn) then
-                    element.insertBefore (nn, unbox cn) |> ignore
-
-            for i = int childs.length to int element.childNodes.length - 1 do
+            for i = index to int element.childNodes.length - 1 do
                 element.removeChild element.childNodes.[i] |> ignore
         )
 
