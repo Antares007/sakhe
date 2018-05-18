@@ -29,6 +29,8 @@ var _Seq = require("./fable-core/Seq");
 
 var _List = require("./fable-core/List");
 
+var _List2 = _interopRequireDefault(_List);
+
 var _disposable = require("@most/disposable");
 
 var disposable = _interopRequireWildcard(_disposable);
@@ -310,25 +312,71 @@ function tree(pith) {
   });
 }
 
+function tryFind($var33, $var34, $var35) {
+  tryFind: while (true) {
+    const f = $var33;
+    const i = $var34;
+    const nlist = $var35;
+    const length = ~~nlist.length | 0;
+
+    if (i >= length) {
+      return null;
+    } else {
+      const n = nlist[i];
+
+      if (f(n)) {
+        return n;
+      } else {
+        $var33 = f;
+        $var34 = i + 1;
+        $var35 = nlist;
+        continue tryFind;
+      }
+    }
+  }
+}
+
 function tree2(pith) {
   const ring = function (pith_1, o) {
     pith_1({
       Node(_arg1, pith_2) {
         ($var20 => {
           var arg00_;
-          return o((arg00_ = (childNodePatch, parentElement) => {
-            throw new Error("ni");
+          return o((arg00_ = (patch, ro) => {
+            const matchValue = ro.TryFind(_arg1[1]);
+
+            if (matchValue != null) {
+              const b = (0, _Option.getValue)(matchValue);
+              patch(b);
+              ro.Append((0, _Option.getValue)(matchValue));
+            } else {
+              const b_1 = _arg1[0]();
+
+              patch(b_1);
+              ro.Append(b_1);
+            }
           }, arg10_ => core.map($var18 => $var19 => {
             arg00_($var18, $var19);
           }, arg10_))($var20));
-        })(tree(pith_2));
+        })(tree2(pith_2));
       },
 
       Leaf(_arg2, s) {
         ($var23 => {
           var arg00_;
-          return o((arg00_ = (childNodePatch, parentElement) => {
-            throw new Error("ni");
+          return o((arg00_ = (patch, ro) => {
+            const matchValue = ro.TryFind(_arg2[1]);
+
+            if (matchValue != null) {
+              const b = (0, _Option.getValue)(matchValue);
+              patch(b);
+              ro.Append((0, _Option.getValue)(matchValue));
+            } else {
+              const b_1 = _arg2[0]();
+
+              patch(b_1);
+              ro.Append(b_1);
+            }
           }, arg10_ => core.map($var21 => $var22 => {
             arg00_($var21, $var22);
           }, arg10_))($var23));
@@ -338,8 +386,8 @@ function tree2(pith) {
       Patch(s) {
         ($var26 => {
           var arg00_;
-          return o((arg00_ = (childNodePatch, parentElement) => {
-            throw new Error("ni");
+          return o((arg00_ = (patch, ro) => {
+            ro.Apply(patch);
           }, arg10_ => core.map($var24 => $var25 => {
             arg00_($var24, $var25);
           }, arg10_))($var26));
@@ -348,21 +396,79 @@ function tree2(pith) {
 
       [_Symbol3.default.reflection]() {
         return {
-          interfaces: ["Sakhe.Dom.ILang"]
+          interfaces: ["Sakhe.Dom.IElm"]
         };
       }
 
     });
-
-    ($var27 => o(core.now.bind(core)($var27)))(function (element) {
-      throw new Error("ni");
-    });
   };
 
-  const bark = (0, _CurriedLambda2.default)(_m.tree)(function (rays) {
-    throw new Error("ni");
-  });
-  return bark(core.map($var28 => $var29 => {
-    ring($var28, $var29);
+  const deltaC = function (rays) {
+    return core.map($var27 => $var28 => {
+      (function (patches, element) {
+        const childs = [];
+        const sq = (0, _Seq.delay)(function () {
+          return (0, _Seq.map)(function (i) {
+            return childs[i];
+          }, (0, _Seq.range)(~~childs.length, ~~element.childNodes.length - 1));
+        });
+        const rev = {
+          TryFind(_typeof) {
+            return (0, _Seq.tryFind)(_typeof, sq);
+          },
+
+          Apply(patch) {
+            patch(element);
+          },
+
+          Append(n) {
+            childs.push(n), void 0;
+          },
+
+          [_Symbol3.default.reflection]() {
+            return {
+              interfaces: ["Sakhe.Dom.IRev"]
+            };
+          }
+
+        };
+        (0, _Seq.iterate)(function (p) {
+          p(rev);
+        }, patches);
+
+        for (let i_1 = 0; i_1 <= ~~childs.length - 1; i_1++) {
+          const cn = element.childNodes[i_1];
+          const nn = childs[i_1];
+
+          if (!(cn === nn)) {
+            element.insertBefore(nn, cn), void 0;
+          }
+        }
+
+        for (let i_2 = ~~childs.length; i_2 <= ~~element.childNodes.length - 1; i_2++) {
+          element.removeChild(element.childNodes[i_2]), void 0;
+        }
+      })($var27, $var28);
+    }, (0, _Seq.fold)(function (ls, rs) {
+      return core.combine(function (l, r) {
+        return new _List2.default(r, l);
+      }, ls, core.map((0, _CurriedLambda2.default)(function (arg00_) {
+        return function makeOnce(f) {
+          var b;
+          return function onceAtoBtoAtoB(a) {
+            if (f) {
+              b = f.call(this, a);
+              f = null;
+            }
+
+            return b;
+          };
+        }(arg00_);
+      }), rs));
+    }, core.now(new _List2.default()), rays));
+  };
+
+  return (0, _m.tree)(deltaC, core.map($var29 => $var30 => {
+    ring($var29, $var30);
   }, pith));
 }

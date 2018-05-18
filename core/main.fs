@@ -8,15 +8,15 @@ type IDom<'a when 'a :> Element> =
     inherit ILang<'a>
     abstract Div<'b when 'b :> Element> : IStream<IDom<'b> -> unit> -> unit
 
-let mkAbsurdProve (create: unit -> 't) (prove: _ -> bool): (unit -> 't) * (Node -> 't option) =
-    (create, fun n -> if prove n then Some (unbox n) else None)
+let mkAbsurdProve (create: unit -> 't) (prove: _ -> bool): (unit -> 't) * (Node -> bool) =
+    (create, prove)
 let inline NodeName nodeName (node: #Node) = node.nodeName = nodeName
 
-let elm (ap: ((unit -> 'a) * (Node -> 'a option))) (pith: IStream<ILang<'a> -> unit>) = (ap, pith)
-let chr (ap: ((unit -> 'a) * (Node -> 'a option))) (pith: IStream<'a -> unit>) = (ap, pith)
+let elm (ap: ((unit -> 'a) * (Node -> bool))) (pith: IStream<IElm<'a> -> unit>) = (ap, pith)
+let chr (ap: ((unit -> 'a) * (Node -> bool))) (pith: IStream<'a -> unit>) = (ap, pith)
 
-[<Emit("((tag) => [() => document.createElement(tag), (n) => n && n.nodeName === tag ? n : null])($0.toUpperCase())")>]
-let createAP<'a when 'a :> Node> (_: string) : (unit -> 'a) * (Node -> 'a option) = jsNative
+[<Emit("((tag) => [() => document.createElement(tag), (n) => n && n.nodeName === tag])($0.toUpperCase())")>]
+let createAP<'a when 'a :> Node> (_: string) : (unit -> 'a) * (Node -> bool) = jsNative
 
 let a = createAP<HTMLAnchorElement> "a"
 let h1 = createAP<HTMLHeadingElement> "h1"
@@ -42,7 +42,7 @@ let timeStamp (_: string) = jsNative
 let run () =
     let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0 |> M.multicast
 
-    let rec counter (d: int) (o:ILang<_>) =
+    let rec counter (d: int) (o:IElm<_>) =
 
         o.Node << Div << M.now <| fun o ->
 
@@ -68,7 +68,7 @@ let run () =
     let patches =
         counter 3
         |> M.now
-        |> tree
+        |> tree2
         |> M.during (M.at 1000. (M.at 3000. ()))
         |> M.scan
             (fun n p ->

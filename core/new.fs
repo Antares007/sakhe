@@ -2,6 +2,7 @@ module Sakhe.Dom
 open Fable.Import.Browser
 open Most
 open Fable.Core
+open Fable.Import
 
 type T<'a, 'b> =
     | Absurd of (unit -> 'a)
@@ -149,29 +150,80 @@ let rec tree<'a when 'a :> Element> (pith: IStream<ILang<'a> -> unit>): IStream<
             ()
     )
 
-let rec tree2<'a when 'a :> Element> (pith: IStream<ILang<'a> -> unit>): IStream<'a -> unit> =
-    let ring (pith: ILang<'a> -> unit) (o:IStream<'a -> unit> -> unit): unit =
-        pith { new ILang<'a>
+type IElm<'a when 'a :> Element> =
+    abstract Node<'b when 'b :> Element> : ((unit -> 'b) * (Node -> bool)) * IStream<IElm<'b> -> unit>  -> unit
+    abstract Leaf<'b when 'b :> CharacterData> : ((unit -> 'b) * (Node -> bool)) * IStream<'b -> unit> -> unit
+    abstract Patch: IStream<'a -> unit> -> unit
+
+type IRev<'a> =
+    abstract TryFind: (Node -> bool) -> Node option
+    abstract Apply: ('a -> unit) -> unit
+    abstract Append: Node -> unit
+
+let rec private tryFind f (i: int) (nlist: NodeList) =
+    if i >= unbox nlist.length then
+        None
+    else
+        let n = nlist.[i]
+        if f n then
+            Some n
+        else
+            tryFind f (i + 1) nlist
+
+let rec tree2<'a when 'a :> Element> (pith: IStream<IElm<'a> -> unit>): IStream<'a -> unit> =
+    let ring (pith: IElm<'a> -> unit) (o: IStream<IRev<'a> -> unit > -> unit): unit =
+        pith { new IElm<'a>
             with
-            member __.Node ((absurd, prove): (unit -> 'b) * (Node -> 'b option) when 'b :> Node, pith) =
-                o << M.map (fun childNodePatch -> (fun (parentElement: 'a) ->
-                    failwith "ni"
-                )) <| tree pith
-
+            member __.Node ((absurd, prove), pith) =
+                o << M.map (fun patch ro ->
+                    match ro.TryFind prove with
+                    | None ->
+                        let b = absurd ()
+                        patch b
+                        ro.Append b
+                    | Some n ->
+                        let b = unbox n
+                        patch b
+                        ro.Append n
+                    ) <| tree2 pith
             member __.Leaf ((absurd, prove), s) =
-                o << M.map (fun childNodePatch -> (fun (parentElement: 'a) ->
-                    failwith "ni"
-                )) <| s
-
+                o << M.map (fun patch ro ->
+                    match ro.TryFind prove with
+                    | None ->
+                        let b = absurd ()
+                        patch b
+                        ro.Append b
+                    | Some n ->
+                        let b = unbox n
+                        patch b
+                        ro.Append n
+                    ) <| s
             member __.Patch (s) =
-                o << M.map (fun childNodePatch -> (fun (parentElement: 'a) ->
-                    failwith "ni"
-                )) <| s }
+                o << M.map (fun patch ro -> ro.Apply patch) <| s }
 
-        o << M.now <| fun element ->
-            failwith "ni"
+    let deltaC (rays: IStream<IRev<'a> -> unit> list): IStream<'a -> unit> =
+        List.fold (fun ls rs -> M.combine (fun l r -> r :: l) ls (M.map once rs)) (M.now []) rays
+        |> M.map (fun patches (element) ->
+            let childs: JS.Array<Node> = unbox [||]
+            let sq = seq {
+                for i = int childs.length to (int element.childNodes.length - 1) do
+                    yield childs.[i]
+            }
+            let rev = { new IRev<'a> with
+                        member __.TryFind (typeof) = Seq.tryFind typeof sq
+                        member __.Apply patch = patch (element)
+                        member __.Append (n) = childs.push n |> ignore }
 
-    let bark = M.tree <| fun rays ->
-        failwith "ni"
+            List.iter (fun p -> p rev) patches
 
-    bark (M.map ring pith)
+            for i = 0 to int childs.length - 1 do
+                let cn = element.childNodes.[i]
+                let nn = childs.[i]
+                if not (LanguagePrimitives.PhysicalEquality cn nn) then
+                    element.insertBefore (nn, unbox cn) |> ignore
+
+            for i = int childs.length to int element.childNodes.length - 1 do
+                element.removeChild element.childNodes.[i] |> ignore
+        )
+
+    M.tree deltaC (M.map ring pith)

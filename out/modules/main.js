@@ -15,8 +15,6 @@ exports.Div = Div;
 exports.Button = Button;
 exports.run = run;
 
-var _Option = require("./fable-core/Option");
-
 var _core = require("@most/core");
 
 var core = _interopRequireWildcard(_core);
@@ -36,9 +34,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function mkAbsurdProve(create, prove) {
-  return [create, function (n) {
-    return prove(n) ? (0, _Option.makeSome)(n) : null;
-  }];
+  return [create, prove];
 }
 
 function elm(ap_0, ap_1, pith) {
@@ -51,21 +47,21 @@ function chr(ap_0, ap_1, pith) {
   return [ap, pith];
 }
 
-const a = exports.a = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag ? n : null])("a".toUpperCase());
+const a = exports.a = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag])("a".toUpperCase());
 
-const h1 = exports.h1 = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag ? n : null])("h1".toUpperCase());
+const h1 = exports.h1 = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag])("h1".toUpperCase());
 
-const h2 = exports.h2 = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag ? n : null])("h2".toUpperCase());
+const h2 = exports.h2 = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag])("h2".toUpperCase());
 
-const h3 = exports.h3 = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag ? n : null])("h3".toUpperCase());
+const h3 = exports.h3 = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag])("h3".toUpperCase());
 
-const h4 = exports.h4 = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag ? n : null])("h4".toUpperCase());
+const h4 = exports.h4 = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag])("h4".toUpperCase());
 
-const span = exports.span = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag ? n : null])("span".toUpperCase());
+const span = exports.span = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag])("span".toUpperCase());
 
-const div = exports.div = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag ? n : null])("div".toUpperCase());
+const div = exports.div = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag])("div".toUpperCase());
 
-const button = exports.button = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag ? n : null])("button".toUpperCase());
+const button = exports.button = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag])("button".toUpperCase());
 
 const text = exports.text = mkAbsurdProve(function () {
   return document.createTextNode("");
@@ -194,7 +190,7 @@ function run() {
     console.timeStamp("patching");
     p(n);
     return n;
-  }, document.getElementById.bind(document)("root-node"), core.during(core.at(1000, core.at(3000, null)), (0, _new.tree)(core.now((0, _CurriedLambda2.default)(counter)(3)))));
+  }, document.getElementById.bind(document)("root-node"), core.during(core.at(1000, core.at(3000, null)), (0, _new.tree2)(core.now((0, _CurriedLambda2.default)(counter)(3)))));
   const scheduler = scheduler_1.newDefaultScheduler();
   return core.runEffects(patches, scheduler);
 }
