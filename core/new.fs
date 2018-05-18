@@ -148,3 +148,30 @@ let rec tree<'a when 'a :> Element> (pith: IStream<ILang<'a> -> unit>): IStream<
             ))
             ()
     )
+
+let rec tree2<'a when 'a :> Element> (pith: IStream<ILang<'a> -> unit>): IStream<'a -> unit> =
+    let ring (pith: ILang<'a> -> unit) (o:IStream<'a -> unit> -> unit): unit =
+        pith { new ILang<'a>
+            with
+            member __.Node ((absurd, prove): (unit -> 'b) * (Node -> 'b option) when 'b :> Node, pith) =
+                o << M.map (fun childNodePatch -> (fun (parentElement: 'a) ->
+                    failwith "ni"
+                )) <| tree pith
+
+            member __.Leaf ((absurd, prove), s) =
+                o << M.map (fun childNodePatch -> (fun (parentElement: 'a) ->
+                    failwith "ni"
+                )) <| s
+
+            member __.Patch (s) =
+                o << M.map (fun childNodePatch -> (fun (parentElement: 'a) ->
+                    failwith "ni"
+                )) <| s }
+
+        o << M.now <| fun element ->
+            failwith "ni"
+
+    let bark = M.tree <| fun rays ->
+        failwith "ni"
+
+    bark (M.map ring pith)

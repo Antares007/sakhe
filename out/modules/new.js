@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.T = undefined;
 exports.tree = tree;
+exports.tree2 = tree2;
 
 var _Symbol2 = require("./fable-core/Symbol");
 
@@ -307,4 +308,61 @@ function tree(pith) {
       dispose();
     }), null);
   });
+}
+
+function tree2(pith) {
+  const ring = function (pith_1, o) {
+    pith_1({
+      Node(_arg1, pith_2) {
+        ($var20 => {
+          var arg00_;
+          return o((arg00_ = (childNodePatch, parentElement) => {
+            throw new Error("ni");
+          }, arg10_ => core.map($var18 => $var19 => {
+            arg00_($var18, $var19);
+          }, arg10_))($var20));
+        })(tree(pith_2));
+      },
+
+      Leaf(_arg2, s) {
+        ($var23 => {
+          var arg00_;
+          return o((arg00_ = (childNodePatch, parentElement) => {
+            throw new Error("ni");
+          }, arg10_ => core.map($var21 => $var22 => {
+            arg00_($var21, $var22);
+          }, arg10_))($var23));
+        })(s);
+      },
+
+      Patch(s) {
+        ($var26 => {
+          var arg00_;
+          return o((arg00_ = (childNodePatch, parentElement) => {
+            throw new Error("ni");
+          }, arg10_ => core.map($var24 => $var25 => {
+            arg00_($var24, $var25);
+          }, arg10_))($var26));
+        })(s);
+      },
+
+      [_Symbol3.default.reflection]() {
+        return {
+          interfaces: ["Sakhe.Dom.ILang"]
+        };
+      }
+
+    });
+
+    ($var27 => o(core.now.bind(core)($var27)))(function (element) {
+      throw new Error("ni");
+    });
+  };
+
+  const bark = (0, _CurriedLambda2.default)(_m.tree)(function (rays) {
+    throw new Error("ni");
+  });
+  return bark(core.map($var28 => $var29 => {
+    ring($var28, $var29);
+  }, pith));
 }
