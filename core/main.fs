@@ -36,8 +36,11 @@ let Div f = elm div f
 let Button f = elm button f
 let Text f = chr text f
 
+[<Emit("console.timeStamp($0)")>]
+let timeStamp (_: string) = jsNative
+
 let run () =
-    let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0
+    let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0 |> M.multicast
 
     let rec counter (d: int) (o:ILang<_>) =
 
@@ -67,7 +70,12 @@ let run () =
         |> M.now
         |> tree
         |> M.during (M.at 1000. (M.at 3000. ()))
-        |> M.scan (fun n p -> p(n); n) (unbox document.getElementById "root-node": HTMLDivElement)
+        |> M.scan
+            (fun n p ->
+                timeStamp ("patching")
+                p(n)
+                n)
+            (unbox document.getElementById "root-node": HTMLDivElement)
 
     let scheduler = Most.Scheduler.newDefaultScheduler ()
     M.runEffects patches scheduler
