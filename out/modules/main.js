@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Text = exports.text = exports.button = exports.div = exports.span = exports.h4 = exports.h3 = exports.h2 = exports.h1 = exports.a = undefined;
-exports.mkAbsurdProve = mkAbsurdProve;
 exports.elm = elm;
 exports.chr = chr;
 exports.H1 = H1;
@@ -33,10 +32,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-function mkAbsurdProve(create, prove) {
-  return [create, prove];
-}
-
 function elm(ap_0, ap_1, pith) {
   const ap = [ap_0, ap_1];
   return [ap, pith];
@@ -63,11 +58,11 @@ const div = exports.div = (tag => [() => document.createElement(tag), n => n && 
 
 const button = exports.button = (tag => [() => document.createElement(tag), n => n && n.nodeName === tag])("button".toUpperCase());
 
-const text = exports.text = mkAbsurdProve(function () {
+const text = exports.text = [function () {
   return document.createTextNode("");
 }, function (node) {
   return node.nodeName === "#text";
-});
+}];
 
 function H1(f) {
   const arg00_ = h1[0];
@@ -114,9 +109,9 @@ function _Text(f) {
 exports.Text = _Text;
 
 function run() {
-  const intS = core.multicast(core.scan(function (c, _arg1) {
+  const intS = core.multicast(core.skip(1, core.scan(function (c, _arg1) {
     return c + 1;
-  }, 0, core.periodic(10)));
+  }, 0, core.periodic(1000))));
 
   const counter = function (d, o) {
     ($var2 => ($var1 => function (tupledArg) {
@@ -190,7 +185,7 @@ function run() {
     console.timeStamp("patching");
     p(n);
     return n;
-  }, document.getElementById.bind(document)("root-node"), core.during(core.at(1000, core.at(3000, null)), (0, _new.tree2)(core.now((0, _CurriedLambda2.default)(counter)(3)))));
+  }, document.getElementById.bind(document)("root-node"), (0, _new.tree2)(core.now((0, _CurriedLambda2.default)(counter)(3))));
   const scheduler = scheduler_1.newDefaultScheduler();
   return core.runEffects(patches, scheduler);
 }

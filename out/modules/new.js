@@ -405,7 +405,6 @@ function tree2(pith) {
   const deltaC = function (rays) {
     return core.map($var27 => $var28 => {
       (function (patches, element) {
-        console.log(patches);
         let index = 0;
         const rev = {
           TryFind(_typeof) {
@@ -417,7 +416,12 @@ function tree2(pith) {
           },
 
           Append(n) {
-            element.insertBefore(n, element.childNodes[index]), void 0;
+            const cur = element.childNodes[index];
+
+            if (!(n === cur)) {
+              element.insertBefore(n, cur), void 0;
+            }
+
             index = index + 1 | 0;
           },
 

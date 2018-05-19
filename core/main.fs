@@ -8,8 +8,6 @@ type IDom<'a when 'a :> Element> =
     inherit ILang<'a>
     abstract Div<'b when 'b :> Element> : IStream<IDom<'b> -> unit> -> unit
 
-let mkAbsurdProve (create: unit -> 't) (prove: _ -> bool): (unit -> 't) * (Node -> bool) =
-    (create, prove)
 let inline NodeName nodeName (node: #Node) = node.nodeName = nodeName
 
 let elm (ap: ((unit -> 'a) * (Node -> bool))) (pith: IStream<IElm<'a> -> unit>) = (ap, pith)
@@ -26,7 +24,7 @@ let h4 = createAP<HTMLHeadingElement> "h4"
 let span = createAP<HTMLSpanElement> "span"
 let div = createAP<HTMLDivElement> "div"
 let button = createAP<HTMLButtonElement> "button"
-let text = mkAbsurdProve (fun () -> document.createTextNode ("")) (NodeName "#text")
+let text = ((fun () -> document.createTextNode ("")), NodeName "#text")
 
 let H1 f = elm h1 f
 let H2 f = elm h2 f
@@ -40,9 +38,14 @@ let Text f = chr text f
 let timeStamp (_: string) = jsNative
 
 let run () =
-    let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0 |> M.multicast
+    let intS = M.periodic 1000. |> M.scan (fun c _ -> c + 1) 0 |> M.skip 1 |> M.multicast
 
     let rec counter (d: int) (o:IElm<_>) =
+        // o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
+        // o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
+        // o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
+        // o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
+        // o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
 
         o.Node << Div << M.now <| fun o ->
 
@@ -69,7 +72,7 @@ let run () =
         counter 3
         |> M.now
         |> tree2
-        |> M.during (M.at 1000. (M.at 3000. ()))
+        // |> M.during (M.at 1000. (M.at 3000. ()))
         |> M.scan
             (fun n p ->
                 timeStamp ("patching")

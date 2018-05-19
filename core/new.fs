@@ -209,7 +209,9 @@ let rec tree2<'a when 'a :> Element> (pith: IStream<IElm<'a> -> unit>): IStream<
                         member __.TryFind (typeof) = tryFind typeof index element.childNodes
                         member __.Apply patch = patch (element)
                         member __.Append (n) =
-                            element.insertBefore (n, unbox element.childNodes.[index]) |> ignore
+                            let cur = unbox element.childNodes.[index]
+                            if not (LanguagePrimitives.PhysicalEquality n cur) then
+                                element.insertBefore (n, cur) |> ignore
                             index <- index + 1 }
 
             List.iter (fun p -> p rev) patches
