@@ -236,7 +236,7 @@ module M =
     /// * `--3---4-5--6-> = s2`
     /// * `--3-4-5-67-8-> = combine (+) s1 s2`
     ///Note that combine waits for at least one event to arrive on all input Streams before it produces any events.
-    let combine  (_: 'a -> 'b -> 'c) (_: 'a IStream) (_:'b IStream): 'c IStream = jsNative
+    let combine (_: 'a -> 'b -> 'c) (_: 'a IStream) (_:'b IStream): 'c IStream = jsNative
 
 
     ///Apply a function to corresponding pairs of events from the inputs Streams.
