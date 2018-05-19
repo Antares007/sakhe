@@ -155,11 +155,6 @@ type IElm<'a when 'a :> Element> =
     abstract Leaf<'b when 'b :> CharacterData> : ((unit -> 'b) * (Node -> bool)) * IStream<'b -> unit> -> unit
     abstract Patch: IStream<'a -> unit> -> unit
 
-type IRev<'a> =
-    abstract TryFind: (Node -> bool) -> Node option
-    abstract Apply: ('a -> unit) -> unit
-    abstract Append: Node -> unit
-
 let rec private tryFind f (i: int) (nlist: NodeList) =
     if i >= unbox nlist.length then
         None
@@ -170,54 +165,44 @@ let rec private tryFind f (i: int) (nlist: NodeList) =
         else
             tryFind f (i + 1) nlist
 
+let matchChildren2 (notFound: unit -> unit, found: Node -> unit, foundAtIndex: Node -> unit)  _ = ()
+let chain (absurd, prove, index) patch (elm: #Element) =
+    let notFound () =
+        let b = absurd()
+        patch b
+        elm.insertBefore (b, unbox elm.childNodes.[index]) |> ignore
+    let foundAtIndex node =
+        patch (unbox node)
+    let found node =
+        let b = unbox node
+        patch b
+        elm.insertBefore (b, unbox elm.childNodes.[index]) |> ignore
+
+    matchChildren2 (notFound, found, foundAtIndex) (prove, index)
+
 let rec tree2<'a when 'a :> Element> (pith: IStream<IElm<'a> -> unit>): IStream<'a -> unit> =
-    let ring (pith: IElm<'a> -> unit) (o: IStream<IRev<'a> -> unit > -> unit): unit =
+    let ring (pith: IElm<'a> -> unit) (o: IStream<'a -> unit > -> unit): unit =
+        let mutable counter = 0
         pith { new IElm<'a>
             with
             member __.Node ((absurd, prove), pith) =
-                o << M.map (fun patch ro ->
-                    match ro.TryFind prove with
-                    | None ->
-                        let b = absurd ()
-                        patch b
-                        ro.Append b
-                    | Some n ->
-                        let b = unbox n
-                        patch b
-                        ro.Append n
-                    ) <| tree2 pith
+                let index = counter
+                counter <- counter + 1
+                o << M.map (chain (absurd, prove, index)) <| tree2 pith
             member __.Leaf ((absurd, prove), s) =
-                o << M.map (fun patch ro ->
-                    match ro.TryFind prove with
-                    | None ->
-                        let b = absurd ()
-                        patch b
-                        ro.Append b
-                    | Some n ->
-                        let b = unbox n
-                        patch b
-                        ro.Append n
-                    ) <| s
+                let index = counter
+                counter <- counter + 1
+                o << M.map (chain (absurd, prove, index)) <| s
             member __.Patch (s) =
-                o << M.map (fun patch ro -> ro.Apply patch) <| s }
+                o << M.map (fun patch elm -> patch elm) <| s }
 
-    let deltaC (rays: IStream<IRev<'a> -> unit> list): IStream<'a -> unit> =
+    let deltaC (rays: IStream<'a -> unit> list): IStream<'a -> unit> =
         List.fold (fun ls rs -> M.combine (fun l r -> r :: l) ls (M.map once rs)) (M.now []) rays
-        |> M.map (fun patches (element) ->
-            let mutable index = 0
-            let rev = { new IRev<'a> with
-                        member __.TryFind (typeof) = tryFind typeof index element.childNodes
-                        member __.Apply patch = patch (element)
-                        member __.Append (n) =
-                            let cur = unbox element.childNodes.[index]
-                            if not (LanguagePrimitives.PhysicalEquality n cur) then
-                                element.insertBefore (n, cur) |> ignore
-                            index <- index + 1 }
-
-            List.iter (fun p -> p rev) patches
-
-            for i = index to int element.childNodes.length - 1 do
-                element.removeChild element.childNodes.[i] |> ignore
+        |> M.map (fun patches element ->
+            ()
+            // List.iter (fun p -> p rev) patches
+            // for i = index to int element.childNodes.length - 1 do
+            //     element.removeChild element.childNodes.[i] |> ignore
         )
 
     M.tree deltaC (M.map ring pith)
