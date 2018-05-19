@@ -22,7 +22,7 @@ var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
-var _new = require("./new");
+var _dom = require("./dom");
 
 var _scheduler = require("@most/scheduler");
 
@@ -185,7 +185,7 @@ function run() {
     console.timeStamp("patching");
     p(n);
     return n;
-  }, document.getElementById.bind(document)("root-node"), core.during(core.at(1000, core.at(3000, null)), (0, _new.tree)(core.now((0, _CurriedLambda2.default)(counter)(3)))));
+  }, document.getElementById.bind(document)("root-node"), core.during(core.at(1000, core.at(3000, null)), (0, _dom.tree)(core.now((0, _CurriedLambda2.default)(counter)(3)))));
   const scheduler = scheduler_1.newDefaultScheduler();
   return core.runEffects(patches, scheduler);
 }
