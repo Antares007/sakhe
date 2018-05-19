@@ -78,6 +78,16 @@ let inline private once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
 [<Emit("[...$0]")>]
 let inline private spreadToArray (_: NodeList): Node [] = Exceptions.jsNative
 
+let inline private makeRestore (elm: Element) =
+    let childNodes = elm.childNodes
+    let oldNodes = spreadToArray(childNodes)
+    (fun () ->
+        let ref = childNodes.[0]
+        for i = 0 to oldNodes.Length - 1 do
+            elm.insertBefore (oldNodes.[i], ref) |> ignore
+        for i = oldNodes.Length to unbox childNodes.length - 1 do
+            elm.removeChild childNodes.[i] |> ignore)
+
 let rec tree<'a when 'a :> Element> (pith: IStream<IElm<'a> -> unit>): IStream<'a -> unit> =
     let ring (pith: IElm<'a> -> unit) (o: IStream<'a -> unit > -> unit): unit =
         let mutable counter = 0
@@ -96,19 +106,10 @@ let rec tree<'a when 'a :> Element> (pith: IStream<IElm<'a> -> unit>): IStream<'
 
     let deltaC (rays: IStream<'a -> unit> list): IStream<'a -> unit> =
         let restore = ref (fun () -> ())
-        let makeRestore = once(fun (elm: 'a) ->
-            let childNodes = elm.childNodes
-            let oldNodes = spreadToArray(childNodes)
-            restore := (fun () ->
-                let ref = childNodes.[0]
-                for i = 0 to oldNodes.Length - 1 do
-                    elm.insertBefore (oldNodes.[i], ref) |> ignore
-                for i = oldNodes.Length to unbox childNodes.length - 1 do
-                    elm.removeChild childNodes.[i] |> ignore)
-            )
+        let makeRestore = once(makeRestore)
         List.fold (fun ls rs -> M.combine (fun l r -> r :: l) ls (M.map once rs)) (M.now []) rays
         |> M.map (fun patches elm ->
-            makeRestore elm
+            restore := makeRestore elm
             List.iter (fun patch -> patch elm) patches
             for i = patches.Length to unbox elm.childNodes.length - 1 do
                 elm.removeChild elm.childNodes.[i] |> ignore

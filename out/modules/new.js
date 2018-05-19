@@ -20,15 +20,15 @@ var _Symbol2 = require("./fable-core/Symbol");
 
 var _Symbol3 = _interopRequireDefault(_Symbol2);
 
+var _CurriedLambda = require("./fable-core/CurriedLambda");
+
+var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
+
 var _Seq = require("./fable-core/Seq");
 
 var _List = require("./fable-core/List");
 
 var _List2 = _interopRequireDefault(_List);
-
-var _CurriedLambda = require("./fable-core/CurriedLambda");
-
-var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _m = require("./m");
 
@@ -170,11 +170,10 @@ function tree(pith) {
 
         return b;
       };
-    }(function (elm) {
+    }((0, _CurriedLambda2.default)(function (elm) {
       const childNodes = elm.childNodes;
       const oldNodes = [...childNodes];
-
-      restore.contents = function () {
+      return function () {
         const ref = childNodes[0];
 
         for (let i = 0; i <= oldNodes.length - 1; i++) {
@@ -185,14 +184,14 @@ function tree(pith) {
           elm.removeChild(childNodes[i_1]), void 0;
         }
       };
-    });
+    }));
 
     return disposeWith(function () {
       const d = restore.contents;
       d();
     }, core.map($var12 => $var13 => {
       (function (patches, elm_1) {
-        makeRestore(elm_1);
+        restore.contents = (0, _CurriedLambda2.default)(makeRestore)(elm_1);
         (0, _Seq.iterate)(function (patch) {
           patch(elm_1);
         }, patches);
