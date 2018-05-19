@@ -5,7 +5,7 @@ open Dom
 open Most
 
 type IDom<'a when 'a :> Element> =
-    inherit ILang<'a>
+    inherit IElm<'a>
     abstract Div<'b when 'b :> Element> : IStream<IDom<'b> -> unit> -> unit
 
 let inline NodeName nodeName (node: #Node) = node.nodeName = nodeName
@@ -38,15 +38,9 @@ let Text f = chr text f
 let timeStamp (_: string) = jsNative
 
 let run () =
-    let intS = M.periodic 1000. |> M.scan (fun c _ -> c + 1) 0 |> M.skip 1 |> M.multicast
+    let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0 |> M.skip 1 |> M.multicast
 
     let rec counter (d: int) (o:IElm<_>) =
-        // o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
-        // o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
-        // o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
-        // o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
-        // o.Leaf << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
-
         o.Node << Div << M.now <| fun o ->
 
             o.Patch << M.now <| fun d ->
@@ -71,8 +65,8 @@ let run () =
     let patches =
         counter 3
         |> M.now
-        |> tree2
-        // |> M.during (M.at 1000. (M.at 3000. ()))
+        |> tree
+        |> M.during (M.at 1000. (M.at 3000. ()))
         |> M.scan
             (fun n p ->
                 timeStamp ("patching")

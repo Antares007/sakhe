@@ -111,7 +111,7 @@ exports.Text = _Text;
 function run() {
   const intS = core.multicast(core.skip(1, core.scan(function (c, _arg1) {
     return c + 1;
-  }, 0, core.periodic(1000))));
+  }, 0, core.periodic(10))));
 
   const counter = function (d, o) {
     ($var2 => ($var1 => function (tupledArg) {
@@ -185,7 +185,7 @@ function run() {
     console.timeStamp("patching");
     p(n);
     return n;
-  }, document.getElementById.bind(document)("root-node"), (0, _new.tree2)(core.now((0, _CurriedLambda2.default)(counter)(3))));
+  }, document.getElementById.bind(document)("root-node"), core.during(core.at(1000, core.at(3000, null)), (0, _new.tree)(core.now((0, _CurriedLambda2.default)(counter)(3)))));
   const scheduler = scheduler_1.newDefaultScheduler();
   return core.runEffects(patches, scheduler);
 }
