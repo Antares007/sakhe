@@ -21,7 +21,7 @@ type IObject =
 and IArray =
     abstract ONode: IStream<IObject -> unit> -> unit
     abstract ANode: IStream<IArray -> unit> -> unit
-    abstract Value<'a> : (unit -> 'a) * (obj -> bool) -> r: IStream<'a -> 'a> -> unit
+    abstract Value<'a> : (unit -> 'a) * (obj -> bool) -> IStream<'a -> 'a> -> unit
 open Dom2
 open Fable.Import.Browser
 open Fable.Core.JsInterop
@@ -30,16 +30,31 @@ console.log run
 let private setKey (_: string) (_: 'a) (_: 'b): 'b = jsNative
 
 let absurdObj () = createEmpty<obj>
-
 let proveObj (_:obj) = true
 
-let otree
+let absurdArray (): obj[] = [||]
+let proveArray (_:obj) = true
+
+let rec otree
     (pith: IStream<IObject -> unit>): IStream<obj -> obj> =
     let ring pith o =
         pith { new IObject with
-        member __.ONode key r =
-            failwith "ni"
-        member __.ANode key r = failwith "ni"
+        member __.ONode key pith =
+            o (
+                key, absurdObj (), proveObj,
+                otree pith |> M.map (fun r o ->
+                    let x = o?key
+                    let oa = if proveObj x then unbox x else absurdObj ()
+                    let na = r oa
+                    setKey key na o))
+        member __.ANode key pith =
+            o (
+                key, absurdArray (), proveArray,
+                atree pith |> M.map (fun r o ->
+                    let x = o?key
+                    let oa = if proveObj x then unbox x else absurdArray ()
+                    let na = r oa
+                    setKey key na o))
         member __.Value key (absurd, prove) r =
             o (
                 key, absurd () :> obj, prove,
@@ -67,6 +82,8 @@ let otree
                 (M.empty ())
 
     M.tree deltac (M.map ring pith)
+and atree (pith: IStream<IArray -> unit>): IStream<obj [] -> obj []> =
+    failwith "ni"
 
 let o = [||] :> obj
 

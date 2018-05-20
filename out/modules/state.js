@@ -6,7 +6,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.o = undefined;
 exports.absurdObj = absurdObj;
 exports.proveObj = proveObj;
+exports.absurdArray = absurdArray;
+exports.proveArray = proveArray;
 exports.otree = otree;
+exports.atree = atree;
 
 var _dom = require("./dom2");
 
@@ -42,24 +45,44 @@ function proveObj(_arg1) {
   return true;
 }
 
+function absurdArray() {
+  return [];
+}
+
+function proveArray(_arg1) {
+  return true;
+}
+
 function otree(pith) {
   const ring = function (pith_1, o) {
     return pith_1({
-      ONode(key, r) {
-        throw new Error("ni");
+      ONode(key, pith_2) {
+        o([key, absurdObj(), arg00__1 => proveObj(arg00__1), core.map($var1 => $var2 => ((r, o_1) => {
+          const x = o_1.key;
+          const oa = proveObj(x) ? x : absurdObj();
+          const na = r(oa);
+          return setKey(key, na, o_1);
+        })($var1, $var2), otree(pith_2))]);
       },
 
-      ANode(key, r) {
-        throw new Error("ni");
+      ANode(key, pith_2) {
+        (tupledArg => {
+          o([tupledArg[0], tupledArg[1], tupledArg[2], tupledArg[3]]);
+        })([key, absurdArray(), arg00__1 => proveArray(arg00__1), core.map($var3 => $var4 => ((r, o_1) => {
+          const x = o_1.key;
+          const oa = proveObj(x) ? x : absurdArray();
+          const na = r(oa);
+          return setKey(key, na, o_1);
+        })($var3, $var4), atree(pith_2))]);
       },
 
       Value(key, absurd, prove, r) {
-        o([key, absurd(), arg00 => prove(arg00), core.map($var1 => $var2 => ((r_1, o_1) => {
+        o([key, absurd(), arg00 => prove(arg00), core.map($var5 => $var6 => ((r_1, o_1) => {
           const x = o_1.key;
           const oa = (arg00_1 => prove(arg00_1))(x) ? x : absurd();
           const na = r_1(oa);
           return setKey(key, na, o_1);
-        })($var1, $var2), r)]);
+        })($var5, $var6), r)]);
       },
 
       [_Symbol3.default.reflection]() {
@@ -85,7 +108,11 @@ function otree(pith) {
     }, xs));
   };
 
-  return (0, _m.tree)(deltac, core.map($var3 => $var4 => ring($var3, $var4), pith));
+  return (0, _m.tree)(deltac, core.map($var7 => $var8 => ring($var7, $var8), pith));
+}
+
+function atree(pith) {
+  throw new Error("ni");
 }
 
 const o = exports.o = [];
