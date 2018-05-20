@@ -46,11 +46,14 @@ let otree
                         setKey key na o
                     )
                     r
-            rMap <- Map.add key r rMap
-        }
-        Map.iter (fun _ r -> o r) rMap
 
-    let deltac xs =
+            rMap <- Map.add key r rMap
+            o (key, (absurd () :> obj, prove, r))
+        }
+        // Map.iter (fun _ r -> o r) rMap
+
+    let deltac (xs: (string * (obj * (obj -> bool) * IStream<obj -> obj>)) list) =
+        List.groupBy fst xs |> ignore
         failwith "ni"
 
     M.tree deltac (M.map ring pith)
