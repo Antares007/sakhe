@@ -48,12 +48,26 @@ let otree
                     r
 
             rMap <- Map.add key r rMap
-            o (key, (absurd () :> obj, prove, r))
+            o (key, absurd () :> obj, prove, r)
         }
         // Map.iter (fun _ r -> o r) rMap
 
-    let deltac (xs: (string * (obj * (obj -> bool) * IStream<obj -> obj>)) list) =
-        List.groupBy fst xs |> ignore
+    let deltac (xs: (string * obj * (obj -> bool) * IStream<obj -> obj>) list) =
+        let rez =
+            List.groupBy (fun (key, _, _, _) -> key) xs
+                |> Seq.map (fun g ->
+                    Seq.fold
+                        (fun (pr, pp) (_, a, np, nr) ->
+                            if pp a then
+                                (M.merge pr nr, np)
+                            else
+                                (pr, np)
+                        )
+                        (M.empty (), (fun _ -> true))
+                        (snd g)
+                    |> fst
+                )
+
         failwith "ni"
 
     M.tree deltac (M.map ring pith)
