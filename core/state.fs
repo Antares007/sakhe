@@ -10,39 +10,51 @@ module Sakhe.State
 
 open Fable.Core
 open Most
+open Sakhe
+
 type T<'a> = (unit -> 'a) * (obj -> bool)
 
 type IObject =
-    abstract ONode: key: string -> (IObject -> unit) -> unit
-    abstract ANode: key: string -> (IArray -> unit) -> unit
-    abstract Value<'a> : key: string -> (unit -> 'a) * (obj -> bool) * IStream<'a -> 'a> -> unit
+    abstract ONode: key: string -> IStream<IObject -> unit> -> unit
+    abstract ANode: key: string -> IStream<IArray -> unit> -> unit
+    abstract Value<'a> : key: string -> (unit -> 'a) * (obj -> bool) -> IStream<'a -> 'a> -> unit
 and IArray =
-    abstract ONode: (IObject -> unit) -> unit
-    abstract ANode: (IArray -> unit) -> unit
-    abstract Value<'a> : t: T<'a> * r: IStream<'a -> 'a> -> unit
+    abstract ONode: IStream<IObject -> unit> -> unit
+    abstract ANode: IStream<IArray -> unit> -> unit
+    abstract Value<'a> : (unit -> 'a) * (obj -> bool) -> r: IStream<'a -> 'a> -> unit
+open Dom2
+open Fable.Import.Browser
+console.log run
+let otree
+    (pith: IStream<IObject -> unit>): IStream<obj -> obj> =
+    let ring pith o =
+        pith { new IObject with
+        member __.ONode key r = failwith "ni"
+        member __.ANode key r = failwith "ni"
+        member __.Value key (absurd, pove) r = failwith "ni"
+        }
 
+    let deltac xs =
+        failwith "ni"
 
-type [<Pojo>] Person =
-    {name: string; age: float}
-    static member Absurd () = {name = "a"; age = 42.}
+    M.tree deltac (M.map ring pith)
 
-let person = {name = "Archil"; age = 42.}
-let zero = Person.Absurd ()
+let o = [||] :> obj
 
-let o: IObject = unbox false
+// type [<Pojo>] Person =
+//     {name: string; age: float}
+//     static member Absurd () = {name = "a"; age = 42.}
 
-o.Value
-    "a"
-    (
-        (fun () -> {name="a"; age = 42.}),
-        (fun o -> true),
-        (M.now (fun x -> x))
-    )
+// let person = {name = "Archil"; age = 42.}
+// let zero = Person.Absurd ()
 
+// let o: IObject = unbox false
 
-let obj: obj =
-    Fable.Core.JsInterop.createEmpty
-
-let p =
-    { name = "Archil"; age = 42. }
+// o.Value
+//     "a"
+//     (
+//         (fun () -> {name="a"; age = 42.}),
+//         (fun o -> true),
+//         (M.now (fun x -> {x with age = 43.}))
+//     )
 // let o = JObject (Map.ofList ["a", JNull; "b", JBool true; "c", JObject (Map.ofList ["a", JNull; "b", JBool true])])
