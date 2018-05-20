@@ -27,56 +27,44 @@ open Fable.Import.Browser
 open Fable.Core.JsInterop
 console.log run
 
-
-[<Emit("(function makeOnce (f) {
-    var b
-    return function onceAtoBtoAtoB (a) {
-        if (f) {
-            b = f.call(this, a)
-            f = null
-        }
-        return b
-    }
-})($0)")>]
-let inline private once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
-
 let private setKey (_: string) (_: 'a) (_: 'b): 'b = jsNative
+
+let absurdObj () = createEmpty<obj>
+
+let proveObj (_:obj) = true
 
 let otree
     (pith: IStream<IObject -> unit>): IStream<obj -> obj> =
     let ring pith o =
         pith { new IObject with
-        member __.ONode key r = failwith "ni"
+        member __.ONode key r =
+            failwith "ni"
         member __.ANode key r = failwith "ni"
         member __.Value key (absurd, prove) r =
             o (
                 key, absurd () :> obj, prove,
-                M.map
-                    (fun r o ->
-                        let x = o?key
-                        let oa = if prove x then (unbox x) else absurd ()
-                        let na = r oa
-                        setKey key na o
-                    )
-                    r
-            )
+                r |> M.map (fun r o ->
+                    let x = o?key
+                    let oa = if prove x then (unbox x) else absurd ()
+                    let na = r oa
+                    setKey key na o))
         }
 
     let deltac (xs: (string * obj * (obj -> bool) * IStream<obj -> obj>) list) =
-        List.groupBy (fun (key, _, _, _) -> key) xs
-            |> Seq.map (fun grp ->
-                Seq.fold
-                    (fun (prevR, prevProve) (_, a, prove, r) ->
-                        if prevProve a then
-                            (M.merge prevR r, prove)
-                        else
-                            (prevR, prevProve)
-                    )
-                    (M.empty (), (fun _ -> true))
-                    (snd grp)
-                |> fst)
-            |> Seq.fold (fun ls rs -> M.combine (fun l r -> r :: l) ls (M.map once rs)) (M.now [])
-            |> M.map (fun reducers o -> o)
+        Seq.groupBy (fun (key, _, _, _) -> key) xs
+            |> Seq.fold
+                (fun rez grp ->
+                    Seq.fold
+                        (fun (prevR, prevProve) (_, a, prove, r) ->
+                            if prevProve a then
+                                (M.merge prevR r, prove)
+                            else
+                                (prevR, prevProve))
+                        (M.empty (), (fun _ -> true))
+                        (snd grp)
+                    |> fst
+                    |> M.merge rez)
+                (M.empty ())
 
     M.tree deltac (M.map ring pith)
 
