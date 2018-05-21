@@ -10,6 +10,7 @@
     <Compile Include="dom.fs" />
     <Compile Include="dom2.fs" />
     <Compile Include="state.fs" />
+    <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

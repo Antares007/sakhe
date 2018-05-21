@@ -4,14 +4,6 @@ open Sakhe
 open Fable.Core
 open Fable.Core.JsInterop
 
-// type JValue =
-//     | JString of string
-//     | JNumber of float
-//     | JBool   of bool
-//     | JNull
-//     | JObject of Map<string, JValue>
-//     | JArray  of JValue list
-
 type R<'a> = 'a option -> 'a
 
 type IJValueRay =
@@ -77,27 +69,3 @@ and aTree (pith: IStream<IJValueRay -> unit>): IStream<(obj []) R> =
             member __.JArray  r = cpp() |> (fun key -> o (M.map (chain key absurdArray isArray) (aTree r))) }
     let deltac list = List.fold M.merge (M.empty ()) list
     M.tree deltac (M.map ring pith)
-
-let init iv r = function
-    | Some v -> r v
-    | None   -> r iv
-
-let rez = oTree << M.now <| fun o ->
-    (o "key1").JNumber << M.now << init 1. <| fun s -> s + 1.
-    (o "key2").JObject << M.now <| fun o ->
-        (o "key1").JNumber << M.now << init 0. <| fun f -> f + 1.
-        (o "key1").JNumber << M.now << init 0. <| fun f -> f + 1.
-    (o "key3").JArray << M.now <| fun o ->
-        o.JString << M.now << init "a" <| fun s -> s + s
-        o.JString << M.now << init "b" <| fun s -> s + s
-        o.JString << M.now << init "o" <| fun s -> s + s
-        ()
-
-open Fable.Import.Browser
-
-let scheduler = Most.Scheduler.newDefaultScheduler ()
-M.runEffects
-    (
-        rez |> M.scan (fun s r -> r (Some s))  (absurdObj ()) |> M.tap console.log
-    )
-    scheduler |> ignore

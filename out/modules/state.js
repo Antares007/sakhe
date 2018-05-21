@@ -3,13 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.scheduler = exports.rez = undefined;
 exports.chain = chain;
 exports.absurdObj = absurdObj;
 exports.absurdArray = absurdArray;
 exports.oTree = oTree;
 exports.aTree = aTree;
-exports.init = init;
 
 var _Option = require("./fable-core/Option");
 
@@ -24,10 +22,6 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 var _Seq = require("./fable-core/Seq");
 
 var _m = require("./m");
-
-var _scheduler = require("@most/scheduler");
-
-var scheduler_1 = _interopRequireWildcard(_scheduler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -185,73 +179,3 @@ function aTree(pith) {
     ring($var23, $var24);
   }, pith));
 }
-
-function init(iv, r, _arg1) {
-  if (_arg1 == null) {
-    return r(iv);
-  } else {
-    return r((0, _Option.getValue)(_arg1));
-  }
-}
-
-const rez = exports.rez = ($var25 => oTree(core.now($var25)))(function (o) {
-  ($var29 => ($var26 => {
-    var objectArg;
-    return (objectArg = o("key1"), objectArg.JNumber.bind(objectArg))(core.now.bind(core)($var26));
-  })(($var27 => $var28 => function (r, _arg1) {
-    return init(1, r, _arg1);
-  }($var27, $var28))($var29)))(function (s) {
-    return s + 1;
-  });
-
-  ($var30 => {
-    var objectArg_1;
-    return (objectArg_1 = o("key2"), objectArg_1.JObject.bind(objectArg_1))(core.now.bind(core)($var30));
-  })(function (o_1) {
-    ($var34 => ($var31 => {
-      var objectArg_2;
-      return (objectArg_2 = o_1("key1"), objectArg_2.JNumber.bind(objectArg_2))(core.now.bind(core)($var31));
-    })(($var32 => $var33 => function (r_1, _arg1_1) {
-      return init(0, r_1, _arg1_1);
-    }($var32, $var33))($var34)))(function (f) {
-      return f + 1;
-    });
-
-    ($var38 => ($var35 => {
-      var objectArg_3;
-      return (objectArg_3 = o_1("key1"), objectArg_3.JNumber.bind(objectArg_3))(core.now.bind(core)($var35));
-    })(($var36 => $var37 => function (r_2, _arg1_2) {
-      return init(0, r_2, _arg1_2);
-    }($var36, $var37))($var38)))(function (f_1) {
-      return f_1 + 1;
-    });
-  });
-
-  ($var39 => {
-    var objectArg_4;
-    return (objectArg_4 = o("key3"), objectArg_4.JArray.bind(objectArg_4))(core.now.bind(core)($var39));
-  })(function (o_2) {
-    ($var43 => ($var40 => o_2.JString.bind(o_2)(core.now.bind(core)($var40)))(($var41 => $var42 => function (r_3, _arg1_3) {
-      return init("a", r_3, _arg1_3);
-    }($var41, $var42))($var43)))(function (s_1) {
-      return s_1 + s_1;
-    });
-
-    ($var47 => ($var44 => o_2.JString.bind(o_2)(core.now.bind(core)($var44)))(($var45 => $var46 => function (r_4, _arg1_4) {
-      return init("b", r_4, _arg1_4);
-    }($var45, $var46))($var47)))(function (s_2) {
-      return s_2 + s_2;
-    });
-
-    ($var51 => ($var48 => o_2.JString.bind(o_2)(core.now.bind(core)($var48)))(($var49 => $var50 => function (r_5, _arg1_5) {
-      return init("o", r_5, _arg1_5);
-    }($var49, $var50))($var51)))(function (s_3) {
-      return s_3 + s_3;
-    });
-  });
-});
-
-const scheduler = exports.scheduler = scheduler_1.newDefaultScheduler();
-core.runEffects(core.tap(console.log.bind(console), core.scan(function (s, r) {
-  return r(s);
-}, absurdObj(), rez)), scheduler), void 0;

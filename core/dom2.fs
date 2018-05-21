@@ -76,4 +76,3 @@ let run () =
 
     let scheduler = Most.Scheduler.newDefaultScheduler ()
     M.runEffects patches scheduler
-run () |> ignore
