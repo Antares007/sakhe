@@ -24,9 +24,11 @@ let chain (key: 'k) (absurd: unit -> 'o) (prove: obj -> bool) (r: R<'a>) (o: 'o 
     | None ->
         assignKey key (r None) absurd (absurd ())
 
-let absurdObj (): obj = createEmpty<obj>
+[<Emit("({})")>]
+let absurdObj (): obj = jsNative
 
-let absurdArray (): obj [] = [||]
+[<Emit("([])")>]
+let absurdArray (): obj [] = jsNative
 
 [<Emit("typeof $0 === 'string'")>]
 let private isString (_: 'o) = jsNative

@@ -92,4 +92,4 @@ const rez = exports.rez = ($var1 => (0, _state.oTree)(core.now($var1)))(function
 const scheduler = exports.scheduler = scheduler_1.newDefaultScheduler();
 core.runEffects(core.tap(console.log.bind(console), core.scan(function (s, r) {
   return r(s);
-}, (0, _state.absurdObj)(), rez)), scheduler), void 0;
+}, {}, rez)), scheduler), void 0;

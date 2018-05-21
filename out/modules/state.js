@@ -4,8 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.chain = chain;
-exports.absurdObj = absurdObj;
-exports.absurdArray = absurdArray;
 exports.oTree = oTree;
 exports.aTree = aTree;
 
@@ -40,14 +38,6 @@ function chain(key, absurd, prove, r, o) {
   }
 }
 
-function absurdObj() {
-  return {};
-}
-
-function absurdArray() {
-  return [];
-}
-
 function oTree(pith) {
   const ring = function (pith_1, o) {
     pith_1(function (key) {
@@ -55,35 +45,35 @@ function oTree(pith) {
         JString(r) {
           o(core.map($var1 => $var2 => {
             var prove;
-            return (prove = arg00_ => typeof arg00_ === "string", (r_1, o_1) => chain(key, () => absurdObj(), prove, r_1, o_1))($var1, $var2);
+            return (prove = arg00_ => typeof arg00_ === "string", (r_1, o_1) => chain(key, () => ({}), prove, r_1, o_1))($var1, $var2);
           }, r));
         },
 
         JNumber(r) {
           o(core.map($var3 => $var4 => {
             var prove;
-            return (prove = arg00_ => typeof arg00_ === "number", (r_1, o_1) => chain(key, () => absurdObj(), prove, r_1, o_1))($var3, $var4);
+            return (prove = arg00_ => typeof arg00_ === "number", (r_1, o_1) => chain(key, () => ({}), prove, r_1, o_1))($var3, $var4);
           }, r));
         },
 
         JBool(r) {
           o(core.map($var5 => $var6 => {
             var prove;
-            return (prove = arg00_ => typeof arg00_ === "boolean", (r_1, o_1) => chain(key, () => absurdObj(), prove, r_1, o_1))($var5, $var6);
+            return (prove = arg00_ => typeof arg00_ === "boolean", (r_1, o_1) => chain(key, () => ({}), prove, r_1, o_1))($var5, $var6);
           }, r));
         },
 
         JObject(r) {
           o(core.map($var7 => $var8 => {
             var prove;
-            return (prove = arg00_ => typeof arg00_ === "object" && arg00_ != null, (r_1, o_1) => chain(key, () => absurdObj(), prove, r_1, o_1))($var7, $var8);
+            return (prove = arg00_ => typeof arg00_ === "object" && arg00_ != null, (r_1, o_1) => chain(key, () => ({}), prove, r_1, o_1))($var7, $var8);
           }, oTree(r)));
         },
 
         JArray(r) {
           o(core.map($var9 => $var10 => {
             var prove;
-            return (prove = arg00_ => Array.isArray(arg00_), (r_1, o_1) => chain(key, () => absurdObj(), prove, r_1, o_1))($var9, $var10);
+            return (prove = arg00_ => Array.isArray(arg00_), (r_1, o_1) => chain(key, () => ({}), prove, r_1, o_1))($var9, $var10);
           }, aTree(r)));
         },
 
@@ -121,7 +111,7 @@ function aTree(pith) {
         (key => {
           o(core.map($var13 => $var14 => {
             var prove;
-            return (prove = arg00_ => typeof arg00_ === "string", (r_1, o_1) => chain(key, () => absurdArray(), prove, r_1, o_1))($var13, $var14);
+            return (prove = arg00_ => typeof arg00_ === "string", (r_1, o_1) => chain(key, () => [], prove, r_1, o_1))($var13, $var14);
           }, r));
         })(cpp());
       },
@@ -130,7 +120,7 @@ function aTree(pith) {
         (key => {
           o(core.map($var15 => $var16 => {
             var prove;
-            return (prove = arg00_ => typeof arg00_ === "number", (r_1, o_1) => chain(key, () => absurdArray(), prove, r_1, o_1))($var15, $var16);
+            return (prove = arg00_ => typeof arg00_ === "number", (r_1, o_1) => chain(key, () => [], prove, r_1, o_1))($var15, $var16);
           }, r));
         })(cpp());
       },
@@ -139,7 +129,7 @@ function aTree(pith) {
         (key => {
           o(core.map($var17 => $var18 => {
             var prove;
-            return (prove = arg00_ => typeof arg00_ === "boolean", (r_1, o_1) => chain(key, () => absurdArray(), prove, r_1, o_1))($var17, $var18);
+            return (prove = arg00_ => typeof arg00_ === "boolean", (r_1, o_1) => chain(key, () => [], prove, r_1, o_1))($var17, $var18);
           }, r));
         })(cpp());
       },
@@ -148,7 +138,7 @@ function aTree(pith) {
         (key => {
           o(core.map($var19 => $var20 => {
             var prove;
-            return (prove = arg00_ => typeof arg00_ === "object" && arg00_ != null, (r_1, o_1) => chain(key, () => absurdArray(), prove, r_1, o_1))($var19, $var20);
+            return (prove = arg00_ => typeof arg00_ === "object" && arg00_ != null, (r_1, o_1) => chain(key, () => [], prove, r_1, o_1))($var19, $var20);
           }, oTree(r)));
         })(cpp());
       },
@@ -157,7 +147,7 @@ function aTree(pith) {
         (key => {
           o(core.map($var21 => $var22 => {
             var prove;
-            return (prove = arg00_ => Array.isArray(arg00_), (r_1, o_1) => chain(key, () => absurdArray(), prove, r_1, o_1))($var21, $var22);
+            return (prove = arg00_ => Array.isArray(arg00_), (r_1, o_1) => chain(key, () => [], prove, r_1, o_1))($var21, $var22);
           }, aTree(r)));
         })(cpp());
       },
