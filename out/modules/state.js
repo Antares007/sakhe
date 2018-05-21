@@ -7,8 +7,8 @@ exports.scheduler = exports.rez = undefined;
 exports.chain = chain;
 exports.absurdObj = absurdObj;
 exports.absurdArray = absurdArray;
-exports.otree = otree;
-exports.atree = atree;
+exports.oTree = oTree;
+exports.aTree = aTree;
 exports.init = init;
 
 var _Option = require("./fable-core/Option");
@@ -54,7 +54,7 @@ function absurdArray() {
   return [];
 }
 
-function otree(pith) {
+function oTree(pith) {
   const ring = function (pith_1, o) {
     pith_1(function (key) {
       return {
@@ -83,14 +83,14 @@ function otree(pith) {
           o(core.map($var7 => $var8 => {
             var prove;
             return (prove = arg00_ => typeof arg00_ === "object" && arg00_ != null, (r_1, o_1) => chain(key, () => absurdObj(), prove, r_1, o_1))($var7, $var8);
-          }, otree(r)));
+          }, oTree(r)));
         },
 
         JArray(r) {
           o(core.map($var9 => $var10 => {
             var prove;
             return (prove = arg00_ => Array.isArray(arg00_), (r_1, o_1) => chain(key, () => absurdObj(), prove, r_1, o_1))($var9, $var10);
-          }, atree(r)));
+          }, aTree(r)));
         },
 
         [_Symbol3.default.reflection]() {
@@ -112,73 +112,60 @@ function otree(pith) {
   }, pith));
 }
 
-function atree(pith) {
+function aTree(pith) {
   const ring = function (pith_1, o) {
     let c = 0;
+
+    const cpp = function () {
+      const index = c | 0;
+      c = c + 1 | 0;
+      return index | 0;
+    };
+
     pith_1({
       JString(r) {
-        const index_1 = (() => {
-          const index = c | 0;
-          c = c + 1 | 0;
-          return index | 0;
-        })();
-
-        o(core.map($var13 => $var14 => {
-          var prove;
-          return (prove = arg00_ => typeof arg00_ === "string", (r_1, o_1) => chain(index_1, () => absurdArray(), prove, r_1, o_1))($var13, $var14);
-        }, r));
+        (key => {
+          o(core.map($var13 => $var14 => {
+            var prove;
+            return (prove = arg00_ => typeof arg00_ === "string", (r_1, o_1) => chain(key, () => absurdArray(), prove, r_1, o_1))($var13, $var14);
+          }, r));
+        })(cpp());
       },
 
       JNumber(r) {
-        const index_1 = (() => {
-          const index = c | 0;
-          c = c + 1 | 0;
-          return index | 0;
-        })();
-
-        o(core.map($var15 => $var16 => {
-          var prove;
-          return (prove = arg00_ => typeof arg00_ === "number", (r_1, o_1) => chain(index_1, () => absurdArray(), prove, r_1, o_1))($var15, $var16);
-        }, r));
+        (key => {
+          o(core.map($var15 => $var16 => {
+            var prove;
+            return (prove = arg00_ => typeof arg00_ === "number", (r_1, o_1) => chain(key, () => absurdArray(), prove, r_1, o_1))($var15, $var16);
+          }, r));
+        })(cpp());
       },
 
       JBool(r) {
-        const index_1 = (() => {
-          const index = c | 0;
-          c = c + 1 | 0;
-          return index | 0;
-        })();
-
-        o(core.map($var17 => $var18 => {
-          var prove;
-          return (prove = arg00_ => typeof arg00_ === "boolean", (r_1, o_1) => chain(index_1, () => absurdArray(), prove, r_1, o_1))($var17, $var18);
-        }, r));
+        (key => {
+          o(core.map($var17 => $var18 => {
+            var prove;
+            return (prove = arg00_ => typeof arg00_ === "boolean", (r_1, o_1) => chain(key, () => absurdArray(), prove, r_1, o_1))($var17, $var18);
+          }, r));
+        })(cpp());
       },
 
       JObject(r) {
-        const index_1 = (() => {
-          const index = c | 0;
-          c = c + 1 | 0;
-          return index | 0;
-        })();
-
-        o(core.map($var19 => $var20 => {
-          var prove;
-          return (prove = arg00_ => typeof arg00_ === "object" && arg00_ != null, (r_1, o_1) => chain(index_1, () => absurdArray(), prove, r_1, o_1))($var19, $var20);
-        }, otree(r)));
+        (key => {
+          o(core.map($var19 => $var20 => {
+            var prove;
+            return (prove = arg00_ => typeof arg00_ === "object" && arg00_ != null, (r_1, o_1) => chain(key, () => absurdArray(), prove, r_1, o_1))($var19, $var20);
+          }, oTree(r)));
+        })(cpp());
       },
 
       JArray(r) {
-        const index_1 = (() => {
-          const index = c | 0;
-          c = c + 1 | 0;
-          return index | 0;
-        })();
-
-        o(core.map($var21 => $var22 => {
-          var prove;
-          return (prove = arg00_ => Array.isArray(arg00_), (r_1, o_1) => chain(index_1, () => absurdArray(), prove, r_1, o_1))($var21, $var22);
-        }, atree(r)));
+        (key => {
+          o(core.map($var21 => $var22 => {
+            var prove;
+            return (prove = arg00_ => Array.isArray(arg00_), (r_1, o_1) => chain(key, () => absurdArray(), prove, r_1, o_1))($var21, $var22);
+          }, aTree(r)));
+        })(cpp());
       },
 
       [_Symbol3.default.reflection]() {
@@ -207,7 +194,7 @@ function init(iv, r, _arg1) {
   }
 }
 
-const rez = exports.rez = ($var25 => otree(core.now($var25)))(function (o) {
+const rez = exports.rez = ($var25 => oTree(core.now($var25)))(function (o) {
   ($var29 => ($var26 => {
     var objectArg;
     return (objectArg = o("key1"), objectArg.JNumber.bind(objectArg))(core.now.bind(core)($var26));

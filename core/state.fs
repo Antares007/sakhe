@@ -51,40 +51,30 @@ let private isObject (_: 'o) = jsNative
 [<Emit("Array.isArray($0)")>]
 let private isArray (_: 'o) = jsNative
 
-let rec otree (pith: IStream<(string -> IJValueRay) -> unit>): IStream<obj R> =
+let rec oTree (pith: IStream<(string -> IJValueRay) -> unit>): IStream<obj R> =
     let ring (pith: (string -> IJValueRay) -> unit) (o: IStream<obj R> -> unit): unit =
         pith <| fun key -> { new IJValueRay with
             member __.JString r = o (M.map (chain key absurdObj isString) r)
             member __.JNumber r = o (M.map (chain key absurdObj isNumber) r)
             member __.JBool   r = o (M.map (chain key absurdObj isBool) r)
-            member __.JObject r = o (M.map (chain key absurdObj isObject) (otree r))
-            member __.JArray  r = o (M.map (chain key absurdObj isArray) (atree r)) }
+            member __.JObject r = o (M.map (chain key absurdObj isObject) (oTree r))
+            member __.JArray  r = o (M.map (chain key absurdObj isArray) (aTree r)) }
     let deltac list = List.fold M.merge (M.empty ()) list
     M.tree deltac (M.map ring pith)
 
-and atree (pith: IStream<IJValueRay -> unit>): IStream<(obj []) R> =
+and aTree (pith: IStream<IJValueRay -> unit>): IStream<(obj []) R> =
     let ring (pith: IJValueRay -> unit) (o: IStream<(obj []) R> -> unit): unit =
         let mutable c = 0
-        let inline cpp () =
+        let cpp () =
                 let index = c
                 c <- c + 1
                 index
         pith { new IJValueRay with
-            member __.JString r =
-                let index = cpp()
-                o (M.map (chain (index) absurdArray isString) r)
-            member __.JNumber r =
-                let index = cpp()
-                o (M.map (chain (index) absurdArray isNumber) r)
-            member __.JBool   r =
-                let index = cpp()
-                o (M.map (chain (index) absurdArray isBool) r)
-            member __.JObject r =
-                let index = cpp()
-                o (M.map (chain (index) absurdArray isObject) (otree r))
-            member __.JArray  r =
-                let index = cpp()
-                o (M.map (chain (index) absurdArray isArray) (atree r)) }
+            member __.JString r = cpp() |> (fun key -> o (M.map (chain key absurdArray isString) r))
+            member __.JNumber r = cpp() |> (fun key -> o (M.map (chain key absurdArray isNumber) r))
+            member __.JBool   r = cpp() |> (fun key -> o (M.map (chain key absurdArray isBool) r))
+            member __.JObject r = cpp() |> (fun key -> o (M.map (chain key absurdArray isObject) (oTree r)))
+            member __.JArray  r = cpp() |> (fun key -> o (M.map (chain key absurdArray isArray) (aTree r))) }
     let deltac list = List.fold M.merge (M.empty ()) list
     M.tree deltac (M.map ring pith)
 
@@ -92,7 +82,7 @@ let init iv r = function
     | Some v -> r v
     | None   -> r iv
 
-let rez = otree << M.now <| fun o ->
+let rez = oTree << M.now <| fun o ->
     (o "key1").JNumber << M.now << init 1. <| fun s -> s + 1.
     (o "key2").JObject << M.now <| fun o ->
         (o "key1").JNumber << M.now << init 0. <| fun f -> f + 1.
