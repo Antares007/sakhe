@@ -1,4 +1,8 @@
 module Sakhe.State
+open Most
+open Sakhe
+open Fable.Core
+open Fable.Core.JsInterop
 
 // type JValue =
 //     | JString of string
@@ -8,99 +12,102 @@ module Sakhe.State
 //     | JObject of Map<string, JValue>
 //     | JArray  of JValue list
 
-open Fable.Core
-open Most
-open Sakhe
+type R<'a> = 'a option -> 'a
 
-type T<'a> = (unit -> 'a) * (obj -> bool)
+type IJValueRay =
+    abstract JString:   IStream<string R> -> unit
+    abstract JNumber:   IStream<float R> -> unit
+    abstract JBool:     IStream<bool R> -> unit
+    abstract JObject:   IStream<(string -> IJValueRay) -> unit> -> unit
+    abstract JArray:    IStream<IJValueRay -> unit> -> unit
 
-type IObject =
-    abstract ONode: key: string -> IStream<IObject -> unit> -> unit
-    abstract ANode: key: string -> IStream<IArray -> unit> -> unit
-    abstract Value<'a> : key: string -> (unit -> 'a) * (obj -> bool) -> IStream<'a -> 'a> -> unit
-and IArray =
-    abstract ONode: IStream<IObject -> unit> -> unit
-    abstract ANode: IStream<IArray -> unit> -> unit
-    abstract Value<'a> : (unit -> 'a) * (obj -> bool) -> IStream<'a -> 'a> -> unit
-open Dom2
-open Fable.Import.Browser
-open Fable.Core.JsInterop
-console.log run
+[<Emit("Object.assign($2(), $3, {[$0]: $1})")>]
+let assignKey (_: 'k) (_: 'v) (_: unit -> 'o) (_: 'o): 'o = jsNative
 
-let private setKey (_: string) (_: 'a) (_: 'b): 'b = jsNative
+let chain (key: 'k) (absurd: unit -> 'o) (prove: obj -> bool) (r: R<'a>) (o: 'o option): 'o =
+    match o with
+    | Some o ->
+        let x: obj = !!o?(key)
+        assignKey key (r (if prove x then Some (x :?> 'a) else None)) absurd o
+    | None ->
+        assignKey key (r None) absurd (absurd ())
 
-let absurdObj () = createEmpty<obj>
-let proveObj (_:obj) = true
+let absurdObj (): obj = createEmpty<obj>
 
-let absurdArray (): obj[] = [||]
-let proveArray (_:obj) = true
+let absurdArray (): obj [] = [||]
 
-let rec otree
-    (pith: IStream<IObject -> unit>): IStream<obj -> obj> =
-    let ring pith o =
-        pith { new IObject with
-        member __.ONode key pith =
-            o (
-                key, absurdObj (), proveObj,
-                otree pith |> M.map (fun r o ->
-                    let x = o?key
-                    let oa = if proveObj x then unbox x else absurdObj ()
-                    let na = r oa
-                    setKey key na o))
-        member __.ANode key pith =
-            o (
-                key, absurdArray (), proveArray,
-                atree pith |> M.map (fun r o ->
-                    let x = o?key
-                    let oa = if proveObj x then unbox x else absurdArray ()
-                    let na = r oa
-                    setKey key na o))
-        member __.Value key (absurd, prove) r =
-            o (
-                key, absurd () :> obj, prove,
-                r |> M.map (fun r o ->
-                    let x = o?key
-                    let oa = if prove x then (unbox x) else absurd ()
-                    let na = r oa
-                    setKey key na o))
-        }
+[<Emit("typeof $0 === 'string'")>]
+let private isString (_: 'o) = jsNative
 
-    let deltac (xs: (string * obj * (obj -> bool) * IStream<obj -> obj>) list) =
-        Seq.groupBy (fun (key, _, _, _) -> key) xs
-            |> Seq.fold
-                (fun rez grp ->
-                    Seq.fold
-                        (fun (prevR, prevProve) (_, a, prove, r) ->
-                            if prevProve a then
-                                (M.merge prevR r, prove)
-                            else
-                                (prevR, prevProve))
-                        (M.empty (), (fun _ -> true))
-                        (snd grp)
-                    |> fst
-                    |> M.merge rez)
-                (M.empty ())
+[<Emit("typeof $0 === 'number'")>]
+let private isNumber (_: 'o) = jsNative
 
+[<Emit("typeof $0 === 'boolean'")>]
+let private isBool   (_: 'o) = jsNative
+
+[<Emit("typeof $0 === 'object' && $0 != null")>]
+let private isObject (_: 'o) = jsNative
+
+[<Emit("Array.isArray($0)")>]
+let private isArray (_: 'o) = jsNative
+
+let rec otree (pith: IStream<(string -> IJValueRay) -> unit>): IStream<obj R> =
+    let ring (pith: (string -> IJValueRay) -> unit) (o: IStream<obj R> -> unit): unit =
+        pith <| fun key -> { new IJValueRay with
+            member __.JString r = o (M.map (chain key absurdObj isString) r)
+            member __.JNumber r = o (M.map (chain key absurdObj isNumber) r)
+            member __.JBool   r = o (M.map (chain key absurdObj isBool) r)
+            member __.JObject r = o (M.map (chain key absurdObj isObject) (otree r))
+            member __.JArray  r = o (M.map (chain key absurdObj isArray) (atree r)) }
+    let deltac list = List.fold M.merge (M.empty ()) list
     M.tree deltac (M.map ring pith)
-and atree (pith: IStream<IArray -> unit>): IStream<obj [] -> obj []> =
-    failwith "ni"
 
-let o = [||] :> obj
+and atree (pith: IStream<IJValueRay -> unit>): IStream<(obj []) R> =
+    let ring (pith: IJValueRay -> unit) (o: IStream<(obj []) R> -> unit): unit =
+        let mutable c = 0
+        let inline cpp () =
+                let index = c
+                c <- c + 1
+                index
+        pith { new IJValueRay with
+            member __.JString r =
+                let index = cpp()
+                o (M.map (chain (index) absurdArray isString) r)
+            member __.JNumber r =
+                let index = cpp()
+                o (M.map (chain (index) absurdArray isNumber) r)
+            member __.JBool   r =
+                let index = cpp()
+                o (M.map (chain (index) absurdArray isBool) r)
+            member __.JObject r =
+                let index = cpp()
+                o (M.map (chain (index) absurdArray isObject) (otree r))
+            member __.JArray  r =
+                let index = cpp()
+                o (M.map (chain (index) absurdArray isArray) (atree r)) }
+    let deltac list = List.fold M.merge (M.empty ()) list
+    M.tree deltac (M.map ring pith)
 
-// type [<Pojo>] Person =
-//     {name: string; age: float}
-//     static member Absurd () = {name = "a"; age = 42.}
+let init iv r = function
+    | Some v -> r v
+    | None   -> r iv
 
-// let person = {name = "Archil"; age = 42.}
-// let zero = Person.Absurd ()
+let rez = otree << M.now <| fun o ->
+    (o "key1").JNumber << M.now << init 1. <| fun s -> s + 1.
+    (o "key2").JObject << M.now <| fun o ->
+        (o "key1").JNumber << M.now << init 0. <| fun f -> f + 1.
+        (o "key1").JNumber << M.now << init 0. <| fun f -> f + 1.
+    (o "key3").JArray << M.now <| fun o ->
+        o.JString << M.now << init "a" <| fun s -> s + s
+        o.JString << M.now << init "b" <| fun s -> s + s
+        o.JString << M.now << init "o" <| fun s -> s + s
+        ()
 
-// let o: IObject = unbox false
+open Fable.Import.Browser
 
-// o.Value
-//     "a"
-//     (
-//         (fun () -> {name="a"; age = 42.}),
-//         (fun o -> true),
-//         (M.now (fun x -> {x with age = 43.}))
-//     )
-// let o = JObject (Map.ofList ["a", JNull; "b", JBool true; "c", JObject (Map.ofList ["a", JNull; "b", JBool true])])
+let scheduler = Most.Scheduler.newDefaultScheduler ()
+M.runEffects
+    (
+        rez |> M.scan (fun s r -> r (Some s))  (absurdObj ()) |> M.tap console.log
+    )
+    scheduler |> ignore
