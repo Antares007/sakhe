@@ -1,8 +1,6 @@
 module Sakhe.Show
 open Most
 open Fable.Import.Browser
-open Fable
-open Fable.Core.Exceptions
 
 let scheduler = Most.Scheduler.newDefaultScheduler ()
 let drain s = M.runEffects s scheduler |> ignore
@@ -57,27 +55,42 @@ module State2 =
     //drain rez
 
 module Dom =
+    open Fable.Core
     open P
-    let Div (pith: IStream<Pith<Dom>>): Dom =
-        Node (
-                ((fun () -> upcast (document.createElement_div ()) ), (fun n -> n.nodeName = "DIV")),
-                P.tree pith
+
+    let elementAP (tag: string): AP<Element> =
+        ((fun () -> upcast (document.createElement tag)), (fun n -> n.nodeName = tag))
+
+    let Div (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "DIV", P.tree pith)
+    let A (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "A", P.tree pith)
+    let Button (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "BUTTON", P.tree pith)
+    let Span (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "SPAN", P.tree pith)
+    let H1 (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "H1", P.tree pith)
+    let H2 (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "H2", P.tree pith)
+    let H3 (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "H3", P.tree pith)
+
+    let Text p =
+        Leaf (
+                ((fun () -> upcast (document.createTextNode "")), (fun n -> n.nodeName = "#text")),
+                p
             )
-    let A (pith: IStream<Pith<Dom>>): Dom =
-        Node (
-                ((fun () -> upcast (document.createElement_a ()) ), (fun n -> n.nodeName = "a")),
-                P.tree pith
-            )
+    let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0 |> M.skip 1 |> M.multicast
+
+    let rec counter d =
+        Div << M.now <| fun o ->
+            o << Button << M.now <| fun o ->
+                o << Span << M.now <| fun o ->
+                    o << Text << M.now <| fun text -> text.textContent <- "+"
+                if d > 0 then o (counter (d - 1))
+            o << Button << M.now <| fun o ->
+                o << Span << M.now <| fun o ->
+                    o << Text << M.now <| fun text -> text.textContent <- "-"
+                if d > 0 then o (counter (d - 1))
+            o << H3 << M.now <| fun o ->
+                o << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
 
     let rez =
-        P.tree << M.now <| fun o ->
-            o << Div << M.now <| fun o ->
-                o << Div << M.now <| ignore
-                o << A << M.now <| ignore
-            o << A << M.now <| fun o ->
-                o << Div << M.now <| ignore
-                o << A << M.now <| ignore
-
+        P.tree << M.now <| fun o -> o (counter 3)
         |> M.scan
             (fun n p -> p(n); n)
             (document.getElementById "root-node")

@@ -4,13 +4,15 @@ open Fable.Import.Browser
 open Sakhe
 open Most
 
-type P<'a> = 'a -> unit
+type Patch<'a> = 'a -> unit
 
 type Pith<'a> = ('a -> unit) -> unit
 
+type AP<'a> = (unit -> 'a) * (Node -> bool)
+
 type Dom =
-    | Node of ((unit -> Element) * (Node -> bool)) * IStream<Element -> unit>
-    | Leaf of ((unit -> CharacterData) * (Node -> bool)) * IStream<CharacterData -> unit>
+    | Node of Element AP * IStream<Element Patch>
+    | Leaf of CharacterData AP * IStream<CharacterData Patch>
 
 [<AutoOpen>]
 module private Impl =
@@ -70,7 +72,7 @@ module private Impl =
             (prove, index, elm)
 
 let tree pith =
-    let ring (pith: Pith<Dom>) (o: IStream<P<Element>> -> unit): unit =
+    let ring (pith: Pith<Dom>) (o: IStream<Patch<Element>> -> unit): unit =
         let mutable c = 0
         pith <| function
         | Node (ap, ps) ->
@@ -82,7 +84,7 @@ let tree pith =
             c <- c + 1
             o (M.map (chain ap index) ps)
 
-    let deltac (rs: IStream<P<Element>> list): IStream<P<Element>> =
+    let deltac (rs: IStream<Patch<Element>> list): IStream<Patch<Element>> =
         rs
             |> Seq.map (M.map once)
             |> Seq.fold (M.combine (fun p0 p e -> p e;  p0 e)) (M.now (ignore))
