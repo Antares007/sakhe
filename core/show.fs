@@ -74,19 +74,21 @@ module Dom =
                 ((fun () -> upcast (document.createTextNode "")), (fun n -> n.nodeName = "#text")),
                 p
             )
+    let (<<|) a b = a (M.now b)
+
     let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0 |> M.skip 1 |> M.multicast
 
     let rec counter d =
-        Div << M.now <| fun o ->
-            o << Button << M.now <| fun o ->
-                o << Span << M.now <| fun o ->
-                    o << Text << M.now <| fun text -> text.textContent <- "+"
+        Div <<| fun o ->
+            o << Button <<| fun o ->
+                o << Span <<| fun o ->
+                    o << Text <<| fun text -> text.textContent <- "+"
                 if d > 0 then o (counter (d - 1))
-            o << Button << M.now <| fun o ->
-                o << Span << M.now <| fun o ->
-                    o << Text << M.now <| fun text -> text.textContent <- "-"
+            o << Button <<| fun o ->
+                o << Span <<| fun o ->
+                    o << Text <<| fun text -> text.textContent <- "-"
                 if d > 0 then o (counter (d - 1))
-            o << H3 << M.now <| fun o ->
+            o << H3 <<| fun o ->
                 o << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
 
     let rez =

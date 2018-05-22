@@ -204,15 +204,19 @@ const Dom = exports.Dom = function (__exports) {
     }], p]);
   };
 
+  const op_LessLessBar = __exports.op_LessLessBar = function (a, b) {
+    return a(core.now(b));
+  };
+
   const intS = __exports.intS = core.multicast(core.skip(1, core.scan(function (c, _arg1) {
     return c + 1;
   }, 0, core.periodic(10))));
 
   const counter = __exports.counter = function (d) {
-    return ($var50 => Div(core.now($var50)))(function (o) {
-      ($var52 => ($var51 => o(Button($var51)))(core.now.bind(core)($var52)))(function (o_1) {
-        ($var54 => ($var53 => o_1(Span($var53)))(core.now.bind(core)($var54)))(function (o_2) {
-          ($var56 => ($var55 => o_2(_Text($var55)))(core.now.bind(core)($var56)))(function (text) {
+    return op_LessLessBar(Div, function (o) {
+      op_LessLessBar($var50 => o(Button($var50)), function (o_1) {
+        op_LessLessBar($var51 => o_1(Span($var51)), function (o_2) {
+          op_LessLessBar($var52 => o_2(_Text($var52)), function (text) {
             text.textContent = "+";
           });
         });
@@ -221,10 +225,9 @@ const Dom = exports.Dom = function (__exports) {
           o_1(counter(d - 1));
         }
       });
-
-      ($var58 => ($var57 => o(Button($var57)))(core.now.bind(core)($var58)))(function (o_3) {
-        ($var60 => ($var59 => o_3(Span($var59)))(core.now.bind(core)($var60)))(function (o_4) {
-          ($var62 => ($var61 => o_4(_Text($var61)))(core.now.bind(core)($var62)))(function (text_1) {
+      op_LessLessBar($var53 => o(Button($var53)), function (o_3) {
+        op_LessLessBar($var54 => o_3(Span($var54)), function (o_4) {
+          op_LessLessBar($var55 => o_4(_Text($var55)), function (text_1) {
             text_1.textContent = "-";
           });
         });
@@ -233,17 +236,16 @@ const Dom = exports.Dom = function (__exports) {
           o_3(counter(d - 1));
         }
       });
-
-      ($var64 => ($var63 => o(H3($var63)))(core.now.bind(core)($var64)))(function (o_5) {
-        ($var68 => {
-          var arg00__7;
-          return ($var65 => o_5(_Text($var65)))((arg00__7 = function (i, text_2) {
+      op_LessLessBar($var56 => o(H3($var56)), function (o_5) {
+        ($var60 => {
+          var arg00_;
+          return ($var57 => o_5(_Text($var57)))((arg00_ = function (i, text_2) {
             text_2.textContent = i.toString();
           }, function (arg10_) {
-            return core.map($var66 => $var67 => {
-              arg00__7($var66, $var67);
+            return core.map($var58 => $var59 => {
+              arg00_($var58, $var59);
             }, arg10_);
-          })($var68));
+          })($var60));
         })(intS);
       });
     });
@@ -252,7 +254,7 @@ const Dom = exports.Dom = function (__exports) {
   const rez_2 = __exports.rez = core.scan(function (n, p) {
     p(n);
     return n;
-  }, document.getElementById("root-node"), ($var69 => (0, _p.tree)(core.now($var69)))(function (o) {
+  }, document.getElementById("root-node"), ($var61 => (0, _p.tree)(core.now($var61)))(function (o) {
     o(counter(3));
   }));
   drain(rez_2);
