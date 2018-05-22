@@ -82,22 +82,10 @@ let rec tree pith =
             c <- c + 1
             o (M.map (chain ap index) ps)
 
-    let deltac rs: IStream<P<Element>> =
-        // let z =
-        //     List.fold
-        //         (fun ls rs ->
-        //             M.combine
-        //                 (fun l r -> r :: l)
-        //                 ls
-        //                 (M.map once rs)
-        //         )
-        //         (M.now [])
-        //         rs
-        List.fold (fun ls rs -> M.combine (fun l r -> r :: l) ls (M.map once rs)) (M.now []) rs
-        |> M.map (fun patches elm ->
-            List.iter (fun patch -> patch elm) patches
-            for i = patches.Length to unbox elm.childNodes.length - 1 do
-                elm.removeChild elm.childNodes.[i] |> ignore
-        )
+    let deltac (rs: IStream<P<Element>> list): IStream<P<Element>> =
+        rs
+            |> Seq.map (M.map once)
+            |> Seq.fold (M.combine (fun p0 p e -> p e;  p0 e)) (M.now (ignore))
+
     M.tree deltac (M.map ring pith)
 

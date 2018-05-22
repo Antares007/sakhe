@@ -20,10 +20,6 @@ var core = _interopRequireWildcard(_core);
 
 var _Seq = require("./fable-core/Seq");
 
-var _List = require("./fable-core/List");
-
-var _List2 = _interopRequireDefault(_List);
-
 var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
@@ -54,11 +50,11 @@ exports.Dom = Dom;
 (0, _Symbol2.setType)("Sakhe.P.Dom", Dom);
 
 const Impl = function (__exports) {
-  const tryFind = __exports.tryFind = function ($var11, $var12, $var13) {
+  const tryFind = __exports.tryFind = function ($var14, $var15, $var16) {
     tryFind: while (true) {
-      const f = $var11;
-      const i = $var12;
-      const nlist = $var13;
+      const f = $var14;
+      const i = $var15;
+      const nlist = $var16;
 
       if (i >= nlist.length) {
         return null;
@@ -68,9 +64,9 @@ const Impl = function (__exports) {
         if (f(n)) {
           return n;
         } else {
-          $var11 = f;
-          $var12 = i + 1;
-          $var13 = nlist;
+          $var14 = f;
+          $var15 = i + 1;
+          $var16 = nlist;
           continue tryFind;
         }
       }
@@ -139,36 +135,37 @@ function tree(pith) {
   };
 
   const deltac = function (rs) {
-    return core.map($var7 => $var8 => {
-      (function (patches, elm_2) {
-        (0, _Seq.iterate)(function (patch_2) {
-          patch_2(elm_2);
-        }, patches);
+    var arg00_;
+    var arg00__2;
+    return (0, _Seq.fold)((arg00_ = function (p0, p, e) {
+      p(e);
+      p0(e);
+    }, function (arg10_, arg20_) {
+      return core.combine(($var7, $var8) => $var9 => {
+        arg00_($var7, $var8, $var9);
+      }, arg10_, arg20_);
+    }), core.now(function (value) {
+      value, void 0;
+    }), (0, _Seq.map)((arg00__2 = (0, _CurriedLambda2.default)(function (arg00__1) {
+      return function makeOnce(f) {
+        var b;
+        return function once(a) {
+          if (f) {
+            b = f.call(this, a);
+            f = null;
+          }
 
-        for (let i = patches.length; i <= elm_2.childNodes.length - 1; i++) {
-          elm_2.removeChild(elm_2.childNodes[i]), void 0;
-        }
-      })($var7, $var8);
-    }, (0, _Seq.fold)(function (ls, rs_1) {
-      return core.combine(function (l, r) {
-        return new _List2.default(r, l);
-      }, ls, core.map((0, _CurriedLambda2.default)(function (arg00_) {
-        return function makeOnce(f) {
-          var b;
-          return function once(a) {
-            if (f) {
-              b = f.call(this, a);
-              f = null;
-            }
-
-            return b;
-          };
-        }(arg00_);
-      }), rs_1));
-    }, core.now(new _List2.default()), rs));
+          return b;
+        };
+      }(arg00__1);
+    }), function (arg10__1) {
+      return core.map($var10 => $var11 => {
+        arg00__2($var10, $var11);
+      }, arg10__1);
+    }), rs));
   };
 
-  return (0, _m.tree)(deltac, core.map($var9 => $var10 => {
-    ring($var9, $var10);
+  return (0, _m.tree)(deltac, core.map($var12 => $var13 => {
+    ring($var12, $var13);
   }, pith));
 }
