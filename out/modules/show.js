@@ -160,21 +160,45 @@ const State2 = exports.State2 = function (__exports) {
 }({});
 
 const Dom = exports.Dom = function (__exports) {
+  const Div = __exports.Div = function (pith) {
+    return new _p.Dom(0, [[function () {
+      return document.createElement("div");
+    }, function (n) {
+      return n.nodeName === "DIV";
+    }], (0, _p.tree)(pith)]);
+  };
+
+  const A = __exports.A = function (pith) {
+    return new _p.Dom(0, [[function () {
+      return document.createElement("a");
+    }, function (n) {
+      return n.nodeName === "a";
+    }], (0, _p.tree)(pith)]);
+  };
+
   const rez_2 = __exports.rez = core.scan(function (n, p) {
     p(n);
     return n;
   }, document.getElementById("root-node"), ($var50 => (0, _p.tree)(core.now($var50)))(function (o) {
-    o(new _p.Dom(0, [[function () {
-      return document.createElement("div");
-    }, function (n_1) {
-      return n_1.nodeName === "DIV";
-    }], ($var51 => (0, _p.tree)(core.now($var51)))(function (o_1) {
-      o_1(new _p.Dom(0, [[function () {
-        return document.createElement("div");
-      }, function (n_2) {
-        return n_2.nodeName === "DIV";
-      }], ($var52 => (0, _p.tree)(core.now($var52)))(function (o_2) {})]));
-    })]));
+    ($var52 => ($var51 => o(Div($var51)))(core.now.bind(core)($var52)))(function (o_1) {
+      ($var54 => ($var53 => o_1(Div($var53)))(core.now.bind(core)($var54)))(function (value) {
+        value, void 0;
+      });
+
+      ($var56 => ($var55 => o_1(A($var55)))(core.now.bind(core)($var56)))(function (value_1) {
+        value_1, void 0;
+      });
+    });
+
+    ($var58 => ($var57 => o(A($var57)))(core.now.bind(core)($var58)))(function (o_2) {
+      ($var60 => ($var59 => o_2(Div($var59)))(core.now.bind(core)($var60)))(function (value_2) {
+        value_2, void 0;
+      });
+
+      ($var62 => ($var61 => o_2(A($var61)))(core.now.bind(core)($var62)))(function (value_3) {
+        value_3, void 0;
+      });
+    });
   }));
   drain(rez_2);
   return __exports;

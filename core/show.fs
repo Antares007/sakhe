@@ -1,6 +1,9 @@
 module Sakhe.Show
 open Most
 open Fable.Import.Browser
+open Fable
+open Fable.Core.Exceptions
+
 let scheduler = Most.Scheduler.newDefaultScheduler ()
 let drain s = M.runEffects s scheduler |> ignore
 
@@ -55,13 +58,26 @@ module State2 =
 
 module Dom =
     open P
+    let Div (pith: IStream<Pith<Dom>>): Dom =
+        Node (
+                ((fun () -> upcast (document.createElement_div ()) ), (fun n -> n.nodeName = "DIV")),
+                P.tree pith
+            )
+    let A (pith: IStream<Pith<Dom>>): Dom =
+        Node (
+                ((fun () -> upcast (document.createElement_a ()) ), (fun n -> n.nodeName = "a")),
+                P.tree pith
+            )
+
     let rez =
         P.tree << M.now <| fun o ->
-            Node (((fun () -> upcast (document.createElement_div ()) ), (fun n -> n.nodeName = "DIV")),  (P.tree <<  M.now) (fun o ->
-                Node (((fun () -> upcast (document.createElement_div ()) ), (fun n -> n.nodeName = "DIV")),  (P.tree <<  M.now) (fun o ->
-                    ())) |> o
-                ())) |> o
-            ()
+            o << Div << M.now <| fun o ->
+                o << Div << M.now <| ignore
+                o << A << M.now <| ignore
+            o << A << M.now <| fun o ->
+                o << Div << M.now <| ignore
+                o << A << M.now <| ignore
+
         |> M.scan
             (fun n p -> p(n); n)
             (document.getElementById "root-node")
