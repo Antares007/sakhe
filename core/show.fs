@@ -57,8 +57,8 @@ module Dom =
     open P
     let rez =
         P.tree << M.now <| fun o ->
-            Node (((fun () -> upcast (document.createElement_div ()) ), (fun n -> n.nodeName = "DIV")), M.now (fun o ->
-                Node (((fun () -> upcast (document.createElement_div ()) ), (fun n -> n.nodeName = "DIV")), M.now (fun o ->
+            Node (((fun () -> upcast (document.createElement_div ()) ), (fun n -> n.nodeName = "DIV")),  (P.tree <<  M.now) (fun o ->
+                Node (((fun () -> upcast (document.createElement_div ()) ), (fun n -> n.nodeName = "DIV")),  (P.tree <<  M.now) (fun o ->
                     ())) |> o
                 ())) |> o
             ()

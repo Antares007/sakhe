@@ -168,12 +168,12 @@ const Dom = exports.Dom = function (__exports) {
       return document.createElement("div");
     }, function (n_1) {
       return n_1.nodeName === "DIV";
-    }], core.now(function (o_1) {
+    }], ($var51 => (0, _p.tree)(core.now($var51)))(function (o_1) {
       o_1(new _p.Dom(0, [[function () {
         return document.createElement("div");
       }, function (n_2) {
         return n_2.nodeName === "DIV";
-      }], core.now(function (o_2) {})]));
+      }], ($var52 => (0, _p.tree)(core.now($var52)))(function (o_2) {})]));
     })]));
   }));
   drain(rez_2);

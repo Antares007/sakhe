@@ -9,8 +9,8 @@ type P<'a> = 'a -> unit
 type Pith<'a> = ('a -> unit) -> unit
 
 type Dom =
-    | Node of ((unit -> Element) * (Node -> bool)) * IStream<Pith<Dom>>
-    | Leaf of ((unit -> CharacterData) * (Node -> bool)) * IStream<(CharacterData -> unit)>
+    | Node of ((unit -> Element) * (Node -> bool)) * IStream<Element -> unit>
+    | Leaf of ((unit -> CharacterData) * (Node -> bool)) * IStream<CharacterData -> unit>
 
 [<AutoOpen>]
 module private Impl =
@@ -69,14 +69,14 @@ module private Impl =
             )
             (prove, index, elm)
 
-let rec tree pith =
+let tree pith =
     let ring (pith: Pith<Dom>) (o: IStream<P<Element>> -> unit): unit =
         let mutable c = 0
         pith <| function
-        | Node (ap, pith) ->
+        | Node (ap, ps) ->
             let index = c
             c <- c + 1
-            o (M.map (chain ap index) (tree pith))
+            o (M.map (chain ap index) ps)
         | Leaf (ap, ps) ->
             let index = c
             c <- c + 1

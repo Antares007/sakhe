@@ -129,7 +129,7 @@ function tree(pith) {
           (function (patch_1, elm_1) {
             Impl.chain(_arg1.data[0][0], _arg1.data[0][1], index_1, patch_1, elm_1);
           })($var5, $var6);
-        }, tree(_arg1.data[1])));
+        }, _arg1.data[1]));
       }
     });
   };
