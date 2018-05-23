@@ -7,9 +7,7 @@
     <Compile Include="a.fs" />
     <Compile Include="most.fs" />
     <Compile Include="m.fs" />
-    <Compile Include="dom.fs" />
     <Compile Include="pnode.fs" />
-    <Compile Include="dom2.fs" />
     <Compile Include="state.fs" />
     <Compile Include="state2.fs" />
     <Compile Include="show.fs" />
