@@ -88,7 +88,7 @@ const Impl = function (__exports) {
       const $var2 = function () {
         const b = absurd();
         patch(b);
-        elm.insertBefore(b, elm.childNodes[index]), void 0;
+        elm.insertBefore(b, elm.childNodes[index]);
       };
 
       const childNodes = elm.childNodes;
@@ -111,7 +111,7 @@ const Impl = function (__exports) {
             (function (tupledArg) {
               const b_1 = tupledArg[0];
               patch(b_1);
-              elm.insertBefore(b_1, tupledArg[1]), void 0;
+              elm.insertBefore(b_1, tupledArg[1]);
             })([(0, _Option.getValue)(matchValue), childAtIndex]);
           }
         }
@@ -144,7 +144,7 @@ function tree(pith) {
       };
     }(function (elm) {
       for (let i = elm.childNodes.length - 1; i >= c; i--) {
-        elm.removeChild(elm.childNodes[i]), void 0;
+        elm.removeChild(elm.childNodes[i]);
       }
     })));
   };
@@ -164,7 +164,7 @@ function tree(pith) {
   };
 
   const state = core.now(function (value) {
-    value, void 0;
+    value;
   });
 
   deltac = function (source) {
