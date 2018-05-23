@@ -72,13 +72,13 @@ module Dom =
     let elementAP (tag: string): AP<Node> =
         ((fun () -> upcast (document.createElement tag)), (fun n -> n.nodeName = tag))
 
-    let Div pith = PNode (elementAP "DIV",  pith)
-    let A pith =  PNode (elementAP "A", pith)
-    let Button pith =  PNode (elementAP "BUTTON", pith)
-    let Span pith =  PNode (elementAP "SPAN", pith)
-    let H1 pith =  PNode (elementAP "H1", pith)
-    let H2 pith =  PNode (elementAP "H2", pith)
-    let H3 pith =  PNode (elementAP "H3", pith)
+    let Div r = PNode (elementAP "DIV",  r)
+    let A r =  PNode (elementAP "A", r)
+    let Button r =  PNode (elementAP "BUTTON", r)
+    let Span r =  PNode (elementAP "SPAN", r)
+    let H1 r =  PNode (elementAP "H1", r)
+    let H2 r =  PNode (elementAP "H2", r)
+    let H3 r =  PNode (elementAP "H3", r)
 
     let Text p =
         PNode (((fun () -> upcast (document.createTextNode "")), (fun n -> n.nodeName = "#text")), p)

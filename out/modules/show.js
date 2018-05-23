@@ -165,32 +165,32 @@ const Dom = exports.Dom = function (__exports) {
     }];
   };
 
-  const Div = __exports.Div = function (pith) {
-    return new _pnode.PNode(0, [elementAP("DIV"), pith]);
+  const Div = __exports.Div = function (r) {
+    return new _pnode.PNode(0, [elementAP("DIV"), r]);
   };
 
-  const A = __exports.A = function (pith) {
-    return new _pnode.PNode(0, [elementAP("A"), pith]);
+  const A = __exports.A = function (r) {
+    return new _pnode.PNode(0, [elementAP("A"), r]);
   };
 
-  const Button = __exports.Button = function (pith) {
-    return new _pnode.PNode(0, [elementAP("BUTTON"), pith]);
+  const Button = __exports.Button = function (r) {
+    return new _pnode.PNode(0, [elementAP("BUTTON"), r]);
   };
 
-  const Span = __exports.Span = function (pith) {
-    return new _pnode.PNode(0, [elementAP("SPAN"), pith]);
+  const Span = __exports.Span = function (r) {
+    return new _pnode.PNode(0, [elementAP("SPAN"), r]);
   };
 
-  const H1 = __exports.H1 = function (pith) {
-    return new _pnode.PNode(0, [elementAP("H1"), pith]);
+  const H1 = __exports.H1 = function (r) {
+    return new _pnode.PNode(0, [elementAP("H1"), r]);
   };
 
-  const H2 = __exports.H2 = function (pith) {
-    return new _pnode.PNode(0, [elementAP("H2"), pith]);
+  const H2 = __exports.H2 = function (r) {
+    return new _pnode.PNode(0, [elementAP("H2"), r]);
   };
 
-  const H3 = __exports.H3 = function (pith) {
-    return new _pnode.PNode(0, [elementAP("H3"), pith]);
+  const H3 = __exports.H3 = function (r) {
+    return new _pnode.PNode(0, [elementAP("H3"), r]);
   };
 
   const _Text = __exports.Text = function (p) {
@@ -207,15 +207,15 @@ const Dom = exports.Dom = function (__exports) {
 
   const counter = __exports.counter = function (d) {
     return ($var24 => ($var23 => Div((0, _pnode.tree)($var23)))(at()(0)($var24)))(function (o) {
-      ($var27 => ($var26 => ($var25 => o(function (pith) {
-        return Button(pith);
-      }($var25)))(function (pith_1) {
-        return (0, _pnode.tree)(pith_1);
+      ($var27 => ($var26 => ($var25 => o(function (r) {
+        return Button(r);
+      }($var25)))(function (pith) {
+        return (0, _pnode.tree)(pith);
       }($var26)))(at()(0)($var27)))(function (o_1) {
-        ($var30 => ($var29 => ($var28 => o_1(function (pith_2) {
-          return Span(pith_2);
-        }($var28)))(function (pith_3) {
-          return (0, _pnode.tree)(pith_3);
+        ($var30 => ($var29 => ($var28 => o_1(function (r_1) {
+          return Span(r_1);
+        }($var28)))(function (pith_1) {
+          return (0, _pnode.tree)(pith_1);
         }($var29)))(at()(0)($var30)))(function (o_2) {
           ($var32 => ($var31 => o_2(function (p) {
             return _Text(p);
@@ -229,15 +229,15 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var35 => ($var34 => ($var33 => o(function (pith_4) {
-        return Button(pith_4);
-      }($var33)))(function (pith_5) {
-        return (0, _pnode.tree)(pith_5);
+      ($var35 => ($var34 => ($var33 => o(function (r_2) {
+        return Button(r_2);
+      }($var33)))(function (pith_2) {
+        return (0, _pnode.tree)(pith_2);
       }($var34)))(at()(0)($var35)))(function (o_3) {
-        ($var38 => ($var37 => ($var36 => o_3(function (pith_6) {
-          return Span(pith_6);
-        }($var36)))(function (pith_7) {
-          return (0, _pnode.tree)(pith_7);
+        ($var38 => ($var37 => ($var36 => o_3(function (r_3) {
+          return Span(r_3);
+        }($var36)))(function (pith_3) {
+          return (0, _pnode.tree)(pith_3);
         }($var37)))(at()(0)($var38)))(function (o_4) {
           ($var40 => ($var39 => o_4(function (p_1) {
             return _Text(p_1);
@@ -251,10 +251,10 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var43 => ($var42 => ($var41 => o(function (pith_8) {
-        return H3(pith_8);
-      }($var41)))(function (pith_9) {
-        return (0, _pnode.tree)(pith_9);
+      ($var43 => ($var42 => ($var41 => o(function (r_4) {
+        return H3(r_4);
+      }($var41)))(function (pith_4) {
+        return (0, _pnode.tree)(pith_4);
       }($var42)))(at()(0)($var43)))(function (o_5) {
         ($var47 => {
           var arg00_;
