@@ -74,15 +74,18 @@ module private Impl =
 let tree pith =
     let ring (pith: Pith<Dom>) (o: IStream<Patch<Element>> -> unit): unit =
         let mutable c = 0
+        let chain ap p =
+            let index = c
+            c <- c + 1
+            o (M.map (chain ap index) p)
+
         pith <| function
-        | Node (ap, ps) ->
-            let index = c
-            c <- c + 1
-            o (M.map (chain ap index) ps)
-        | Leaf (ap, ps) ->
-            let index = c
-            c <- c + 1
-            o (M.map (chain ap index) ps)
+        | Node (ap, p) -> chain ap p
+        | Leaf (ap, p) -> chain ap p
+
+        o << M.now <| fun elm ->
+            for i = unbox elm.childNodes.length - 1 downto c do
+                elm.removeChild elm.childNodes.[i] |> ignore
 
     let deltac (rs: IStream<Patch<Element>> list): IStream<Patch<Element>> =
         rs

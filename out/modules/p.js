@@ -50,11 +50,11 @@ exports.Dom = Dom;
 (0, _Symbol2.setType)("Sakhe.P.Dom", Dom);
 
 const Impl = function (__exports) {
-  const tryFind = __exports.tryFind = function ($var14, $var15, $var16) {
+  const tryFind = __exports.tryFind = function ($var13, $var14, $var15) {
     tryFind: while (true) {
-      const f = $var14;
-      const i = $var15;
-      const nlist = $var16;
+      const f = $var13;
+      const i = $var14;
+      const nlist = $var15;
 
       if (i >= nlist.length) {
         return null;
@@ -64,9 +64,9 @@ const Impl = function (__exports) {
         if (f(n)) {
           return n;
         } else {
-          $var14 = f;
-          $var15 = i + 1;
-          $var16 = nlist;
+          $var13 = f;
+          $var14 = i + 1;
+          $var15 = nlist;
           continue tryFind;
         }
       }
@@ -113,40 +113,45 @@ const Impl = function (__exports) {
 function tree(pith) {
   const ring = function (pith_1, o) {
     let c = 0;
+
+    const chain_1 = function (ap, p) {
+      const index = c | 0;
+      c = c + 1 | 0;
+      o(core.map($var3 => $var4 => {
+        (function (patch, elm) {
+          Impl.chain(ap[0], ap[1], index, patch, elm);
+        })($var3, $var4);
+      }, p));
+    };
+
     pith_1(function (_arg1) {
       if (_arg1.tag === 1) {
-        const index = c | 0;
-        c = c + 1 | 0;
-        o(core.map($var3 => $var4 => {
-          (function (patch, elm) {
-            Impl.chain(_arg1.data[0][0], _arg1.data[0][1], index, patch, elm);
-          })($var3, $var4);
-        }, _arg1.data[1]));
+        chain_1(_arg1.data[0], _arg1.data[1]);
       } else {
-        const index_1 = c | 0;
-        c = c + 1 | 0;
-        o(core.map($var5 => $var6 => {
-          (function (patch_1, elm_1) {
-            Impl.chain(_arg1.data[0][0], _arg1.data[0][1], index_1, patch_1, elm_1);
-          })($var5, $var6);
-        }, _arg1.data[1]));
+        chain_1(_arg1.data[0], _arg1.data[1]);
+      }
+    });
+
+    ($var5 => o(core.now.bind(core)($var5)))(function (elm_1) {
+      for (let i = elm_1.childNodes.length - 1; i >= c; i--) {
+        elm_1.removeChild(elm_1.childNodes[i]), void 0;
       }
     });
   };
 
   const deltac = function (rs) {
-    var arg00_;
-    var arg00__2;
-    return (0, _Seq.fold)((arg00_ = function (p0, p, e) {
-      p(e);
+    var arg00__1;
+    var arg00__3;
+    return (0, _Seq.fold)((arg00__1 = function (p0, p_1, e) {
+      p_1(e);
       p0(e);
     }, function (arg10_, arg20_) {
-      return core.combine(($var7, $var8) => $var9 => {
-        arg00_($var7, $var8, $var9);
+      return core.combine(($var6, $var7) => $var8 => {
+        arg00__1($var6, $var7, $var8);
       }, arg10_, arg20_);
     }), core.now(function (value) {
       value, void 0;
-    }), (0, _Seq.map)((arg00__2 = (0, _CurriedLambda2.default)(function (arg00__1) {
+    }), (0, _Seq.map)((arg00__3 = (0, _CurriedLambda2.default)(function (arg00__2) {
       return function makeOnce(f) {
         var b;
         return function once(a) {
@@ -157,15 +162,15 @@ function tree(pith) {
 
           return b;
         };
-      }(arg00__1);
+      }(arg00__2);
     }), function (arg10__1) {
-      return core.map($var10 => $var11 => {
-        arg00__2($var10, $var11);
+      return core.map($var9 => $var10 => {
+        arg00__3($var9, $var10);
       }, arg10__1);
     }), rs));
   };
 
-  return (0, _m.tree)(deltac, core.map($var12 => $var13 => {
-    ring($var12, $var13);
+  return (0, _m.tree)(deltac, core.map($var11 => $var12 => {
+    ring($var11, $var12);
   }, pith));
 }
