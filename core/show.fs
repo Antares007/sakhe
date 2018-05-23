@@ -1,6 +1,7 @@
 module Sakhe.Show
 open Most
 open Fable.Import.Browser
+open Fable.Core.JsInterop
 
 let scheduler = Most.Scheduler.newDefaultScheduler ()
 let drain s = M.runEffects s scheduler |> ignore
@@ -19,11 +20,16 @@ module State =
 
     // let define key d = RValue (x, d)
     let Number k s = RNumber (k, s)
+
+    let emptystring = createEmpty<obj []>
     let rez =
         objectTree << at 0. <| fun o ->
             let see = o << Number "a" << now <| (fun _ -> 1.)
             see |> ignore
+
+
             ()
+
             // let archil =
             //     M.merge
             //         (now (fun _ ->

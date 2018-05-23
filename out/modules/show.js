@@ -59,6 +59,7 @@ const State = exports.State = function (__exports) {
     return new _state.RValue(1, [k, s]);
   };
 
+  const emptystring = __exports.emptystring = {};
   const rez = __exports.rez = core.tap(console.log.bind(console), core.scan(function (s, r) {
     return r(s);
   }, {}, ($var1 => (0, _state.objectTree)(at()(0)($var1)))(function (o) {

@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RValue = undefined;
 exports.objectTree = objectTree;
-exports.aTree = aTree;
+exports.arrayTree = arrayTree;
 
 var _Symbol2 = require("./fable-core/Symbol");
 
@@ -155,7 +155,7 @@ function objectTree(pith) {
   }, pith));
 }
 
-function aTree(pith) {
+function arrayTree(pith) {
   const ring = function (pith_1, o) {
     pith_1(function (_arg1) {
       switch (_arg1.tag) {

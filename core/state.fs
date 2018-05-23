@@ -70,7 +70,7 @@ let rec objectTree (pith: IStream<Pith<RValue<string>>>): IStream<R<obj>> =
     let deltac list = List.fold M.merge (M.empty ()) list
     M.tree deltac (M.map ring pith)
 
-let aTree (pith: IStream<Pith<RValue<int>>>): IStream<R<obj []>> =
+let arrayTree (pith: IStream<Pith<RValue<int>>>): IStream<R<obj []>> =
     let ring (pith: Pith<RValue<int>>) (o: IStream<R<obj []>> -> unit): unit =
         pith <| function
         | RString (key, r) -> o (M.map (chain absurdArray key asString) r)
