@@ -24,9 +24,11 @@ module State =
         objectTree << at 0. <| fun o ->
             let archil =
                 M.merge
-                    (now (fun _ -> createObj [
-                                    "age" ==> 42
-                                    ]))
+                    (now (fun _ ->
+                        createObj [
+                            "age" ==> 42
+                            ]
+                    ))
                     (objectTree << at 3000. <| fun o ->
                         o << define "age" << RNumber << at 3000. <| fun _ -> 1.)
 
