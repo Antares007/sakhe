@@ -16,9 +16,15 @@ var core = _interopRequireWildcard(_core);
 
 var _Option = require("./fable-core/Option");
 
+var _CurriedLambda = require("./fable-core/CurriedLambda");
+
+var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
+
 var _state = require("./state");
 
 var _pnode = require("./pnode");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -29,60 +35,46 @@ function drain(s) {
 }
 
 const State = exports.State = function (__exports) {
-  const init = __exports.init = function (iv, r, _arg1) {
-    if (_arg1 == null) {
-      return r(iv);
+  const init = __exports.init = function (a, a2b, maybe_a) {
+    if (maybe_a == null) {
+      return a2b(a);
     } else {
-      return r((0, _Option.getValue)(_arg1));
+      return a2b((0, _Option.getValue)(maybe_a));
     }
+  };
+
+  const now = __exports.now = function () {
+    return (0, _CurriedLambda2.default)(core.now.bind(core));
+  };
+
+  const constant = __exports.constant = function () {
+    return (0, _CurriedLambda2.default)(core.constant.bind(core));
+  };
+
+  const at = __exports.at = function () {
+    return (0, _CurriedLambda2.default)(core.at.bind(core));
+  };
+
+  const define = __exports.define = function (x, d) {
+    return [x, d];
   };
 
   const rez = __exports.rez = core.tap(console.log.bind(console), core.scan(function (s, r) {
     return r(s);
-  }, {}, ($var1 => (0, _state.oTree)(core.now($var1)))(function (o) {
-    o(["k1", new _state.RValue(1, ($var4 => core.now.bind(core)(($var2 => $var3 => function (r_1, _arg1) {
-      return init(1, r_1, _arg1);
-    }($var2, $var3))($var4)))(function (s_1) {
-      return s_1 + 1;
-    }))]);
-    o(["k2", new _state.RValue(3, core.now(function (o_1) {
-      o_1(["k2.1", new _state.RValue(1, ($var7 => core.now.bind(core)(($var5 => $var6 => function (r_2, _arg1_1) {
-        return init(2, r_2, _arg1_1);
-      }($var5, $var6))($var7)))(function (s_2) {
-        return s_2 + 1;
-      }))]);
-      o_1(["k2.2", new _state.RValue(1, ($var10 => core.now.bind(core)(($var8 => $var9 => function (r_3, _arg1_2) {
-        return init(3, r_3, _arg1_2);
-      }($var8, $var9))($var10)))(function (s_3) {
-        return s_3 + 1;
-      }))]);
-      o_1(["k2.3", new _state.RValue(3, core.now(function (o_2) {
-        o_2(["k2.3.1", new _state.RValue(1, ($var13 => core.now.bind(core)(($var11 => $var12 => function (r_4, _arg1_3) {
-          return init(4, r_4, _arg1_3);
-        }($var11, $var12))($var13)))(function (s_4) {
-          return s_4 + 1;
-        }))]);
-      }))]);
-    }))]);
-    o(["k3", new _state.RValue(4, core.now(function (o_3) {
-      o_3([0, new _state.RValue(1, ($var16 => core.now.bind(core)(($var14 => $var15 => function (r_5, _arg1_4) {
-        return init(2, r_5, _arg1_4);
-      }($var14, $var15))($var16)))(function (s_5) {
-        return s_5 + 1;
-      }))]);
-      o_3([1, new _state.RValue(1, ($var19 => core.now.bind(core)(($var17 => $var18 => function (r_6, _arg1_5) {
-        return init(3, r_6, _arg1_5);
-      }($var17, $var18))($var19)))(function (s_6) {
-        return s_6 + 1;
-      }))]);
-      o_3([2, new _state.RValue(3, core.now(function (o_4) {
-        o_4(["k2.3.1", new _state.RValue(1, ($var22 => core.now.bind(core)(($var20 => $var21 => function (r_7, _arg1_6) {
-          return init(4, r_7, _arg1_6);
-        }($var20, $var21))($var22)))(function (s_7) {
-          return s_7 + 1;
-        }))]);
-      }))]);
-    }))]);
+  }, {}, ($var1 => (0, _state.objectTree)(at()(0)($var1)))(function (o) {
+    ($var5 => ($var4 => ($var3 => ($var2 => o(function (d) {
+      return define("არჩილ", d);
+    }($var2)))(function (arg0) {
+      return new _state.RValue(3, arg0);
+    }($var3)))((0, _state.objectTree)($var4)))(at()(3000)($var5)))(function (o_1) {
+      ($var8 => ($var7 => ($var6 => o_1(function (d_1) {
+        return define("age", d_1);
+      }($var6)))(function (arg0_1) {
+        return new _state.RValue(1, arg0_1);
+      }($var7)))(at()(3000)($var8)))(function (_arg1) {
+        return 1;
+      });
+    });
   })));
   drain(rez);
   return __exports;
@@ -143,9 +135,9 @@ const Dom = exports.Dom = function (__exports) {
 
   const counter = __exports.counter = function (d) {
     return op_LessLessBar(Div, function (o) {
-      op_LessLessBar($var23 => o(Button($var23)), function (o_1) {
-        op_LessLessBar($var24 => o_1(Span($var24)), function (o_2) {
-          op_LessLessBar($var25 => o_2(_Text($var25)), function (text) {
+      op_LessLessBar($var9 => o(Button($var9)), function (o_1) {
+        op_LessLessBar($var10 => o_1(Span($var10)), function (o_2) {
+          op_LessLessBar($var11 => o_2(_Text($var11)), function (text) {
             text.textContent = "+";
           });
         });
@@ -154,9 +146,9 @@ const Dom = exports.Dom = function (__exports) {
           o_1(counter(d - 1));
         }
       });
-      op_LessLessBar($var26 => o(Button($var26)), function (o_3) {
-        op_LessLessBar($var27 => o_3(Span($var27)), function (o_4) {
-          op_LessLessBar($var28 => o_4(_Text($var28)), function (text_1) {
+      op_LessLessBar($var12 => o(Button($var12)), function (o_3) {
+        op_LessLessBar($var13 => o_3(Span($var13)), function (o_4) {
+          op_LessLessBar($var14 => o_4(_Text($var14)), function (text_1) {
             text_1.textContent = "-";
           });
         });
@@ -165,16 +157,16 @@ const Dom = exports.Dom = function (__exports) {
           o_3(counter(d - 1));
         }
       });
-      op_LessLessBar($var29 => o(H3($var29)), function (o_5) {
-        ($var33 => {
+      op_LessLessBar($var15 => o(H3($var15)), function (o_5) {
+        ($var19 => {
           var arg00_;
-          return ($var30 => o_5(_Text($var30)))((arg00_ = function (i, text_2) {
+          return ($var16 => o_5(_Text($var16)))((arg00_ = function (i, text_2) {
             text_2.textContent = i.toString();
           }, function (arg10_) {
-            return core.map($var31 => $var32 => {
-              arg00_($var31, $var32);
+            return core.map($var17 => $var18 => {
+              arg00_($var17, $var18);
             }, arg10_);
-          })($var33));
+          })($var19));
         })(intS);
       });
     });
@@ -183,7 +175,7 @@ const Dom = exports.Dom = function (__exports) {
   const rez_1 = __exports.rez = core.scan(function (n, p) {
     p(n);
     return n;
-  }, document.getElementById("root-node"), ($var34 => (0, _pnode.tree)(core.now($var34)))(function (o) {
+  }, document.getElementById("root-node"), ($var20 => (0, _pnode.tree)(core.now($var20)))(function (o) {
     o(counter(3));
   }));
   drain(rez_1);

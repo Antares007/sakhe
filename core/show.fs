@@ -1,32 +1,30 @@
 module Sakhe.Show
 open Most
 open Fable.Import.Browser
+open Fable.Core.JsInterop
 
 let scheduler = Most.Scheduler.newDefaultScheduler ()
 let drain s = M.runEffects s scheduler |> ignore
 
 module State =
     open Sakhe.State
-    let init iv r = function
-        | Some v -> r v
-        | None   -> r iv
+
+    let init (a: 'a) (a2b: 'a -> 'b) (maybe_a:'a option): 'b =
+        match maybe_a with
+        | Some a -> a2b a
+        | None   -> a2b a
+
+    let now = M.now
+    let constant = M.constant
+    let at = M.at
+
+    let define x d:('k * RValue) = (x, d)
+
     let rez =
-        oTree << M.now <| fun o ->
-            ("k1", RNumber (M.now << init 1. <| fun s -> s + 1.)) |> o
-            ("k2", RObject (M.now <| fun o ->
-                ("k2.1", RNumber (M.now << init 2. <| fun s -> s + 1.)) |> o
-                ("k2.2", RNumber (M.now << init 3. <| fun s -> s + 1.)) |> o
-                ("k2.3", RObject (M.now  <| fun o ->
-                    ("k2.3.1", RNumber (M.now << init 4. <| fun s -> s + 1.)) |> o
-                )) |> o
-           )) |> o
-            ("k3", RArray (M.now <| fun o ->
-                (0, RNumber (M.now << init 2. <| fun s -> s + 1.)) |> o
-                (1, RNumber (M.now << init 3. <| fun s -> s + 1.)) |> o
-                (2, RObject (M.now <| fun o ->
-                    ("k2.3.1", RNumber (M.now << init 4. <| fun s -> s + 1.)) |> o
-                )) |> o
-           )) |> o
+        objectTree << at 0. <| fun o ->
+            o << define "არჩილ" <<  RObject << objectTree << at 3000. <| fun o ->
+                o << define "age" << RNumber << at 3000. <| fun _ -> 1.
+
         |> M.scan
             (fun s r -> r (Some s))
             (Fable.Core.JsInterop.createEmpty<obj>)
