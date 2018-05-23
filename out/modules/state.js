@@ -72,165 +72,89 @@ const Impl = function (__exports) {
     }
   };
 
-  return __exports;
-}({});
-
-function objectTree(pith) {
-  const ring = function (pith_1, o) {
-    pith_1(function (_arg1) {
+  const ring = __exports.ring = function (absurdObj, pith, o) {
+    pith(function (_arg1) {
       switch (_arg1.tag) {
         case 1:
-          o(core.map($var1 => $var2 => {
+          return o(core.map($var1 => $var2 => {
             var prove;
             return (prove = function (arg00_) {
               return typeof arg00_ === "number" ? arg00_ : null;
             }, function (r, o_1) {
-              return Impl.chain(function () {
-                return {};
-              }, _arg1.data[0], prove, r, o_1);
+              return chain(absurdObj, _arg1.data[0], prove, r, o_1);
             })($var1, $var2);
           }, _arg1.data[1]));
-          break;
 
         case 2:
-          o(core.map($var3 => $var4 => {
+          return o(core.map($var3 => $var4 => {
             var prove_1;
-            return (prove_1 = function (arg00__2) {
-              return typeof arg00__2 === "boolean" ? arg00__2 : null;
+            return (prove_1 = function (arg00__1) {
+              return typeof arg00__1 === "boolean" ? arg00__1 : null;
             }, function (r_1, o_2) {
-              return Impl.chain(function () {
-                return {};
-              }, _arg1.data[0], prove_1, r_1, o_2);
+              return chain(absurdObj, _arg1.data[0], prove_1, r_1, o_2);
             })($var3, $var4);
           }, _arg1.data[1]));
-          break;
 
         case 3:
-          o(core.map($var5 => $var6 => {
+          return o(core.map($var5 => $var6 => {
             var prove_2;
-            return (prove_2 = function (arg00__4) {
-              return typeof arg00__4 === "object" && arg00__4 != null ? arg00__4 : null;
+            return (prove_2 = function (arg00__2) {
+              return typeof arg00__2 === "object" && arg00__2 != null ? arg00__2 : null;
             }, function (r_2, o_3) {
-              return Impl.chain(function () {
-                return {};
-              }, _arg1.data[0], prove_2, r_2, o_3);
+              return chain(absurdObj, _arg1.data[0], prove_2, r_2, o_3);
             })($var5, $var6);
           }, _arg1.data[1]));
-          break;
 
         case 4:
-          o(core.map($var7 => $var8 => {
+          return o(core.map($var7 => $var8 => {
             var prove_3;
-            return (prove_3 = function (arg00__6) {
-              return Array.isArray(arg00__6) ? arg00__6 : null;
+            return (prove_3 = function (arg00__3) {
+              return Array.isArray(arg00__3) ? arg00__3 : null;
             }, function (r_3, o_4) {
-              return Impl.chain(function () {
-                return {};
-              }, _arg1.data[0], prove_3, r_3, o_4);
+              return chain(absurdObj, _arg1.data[0], prove_3, r_3, o_4);
             })($var7, $var8);
           }, _arg1.data[1]));
-          break;
 
         default:
-          o(core.map($var9 => $var10 => {
+          return o(core.map($var9 => $var10 => {
             var prove_4;
-            return (prove_4 = function (arg00__8) {
-              return typeof arg00__8 === "string" ? arg00__8 : null;
+            return (prove_4 = function (arg00__4) {
+              return typeof arg00__4 === "string" ? arg00__4 : null;
             }, function (r_4, o_5) {
-              return Impl.chain(function () {
-                return {};
-              }, _arg1.data[0], prove_4, r_4, o_5);
+              return chain(absurdObj, _arg1.data[0], prove_4, r_4, o_5);
             })($var9, $var10);
           }, _arg1.data[1]));
       }
     });
   };
 
+  return __exports;
+}({});
+
+function objectTree(pith) {
   const deltac = function (list) {
     return (0, _Seq.fold)(core.merge.bind(core), core.empty(), list);
   };
 
   return (0, _m.tree)(deltac, core.map($var11 => $var12 => {
-    ring($var11, $var12);
+    (function (pith_1, o) {
+      Impl.ring(function () {
+        return {};
+      }, pith_1, o);
+    })($var11, $var12);
   }, pith));
 }
 
 function arrayTree(pith) {
-  const ring = function (pith_1, o) {
-    pith_1(function (_arg1) {
-      switch (_arg1.tag) {
-        case 1:
-          o(core.map($var13 => $var14 => {
-            var prove;
-            return (prove = function (arg00_) {
-              return typeof arg00_ === "number" ? arg00_ : null;
-            }, function (r, o_1) {
-              return Impl.chain(function () {
-                return [];
-              }, _arg1.data[0], prove, r, o_1);
-            })($var13, $var14);
-          }, _arg1.data[1]));
-          break;
-
-        case 2:
-          o(core.map($var15 => $var16 => {
-            var prove_1;
-            return (prove_1 = function (arg00__2) {
-              return typeof arg00__2 === "boolean" ? arg00__2 : null;
-            }, function (r_1, o_2) {
-              return Impl.chain(function () {
-                return [];
-              }, _arg1.data[0], prove_1, r_1, o_2);
-            })($var15, $var16);
-          }, _arg1.data[1]));
-          break;
-
-        case 3:
-          o(core.map($var17 => $var18 => {
-            var prove_2;
-            return (prove_2 = function (arg00__4) {
-              return typeof arg00__4 === "object" && arg00__4 != null ? arg00__4 : null;
-            }, function (r_2, o_3) {
-              return Impl.chain(function () {
-                return [];
-              }, _arg1.data[0], prove_2, r_2, o_3);
-            })($var17, $var18);
-          }, _arg1.data[1]));
-          break;
-
-        case 4:
-          o(core.map($var19 => $var20 => {
-            var prove_3;
-            return (prove_3 = function (arg00__6) {
-              return Array.isArray(arg00__6) ? arg00__6 : null;
-            }, function (r_3, o_4) {
-              return Impl.chain(function () {
-                return [];
-              }, _arg1.data[0], prove_3, r_3, o_4);
-            })($var19, $var20);
-          }, _arg1.data[1]));
-          break;
-
-        default:
-          o(core.map($var21 => $var22 => {
-            var prove_4;
-            return (prove_4 = function (arg00__8) {
-              return typeof arg00__8 === "string" ? arg00__8 : null;
-            }, function (r_4, o_5) {
-              return Impl.chain(function () {
-                return [];
-              }, _arg1.data[0], prove_4, r_4, o_5);
-            })($var21, $var22);
-          }, _arg1.data[1]));
-      }
-    });
-  };
-
   const deltac = function (list) {
     return (0, _Seq.fold)(core.merge.bind(core), core.empty(), list);
   };
 
-  return (0, _m.tree)(deltac, core.map($var23 => $var24 => {
-    ring($var23, $var24);
+  return (0, _m.tree)(deltac, core.map($var13 => $var14 => {
+    (function (pith_1, o) {
+      Impl.ring(function () {
+        return [];
+      }, pith_1, o);
+    })($var13, $var14);
   }, pith));
 }

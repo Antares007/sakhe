@@ -8,6 +8,7 @@ let drain s = M.runEffects s scheduler |> ignore
 
 module State =
     open Sakhe.State
+    open Fable.Core
 
     let init (a: 'a) (a2b: 'a -> 'b) (maybe_a:'a option): 'b =
         match maybe_a with
@@ -20,27 +21,44 @@ module State =
 
     // let define key d = RValue (x, d)
     let Number k s = RNumber (k, s)
+    let Object k s = RObject (k, s)
+    let Array k s = RArray (k, s)
 
     let emptystring = createEmpty<obj []>
+    type [<Pojo>] Person = {
+        name: string
+        age: int
+    }
     let rez =
         objectTree << at 0. <| fun o ->
-            let see = o << Number "a" << now <| (fun _ -> 1.)
-            see |> ignore
+            o << Number "a" << now <| (fun _ -> 1.)
+            o << Object "b" << now <| fun _ -> createObj [ "k" ==> 42]
 
-
+            o << Object "b" << objectTree << now <| fun o ->
+                o << Number "k" << now <| function
+                    | Some k -> k + 1.
+                    | None -> 0.
+                ()
             ()
+            o << Object "array" << now <| fun _ ->
+                unbox [|
+                    { name ="archil"; age = 42 }
+                    { name ="archil"; age = 42 }
+                    { name ="archil"; age = 42 }
+                    { name ="archil"; age = 42 } |]
 
-            // let archil =
-            //     M.merge
-            //         (now (fun _ ->
-            //             createObj [
-            //                 "age" ==> 42
-            //                 ]
-            //         ))
-            //         (objectTree << at 3000. <| fun o ->
-            //             o << define "age" << RNumber << at 3000. <| fun _ -> 1.)
-
-            // o << define "არჩილ" <<  RObject <| archil
+            o << Array "array" << arrayTree << at 3000. <| fun a ->
+                a << Number 0 << now <| function
+                    | Some k -> k + 1.
+                    | None -> 1.
+                ()
+            ()
+            o << Array "array" << arrayTree << at 3000. <| fun a ->
+                a << Number 0 << now <| function
+                    | Some k -> k + 1.
+                    | None -> 0.
+                ()
+            ()
 
         |> M.scan
             (fun s r -> r (Some s))
@@ -73,11 +91,11 @@ module Dom =
             o << Button <<| fun o ->
                 o << Span <<| fun o ->
                     o << Text <<| fun text -> text.textContent <- "+"
-                if d > 0 then o (counter (d - 1))
+                if d > 0 then o <| counter (d - 1)
             o << Button <<| fun o ->
                 o << Span <<| fun o ->
                     o << Text <<| fun text -> text.textContent <- "-"
-                if d > 0 then o (counter (d - 1))
+                if d > 0 then o <| counter (d - 1)
             o << H3 <<| fun o ->
                 o << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
 

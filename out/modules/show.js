@@ -59,17 +59,79 @@ const State = exports.State = function (__exports) {
     return new _state.RValue(1, [k, s]);
   };
 
+  const _Object = __exports.Object = function (k, s) {
+    return new _state.RValue(3, [k, s]);
+  };
+
+  const _Array = __exports.Array = function (k, s) {
+    return new _state.RValue(4, [k, s]);
+  };
+
   const emptystring = __exports.emptystring = {};
   const rez = __exports.rez = core.tap(console.log.bind(console), core.scan(function (s, r) {
     return r(s);
   }, {}, ($var1 => (0, _state.objectTree)(at()(0)($var1)))(function (o) {
-    const see = ($var3 => ($var2 => o(function (s_1) {
+    ($var3 => ($var2 => o(function (s_1) {
       return _Number("a", s_1);
     }($var2)))(now()($var3)))(function (_arg1) {
       return 1;
     });
 
-    null, void 0;
+    ($var5 => ($var4 => o(function (s_2) {
+      return _Object("b", s_2);
+    }($var4)))(now()($var5)))(function (_arg2) {
+      return {
+        k: 42
+      };
+    });
+
+    ($var8 => ($var7 => ($var6 => o(function (s_3) {
+      return _Object("b", s_3);
+    }($var6)))((0, _state.objectTree)($var7)))(now()($var8)))(function (o_1) {
+      ($var10 => ($var9 => o_1(function (s_4) {
+        return _Number("k", s_4);
+      }($var9)))(now()($var10)))(function (_arg1_1) {
+        return _arg1_1 == null ? 0 : (0, _Option.getValue)(_arg1_1) + 1;
+      });
+    });
+
+    ($var12 => ($var11 => o(function (s_5) {
+      return _Object("array", s_5);
+    }($var11)))(now()($var12)))(function (_arg3) {
+      return [{
+        name: "archil",
+        age: 42
+      }, {
+        name: "archil",
+        age: 42
+      }, {
+        name: "archil",
+        age: 42
+      }, {
+        name: "archil",
+        age: 42
+      }];
+    });
+
+    ($var15 => ($var14 => ($var13 => o(function (s_6) {
+      return _Array("array", s_6);
+    }($var13)))((0, _state.arrayTree)($var14)))(at()(3000)($var15)))(function (a) {
+      ($var17 => ($var16 => a(function (s_7) {
+        return _Number(0, s_7);
+      }($var16)))(now()($var17)))(function (_arg2_1) {
+        return _arg2_1 == null ? 1 : (0, _Option.getValue)(_arg2_1) + 1;
+      });
+    });
+
+    ($var20 => ($var19 => ($var18 => o(function (s_8) {
+      return _Array("array", s_8);
+    }($var18)))((0, _state.arrayTree)($var19)))(at()(3000)($var20)))(function (a_1) {
+      ($var22 => ($var21 => a_1(function (s_9) {
+        return _Number(0, s_9);
+      }($var21)))(now()($var22)))(function (_arg3_1) {
+        return _arg3_1 == null ? 0 : (0, _Option.getValue)(_arg3_1) + 1;
+      });
+    });
   })));
   drain(rez);
   return __exports;
@@ -130,9 +192,9 @@ const Dom = exports.Dom = function (__exports) {
 
   const counter = __exports.counter = function (d) {
     return op_LessLessBar(Div, function (o) {
-      op_LessLessBar($var4 => o(Button($var4)), function (o_1) {
-        op_LessLessBar($var5 => o_1(Span($var5)), function (o_2) {
-          op_LessLessBar($var6 => o_2(_Text($var6)), function (text) {
+      op_LessLessBar($var23 => o(Button($var23)), function (o_1) {
+        op_LessLessBar($var24 => o_1(Span($var24)), function (o_2) {
+          op_LessLessBar($var25 => o_2(_Text($var25)), function (text) {
             text.textContent = "+";
           });
         });
@@ -141,9 +203,9 @@ const Dom = exports.Dom = function (__exports) {
           o_1(counter(d - 1));
         }
       });
-      op_LessLessBar($var7 => o(Button($var7)), function (o_3) {
-        op_LessLessBar($var8 => o_3(Span($var8)), function (o_4) {
-          op_LessLessBar($var9 => o_4(_Text($var9)), function (text_1) {
+      op_LessLessBar($var26 => o(Button($var26)), function (o_3) {
+        op_LessLessBar($var27 => o_3(Span($var27)), function (o_4) {
+          op_LessLessBar($var28 => o_4(_Text($var28)), function (text_1) {
             text_1.textContent = "-";
           });
         });
@@ -152,16 +214,16 @@ const Dom = exports.Dom = function (__exports) {
           o_3(counter(d - 1));
         }
       });
-      op_LessLessBar($var10 => o(H3($var10)), function (o_5) {
-        ($var14 => {
+      op_LessLessBar($var29 => o(H3($var29)), function (o_5) {
+        ($var33 => {
           var arg00_;
-          return ($var11 => o_5(_Text($var11)))((arg00_ = function (i, text_2) {
+          return ($var30 => o_5(_Text($var30)))((arg00_ = function (i, text_2) {
             text_2.textContent = i.toString();
           }, function (arg10_) {
-            return core.map($var12 => $var13 => {
-              arg00_($var12, $var13);
+            return core.map($var31 => $var32 => {
+              arg00_($var31, $var32);
             }, arg10_);
-          })($var14));
+          })($var33));
         })(intS);
       });
     });
@@ -170,7 +232,7 @@ const Dom = exports.Dom = function (__exports) {
   const rez_1 = __exports.rez = core.scan(function (n, p) {
     p(n);
     return n;
-  }, document.getElementById("root-node"), ($var15 => (0, _pnode.tree)(core.now($var15)))(function (o) {
+  }, document.getElementById("root-node"), ($var34 => (0, _pnode.tree)(core.now($var34)))(function (o) {
     o(counter(3));
   }));
   drain(rez_1);

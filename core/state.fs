@@ -54,30 +54,24 @@ module private Impl =
             let a = r None
             setKey key a o
             o
-[<Emit("({})")>]
-let absurdObj (): obj = jsNative
-[<Emit("([])")>]
-let absurdArray (): obj [] = jsNative
+    [<Emit("({})")>]
+    let absurdObj (): obj = jsNative
+    [<Emit("([])")>]
+    let absurdArray (): obj [] = jsNative
 
-let rec objectTree (pith: IStream<Pith<RValue<string>>>): IStream<R<obj>> =
-    let ring (pith: Pith<RValue<string>>) (o: IStream<R<obj>> -> unit): unit =
+    let ring absurdObj pith o: unit =
         pith <| function
         | RString (key, r) -> o (M.map (chain absurdObj key asString) r)
         | RNumber (key, r) -> o (M.map (chain absurdObj key asNumber) r)
         | RBool (key, r) -> o (M.map (chain absurdObj key asBool) r)
         | RObject (key, r) -> o (M.map (chain absurdObj key asObject)  r)
         | RArray (key, r) -> o (M.map (chain absurdObj key asArray) r)
+
+let rec objectTree (pith: IStream<Pith<RValue<string>>>): IStream<R<obj>> =
     let deltac list = List.fold M.merge (M.empty ()) list
-    M.tree deltac (M.map ring pith)
+    M.tree deltac (M.map (ring absurdObj) pith)
 
 let arrayTree (pith: IStream<Pith<RValue<int>>>): IStream<R<obj []>> =
-    let ring (pith: Pith<RValue<int>>) (o: IStream<R<obj []>> -> unit): unit =
-        pith <| function
-        | RString (key, r) -> o (M.map (chain absurdArray key asString) r)
-        | RNumber (key, r) -> o (M.map (chain absurdArray key asNumber) r)
-        | RBool (key, r) -> o (M.map (chain absurdArray key asBool) r)
-        | RObject (key, r) -> o (M.map (chain absurdArray key asObject) r)
-        | RArray (key, r) -> o (M.map (chain absurdArray key asArray) r)
     let deltac list = List.fold M.merge (M.empty ()) list
-    M.tree deltac (M.map ring pith)
+    M.tree deltac (M.map (ring absurdArray) pith)
 
