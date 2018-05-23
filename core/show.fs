@@ -22,8 +22,15 @@ module State =
 
     let rez =
         objectTree << at 0. <| fun o ->
-            o << define "არჩილ" <<  RObject << objectTree << at 3000. <| fun o ->
-                o << define "age" << RNumber << at 3000. <| fun _ -> 1.
+            let archil =
+                M.merge
+                    (now (fun _ -> createObj [
+                                    "age" ==> 42
+                                    ]))
+                    (objectTree << at 3000. <| fun o ->
+                        o << define "age" << RNumber << at 3000. <| fun _ -> 1.)
+
+            o << define "არჩილ" <<  RObject <| archil
 
         |> M.scan
             (fun s r -> r (Some s))
