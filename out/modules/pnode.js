@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Dom = undefined;
+exports.PNode = undefined;
 exports.tree = tree;
 
 var _Symbol2 = require("./fable-core/Symbol");
@@ -30,7 +30,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class Dom {
+class PNode {
   constructor(tag, data) {
     this.tag = tag | 0;
     this.data = data;
@@ -38,16 +38,16 @@ class Dom {
 
   [_Symbol3.default.reflection]() {
     return {
-      type: "Sakhe.P.Dom",
+      type: "Sakhe.PNode.PNode",
       interfaces: ["FSharpUnion"],
-      cases: [["Dom", (0, _Util.Tuple)([(0, _Util.Function)([_Util.Unit, (0, _Util.Interface)("Fable.Import.Browser.Node")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"])]), (0, _Util.Interface)("Most.IStream")]]
+      cases: [["PNode", (0, _Util.Tuple)([(0, _Util.Function)([_Util.Unit, (0, _Util.Interface)("Fable.Import.Browser.Node")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"])]), (0, _Util.Interface)("Most.IStream")]]
     };
   }
 
 }
 
-exports.Dom = Dom;
-(0, _Symbol2.setType)("Sakhe.P.Dom", Dom);
+exports.PNode = PNode;
+(0, _Symbol2.setType)("Sakhe.PNode.PNode", PNode);
 
 const Impl = function (__exports) {
   const tryFind = __exports.tryFind = function ($var8, $var9, $var10) {

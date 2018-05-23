@@ -20,7 +20,7 @@ var _state = require("./state");
 
 var _state2 = require("./state2");
 
-var _p = require("./p");
+var _pnode = require("./pnode");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -169,35 +169,35 @@ const Dom = exports.Dom = function (__exports) {
   };
 
   const Div = __exports.Div = function (pith) {
-    return new _p.Dom(0, [elementAP("DIV"), (0, _p.tree)(pith)]);
+    return new _pnode.PNode(0, [elementAP("DIV"), (0, _pnode.tree)(pith)]);
   };
 
   const A = __exports.A = function (pith) {
-    return new _p.Dom(0, [elementAP("A"), (0, _p.tree)(pith)]);
+    return new _pnode.PNode(0, [elementAP("A"), (0, _pnode.tree)(pith)]);
   };
 
   const Button = __exports.Button = function (pith) {
-    return new _p.Dom(0, [elementAP("BUTTON"), (0, _p.tree)(pith)]);
+    return new _pnode.PNode(0, [elementAP("BUTTON"), (0, _pnode.tree)(pith)]);
   };
 
   const Span = __exports.Span = function (pith) {
-    return new _p.Dom(0, [elementAP("SPAN"), (0, _p.tree)(pith)]);
+    return new _pnode.PNode(0, [elementAP("SPAN"), (0, _pnode.tree)(pith)]);
   };
 
   const H1 = __exports.H1 = function (pith) {
-    return new _p.Dom(0, [elementAP("H1"), (0, _p.tree)(pith)]);
+    return new _pnode.PNode(0, [elementAP("H1"), (0, _pnode.tree)(pith)]);
   };
 
   const H2 = __exports.H2 = function (pith) {
-    return new _p.Dom(0, [elementAP("H2"), (0, _p.tree)(pith)]);
+    return new _pnode.PNode(0, [elementAP("H2"), (0, _pnode.tree)(pith)]);
   };
 
   const H3 = __exports.H3 = function (pith) {
-    return new _p.Dom(0, [elementAP("H3"), (0, _p.tree)(pith)]);
+    return new _pnode.PNode(0, [elementAP("H3"), (0, _pnode.tree)(pith)]);
   };
 
   const _Text = __exports.Text = function (p) {
-    return new _p.Dom(0, [[function () {
+    return new _pnode.PNode(0, [[function () {
       return document.createTextNode("");
     }, function (n) {
       return n.nodeName === "#text";
@@ -254,7 +254,7 @@ const Dom = exports.Dom = function (__exports) {
   const rez_2 = __exports.rez = core.scan(function (n, p) {
     p(n);
     return n;
-  }, document.getElementById("root-node"), ($var61 => (0, _p.tree)(core.now($var61)))(function (o) {
+  }, document.getElementById("root-node"), ($var61 => (0, _pnode.tree)(core.now($var61)))(function (o) {
     o(counter(3));
   }));
   drain(rez_2);

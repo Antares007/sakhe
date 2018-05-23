@@ -55,21 +55,21 @@ module State2 =
     //drain rez
 
 module Dom =
-    open P
+    open PNode
 
     let elementAP (tag: string): AP<Node> =
         ((fun () -> upcast (document.createElement tag)), (fun n -> n.nodeName = tag))
 
-    let Div (pith: IStream<Pith<Dom>>) = Dom (elementAP "DIV", P.tree pith)
-    let A (pith: IStream<Pith<Dom>>) =  Dom (elementAP "A", P.tree pith)
-    let Button (pith: IStream<Pith<Dom>>) =  Dom (elementAP "BUTTON", P.tree pith)
-    let Span (pith: IStream<Pith<Dom>>) =  Dom (elementAP "SPAN", P.tree pith)
-    let H1 (pith: IStream<Pith<Dom>>) =  Dom (elementAP "H1", P.tree pith)
-    let H2 (pith: IStream<Pith<Dom>>) =  Dom (elementAP "H2", P.tree pith)
-    let H3 (pith: IStream<Pith<Dom>>) =  Dom (elementAP "H3", P.tree pith)
+    let Div (pith: IStream<Pith<PNode>>) = PNode (elementAP "DIV", PNode.tree pith)
+    let A (pith: IStream<Pith<PNode>>) =  PNode (elementAP "A", PNode.tree pith)
+    let Button (pith: IStream<Pith<PNode>>) =  PNode (elementAP "BUTTON", PNode.tree pith)
+    let Span (pith: IStream<Pith<PNode>>) =  PNode (elementAP "SPAN", PNode.tree pith)
+    let H1 (pith: IStream<Pith<PNode>>) =  PNode (elementAP "H1", PNode.tree pith)
+    let H2 (pith: IStream<Pith<PNode>>) =  PNode (elementAP "H2", PNode.tree pith)
+    let H3 (pith: IStream<Pith<PNode>>) =  PNode (elementAP "H3", PNode.tree pith)
 
     let Text p =
-        Dom (((fun () -> upcast (document.createTextNode "")), (fun n -> n.nodeName = "#text")), p)
+        PNode (((fun () -> upcast (document.createTextNode "")), (fun n -> n.nodeName = "#text")), p)
     let (<<|) a b = a (M.now b)
 
     let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0 |> M.skip 1 |> M.multicast
@@ -88,7 +88,7 @@ module Dom =
                 o << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
 
     let rez =
-        P.tree << M.now <| fun o -> o (counter 3)
+        PNode.tree << M.now <| fun o -> o (counter 3)
         |> M.scan
             (fun n p -> p(n); n)
             (document.getElementById "root-node")
