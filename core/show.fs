@@ -10,27 +10,6 @@ module State =
     let init iv r = function
         | Some v -> r v
         | None   -> r iv
-
-    let rez =
-        oTree << M.now <| fun o ->
-            (o "key1").JNumber << M.now << init 1. <| fun s -> s + 1.
-            (o "key2").JObject << M.now <| fun o ->
-                (o "key1").JNumber << M.now << init 0. <| fun f -> f + 1.
-                (o "key1").JNumber << M.now << init 0. <| fun f -> f + 1.
-            (o "key3").JArray << M.now <| fun o ->
-                o.JString << M.now << init "a" <| fun s -> s + s
-                o.JString << M.now << init "b" <| fun s -> s + s
-                o.JString << M.now << init "o" <| fun s -> s + s
-                ()
-        |> M.scan (fun s r -> r (Some s))  (absurdObj ())
-        |> M.tap console.log
-    //drain rez
-
-module State2 =
-    open Sakhe.State2
-    let init iv r = function
-        | Some v -> r v
-        | None   -> r iv
     let rez =
         oTree << M.now <| fun o ->
             ("k1", RNumber (M.now << init 1. <| fun s -> s + 1.)) |> o
@@ -52,7 +31,7 @@ module State2 =
             (fun s r -> r (Some s))
             (Fable.Core.JsInterop.createEmpty<obj>)
         |> M.tap console.log
-    //drain rez
+    drain rez
 
 module Dom =
     open PNode

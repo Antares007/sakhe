@@ -9,7 +9,6 @@
     <Compile Include="m.fs" />
     <Compile Include="pnode.fs" />
     <Compile Include="state.fs" />
-    <Compile Include="state2.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

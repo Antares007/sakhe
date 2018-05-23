@@ -1,73 +1,83 @@
 module Sakhe.State
+open Fable.Core
 open Most
 open Sakhe
-open Fable.Core
-open Fable.Core.JsInterop
+
+type Pith<'a> = ('a -> unit) -> unit
 
 type R<'a> = 'a option -> 'a
 
-type IJValueRay =
-    abstract JString:   IStream<string R> -> unit
-    abstract JNumber:   IStream<float R> -> unit
-    abstract JBool:     IStream<bool R> -> unit
-    abstract JObject:   IStream<(string -> IJValueRay) -> unit> -> unit
-    abstract JArray:    IStream<IJValueRay -> unit> -> unit
+type RValue =
+    | RString of  IStream<string R>
+    | RNumber of  IStream<float R>
+    | RBool   of  IStream<bool R>
+    | RObject of  IStream<Pith<string * RValue>>
+    | RArray  of  IStream<Pith<int * RValue>>
 
-[<Emit("Object.assign($2(), $3, {[$0]: $1})")>]
-let assignKey (_: 'k) (_: 'v) (_: unit -> 'o) (_: 'o): 'o = jsNative
+[<AutoOpen>]
+module private Impl =
+    [<Emit("({})")>]
+    let absurdObj () = jsNative
+    [<Emit("([])")>]
+    let absurdArray () = jsNative
 
-let chain (key: 'k) (absurd: unit -> 'o) (prove: obj -> bool) (r: R<'a>) (o: 'o option): 'o =
-    match o with
-    | Some o ->
-        let x: obj = !!o?(key)
-        assignKey key (r (if prove x then Some (x :?> 'a) else None)) absurd o
-    | None ->
-        assignKey key (r None) absurd (absurd ())
+    [<Emit("typeof $0 === 'string' ? $0 : null")>]
+    let asString (_: obj): string option = jsNative
+    [<Emit("typeof $0 === 'number' ? $0 : null")>]
+    let asNumber (_: obj): float option = jsNative
+    [<Emit("typeof $0 === 'boolean' ? $0 : null")>]
+    let asBool (_: obj): bool option = jsNative
+    [<Emit("typeof $0 === 'object' && $0 != null ? $0 : null")>]
+    let asObject (_: obj): obj option = jsNative
+    [<Emit("Array.isArray($0) ? $0 : null")>]
+    let asArray (_: obj): obj [] option = jsNative
 
-[<Emit("({})")>]
-let absurdObj (): obj = jsNative
+    [<Emit("$2[$0] = $1")>]
+    let setKey _ _ _: unit = jsNative
 
-[<Emit("([])")>]
-let absurdArray (): obj [] = jsNative
+    [<Emit("$1[$0]")>]
+    let getKey _ _: obj = jsNative
 
-[<Emit("typeof $0 === 'string'")>]
-let private isString (_: 'o) = jsNative
+    [<Emit("Object.assign($0, $1)")>]
+    let assignFrom (_: 'a) (_: 'a): 'a = jsNative
 
-[<Emit("typeof $0 === 'number'")>]
-let private isNumber (_: 'o) = jsNative
+    let chain
+        (absurd: unit -> 'o) (key:'k) (prove: obj -> 'a option) (r:'a option -> 'a) (o: 'o option): 'o =
+        match o with
+        | Some o ->
+            let o = unbox o // emmits better js
+            let x = getKey key o
+            let a = r (prove x)
+            if LanguagePrimitives.PhysicalEquality x (upcast a) then
+                o
+            else
+                let oClone = assignFrom (absurd ()) o
+                setKey key a oClone
+                oClone
+        | None ->
+            let o = absurd ()
+            let a = r None
+            setKey key a o
+            o
 
-[<Emit("typeof $0 === 'boolean'")>]
-let private isBool   (_: 'o) = jsNative
-
-[<Emit("typeof $0 === 'object' && $0 != null")>]
-let private isObject (_: 'o) = jsNative
-
-[<Emit("Array.isArray($0)")>]
-let private isArray (_: 'o) = jsNative
-
-let rec oTree (pith: IStream<(string -> IJValueRay) -> unit>): IStream<obj R> =
-    let ring (pith: (string -> IJValueRay) -> unit) (o: IStream<obj R> -> unit): unit =
-        pith <| fun key -> { new IJValueRay with
-            member __.JString r = o (M.map (chain key absurdObj isString) r)
-            member __.JNumber r = o (M.map (chain key absurdObj isNumber) r)
-            member __.JBool   r = o (M.map (chain key absurdObj isBool) r)
-            member __.JObject r = o (M.map (chain key absurdObj isObject) (oTree r))
-            member __.JArray  r = o (M.map (chain key absurdObj isArray) (aTree r)) }
+let rec oTree (pith: IStream<Pith<string * RValue>>): IStream<R<obj>> =
+    let ring (pith: Pith<string * RValue>) (o: IStream<R<obj>> -> unit): unit =
+        pith <| function
+        | key, RString r -> o (M.map (chain absurdObj key asString) r)
+        | key, RNumber r -> o (M.map (chain absurdObj key asNumber) r)
+        | key, RBool r -> o (M.map (chain absurdObj key asBool) r)
+        | key, RObject r -> o (M.map (chain absurdObj key asObject) (oTree r))
+        | key, RArray r -> o (M.map (chain absurdObj key asArray) (aTree r))
+    let deltac list = List.fold M.merge (M.empty ()) list
+    M.tree deltac (M.map ring pith)
+and aTree (pith: IStream<Pith<int * RValue>>): IStream<R<obj []>> =
+    let ring (pith: Pith<int * RValue>) (o: IStream<R<obj []>> -> unit): unit =
+        pith <| function
+        | key, RString r -> o (M.map (chain absurdArray key asString) r)
+        | key, RNumber r -> o (M.map (chain absurdArray key asNumber) r)
+        | key, RBool r -> o (M.map (chain absurdArray key asBool) r)
+        | key, RObject r -> o (M.map (chain absurdArray key asObject) (oTree r))
+        | key, RArray r -> o (M.map (chain absurdArray key asArray) (aTree r))
     let deltac list = List.fold M.merge (M.empty ()) list
     M.tree deltac (M.map ring pith)
 
-and aTree (pith: IStream<IJValueRay -> unit>): IStream<(obj []) R> =
-    let ring (pith: IJValueRay -> unit) (o: IStream<(obj []) R> -> unit): unit =
-        let mutable c = 0
-        let cpp () =
-                let index = c
-                c <- c + 1
-                index
-        pith { new IJValueRay with
-            member __.JString r = cpp() |> (fun key -> o (M.map (chain key absurdArray isString) r))
-            member __.JNumber r = cpp() |> (fun key -> o (M.map (chain key absurdArray isNumber) r))
-            member __.JBool   r = cpp() |> (fun key -> o (M.map (chain key absurdArray isBool) r))
-            member __.JObject r = cpp() |> (fun key -> o (M.map (chain key absurdArray isObject) (oTree r)))
-            member __.JArray  r = cpp() |> (fun key -> o (M.map (chain key absurdArray isArray) (aTree r))) }
-    let deltac list = List.fold M.merge (M.empty ()) list
-    M.tree deltac (M.map ring pith)
