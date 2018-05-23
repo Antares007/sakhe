@@ -133,7 +133,9 @@ const Impl = function (__exports) {
 
 function objectTree(pith) {
   const deltac = function (list) {
-    return (0, _Seq.fold)(core.merge.bind(core), core.empty(), list);
+    return (0, _Seq.fold)(function (a, b) {
+      return core.merge(b, a);
+    }, core.empty(), list);
   };
 
   return (0, _m.tree)(deltac, core.map($var11 => $var12 => {
@@ -147,7 +149,9 @@ function objectTree(pith) {
 
 function arrayTree(pith) {
   const deltac = function (list) {
-    return (0, _Seq.fold)(core.merge.bind(core), core.empty(), list);
+    return (0, _Seq.fold)(function (a, b) {
+      return core.merge(b, a);
+    }, core.empty(), list);
   };
 
   return (0, _m.tree)(deltac, core.map($var13 => $var14 => {

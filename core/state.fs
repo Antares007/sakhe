@@ -68,10 +68,10 @@ module private Impl =
         | RArray (key, r) -> o (M.map (chain absurdObj key asArray) r)
 
 let rec objectTree (pith: IStream<Pith<RValue<string>>>): IStream<R<obj>> =
-    let deltac list = List.fold M.merge (M.empty ()) list
+    let deltac list = List.fold (fun a b -> M.merge b a) (M.empty ()) list
     M.tree deltac (M.map (ring absurdObj) pith)
 
 let arrayTree (pith: IStream<Pith<RValue<int>>>): IStream<R<obj []>> =
-    let deltac list = List.fold M.merge (M.empty ()) list
+    let deltac list = List.fold (fun a b -> M.merge b a) (M.empty ()) list
     M.tree deltac (M.map (ring absurdArray) pith)
 

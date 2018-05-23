@@ -50,7 +50,7 @@ module State =
             o << Array "array" << arrayTree << at 3000. <| fun a ->
                 a << Number 0 << now <| function
                     | Some k -> k + 1.
-                    | None -> 1.
+                    | None -> 42.
                 ()
             ()
             o << Array "array" << arrayTree << at 3000. <| fun a ->

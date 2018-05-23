@@ -119,7 +119,7 @@ const State = exports.State = function (__exports) {
       ($var17 => ($var16 => a(function (s_7) {
         return _Number(0, s_7);
       }($var16)))(now()($var17)))(function (_arg2_1) {
-        return _arg2_1 == null ? 1 : (0, _Option.getValue)(_arg2_1) + 1;
+        return _arg2_1 == null ? 42 : (0, _Option.getValue)(_arg2_1) + 1;
       });
     });
 
