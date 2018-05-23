@@ -12,6 +12,10 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
+var _CurriedLambda = require("./fable-core/CurriedLambda");
+
+var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
+
 var _Option = require("./fable-core/Option");
 
 var _core = require("@most/core");
@@ -19,10 +23,6 @@ var _core = require("@most/core");
 var core = _interopRequireWildcard(_core);
 
 var _Seq = require("./fable-core/Seq");
-
-var _CurriedLambda = require("./fable-core/CurriedLambda");
-
-var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _m = require("./m");
 
@@ -50,11 +50,11 @@ exports.Dom = Dom;
 (0, _Symbol2.setType)("Sakhe.P.Dom", Dom);
 
 const Impl = function (__exports) {
-  const tryFind = __exports.tryFind = function ($var13, $var14, $var15) {
+  const tryFind = __exports.tryFind = function ($var8, $var9, $var10) {
     tryFind: while (true) {
-      const f = $var13;
-      const i = $var14;
-      const nlist = $var15;
+      const f = $var8;
+      const i = $var9;
+      const nlist = $var10;
 
       if (i >= nlist.length) {
         return null;
@@ -64,47 +64,59 @@ const Impl = function (__exports) {
         if (f(n)) {
           return n;
         } else {
-          $var13 = f;
-          $var14 = i + 1;
-          $var15 = nlist;
+          $var8 = f;
+          $var9 = i + 1;
+          $var10 = nlist;
           continue tryFind;
         }
       }
     }
   };
 
-  const chain = __exports.chain = function (absurd, prove, index, patch, elm) {
-    const $var2 = function () {
-      const b = absurd();
-      patch(b);
-      elm.insertBefore(b, elm.childNodes[index]), void 0;
-    };
+  const chain = __exports.chain = function (absurd, prove, index, patch) {
+    return (0, _CurriedLambda2.default)(function makeOnce(f) {
+      var b;
+      return function once(a) {
+        if (f) {
+          b = f.call(this, a);
+          f = null;
+        }
 
-    const childNodes = elm.childNodes;
+        return b;
+      };
+    }(function (elm) {
+      const $var2 = function () {
+        const b = absurd();
+        patch(b);
+        elm.insertBefore(b, elm.childNodes[index]), void 0;
+      };
 
-    if (index >= childNodes.length) {
-      $var2();
-    } else {
-      const childAtIndex = childNodes[index];
+      const childNodes = elm.childNodes;
 
-      if (prove(childAtIndex)) {
-        ($var1 => patch(function (value) {
-          return value;
-        }($var1)))(childAtIndex);
+      if (index >= childNodes.length) {
+        $var2();
       } else {
-        const matchValue = tryFind(prove, index, childNodes);
+        const childAtIndex = childNodes[index];
 
-        if (matchValue == null) {
-          $var2();
+        if (prove(childAtIndex)) {
+          ($var1 => patch(function (value) {
+            return value;
+          }($var1)))(childAtIndex);
         } else {
-          (function (tupledArg) {
-            const b_1 = tupledArg[0];
-            patch(b_1);
-            elm.insertBefore(b_1, tupledArg[1]), void 0;
-          })([(0, _Option.getValue)(matchValue), childAtIndex]);
+          const matchValue = tryFind(prove, index, childNodes);
+
+          if (matchValue == null) {
+            $var2();
+          } else {
+            (function (tupledArg) {
+              const b_1 = tupledArg[0];
+              patch(b_1);
+              elm.insertBefore(b_1, tupledArg[1]), void 0;
+            })([(0, _Option.getValue)(matchValue), childAtIndex]);
+          }
         }
       }
-    }
+    }));
   };
 
   return __exports;
@@ -117,11 +129,9 @@ function tree(pith) {
     const chain_1 = function (ap, p) {
       const index = c | 0;
       c = c + 1 | 0;
-      o(core.map($var3 => $var4 => {
-        (function (patch, elm) {
-          Impl.chain(ap[0], ap[1], index, patch, elm);
-        })($var3, $var4);
-      }, p));
+      o(core.map((0, _CurriedLambda2.default)(function (patch) {
+        return Impl.chain(ap[0], ap[1], index, patch);
+      }), p));
     };
 
     pith_1(function (_arg1) {
@@ -131,46 +141,46 @@ function tree(pith) {
         chain_1(_arg1.data[0], _arg1.data[1]);
       }
     });
+    o(core.now(function makeOnce(f) {
+      var b;
+      return function once(a) {
+        if (f) {
+          b = f.call(this, a);
+          f = null;
+        }
 
-    ($var5 => o(core.now.bind(core)($var5)))(function (elm_1) {
-      for (let i = elm_1.childNodes.length - 1; i >= c; i--) {
-        elm_1.removeChild(elm_1.childNodes[i]), void 0;
+        return b;
+      };
+    }(function (elm) {
+      for (let i = elm.childNodes.length - 1; i >= c; i--) {
+        elm.removeChild(elm.childNodes[i]), void 0;
       }
-    });
+    })));
   };
 
-  const deltac = function (rs) {
-    var arg00__1;
-    var arg00__3;
-    return (0, _Seq.fold)((arg00__1 = function (p0, p_1, e) {
-      p_1(e);
-      p0(e);
-    }, function (arg10_, arg20_) {
-      return core.combine(($var6, $var7) => $var8 => {
-        arg00__1($var6, $var7, $var8);
-      }, arg10_, arg20_);
-    }), core.now(function (value) {
-      value, void 0;
-    }), (0, _Seq.map)((arg00__3 = (0, _CurriedLambda2.default)(function (arg00__2) {
-      return function makeOnce(f) {
-        var b;
-        return function once(a) {
-          if (f) {
-            b = f.call(this, a);
-            f = null;
-          }
+  let deltac;
+  let folder;
 
-          return b;
-        };
-      }(arg00__2);
-    }), function (arg10__1) {
-      return core.map($var9 => $var10 => {
-        arg00__3($var9, $var10);
-      }, arg10__1);
-    }), rs));
+  const arg00_ = function (p0, p_1, e) {
+    p_1(e);
+    p0(e);
   };
 
-  return (0, _m.tree)(deltac, core.map($var11 => $var12 => {
-    ring($var11, $var12);
+  folder = function (arg10_, arg20_) {
+    return core.combine(($var3, $var4) => $var5 => {
+      arg00_($var3, $var4, $var5);
+    }, arg10_, arg20_);
+  };
+
+  const state = core.now(function (value) {
+    value, void 0;
+  });
+
+  deltac = function (source) {
+    return (0, _Seq.fold)(folder, state, source);
+  };
+
+  return (0, _m.tree)(deltac, core.map($var6 => $var7 => {
+    ring($var6, $var7);
   }, pith));
 }

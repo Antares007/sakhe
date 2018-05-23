@@ -54,22 +54,23 @@ module private Impl =
         }
     })($0)")>]
     let inline once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
-    let chain (absurd, prove) index patch (elm: Element) =
-        matchChildren
-            (
-                (fun () ->
-                    let b = absurd()
-                    patch b
-                    elm.insertBefore (b, unbox elm.childNodes.[index]) |> ignore
-                ),
-                unbox >> patch,
-                (fun (moved, from) ->
-                    let b = unbox moved
-                    patch b
-                    elm.insertBefore (b, from) |> ignore
+    let chain (absurd, prove) index patch =
+        once (fun (elm: Element) ->
+            matchChildren
+                (
+                    (fun () ->
+                        let b = absurd()
+                        patch b
+                        elm.insertBefore (b, unbox elm.childNodes.[index]) |> ignore
+                    ),
+                    unbox >> patch,
+                    (fun (moved, from) ->
+                        let b = unbox moved
+                        patch b
+                        elm.insertBefore (b, from) |> ignore
+                    )
                 )
-            )
-            (prove, index, elm)
+                (prove, index, elm))
 
 let tree pith =
     let ring (pith: Pith<Dom>) (o: IStream<Patch<Element>> -> unit): unit =
@@ -83,14 +84,12 @@ let tree pith =
         | Node (ap, p) -> chain ap p
         | Leaf (ap, p) -> chain ap p
 
-        o << M.now <| fun elm ->
+        o (M.now (once (fun elm ->
             for i = unbox elm.childNodes.length - 1 downto c do
-                elm.removeChild elm.childNodes.[i] |> ignore
+                elm.removeChild elm.childNodes.[i] |> ignore)))
 
-    let deltac (rs: IStream<Patch<Element>> list): IStream<Patch<Element>> =
-        rs
-            |> Seq.map (M.map once)
-            |> Seq.fold (M.combine (fun p0 p e -> p e;  p0 e)) (M.now (ignore))
+    let deltac =
+        Seq.fold (M.combine (fun p0 p e -> p e;  p0 e)) (M.now (ignore))
 
     M.tree deltac (M.map ring pith)
 
