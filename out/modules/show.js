@@ -197,7 +197,7 @@ const Dom = exports.Dom = function (__exports) {
   };
 
   const _Text = __exports.Text = function (p) {
-    return new _p.Dom(1, [[function () {
+    return new _p.Dom(0, [[function () {
       return document.createTextNode("");
     }, function (n) {
       return n.nodeName === "#text";

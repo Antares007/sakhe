@@ -40,7 +40,7 @@ class Dom {
     return {
       type: "Sakhe.P.Dom",
       interfaces: ["FSharpUnion"],
-      cases: [["Node", (0, _Util.Tuple)([(0, _Util.Function)([_Util.Unit, (0, _Util.Interface)("Fable.Import.Browser.Element")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"])]), (0, _Util.Interface)("Most.IStream")], ["Leaf", (0, _Util.Tuple)([(0, _Util.Function)([_Util.Unit, (0, _Util.Interface)("Fable.Import.Browser.CharacterData")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"])]), (0, _Util.Interface)("Most.IStream")]]
+      cases: [["Dom", (0, _Util.Tuple)([(0, _Util.Function)([_Util.Unit, (0, _Util.Interface)("Fable.Import.Browser.Node")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"])]), (0, _Util.Interface)("Most.IStream")]]
     };
   }
 
@@ -125,21 +125,12 @@ const Impl = function (__exports) {
 function tree(pith) {
   const ring = function (pith_1, o) {
     let c = 0;
-
-    const chain_1 = function (ap, p) {
+    pith_1(function (_arg1) {
       const index = c | 0;
       c = c + 1 | 0;
       o(core.map((0, _CurriedLambda2.default)(function (patch) {
-        return Impl.chain(ap[0], ap[1], index, patch);
-      }), p));
-    };
-
-    pith_1(function (_arg1) {
-      if (_arg1.tag === 1) {
-        chain_1(_arg1.data[0], _arg1.data[1]);
-      } else {
-        chain_1(_arg1.data[0], _arg1.data[1]);
-      }
+        return Impl.chain(_arg1.data[0][0], _arg1.data[0][1], index, patch);
+      }), _arg1.data[1]));
     });
     o(core.now(function makeOnce(f) {
       var b;
@@ -161,8 +152,8 @@ function tree(pith) {
   let deltac;
   let folder;
 
-  const arg00_ = function (p0, p_1, e) {
-    p_1(e);
+  const arg00_ = function (p0, p, e) {
+    p(e);
     p0(e);
   };
 

@@ -10,9 +10,7 @@ type Pith<'a> = ('a -> unit) -> unit
 
 type AP<'a> = (unit -> 'a) * (Node -> bool)
 
-type Dom =
-    | Node of Element AP * IStream<Element Patch>
-    | Leaf of CharacterData AP * IStream<CharacterData Patch>
+type Dom = Dom of Node AP * IStream<Node Patch>
 
 [<AutoOpen>]
 module private Impl =
@@ -31,7 +29,7 @@ module private Impl =
             atIndex: Node -> unit,
             movedFrom: Node * Node -> unit
         )
-        (prove: Node -> bool, index: int, elm: Element) =
+        (prove: Node -> bool, index: int, elm: Node) =
         let childNodes = elm.childNodes
         if index >= unbox childNodes.length then
             notFound ()
@@ -55,7 +53,7 @@ module private Impl =
     })($0)")>]
     let inline once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
     let chain (absurd, prove) index patch =
-        once (fun (elm: Element) ->
+        once (fun (elm: Node) ->
             matchChildren
                 (
                     (fun () ->
@@ -73,16 +71,14 @@ module private Impl =
                 (prove, index, elm))
 
 let tree pith =
-    let ring (pith: Pith<Dom>) (o: IStream<Patch<Element>> -> unit): unit =
+    let ring (pith: Pith<Dom>) (o: IStream<Patch<Node>> -> unit): unit =
         let mutable c = 0
-        let chain ap p =
+
+        pith <| function
+        | Dom (ap, p) ->
             let index = c
             c <- c + 1
             o (M.map (chain ap index) p)
-
-        pith <| function
-        | Node (ap, p) -> chain ap p
-        | Leaf (ap, p) -> chain ap p
 
         o (M.now (once (fun elm ->
             for i = unbox elm.childNodes.length - 1 downto c do

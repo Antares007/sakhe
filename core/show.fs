@@ -55,25 +55,21 @@ module State2 =
     //drain rez
 
 module Dom =
-    open Fable.Core
     open P
 
-    let elementAP (tag: string): AP<Element> =
+    let elementAP (tag: string): AP<Node> =
         ((fun () -> upcast (document.createElement tag)), (fun n -> n.nodeName = tag))
 
-    let Div (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "DIV", P.tree pith)
-    let A (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "A", P.tree pith)
-    let Button (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "BUTTON", P.tree pith)
-    let Span (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "SPAN", P.tree pith)
-    let H1 (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "H1", P.tree pith)
-    let H2 (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "H2", P.tree pith)
-    let H3 (pith: IStream<Pith<Dom>>): Dom = Node (elementAP "H3", P.tree pith)
+    let Div (pith: IStream<Pith<Dom>>) = Dom (elementAP "DIV", P.tree pith)
+    let A (pith: IStream<Pith<Dom>>) =  Dom (elementAP "A", P.tree pith)
+    let Button (pith: IStream<Pith<Dom>>) =  Dom (elementAP "BUTTON", P.tree pith)
+    let Span (pith: IStream<Pith<Dom>>) =  Dom (elementAP "SPAN", P.tree pith)
+    let H1 (pith: IStream<Pith<Dom>>) =  Dom (elementAP "H1", P.tree pith)
+    let H2 (pith: IStream<Pith<Dom>>) =  Dom (elementAP "H2", P.tree pith)
+    let H3 (pith: IStream<Pith<Dom>>) =  Dom (elementAP "H3", P.tree pith)
 
     let Text p =
-        Leaf (
-                ((fun () -> upcast (document.createTextNode "")), (fun n -> n.nodeName = "#text")),
-                p
-            )
+        Dom (((fun () -> upcast (document.createTextNode "")), (fun n -> n.nodeName = "#text")), p)
     let (<<|) a b = a (M.now b)
 
     let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0 |> M.skip 1 |> M.multicast
