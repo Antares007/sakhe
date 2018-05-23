@@ -7,12 +7,12 @@ type Pith<'a> = ('a -> unit) -> unit
 
 type R<'a> = 'a option -> 'a
 
-type RValue =
-    | RString of  IStream<string R>
-    | RNumber of  IStream<float R>
-    | RBool   of  IStream<bool R>
-    | RObject of  IStream<obj R>
-    | RArray  of  IStream<obj [] R>
+type RValue<'key> =
+    | RString of  'key * IStream<string R>
+    | RNumber of  'key * IStream<float R>
+    | RBool   of  'key * IStream<bool R>
+    | RObject of  'key * IStream<obj R>
+    | RArray  of  'key * IStream<obj [] R>
 
 [<AutoOpen>]
 module private Impl =
@@ -59,25 +59,25 @@ let absurdObj (): obj = jsNative
 [<Emit("([])")>]
 let absurdArray (): obj [] = jsNative
 
-let rec objectTree (pith: IStream<Pith<string * RValue>>): IStream<R<obj>> =
-    let ring (pith: Pith<string * RValue>) (o: IStream<R<obj>> -> unit): unit =
+let rec objectTree (pith: IStream<Pith<RValue<string>>>): IStream<R<obj>> =
+    let ring (pith: Pith<RValue<string>>) (o: IStream<R<obj>> -> unit): unit =
         pith <| function
-        | key, RString r -> o (M.map (chain absurdObj key asString) r)
-        | key, RNumber r -> o (M.map (chain absurdObj key asNumber) r)
-        | key, RBool r -> o (M.map (chain absurdObj key asBool) r)
-        | key, RObject r -> o (M.map (chain absurdObj key asObject)  r)
-        | key, RArray r -> o (M.map (chain absurdObj key asArray) r)
+        | RString (key, r) -> o (M.map (chain absurdObj key asString) r)
+        | RNumber (key, r) -> o (M.map (chain absurdObj key asNumber) r)
+        | RBool (key, r) -> o (M.map (chain absurdObj key asBool) r)
+        | RObject (key, r) -> o (M.map (chain absurdObj key asObject)  r)
+        | RArray (key, r) -> o (M.map (chain absurdObj key asArray) r)
     let deltac list = List.fold M.merge (M.empty ()) list
     M.tree deltac (M.map ring pith)
 
-let aTree (pith: IStream<Pith<int * RValue>>): IStream<R<obj []>> =
-    let ring (pith: Pith<int * RValue>) (o: IStream<R<obj []>> -> unit): unit =
+let aTree (pith: IStream<Pith<RValue<int>>>): IStream<R<obj []>> =
+    let ring (pith: Pith<RValue<int>>) (o: IStream<R<obj []>> -> unit): unit =
         pith <| function
-        | key, RString r -> o (M.map (chain absurdArray key asString) r)
-        | key, RNumber r -> o (M.map (chain absurdArray key asNumber) r)
-        | key, RBool r -> o (M.map (chain absurdArray key asBool) r)
-        | key, RObject r -> o (M.map (chain absurdArray key asObject) r)
-        | key, RArray r -> o (M.map (chain absurdArray key asArray) r)
+        | RString (key, r) -> o (M.map (chain absurdArray key asString) r)
+        | RNumber (key, r) -> o (M.map (chain absurdArray key asNumber) r)
+        | RBool (key, r) -> o (M.map (chain absurdArray key asBool) r)
+        | RObject (key, r) -> o (M.map (chain absurdArray key asObject) r)
+        | RArray (key, r) -> o (M.map (chain absurdArray key asArray) r)
     let deltac list = List.fold M.merge (M.empty ()) list
     M.tree deltac (M.map ring pith)
 

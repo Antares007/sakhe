@@ -55,32 +55,20 @@ const State = exports.State = function (__exports) {
     return (0, _CurriedLambda2.default)(core.at.bind(core));
   };
 
-  const define = __exports.define = function (x, d) {
-    return [x, d];
+  const _Number = __exports.Number = function (k, s) {
+    return new _state.RValue(1, [k, s]);
   };
 
   const rez = __exports.rez = core.tap(console.log.bind(console), core.scan(function (s, r) {
     return r(s);
   }, {}, ($var1 => (0, _state.objectTree)(at()(0)($var1)))(function (o) {
-    const archil = core.merge(now()(function (_arg1) {
-      return {
-        age: 42
-      };
-    }), ($var2 => (0, _state.objectTree)(at()(3000)($var2)))(function (o_1) {
-      ($var5 => ($var4 => ($var3 => o_1(function (d) {
-        return define("age", d);
-      }($var3)))(function (arg0) {
-        return new _state.RValue(1, arg0);
-      }($var4)))(at()(3000)($var5)))(function (_arg2) {
-        return 1;
-      });
-    }));
+    const see = ($var3 => ($var2 => o(function (s_1) {
+      return _Number("a", s_1);
+    }($var2)))(now()($var3)))(function (_arg1) {
+      return 1;
+    });
 
-    ($var7 => ($var6 => o(function (d_1) {
-      return define("არჩილ", d_1);
-    }($var6)))(function (arg0_1) {
-      return new _state.RValue(3, arg0_1);
-    }($var7)))(archil);
+    null, void 0;
   })));
   drain(rez);
   return __exports;
@@ -141,9 +129,9 @@ const Dom = exports.Dom = function (__exports) {
 
   const counter = __exports.counter = function (d) {
     return op_LessLessBar(Div, function (o) {
-      op_LessLessBar($var8 => o(Button($var8)), function (o_1) {
-        op_LessLessBar($var9 => o_1(Span($var9)), function (o_2) {
-          op_LessLessBar($var10 => o_2(_Text($var10)), function (text) {
+      op_LessLessBar($var4 => o(Button($var4)), function (o_1) {
+        op_LessLessBar($var5 => o_1(Span($var5)), function (o_2) {
+          op_LessLessBar($var6 => o_2(_Text($var6)), function (text) {
             text.textContent = "+";
           });
         });
@@ -152,9 +140,9 @@ const Dom = exports.Dom = function (__exports) {
           o_1(counter(d - 1));
         }
       });
-      op_LessLessBar($var11 => o(Button($var11)), function (o_3) {
-        op_LessLessBar($var12 => o_3(Span($var12)), function (o_4) {
-          op_LessLessBar($var13 => o_4(_Text($var13)), function (text_1) {
+      op_LessLessBar($var7 => o(Button($var7)), function (o_3) {
+        op_LessLessBar($var8 => o_3(Span($var8)), function (o_4) {
+          op_LessLessBar($var9 => o_4(_Text($var9)), function (text_1) {
             text_1.textContent = "-";
           });
         });
@@ -163,16 +151,16 @@ const Dom = exports.Dom = function (__exports) {
           o_3(counter(d - 1));
         }
       });
-      op_LessLessBar($var14 => o(H3($var14)), function (o_5) {
-        ($var18 => {
+      op_LessLessBar($var10 => o(H3($var10)), function (o_5) {
+        ($var14 => {
           var arg00_;
-          return ($var15 => o_5(_Text($var15)))((arg00_ = function (i, text_2) {
+          return ($var11 => o_5(_Text($var11)))((arg00_ = function (i, text_2) {
             text_2.textContent = i.toString();
           }, function (arg10_) {
-            return core.map($var16 => $var17 => {
-              arg00_($var16, $var17);
+            return core.map($var12 => $var13 => {
+              arg00_($var12, $var13);
             }, arg10_);
-          })($var18));
+          })($var14));
         })(intS);
       });
     });
@@ -181,7 +169,7 @@ const Dom = exports.Dom = function (__exports) {
   const rez_1 = __exports.rez = core.scan(function (n, p) {
     p(n);
     return n;
-  }, document.getElementById("root-node"), ($var19 => (0, _pnode.tree)(core.now($var19)))(function (o) {
+  }, document.getElementById("root-node"), ($var15 => (0, _pnode.tree)(core.now($var15)))(function (o) {
     o(counter(3));
   }));
   drain(rez_1);

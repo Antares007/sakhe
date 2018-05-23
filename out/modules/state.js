@@ -37,7 +37,7 @@ class RValue {
     return {
       type: "Sakhe.State.RValue",
       interfaces: ["FSharpUnion", "System.IEquatable"],
-      cases: [["RString", (0, _Util.Interface)("Most.IStream")], ["RNumber", (0, _Util.Interface)("Most.IStream")], ["RBool", (0, _Util.Interface)("Most.IStream")], ["RObject", (0, _Util.Interface)("Most.IStream")], ["RArray", (0, _Util.Interface)("Most.IStream")]]
+      cases: [["RString", (0, _Util.GenericParam)("key"), (0, _Util.Interface)("Most.IStream")], ["RNumber", (0, _Util.GenericParam)("key"), (0, _Util.Interface)("Most.IStream")], ["RBool", (0, _Util.GenericParam)("key"), (0, _Util.Interface)("Most.IStream")], ["RObject", (0, _Util.GenericParam)("key"), (0, _Util.Interface)("Most.IStream")], ["RArray", (0, _Util.GenericParam)("key"), (0, _Util.Interface)("Most.IStream")]]
     };
   }
 
@@ -78,66 +78,70 @@ const Impl = function (__exports) {
 function objectTree(pith) {
   const ring = function (pith_1, o) {
     pith_1(function (_arg1) {
-      if (_arg1[1].tag === 1) {
-        const r = _arg1[1].data;
-        o(core.map($var1 => $var2 => {
-          var prove;
-          return (prove = function (arg00_) {
-            return typeof arg00_ === "number" ? arg00_ : null;
-          }, function (r_1, o_1) {
-            return Impl.chain(function () {
-              return {};
-            }, _arg1[0], prove, r_1, o_1);
-          })($var1, $var2);
-        }, r));
-      } else if (_arg1[1].tag === 2) {
-        const r_2 = _arg1[1].data;
-        o(core.map($var3 => $var4 => {
-          var prove_1;
-          return (prove_1 = function (arg00__2) {
-            return typeof arg00__2 === "boolean" ? arg00__2 : null;
-          }, function (r_3, o_2) {
-            return Impl.chain(function () {
-              return {};
-            }, _arg1[0], prove_1, r_3, o_2);
-          })($var3, $var4);
-        }, r_2));
-      } else if (_arg1[1].tag === 3) {
-        const r_4 = _arg1[1].data;
-        o(core.map($var5 => $var6 => {
-          var prove_2;
-          return (prove_2 = function (arg00__4) {
-            return typeof arg00__4 === "object" && arg00__4 != null ? arg00__4 : null;
-          }, function (r_5, o_3) {
-            return Impl.chain(function () {
-              return {};
-            }, _arg1[0], prove_2, r_5, o_3);
-          })($var5, $var6);
-        }, r_4));
-      } else if (_arg1[1].tag === 4) {
-        const r_6 = _arg1[1].data;
-        o(core.map($var7 => $var8 => {
-          var prove_3;
-          return (prove_3 = function (arg00__6) {
-            return Array.isArray(arg00__6) ? arg00__6 : null;
-          }, function (r_7, o_4) {
-            return Impl.chain(function () {
-              return {};
-            }, _arg1[0], prove_3, r_7, o_4);
-          })($var7, $var8);
-        }, r_6));
-      } else {
-        const r_8 = _arg1[1].data;
-        o(core.map($var9 => $var10 => {
-          var prove_4;
-          return (prove_4 = function (arg00__8) {
-            return typeof arg00__8 === "string" ? arg00__8 : null;
-          }, function (r_9, o_5) {
-            return Impl.chain(function () {
-              return {};
-            }, _arg1[0], prove_4, r_9, o_5);
-          })($var9, $var10);
-        }, r_8));
+      switch (_arg1.tag) {
+        case 1:
+          o(core.map($var1 => $var2 => {
+            var prove;
+            return (prove = function (arg00_) {
+              return typeof arg00_ === "number" ? arg00_ : null;
+            }, function (r, o_1) {
+              return Impl.chain(function () {
+                return {};
+              }, _arg1.data[0], prove, r, o_1);
+            })($var1, $var2);
+          }, _arg1.data[1]));
+          break;
+
+        case 2:
+          o(core.map($var3 => $var4 => {
+            var prove_1;
+            return (prove_1 = function (arg00__2) {
+              return typeof arg00__2 === "boolean" ? arg00__2 : null;
+            }, function (r_1, o_2) {
+              return Impl.chain(function () {
+                return {};
+              }, _arg1.data[0], prove_1, r_1, o_2);
+            })($var3, $var4);
+          }, _arg1.data[1]));
+          break;
+
+        case 3:
+          o(core.map($var5 => $var6 => {
+            var prove_2;
+            return (prove_2 = function (arg00__4) {
+              return typeof arg00__4 === "object" && arg00__4 != null ? arg00__4 : null;
+            }, function (r_2, o_3) {
+              return Impl.chain(function () {
+                return {};
+              }, _arg1.data[0], prove_2, r_2, o_3);
+            })($var5, $var6);
+          }, _arg1.data[1]));
+          break;
+
+        case 4:
+          o(core.map($var7 => $var8 => {
+            var prove_3;
+            return (prove_3 = function (arg00__6) {
+              return Array.isArray(arg00__6) ? arg00__6 : null;
+            }, function (r_3, o_4) {
+              return Impl.chain(function () {
+                return {};
+              }, _arg1.data[0], prove_3, r_3, o_4);
+            })($var7, $var8);
+          }, _arg1.data[1]));
+          break;
+
+        default:
+          o(core.map($var9 => $var10 => {
+            var prove_4;
+            return (prove_4 = function (arg00__8) {
+              return typeof arg00__8 === "string" ? arg00__8 : null;
+            }, function (r_4, o_5) {
+              return Impl.chain(function () {
+                return {};
+              }, _arg1.data[0], prove_4, r_4, o_5);
+            })($var9, $var10);
+          }, _arg1.data[1]));
       }
     });
   };
@@ -154,66 +158,70 @@ function objectTree(pith) {
 function aTree(pith) {
   const ring = function (pith_1, o) {
     pith_1(function (_arg1) {
-      if (_arg1[1].tag === 1) {
-        const r = _arg1[1].data;
-        o(core.map($var13 => $var14 => {
-          var prove;
-          return (prove = function (arg00_) {
-            return typeof arg00_ === "number" ? arg00_ : null;
-          }, function (r_1, o_1) {
-            return Impl.chain(function () {
-              return [];
-            }, _arg1[0], prove, r_1, o_1);
-          })($var13, $var14);
-        }, r));
-      } else if (_arg1[1].tag === 2) {
-        const r_2 = _arg1[1].data;
-        o(core.map($var15 => $var16 => {
-          var prove_1;
-          return (prove_1 = function (arg00__2) {
-            return typeof arg00__2 === "boolean" ? arg00__2 : null;
-          }, function (r_3, o_2) {
-            return Impl.chain(function () {
-              return [];
-            }, _arg1[0], prove_1, r_3, o_2);
-          })($var15, $var16);
-        }, r_2));
-      } else if (_arg1[1].tag === 3) {
-        const r_4 = _arg1[1].data;
-        o(core.map($var17 => $var18 => {
-          var prove_2;
-          return (prove_2 = function (arg00__4) {
-            return typeof arg00__4 === "object" && arg00__4 != null ? arg00__4 : null;
-          }, function (r_5, o_3) {
-            return Impl.chain(function () {
-              return [];
-            }, _arg1[0], prove_2, r_5, o_3);
-          })($var17, $var18);
-        }, r_4));
-      } else if (_arg1[1].tag === 4) {
-        const r_6 = _arg1[1].data;
-        o(core.map($var19 => $var20 => {
-          var prove_3;
-          return (prove_3 = function (arg00__6) {
-            return Array.isArray(arg00__6) ? arg00__6 : null;
-          }, function (r_7, o_4) {
-            return Impl.chain(function () {
-              return [];
-            }, _arg1[0], prove_3, r_7, o_4);
-          })($var19, $var20);
-        }, r_6));
-      } else {
-        const r_8 = _arg1[1].data;
-        o(core.map($var21 => $var22 => {
-          var prove_4;
-          return (prove_4 = function (arg00__8) {
-            return typeof arg00__8 === "string" ? arg00__8 : null;
-          }, function (r_9, o_5) {
-            return Impl.chain(function () {
-              return [];
-            }, _arg1[0], prove_4, r_9, o_5);
-          })($var21, $var22);
-        }, r_8));
+      switch (_arg1.tag) {
+        case 1:
+          o(core.map($var13 => $var14 => {
+            var prove;
+            return (prove = function (arg00_) {
+              return typeof arg00_ === "number" ? arg00_ : null;
+            }, function (r, o_1) {
+              return Impl.chain(function () {
+                return [];
+              }, _arg1.data[0], prove, r, o_1);
+            })($var13, $var14);
+          }, _arg1.data[1]));
+          break;
+
+        case 2:
+          o(core.map($var15 => $var16 => {
+            var prove_1;
+            return (prove_1 = function (arg00__2) {
+              return typeof arg00__2 === "boolean" ? arg00__2 : null;
+            }, function (r_1, o_2) {
+              return Impl.chain(function () {
+                return [];
+              }, _arg1.data[0], prove_1, r_1, o_2);
+            })($var15, $var16);
+          }, _arg1.data[1]));
+          break;
+
+        case 3:
+          o(core.map($var17 => $var18 => {
+            var prove_2;
+            return (prove_2 = function (arg00__4) {
+              return typeof arg00__4 === "object" && arg00__4 != null ? arg00__4 : null;
+            }, function (r_2, o_3) {
+              return Impl.chain(function () {
+                return [];
+              }, _arg1.data[0], prove_2, r_2, o_3);
+            })($var17, $var18);
+          }, _arg1.data[1]));
+          break;
+
+        case 4:
+          o(core.map($var19 => $var20 => {
+            var prove_3;
+            return (prove_3 = function (arg00__6) {
+              return Array.isArray(arg00__6) ? arg00__6 : null;
+            }, function (r_3, o_4) {
+              return Impl.chain(function () {
+                return [];
+              }, _arg1.data[0], prove_3, r_3, o_4);
+            })($var19, $var20);
+          }, _arg1.data[1]));
+          break;
+
+        default:
+          o(core.map($var21 => $var22 => {
+            var prove_4;
+            return (prove_4 = function (arg00__8) {
+              return typeof arg00__8 === "string" ? arg00__8 : null;
+            }, function (r_4, o_5) {
+              return Impl.chain(function () {
+                return [];
+              }, _arg1.data[0], prove_4, r_4, o_5);
+            })($var21, $var22);
+          }, _arg1.data[1]));
       }
     });
   };

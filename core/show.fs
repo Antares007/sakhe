@@ -1,7 +1,6 @@
 module Sakhe.Show
 open Most
 open Fable.Import.Browser
-open Fable.Core.JsInterop
 
 let scheduler = Most.Scheduler.newDefaultScheduler ()
 let drain s = M.runEffects s scheduler |> ignore
@@ -18,21 +17,24 @@ module State =
     let constant = M.constant
     let at = M.at
 
-    let define x d:('k * RValue) = (x, d)
-
+    // let define key d = RValue (x, d)
+    let Number k s = RNumber (k, s)
     let rez =
         objectTree << at 0. <| fun o ->
-            let archil =
-                M.merge
-                    (now (fun _ ->
-                        createObj [
-                            "age" ==> 42
-                            ]
-                    ))
-                    (objectTree << at 3000. <| fun o ->
-                        o << define "age" << RNumber << at 3000. <| fun _ -> 1.)
+            let see = o << Number "a" << now <| (fun _ -> 1.)
+            see |> ignore
+            ()
+            // let archil =
+            //     M.merge
+            //         (now (fun _ ->
+            //             createObj [
+            //                 "age" ==> 42
+            //                 ]
+            //         ))
+            //         (objectTree << at 3000. <| fun o ->
+            //             o << define "age" << RNumber << at 3000. <| fun _ -> 1.)
 
-            o << define "არჩილ" <<  RObject <| archil
+            // o << define "არჩილ" <<  RObject <| archil
 
         |> M.scan
             (fun s r -> r (Some s))
