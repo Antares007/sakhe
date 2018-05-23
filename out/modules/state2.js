@@ -58,13 +58,14 @@ const Impl = function (__exports) {
       o_1[key] = a;
       return o_1;
     } else {
-      const x = (0, _Option.getValue)(o)[key];
+      const o_2 = (0, _Option.getValue)(o);
+      const x = o_2[key];
       const a_1 = r(prove(x));
 
       if (x === a_1) {
-        return (0, _Option.getValue)(o);
+        return o_2;
       } else {
-        const oClone = Object.assign(absurd(), (0, _Option.getValue)(o));
+        const oClone = Object.assign(absurd(), o_2);
         oClone[key] = a_1;
         return oClone;
       }

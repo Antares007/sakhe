@@ -45,6 +45,7 @@ module private Impl =
         (absurd: unit -> 'o) (key:'k) (prove: obj -> 'a option) (r:'a option -> 'a) (o: 'o option): 'o =
         match o with
         | Some o ->
+            let o = unbox o // emmits better js
             let x = getKey key o
             let a = r (prove x)
             if LanguagePrimitives.PhysicalEquality x (upcast a) then
