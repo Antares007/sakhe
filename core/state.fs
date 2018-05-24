@@ -2,8 +2,10 @@ module Sakhe.State
 open Fable.Core
 open Sakhe
 open M
+open Fable
 
-type R<'a> = 'a option -> 'a
+[<Fable.Core.Erase>]
+type R<'a> = R of ('a option -> 'a)
 
 type RValue<'key> =
     | RString of  'key * Stream<string R>
@@ -15,27 +17,35 @@ type RValue<'key> =
 [<AutoOpen>]
 module private Impl =
     [<Emit("typeof $0 === 'string' ? $0 : null")>]
-    let asString (_: obj): string option = jsNative
+    let asString (_: obj): string option =
+        jsNative
     [<Emit("typeof $0 === 'number' ? $0 : null")>]
-    let asNumber (_: obj): float option = jsNative
+    let asNumber (_: obj): float option =
+        jsNative
     [<Emit("typeof $0 === 'boolean' ? $0 : null")>]
-    let asBool (_: obj): bool option = jsNative
+    let asBool (_: obj): bool option =
+        jsNative
     [<Emit("typeof $0 === 'object' && $0 != null ? $0 : null")>]
-    let asObject (_: obj): obj option = jsNative
+    let asObject (_: obj): obj option =
+        jsNative
     [<Emit("Array.isArray($0) ? $0 : null")>]
-    let asArray (_: obj): obj [] option = jsNative
+    let asArray (_: obj): obj [] option =
+        jsNative
 
     [<Emit("$2[$0] = $1")>]
-    let setKey _ _ _: unit = jsNative
+    let setKey _ _ _: unit =
+        jsNative
 
     [<Emit("$1[$0]")>]
-    let getKey _ _: obj = jsNative
+    let getKey _ _: obj =
+        jsNative
 
     [<Emit("Object.assign($0, $1)")>]
-    let assignFrom (_: 'a) (_: 'a): 'a = jsNative
+    let assignFrom (_: 'a) (_: 'a): 'a =
+        jsNative
 
     let chain
-        (absurd: unit -> 'o) (key:'k) (prove: obj -> 'a option) (r:'a option -> 'a) (o: 'o option): 'o =
+        (absurd: unit -> 'o) (key:'k) (prove: obj -> 'a option) (R r) (o: 'o option): 'o =
         match o with
         | Some o ->
             let o = unbox o // emmits better js
@@ -53,23 +63,33 @@ module private Impl =
             setKey key a o
             o
 
-    [<Emit("({})")>]
-    let absurdObj (): obj = jsNative
-    [<Emit("([])")>]
-    let absurdArray (): obj [] = jsNative
-
-    let ring absurdObj pith o: unit =
+    let makeRing absurdObj pith o: unit =
         pith <| function
         | RString (key, r) -> o (map (chain absurdObj key asString) r)
         | RNumber (key, r) -> o (map (chain absurdObj key asNumber) r)
         | RBool (key, r) -> o (map (chain absurdObj key asBool) r)
         | RObject (key, r) -> o (map (chain absurdObj key asObject)  r)
         | RArray (key, r) -> o (map (chain absurdObj key asArray) r)
+        ()
 
-    let merge list = List.fold (fun a b -> merge b a) (empty ()) list
+    let merge list =
+        List.fold (fun a b -> merge b a) (empty ()) list
 
-let rec oTree pith =
-    M.tree (A.DeltaC merge) (M.map (A.pmap (ring absurdObj)) pith)
+module R =
+    [<Emit("({})")>]
+    let absurdObj (): obj =
+        jsNative
+
+    [<Emit("([])")>]
+    let absurdArray (): obj [] =
+        jsNative
+
+let oTree pith =
+    map
+        R
+        (M.tree (A.DeltaC merge) (M.map (A.pmap (makeRing R.absurdObj)) pith))
 
 let aTree pith =
-    M.tree (A.DeltaC merge) (M.map (A.pmap (ring absurdArray)) pith)
+    map
+        R
+        (M.tree (A.DeltaC merge) (M.map (A.pmap (makeRing R.absurdArray)) pith))

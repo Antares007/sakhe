@@ -26,15 +26,15 @@ module State =
     open A
     let rez =
         oTree << (at << ms) 0. << Pith <| fun o ->
-            o << Number "a" << now <| (fun _ -> 1.)
-            o << Object "b" << now <| fun _ -> createObj [ "k" ==> 42]
+            o << Number "a" << now << R <| (fun _ -> 1.)
+            o << Object "b" << now << R <| fun _ -> createObj [ "k" ==> 42]
             o << Object "b" << oTree << now << Pith <| fun o ->
-                o << Number "k" << now <| function
+                o << Number "k" << now << R <| function
                     | Some k -> k + 1.
                     | None -> 0.
                 ()
             ()
-            o << Object "array" << now <| fun _ ->
+            o << Object "array" << now << R <| fun _ ->
                 unbox [|
                     { name ="archil"; age = 42 }
                     { name ="archil"; age = 42 }
@@ -42,20 +42,20 @@ module State =
                     { name ="archil"; age = 42 } |]
 
             o << Array "array" << aTree << at (ms 3000.) << Pith <| fun a ->
-                a << Number 0 << now <| function
+                a << Number 0 << now << R <| function
                     | Some k -> k + 1.
                     | None -> 42.
                 ()
             ()
             o << Array "array" << aTree << at (ms 3000.) << Pith <| fun a ->
-                a << Number 0 << now <| function
+                a << Number 0 << now << R <| function
                     | Some k -> k + 1.
                     | None -> 0.
                 ()
             ()
 
         |> scan
-            (fun s r -> r (Some s))
+            (fun s (R r) -> r (Some s))
             (Fable.Core.JsInterop.createEmpty<obj>)
         |> tap console.log
 
