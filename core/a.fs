@@ -1,6 +1,9 @@
 ﻿module Sakhe.A
 
+[<Fable.Core.Erase>]
 type Pith<'a> = private Pith of (('a -> unit) -> unit)
+
+[<Fable.Core.Erase>]
 type DeltaC<'a, 'b> = private DeltaC of ('a list -> 'b)
 
 let pith f = Pith f

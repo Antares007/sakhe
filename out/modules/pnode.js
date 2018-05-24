@@ -13,13 +13,13 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
-var _m = require("./m");
-
 var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _Option = require("./fable-core/Option");
+
+var _m = require("./m");
 
 var _Seq = require("./fable-core/Seq");
 
@@ -57,9 +57,7 @@ class PNode {
       interfaces: ["FSharpUnion"],
       cases: [["PNode", (0, _Util.makeGeneric)(AP, {
         a: (0, _Util.Interface)("Fable.Import.Browser.Node")
-      }), (0, _Util.makeGeneric)(_m.Stream, {
-        a: (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), _Util.Unit])
-      })]]
+      }), _Util.Any]]
     };
   }
 

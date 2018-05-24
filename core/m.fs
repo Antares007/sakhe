@@ -1,7 +1,10 @@
 ﻿module Sakhe.M
 open Most
+
+[<Fable.Core.Erase>]
 type Stream<'a> = private Stream of IStream<'a>
 
+[<Fable.Core.Erase>]
 type Time = private Time of float
 
 [<AutoOpen>]

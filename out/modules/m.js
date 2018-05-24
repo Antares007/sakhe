@@ -20,12 +20,6 @@ exports.multicast = multicast;
 exports.tree = tree;
 exports.drain = drain;
 
-var _Symbol2 = require("./fable-core/Symbol");
-
-var _Symbol3 = _interopRequireDefault(_Symbol2);
-
-var _Util = require("./fable-core/Util");
-
 var _core = require("@most/core");
 
 var core = _interopRequireWildcard(_core);
@@ -38,123 +32,73 @@ var scheduler_1 = _interopRequireWildcard(_scheduler);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-class Stream {
-  constructor(tag, data) {
-    this.tag = tag | 0;
-    this.data = data;
-  }
-
-  [_Symbol3.default.reflection]() {
-    return {
-      type: "Sakhe.M.Stream",
-      interfaces: ["FSharpUnion", "System.IEquatable"],
-      cases: [["Stream", (0, _Util.Interface)("Most.IStream")]]
-    };
-  }
-
-  Equals(other) {
-    return this === other || this.tag === other.tag && (0, _Util.equals)(this.data, other.data);
-  }
-
-}
-
-(0, _Symbol2.setType)("Sakhe.M.Stream", Stream);
-
-class Time {
-  constructor(tag, data) {
-    this.tag = tag | 0;
-    this.data = data;
-  }
-
-  [_Symbol3.default.reflection]() {
-    return {
-      type: "Sakhe.M.Time",
-      interfaces: ["FSharpUnion", "System.IEquatable", "System.IComparable"],
-      cases: [["Time", "number"]]
-    };
-  }
-
-  Equals(other) {
-    return this === other || this.tag === other.tag && (0, _Util.equals)(this.data, other.data);
-  }
-
-  CompareTo(other) {
-    return (0, _Util.compareUnions)(this, other) | 0;
-  }
-
-}
-
-(0, _Symbol2.setType)("Sakhe.M.Time", Time);
-
 const TimeModule = exports.TimeModule = function (__exports) {
   const ms = __exports.ms = function (ms_1) {
-    return new Time(0, ms_1);
+    return ms_1;
   };
 
   return __exports;
 }({});
 
 function empty() {
-  return new Stream(0, core.empty());
+  return core.empty();
 }
 
 function now(a) {
-  return new Stream(0, core.now(a));
+  return core.now(a);
 }
 
 function at(_arg1, a) {
-  return new Stream(0, core.at(_arg1.data, a));
+  return core.at(_arg1, a);
 }
 
-const see = exports.see = at(new Time(0, 1), at(new Time(0, 1), null));
+const see = exports.see = at(1, at(1, null));
 
 function map(f, _arg1) {
-  return new Stream(0, core.map(f, _arg1.data));
+  return core.map(f, _arg1);
 }
 
 function switchLatest(_arg1) {
   return ($var2 => {
     var arg00_;
-    return ($var1 => new Stream(0, core.switchLatest($var1)))((arg00_ = function (_arg1_1) {
-      return _arg1_1.data;
+    return ($var1 => core.switchLatest($var1))((arg00_ = function (_arg1_1) {
+      return _arg1_1;
     }, function (arg10_) {
       return core.map(arg00_, arg10_);
     })($var2));
-  })(_arg1.data);
+  })(_arg1);
 }
 
 function combine(f, _arg2, _arg1) {
-  return new Stream(0, core.combine(f, _arg2.data, _arg1.data));
+  return core.combine(f, _arg2, _arg1);
 }
 
 function merge(_arg2, _arg1) {
-  return new Stream(0, core.merge(_arg2.data, _arg1.data));
+  return core.merge(_arg2, _arg1);
 }
 
 function constant(a, _arg1) {
-  return new Stream(0, core.constant(a, _arg1.data));
+  return core.constant(a, _arg1);
 }
 
 function scan(f, state, _arg1) {
-  return new Stream(0, core.scan(f, state, _arg1.data));
+  return core.scan(f, state, _arg1);
 }
 
 function tap(f, _arg1) {
-  return new Stream(0, core.tap(f, _arg1.data));
+  return core.tap(f, _arg1);
 }
 
 function periodic(_arg1) {
-  return new Stream(0, core.periodic(_arg1.data));
+  return core.periodic(_arg1);
 }
 
 function skip(n, _arg1) {
-  return new Stream(0, core.skip(n, _arg1.data));
+  return core.skip(n, _arg1);
 }
 
 function multicast(_arg1) {
-  return new Stream(0, core.multicast(_arg1.data));
+  return core.multicast(_arg1);
 }
 
 function tree(deltac, mpith) {
@@ -166,5 +110,5 @@ function tree(deltac, mpith) {
 const scheduler = scheduler_1.newDefaultScheduler();
 
 function drain(_arg1) {
-  return core.runEffects(_arg1.data, scheduler);
+  return core.runEffects(_arg1, scheduler);
 }

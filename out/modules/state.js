@@ -13,9 +13,9 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
-var _m = require("./m");
-
 var _Option = require("./fable-core/Option");
+
+var _m = require("./m");
 
 var _Seq = require("./fable-core/Seq");
 
@@ -33,17 +33,7 @@ class RValue {
     return {
       type: "Sakhe.State.RValue",
       interfaces: ["FSharpUnion", "System.IEquatable"],
-      cases: [["RString", (0, _Util.GenericParam)("key"), (0, _Util.makeGeneric)(_m.Stream, {
-        a: (0, _Util.Function)([(0, _Util.Option)("string"), "string"])
-      })], ["RNumber", (0, _Util.GenericParam)("key"), (0, _Util.makeGeneric)(_m.Stream, {
-        a: (0, _Util.Function)([(0, _Util.Option)("number"), "number"])
-      })], ["RBool", (0, _Util.GenericParam)("key"), (0, _Util.makeGeneric)(_m.Stream, {
-        a: (0, _Util.Function)([(0, _Util.Option)("boolean"), "boolean"])
-      })], ["RObject", (0, _Util.GenericParam)("key"), (0, _Util.makeGeneric)(_m.Stream, {
-        a: (0, _Util.Function)([(0, _Util.Option)(_Util.Any), _Util.Any])
-      })], ["RArray", (0, _Util.GenericParam)("key"), (0, _Util.makeGeneric)(_m.Stream, {
-        a: (0, _Util.Function)([(0, _Util.Option)((0, _Util.Array)(_Util.Any)), (0, _Util.Array)(_Util.Any)])
-      })]]
+      cases: [["RString", (0, _Util.GenericParam)("key"), _Util.Any], ["RNumber", (0, _Util.GenericParam)("key"), _Util.Any], ["RBool", (0, _Util.GenericParam)("key"), _Util.Any], ["RObject", (0, _Util.GenericParam)("key"), _Util.Any], ["RArray", (0, _Util.GenericParam)("key"), _Util.Any]]
     };
   }
 
