@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PNode = exports.AP = undefined;
+exports.Patch = exports.PNode = exports.AP = undefined;
 exports.tree = tree;
 
 var _Symbol2 = require("./fable-core/Symbol");
@@ -11,10 +11,6 @@ var _Symbol2 = require("./fable-core/Symbol");
 var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
-
-var _CurriedLambda = require("./fable-core/CurriedLambda");
-
-var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _Option = require("./fable-core/Option");
 
@@ -66,32 +62,9 @@ class PNode {
 exports.PNode = PNode;
 (0, _Symbol2.setType)("Sakhe.PNode.PNode", PNode);
 
-const Impl = function (__exports) {
-  const tryFind = __exports.tryFind = function ($var8, $var9, $var10) {
-    tryFind: while (true) {
-      const f = $var8;
-      const i = $var9;
-      const nlist = $var10;
-
-      if (i >= nlist.length) {
-        return null;
-      } else {
-        const n = nlist[i];
-
-        if (f(n)) {
-          return n;
-        } else {
-          $var8 = f;
-          $var9 = i + 1;
-          $var10 = nlist;
-          continue tryFind;
-        }
-      }
-    }
-  };
-
-  const chain = __exports.chain = function (absurd, prove, index, patch) {
-    return (0, _CurriedLambda2.default)(function makeOnce(f) {
+const Patch = exports.Patch = function (__exports) {
+  const once = __exports.once = function (f) {
+    return function makeOnce(f) {
       var b;
       return function once(a) {
         if (f) {
@@ -101,10 +74,57 @@ const Impl = function (__exports) {
 
         return b;
       };
-    }(function (elm) {
+    }(f);
+  };
+
+  const combine = __exports.combine = function (_arg2, _arg1) {
+    return function (n) {
+      _arg1(n);
+
+      _arg2(n);
+    };
+  };
+
+  const apply = __exports.apply = function (n, _arg1) {
+    _arg1(n);
+
+    return n;
+  };
+
+  return __exports;
+}({});
+
+const Impl = function (__exports) {
+  const tryFind = __exports.tryFind = function ($var4, $var5, $var6) {
+    tryFind: while (true) {
+      const f = $var4;
+      const i = $var5;
+      const nlist = $var6;
+
+      if (i >= nlist.length) {
+        return null;
+      } else {
+        const n = nlist[i];
+
+        if (f(n)) {
+          return n;
+        } else {
+          $var4 = f;
+          $var5 = i + 1;
+          $var6 = nlist;
+          continue tryFind;
+        }
+      }
+    }
+  };
+
+  const chain = __exports.chain = function (absurd, prove, index, _arg1) {
+    return Patch.once(function (elm) {
       const $var2 = function () {
         const b = absurd();
-        patch(b);
+
+        _arg1(b);
+
         elm.insertBefore(b, elm.childNodes[index]), void 0;
       };
 
@@ -116,7 +136,7 @@ const Impl = function (__exports) {
         const childAtIndex = childNodes[index];
 
         if (prove(childAtIndex)) {
-          ($var1 => patch(function (value) {
+          ($var1 => _arg1(function (value) {
             return value;
           }($var1)))(childAtIndex);
         } else {
@@ -127,13 +147,15 @@ const Impl = function (__exports) {
           } else {
             (function (tupledArg) {
               const b_1 = tupledArg[0];
-              patch(b_1);
+
+              _arg1(b_1);
+
               elm.insertBefore(b_1, tupledArg[1]), void 0;
             })([(0, _Option.getValue)(matchValue), childAtIndex]);
           }
         }
       }
-    }));
+    });
   };
 
   return __exports;
@@ -147,24 +169,11 @@ function tree(pith) {
       const a = _arg1.data[0].data[0];
       const index = c | 0;
       c = c + 1 | 0;
-      o((0, _m.map)($var3 => $var4 => {
-        var arg;
-        (arg = [a, prove], (0, _CurriedLambda2.default)(function (patch) {
-          return Impl.chain(arg[0], arg[1], index, patch);
-        }))($var3, $var4);
+      o((0, _m.map)(function (arg20_) {
+        return Impl.chain(a, prove, index, arg20_);
       }, _arg1.data[1]));
     });
-    o((0, _m.now)(function makeOnce(f) {
-      var b;
-      return function once(a) {
-        if (f) {
-          b = f.call(this, a);
-          f = null;
-        }
-
-        return b;
-      };
-    }(function (elm) {
+    o((0, _m.now)(Patch.once(function (elm) {
       for (let i = elm.childNodes.length - 1; i >= c; i--) {
         elm.removeChild(elm.childNodes[i]), void 0;
       }
@@ -174,15 +183,12 @@ function tree(pith) {
   let deltac;
   let folder;
 
-  const f = function (p0, p, e) {
-    p(e);
-    p0(e);
+  const f = function (arg00_, arg10_) {
+    return Patch.combine(arg00_, arg10_);
   };
 
-  folder = function (arg10_, arg20_) {
-    return (0, _m.combine)(($var5, $var6) => $var7 => {
-      f($var5, $var6, $var7);
-    }, arg10_, arg20_);
+  folder = function (arg10__1, arg20__1) {
+    return (0, _m.combine)(f, arg10__1, arg20__1);
   };
 
   const state = (0, _m.now)(function (value) {
@@ -193,7 +199,7 @@ function tree(pith) {
     return (0, _Seq.fold)(folder, state, source);
   };
 
-  return (0, _m.tree)(deltac, (0, _m.map)(function (arg10__1) {
-    return (0, _a.pmap)(ring, arg10__1);
+  return (0, _m.tree)(deltac, (0, _m.map)(function (arg10__2) {
+    return (0, _a.pmap)(ring, arg10__2);
   }, pith));
 }

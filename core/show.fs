@@ -88,20 +88,20 @@ module Dom =
         Div << tree << at (ms 0.) << Pith <| fun o ->
             o << Button << tree << at (ms 0.) << Pith <| fun o ->
                 o << Span << tree << at (ms 0.) << Pith <| fun o ->
-                    o << Text << at (ms 0.) <| fun text -> text.textContent <- "+"
+                    o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "+"
                 if d > 0 then o <| counter (d - 1)
             o << Button << tree << at (ms 0.) << Pith <| fun o ->
                 o << Span << tree << at (ms 0.) << Pith <| fun o ->
-                    o << Text << at (ms 0.) <| fun text -> text.textContent <- "-"
+                    o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "-"
                 if d > 0 then o <| counter (d - 1)
             o << H3 << tree << at (ms 0.) << Pith <| fun o ->
-                o << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
+                o << Text << M.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
 
     let rez =
         tree << now << Pith <| fun o ->
             o (counter 3)
         |> scan
-            (fun n p -> p(n); n)
-            (document.getElementById "root-node")
+            Patch.apply
+            (document.getElementById "root-node"  :> Node)
 
     drain rez |> ignore

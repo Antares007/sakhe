@@ -5,9 +5,30 @@ open Sakhe
 open M
 open A
 
-type Patch<'a> = 'a -> unit
+[<Fable.Core.Erase>]
+type Patch<'a when 'a :> Node> = private Patch of ('a -> unit)
+
 type AP<'a> = AP of (unit -> 'a) * (Node -> bool)
-type PNode = PNode of Node AP * Stream<Node Patch>
+type PNode<'a when 'a :> Node> = PNode of Node AP * Stream<Patch<'a>>
+
+module Patch =
+    [<Emit("(function makeOnce (f) {
+        var b
+        return function once (a) {
+            if (f) {
+                b = f.call(this, a)
+                f = null
+            }
+            return b
+        }
+    })($0)")>]
+    let private onceNative (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
+    let once f = Patch (onceNative f)
+    let combine (Patch p0) (Patch p1) =
+        Patch <| fun n ->
+            p1 n
+            p0 n
+    let apply n (Patch p) = p n; n
 
 [<AutoOpen>]
 module private Impl =
@@ -38,19 +59,8 @@ module private Impl =
                 match tryFind prove index childNodes with
                 | Some moved -> movedFrom (moved, childAtIndex)
                 | None -> notFound ()
-    [<Emit("(function makeOnce (f) {
-        var b
-        return function once (a) {
-            if (f) {
-                b = f.call(this, a)
-                f = null
-            }
-            return b
-        }
-    })($0)")>]
-    let inline once (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
-    let chain (absurd, prove) index patch =
-        once (fun (elm: Node) ->
+    let chain (absurd, prove) index (Patch patch) =
+        Patch.once (fun (elm: Node) ->
             matchChildren
                 (
                     (fun () ->
@@ -77,12 +87,12 @@ let tree pith =
             c <- c + 1
             o (M.map (chain (a, prove) index) p)
 
-        o (M.now (once (fun elm ->
+        o (M.now (Patch.once (fun elm ->
             for i = unbox elm.childNodes.length - 1 downto c do
                 elm.removeChild elm.childNodes.[i] |> ignore)))
         ()
 
     let deltac =
-        Seq.fold (combine (fun p0 p e -> p e;  p0 e)) (now (ignore))
+        Seq.fold (combine (Patch.combine)) (now (Patch ignore))
 
     M.tree (DeltaC deltac) (map (pmap ring) pith)

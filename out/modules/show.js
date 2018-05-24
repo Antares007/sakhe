@@ -201,12 +201,12 @@ const Dom = exports.Dom = function (__exports) {
         })(function (arg0_2) {
           return arg0_2;
         }($var49)))(function (o_2) {
-          ($var51 => {
+          ($var52 => ($var51 => {
             var arg00__3;
             return ($var50 => o_2(_Text($var50)))((arg00__3 = _m.TimeModule.ms(0), function (a_3) {
               return (0, _m.at)(arg00__3, a_3);
             })($var51));
-          })(function (text) {
+          })(_pnode.Patch.once.bind(_pnode.Patch)($var52)))(function (text) {
             text.textContent = "+";
           });
         });
@@ -216,28 +216,28 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var55 => ($var54 => {
+      ($var56 => ($var55 => {
         var arg00__4;
-        return ($var53 => ($var52 => o(Button($var52)))((0, _pnode.tree)($var53)))((arg00__4 = _m.TimeModule.ms(0), function (a_4) {
+        return ($var54 => ($var53 => o(Button($var53)))((0, _pnode.tree)($var54)))((arg00__4 = _m.TimeModule.ms(0), function (a_4) {
           return (0, _m.at)(arg00__4, a_4);
-        })($var54));
+        })($var55));
       })(function (arg0_3) {
         return arg0_3;
-      }($var55)))(function (o_3) {
-        ($var59 => ($var58 => {
+      }($var56)))(function (o_3) {
+        ($var60 => ($var59 => {
           var arg00__5;
-          return ($var57 => ($var56 => o_3(Span($var56)))((0, _pnode.tree)($var57)))((arg00__5 = _m.TimeModule.ms(0), function (a_5) {
+          return ($var58 => ($var57 => o_3(Span($var57)))((0, _pnode.tree)($var58)))((arg00__5 = _m.TimeModule.ms(0), function (a_5) {
             return (0, _m.at)(arg00__5, a_5);
-          })($var58));
+          })($var59));
         })(function (arg0_4) {
           return arg0_4;
-        }($var59)))(function (o_4) {
-          ($var61 => {
+        }($var60)))(function (o_4) {
+          ($var63 => ($var62 => {
             var arg00__6;
-            return ($var60 => o_4(_Text($var60)))((arg00__6 = _m.TimeModule.ms(0), function (a_6) {
+            return ($var61 => o_4(_Text($var61)))((arg00__6 = _m.TimeModule.ms(0), function (a_6) {
               return (0, _m.at)(arg00__6, a_6);
-            })($var61));
-          })(function (text_1) {
+            })($var62));
+          })(_pnode.Patch.once.bind(_pnode.Patch)($var63)))(function (text_1) {
             text_1.textContent = "-";
           });
         });
@@ -247,32 +247,29 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var65 => ($var64 => {
+      ($var67 => ($var66 => {
         var arg00__7;
-        return ($var63 => ($var62 => o(H3($var62)))((0, _pnode.tree)($var63)))((arg00__7 = _m.TimeModule.ms(0), function (a_7) {
+        return ($var65 => ($var64 => o(H3($var64)))((0, _pnode.tree)($var65)))((arg00__7 = _m.TimeModule.ms(0), function (a_7) {
           return (0, _m.at)(arg00__7, a_7);
-        })($var64));
+        })($var66));
       })(function (arg0_5) {
         return arg0_5;
-      }($var65)))(function (o_5) {
+      }($var67)))(function (o_5) {
         ($var69 => {
-          var f;
-          return ($var66 => o_5(_Text($var66)))((f = function (i, text_2) {
-            text_2.textContent = i.toString();
+          var f_2;
+          return ($var68 => o_5(_Text($var68)))((f_2 = function (i) {
+            return _pnode.Patch.once(function (text_2) {
+              text_2.textContent = i.toString();
+            });
           }, function (arg10_) {
-            return (0, _m.map)($var67 => $var68 => {
-              f($var67, $var68);
-            }, arg10_);
+            return (0, _m.map)(f_2, arg10_);
           })($var69));
         })(intS);
       });
     });
   };
 
-  const rez_1 = __exports.rez = (0, _m.scan)(function (n, p) {
-    p(n);
-    return n;
-  }, document.getElementById("root-node"), ($var71 => ($var70 => (0, _pnode.tree)((0, _m.now)($var70)))(function (arg0) {
+  const rez_1 = __exports.rez = (0, _m.scan)(_pnode.Patch.apply.bind(_pnode.Patch), document.getElementById("root-node"), ($var71 => ($var70 => (0, _pnode.tree)((0, _m.now)($var70)))(function (arg0) {
     return arg0;
   }($var71)))(function (o) {
     o(counter(3));
