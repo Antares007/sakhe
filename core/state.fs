@@ -16,6 +16,13 @@ type RValue<'key> =
 
 [<AutoOpen>]
 module private Impl =
+    [<Emit("({})")>]
+    let absurdObj (): obj =
+        jsNative
+    [<Emit("([])")>]
+    let absurdArray (): obj [] =
+        jsNative
+
     [<Emit("typeof $0 === 'string' ? $0 : null")>]
     let asString (_: obj): string option =
         jsNative
@@ -45,23 +52,23 @@ module private Impl =
         jsNative
 
     let chain
-        (absurd: unit -> 'o) (key:'k) (prove: obj -> 'a option) (R r) (o: 'o option): 'o =
-        match o with
-        | Some o ->
-            let o = unbox o // emmits better js
-            let x = getKey key o
-            let a = r (prove x)
-            if LanguagePrimitives.PhysicalEquality x (upcast a) then
+        (absurd: unit -> 'o) (key:'k) (prove: obj -> 'a option) (R r) =
+            R <| function
+            | Some o ->
+                let o = unbox o // emmits better js
+                let x = getKey key o
+                let a = r (prove x)
+                if LanguagePrimitives.PhysicalEquality x (upcast a) then
+                    o
+                else
+                    let oClone = assignFrom (absurd ()) o
+                    setKey key a oClone
+                    oClone
+            | None ->
+                let o = absurd ()
+                let a = r None
+                setKey key a o
                 o
-            else
-                let oClone = assignFrom (absurd ()) o
-                setKey key a oClone
-                oClone
-        | None ->
-            let o = absurd ()
-            let a = r None
-            setKey key a o
-            o
 
     let makeRing absurdObj pith o: unit =
         pith <| function
@@ -75,21 +82,8 @@ module private Impl =
     let merge list =
         List.fold (fun a b -> merge b a) (empty ()) list
 
-module R =
-    [<Emit("({})")>]
-    let absurdObj (): obj =
-        jsNative
-
-    [<Emit("([])")>]
-    let absurdArray (): obj [] =
-        jsNative
-
 let oTree pith =
-    map
-        R
-        (M.tree (A.DeltaC merge) (M.map (A.pmap (makeRing R.absurdObj)) pith))
+        (M.tree (A.DeltaC merge) (M.map (A.pmap (makeRing absurdObj)) pith))
 
 let aTree pith =
-    map
-        R
-        (M.tree (A.DeltaC merge) (M.map (A.pmap (makeRing R.absurdArray)) pith))
+        (M.tree (A.DeltaC merge) (M.map (A.pmap (makeRing absurdArray)) pith))
