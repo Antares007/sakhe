@@ -154,7 +154,7 @@ function oTree(pith) {
       return {};
     }, pith_1, o);
   }, function (arg10_) {
-    return (0, _a.pmap)(f, arg10_);
+    return _a.Pith.map(f, arg10_);
   }), pith));
 }
 
@@ -165,6 +165,6 @@ function aTree(pith) {
       return [];
     }, pith_1, o);
   }, function (arg10_) {
-    return (0, _a.pmap)(f, arg10_);
+    return _a.Pith.map(f, arg10_);
   }), pith));
 }

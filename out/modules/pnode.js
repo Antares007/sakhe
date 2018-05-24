@@ -200,6 +200,6 @@ function tree(pith) {
   };
 
   return (0, _m.tree)(deltac, (0, _m.map)(function (arg10__2) {
-    return (0, _a.pmap)(ring, arg10__2);
+    return _a.Pith.map(ring, arg10__2);
   }, pith));
 }

@@ -25,10 +25,10 @@ module State =
     }
     open A
     let rez =
-        oTree << (at << ms) 0. << Pith <| fun o ->
+        oTree << (at << ms) 0. << Pith.Of <| fun o ->
             o << Number "a" << now <| R.set 1.
             o << Object "b" << now <| R.set (createObj [ "k" ==> 42])
-            o << Object "b" << oTree << now << Pith <| fun o ->
+            o << Object "b" << oTree << now << Pith.Of <| fun o ->
                 o << Number "k" << now << R.update <| function
                     | Some k -> k + 1.
                     | None -> 0.
@@ -41,13 +41,13 @@ module State =
                     { name ="archil"; age = 42 }
                     { name ="archil"; age = 42 } |]
 
-            o << Array "array" << aTree << at (ms 3000.) << Pith <| fun a ->
+            o << Array "array" << aTree << at (ms 3000.) << Pith.Of <| fun a ->
                 a << Number 0 << now << R.update <| function
                     | Some k -> k + 1.
                     | None -> 42.
                 ()
             ()
-            o << Array "array" << aTree << at (ms 3000.) << Pith <| fun a ->
+            o << Array "array" << aTree << at (ms 3000.) << Pith.Of <| fun a ->
                 a << Number 0 << now << R.update <| function
                     | Some k -> k + 1.
                     | None -> 0.
@@ -85,20 +85,20 @@ module Dom =
     let intS = periodic (ms 10.) |> M.scan (fun c _ -> c + 1) 0 |> skip 1 |> multicast
 
     let rec counter d =
-        Div << tree << at (ms 0.) << Pith <| fun o ->
-            o << Button << tree << at (ms 0.) << Pith <| fun o ->
-                o << Span << tree << at (ms 0.) << Pith <| fun o ->
+        Div << tree << at (ms 0.) << Pith.Of <| fun o ->
+            o << Button << tree << at (ms 0.) << Pith.Of <| fun o ->
+                o << Span << tree << at (ms 0.) << Pith.Of <| fun o ->
                     o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "+"
                 if d > 0 then o <| counter (d - 1)
-            o << Button << tree << at (ms 0.) << Pith <| fun o ->
-                o << Span << tree << at (ms 0.) << Pith <| fun o ->
+            o << Button << tree << at (ms 0.) << Pith.Of <| fun o ->
+                o << Span << tree << at (ms 0.) << Pith.Of <| fun o ->
                     o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "-"
                 if d > 0 then o <| counter (d - 1)
-            o << H3 << tree << at (ms 0.) << Pith <| fun o ->
+            o << H3 << tree << at (ms 0.) << Pith.Of <| fun o ->
                 o << Text << M.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
 
     let rez =
-        tree << now << Pith <| fun o ->
+        tree << now << Pith.Of <| fun o ->
             o (counter 3)
         |> scan
             Patch.apply

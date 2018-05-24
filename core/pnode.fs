@@ -95,4 +95,4 @@ let tree pith =
     let deltac =
         Seq.fold (combine (Patch.combine)) (now (Patch ignore))
 
-    M.tree (DeltaC deltac) (map (pmap ring) pith)
+    M.tree (DeltaC deltac) (map (Pith.map ring) pith)

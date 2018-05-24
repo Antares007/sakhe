@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.pmap = pmap;
+exports.Pith = undefined;
 exports.tree = tree;
 
 var _CurriedLambda = require("./fable-core/CurriedLambda");
@@ -16,9 +16,17 @@ var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function pmap(f, _arg1) {
-  return (0, _CurriedLambda2.default)(f)(_arg1);
-}
+const Pith = exports.Pith = function (__exports) {
+  const Of = __exports.Of = function (a) {
+    return a;
+  };
+
+  const map = __exports.map = function (f, _arg1) {
+    return (0, _CurriedLambda2.default)(f)(_arg1);
+  };
+
+  return __exports;
+}({});
 
 function tree(_arg2, _arg1) {
   let list = new _List2.default();
