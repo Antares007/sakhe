@@ -2,15 +2,12 @@ module Sakhe.PNode
 open Fable.Core
 open Fable.Import.Browser
 open Sakhe
-open Most
+open M
+open A
 
 type Patch<'a> = 'a -> unit
-
-type Pith<'a> = ('a -> unit) -> unit
-
 type AP<'a> = (unit -> 'a) * (Node -> bool)
-
-type PNode = PNode of Node AP * IStream<Node Patch>
+type PNode = PNode of Node AP * Stream<Node Patch>
 
 [<AutoOpen>]
 module private Impl =
@@ -71,7 +68,7 @@ module private Impl =
                 (prove, index, elm))
 
 let tree pith =
-    let ring (pith: Pith<PNode>) (o: IStream<Patch<Node>> -> unit): unit =
+    let ring (pith: (PNode -> unit) -> unit) (o: Stream<Patch<Node>> -> unit): unit =
         let mutable c = 0
 
         pith <| function
@@ -85,7 +82,7 @@ let tree pith =
                 elm.removeChild elm.childNodes.[i] |> ignore)))
 
     let deltac =
-        Seq.fold (M.combine (fun p0 p e -> p e;  p0 e)) (M.now (ignore))
+        Seq.fold (combine (fun p0 p e -> p e;  p0 e)) (now (ignore))
 
-    M.tree deltac (M.map ring pith)
+    M.tree (deltaC deltac) (map (pmap ring) pith)
 

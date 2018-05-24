@@ -1,14 +1,7 @@
 module Sakhe.Show
-open Most
+open M
 open Fable.Import.Browser
 open Fable.Core.JsInterop
-
-let scheduler = Most.Scheduler.newDefaultScheduler ()
-let drain s = M.runEffects s scheduler |> ignore
-
-let now = M.now
-let constant = M.constant
-let at = M.at
 
 module State =
     open Sakhe.State
@@ -30,11 +23,12 @@ module State =
         name: string
         age: int
     }
+    open A
     let rez =
-        objectTree << at 0. <| fun o ->
+        objectTree << (at << ms) 0. << pith <| fun o ->
             o << Number "a" << now <| (fun _ -> 1.)
             o << Object "b" << now <| fun _ -> createObj [ "k" ==> 42]
-            o << Object "b" << objectTree << now <| fun o ->
+            o << Object "b" << objectTree << now << pith <| fun o ->
                 o << Number "k" << now <| function
                     | Some k -> k + 1.
                     | None -> 0.
@@ -47,24 +41,24 @@ module State =
                     { name ="archil"; age = 42 }
                     { name ="archil"; age = 42 } |]
 
-            o << Array "array" << arrayTree << at 3000. <| fun a ->
+            o << Array "array" << arrayTree << at (ms 3000.) << pith <| fun a ->
                 a << Number 0 << now <| function
                     | Some k -> k + 1.
                     | None -> 42.
                 ()
             ()
-            o << Array "array" << arrayTree << at 3000. <| fun a ->
+            o << Array "array" << arrayTree << at (ms 3000.) << pith <| fun a ->
                 a << Number 0 << now <| function
                     | Some k -> k + 1.
                     | None -> 0.
                 ()
             ()
 
-        |> M.scan
+        |> scan
             (fun s r -> r (Some s))
             (Fable.Core.JsInterop.createEmpty<obj>)
-        |> M.tap console.log
-    drain rez
+        |> tap console.log
+    drain rez |> ignore
 
 module Dom =
     open PNode
@@ -83,25 +77,25 @@ module Dom =
     let Text p =
         PNode (((fun () -> upcast (document.createTextNode "")), (fun n -> n.nodeName = "#text")), p)
     // let (<<|) a b = a (M.now b)
+    open A
 
-    let intS = M.periodic 10. |> M.scan (fun c _ -> c + 1) 0 |> M.skip 1 |> M.multicast
-
+    let intS = periodic (ms 10.) |> M.scan (fun c _ -> c + 1) 0 |> skip 1 |> multicast
     let rec counter d =
-        Div << PNode.tree << at 0. <| fun o ->
-            o << Button << PNode.tree << at 0. <| fun o ->
-                o << Span << PNode.tree << at 0. <| fun o ->
-                    o << Text << at 0. <| fun text -> text.textContent <- "+"
+        Div << PNode.tree << at (ms 0.) << pith <| fun o ->
+            o << Button << PNode.tree << at (ms 0.) << pith <| fun o ->
+                o << Span << PNode.tree << at (ms 0.) << pith <| fun o ->
+                    o << Text << at (ms 0.) <| fun text -> text.textContent <- "+"
                 if d > 0 then o <| counter (d - 1)
-            o << Button << PNode.tree << at 0. <| fun o ->
-                o << Span << PNode.tree << at 0. <| fun o ->
-                    o << Text << at 0. <| fun text -> text.textContent <- "-"
+            o << Button << PNode.tree << at (ms 0.) << pith <| fun o ->
+                o << Span << PNode.tree << at (ms 0.) << pith <| fun o ->
+                    o << Text << at (ms 0.) <| fun text -> text.textContent <- "-"
                 if d > 0 then o <| counter (d - 1)
-            o << H3 << PNode.tree << at 0. <| fun o ->
+            o << H3 << PNode.tree << at (ms 0.) << pith <| fun o ->
                 o << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
 
     let rez =
-        PNode.tree << M.now <| fun o -> o (counter 3)
-        |> M.scan
+        PNode.tree << now << pith <| fun o -> o (counter 3)
+        |> scan
             (fun n p -> p(n); n)
             (document.getElementById "root-node")
-    drain rez
+    drain rez |> ignore

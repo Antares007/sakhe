@@ -13,17 +13,13 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
+var _m = require("./m");
+
 var _Option = require("./fable-core/Option");
-
-var _core = require("@most/core");
-
-var core = _interopRequireWildcard(_core);
 
 var _Seq = require("./fable-core/Seq");
 
-var _m = require("./m");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+var _a = require("./a");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37,7 +33,17 @@ class RValue {
     return {
       type: "Sakhe.State.RValue",
       interfaces: ["FSharpUnion", "System.IEquatable"],
-      cases: [["RString", (0, _Util.GenericParam)("key"), (0, _Util.Interface)("Most.IStream")], ["RNumber", (0, _Util.GenericParam)("key"), (0, _Util.Interface)("Most.IStream")], ["RBool", (0, _Util.GenericParam)("key"), (0, _Util.Interface)("Most.IStream")], ["RObject", (0, _Util.GenericParam)("key"), (0, _Util.Interface)("Most.IStream")], ["RArray", (0, _Util.GenericParam)("key"), (0, _Util.Interface)("Most.IStream")]]
+      cases: [["RString", (0, _Util.GenericParam)("key"), (0, _Util.makeGeneric)(_m.Stream, {
+        a: (0, _Util.Function)([(0, _Util.Option)("string"), "string"])
+      })], ["RNumber", (0, _Util.GenericParam)("key"), (0, _Util.makeGeneric)(_m.Stream, {
+        a: (0, _Util.Function)([(0, _Util.Option)("number"), "number"])
+      })], ["RBool", (0, _Util.GenericParam)("key"), (0, _Util.makeGeneric)(_m.Stream, {
+        a: (0, _Util.Function)([(0, _Util.Option)("boolean"), "boolean"])
+      })], ["RObject", (0, _Util.GenericParam)("key"), (0, _Util.makeGeneric)(_m.Stream, {
+        a: (0, _Util.Function)([(0, _Util.Option)(_Util.Any), _Util.Any])
+      })], ["RArray", (0, _Util.GenericParam)("key"), (0, _Util.makeGeneric)(_m.Stream, {
+        a: (0, _Util.Function)([(0, _Util.Option)((0, _Util.Array)(_Util.Any)), (0, _Util.Array)(_Util.Any)])
+      })]]
     };
   }
 
@@ -76,7 +82,7 @@ const Impl = function (__exports) {
     pith(function (_arg1) {
       switch (_arg1.tag) {
         case 1:
-          return o(core.map($var1 => $var2 => {
+          return o((0, _m.map)($var1 => $var2 => {
             var prove;
             return (prove = function (arg00_) {
               return typeof arg00_ === "number" ? arg00_ : null;
@@ -86,7 +92,7 @@ const Impl = function (__exports) {
           }, _arg1.data[1]));
 
         case 2:
-          return o(core.map($var3 => $var4 => {
+          return o((0, _m.map)($var3 => $var4 => {
             var prove_1;
             return (prove_1 = function (arg00__1) {
               return typeof arg00__1 === "boolean" ? arg00__1 : null;
@@ -96,7 +102,7 @@ const Impl = function (__exports) {
           }, _arg1.data[1]));
 
         case 3:
-          return o(core.map($var5 => $var6 => {
+          return o((0, _m.map)($var5 => $var6 => {
             var prove_2;
             return (prove_2 = function (arg00__2) {
               return typeof arg00__2 === "object" && arg00__2 != null ? arg00__2 : null;
@@ -106,7 +112,7 @@ const Impl = function (__exports) {
           }, _arg1.data[1]));
 
         case 4:
-          return o(core.map($var7 => $var8 => {
+          return o((0, _m.map)($var7 => $var8 => {
             var prove_3;
             return (prove_3 = function (arg00__3) {
               return Array.isArray(arg00__3) ? arg00__3 : null;
@@ -116,7 +122,7 @@ const Impl = function (__exports) {
           }, _arg1.data[1]));
 
         default:
-          return o(core.map($var9 => $var10 => {
+          return o((0, _m.map)($var9 => $var10 => {
             var prove_4;
             return (prove_4 = function (arg00__4) {
               return typeof arg00__4 === "string" ? arg00__4 : null;
@@ -132,33 +138,37 @@ const Impl = function (__exports) {
 }({});
 
 function objectTree(pith) {
+  var f;
+
   const deltac = function (list) {
     return (0, _Seq.fold)(function (a, b) {
-      return core.merge(b, a);
-    }, core.empty(), list);
+      return (0, _m.merge)(b, a);
+    }, (0, _m.empty)(), list);
   };
 
-  return (0, _m.tree)(deltac, core.map($var11 => $var12 => {
-    (function (pith_1, o) {
-      Impl.ring(function () {
-        return {};
-      }, pith_1, o);
-    })($var11, $var12);
-  }, pith));
+  return (0, _m.tree)((0, _a.deltaC)(deltac), (0, _m.map)((f = function (pith_1, o) {
+    Impl.ring(function () {
+      return {};
+    }, pith_1, o);
+  }, function (arg10_) {
+    return (0, _a.pmap)(f, arg10_);
+  }), pith));
 }
 
 function arrayTree(pith) {
+  var f;
+
   const deltac = function (list) {
     return (0, _Seq.fold)(function (a, b) {
-      return core.merge(b, a);
-    }, core.empty(), list);
+      return (0, _m.merge)(b, a);
+    }, (0, _m.empty)(), list);
   };
 
-  return (0, _m.tree)(deltac, core.map($var13 => $var14 => {
-    (function (pith_1, o) {
-      Impl.ring(function () {
-        return [];
-      }, pith_1, o);
-    })($var13, $var14);
-  }, pith));
+  return (0, _m.tree)((0, _a.deltaC)(deltac), (0, _m.map)((f = function (pith_1, o) {
+    Impl.ring(function () {
+      return [];
+    }, pith_1, o);
+  }, function (arg10_) {
+    return (0, _a.pmap)(f, arg10_);
+  }), pith));
 }

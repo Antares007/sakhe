@@ -1,18 +1,18 @@
 module Sakhe.State
 open Fable.Core
-open Most
 open Sakhe
+open M
 
 type Pith<'a> = ('a -> unit) -> unit
 
 type R<'a> = 'a option -> 'a
 
 type RValue<'key> =
-    | RString of  'key * IStream<string R>
-    | RNumber of  'key * IStream<float R>
-    | RBool   of  'key * IStream<bool R>
-    | RObject of  'key * IStream<obj R>
-    | RArray  of  'key * IStream<obj [] R>
+    | RString of  'key * Stream<string R>
+    | RNumber of  'key * Stream<float R>
+    | RBool   of  'key * Stream<bool R>
+    | RObject of  'key * Stream<obj R>
+    | RArray  of  'key * Stream<obj [] R>
 
 [<AutoOpen>]
 module private Impl =
@@ -66,12 +66,12 @@ module private Impl =
         | RBool (key, r) -> o (M.map (chain absurdObj key asBool) r)
         | RObject (key, r) -> o (M.map (chain absurdObj key asObject)  r)
         | RArray (key, r) -> o (M.map (chain absurdObj key asArray) r)
+open A
+let rec objectTree (pith: Stream<Pith<RValue<string>>>): Stream<R<obj>> =
+    let deltac list = List.fold (fun a b -> merge b a) (empty ()) list
+    M.tree (deltaC deltac) (M.map (pmap (ring absurdObj)) pith)
 
-let rec objectTree (pith: IStream<Pith<RValue<string>>>): IStream<R<obj>> =
-    let deltac list = List.fold (fun a b -> M.merge b a) (M.empty ()) list
-    M.tree deltac (M.map (ring absurdObj) pith)
-
-let arrayTree (pith: IStream<Pith<RValue<int>>>): IStream<R<obj []>> =
-    let deltac list = List.fold (fun a b -> M.merge b a) (M.empty ()) list
-    M.tree deltac (M.map (ring absurdArray) pith)
+let arrayTree (pith: Stream<Pith<RValue<int>>>): Stream<R<obj []>> =
+    let deltac list = List.fold (fun a b -> merge b a) (empty ()) list
+    M.tree (deltaC deltac) (M.map (pmap (ring absurdArray)) pith)
 
