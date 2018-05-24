@@ -52,6 +52,7 @@ module private Impl =
             let a = r None
             setKey key a o
             o
+
     [<Emit("({})")>]
     let absurdObj (): obj = jsNative
     [<Emit("([])")>]
@@ -59,19 +60,16 @@ module private Impl =
 
     let ring absurdObj pith o: unit =
         pith <| function
-        | RString (key, r) -> o (M.map (chain absurdObj key asString) r)
-        | RNumber (key, r) -> o (M.map (chain absurdObj key asNumber) r)
-        | RBool (key, r) -> o (M.map (chain absurdObj key asBool) r)
-        | RObject (key, r) -> o (M.map (chain absurdObj key asObject)  r)
-        | RArray (key, r) -> o (M.map (chain absurdObj key asArray) r)
+        | RString (key, r) -> o (map (chain absurdObj key asString) r)
+        | RNumber (key, r) -> o (map (chain absurdObj key asNumber) r)
+        | RBool (key, r) -> o (map (chain absurdObj key asBool) r)
+        | RObject (key, r) -> o (map (chain absurdObj key asObject)  r)
+        | RArray (key, r) -> o (map (chain absurdObj key asArray) r)
 
-open A
+    let merge list = List.fold (fun a b -> merge b a) (empty ()) list
 
-let rec objectTree pith =
-    let deltac list = List.fold (fun a b -> merge b a) (empty ()) list
-    M.tree (DeltaC deltac) (M.map (pmap (ring absurdObj)) pith)
+let rec oTree pith =
+    M.tree (A.DeltaC merge) (M.map (A.pmap (ring absurdObj)) pith)
 
-let arrayTree pith =
-    let deltac list = List.fold (fun a b -> merge b a) (empty ()) list
-    M.tree (DeltaC deltac) (M.map (pmap (ring absurdArray)) pith)
-
+let aTree pith =
+    M.tree (A.DeltaC merge) (M.map (A.pmap (ring absurdArray)) pith)

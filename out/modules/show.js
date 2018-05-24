@@ -43,7 +43,7 @@ const State = exports.State = function (__exports) {
   const emptystring = __exports.emptystring = {};
   const rez = __exports.rez = (0, _m.tap)(console.log.bind(console), (0, _m.scan)(function (s, r) {
     return r(s);
-  }, {}, ($var5 => ($var4 => (0, _state.objectTree)(($var3 => ($var1 => $var2 => (0, _m.at)($var1, $var2))(_m.TimeModule.ms.bind(_m.TimeModule)($var3)))(0)($var4)))(function (arg0) {
+  }, {}, ($var5 => ($var4 => (0, _state.oTree)(($var3 => ($var1 => $var2 => (0, _m.at)($var1, $var2))(_m.TimeModule.ms.bind(_m.TimeModule)($var3)))(0)($var4)))(function (arg0) {
     return arg0;
   }($var5)))(function (o) {
     ($var7 => ($var6 => o(function (s_1) {
@@ -62,7 +62,7 @@ const State = exports.State = function (__exports) {
 
     ($var13 => ($var12 => ($var11 => ($var10 => o(function (s_3) {
       return _Object("b", s_3);
-    }($var10)))((0, _state.objectTree)($var11)))((0, _m.now)($var12)))(function (arg0_1) {
+    }($var10)))((0, _state.oTree)($var11)))((0, _m.now)($var12)))(function (arg0_1) {
       return arg0_1;
     }($var13)))(function (o_1) {
       ($var15 => ($var14 => o_1(function (s_4) {
@@ -94,7 +94,7 @@ const State = exports.State = function (__exports) {
       var arg00__1;
       return ($var19 => ($var18 => o(function (s_6) {
         return _Array("array", s_6);
-      }($var18)))((0, _state.arrayTree)($var19)))((arg00__1 = _m.TimeModule.ms(3000), function (a_6) {
+      }($var18)))((0, _state.aTree)($var19)))((arg00__1 = _m.TimeModule.ms(3000), function (a_6) {
         return (0, _m.at)(arg00__1, a_6);
       })($var20));
     })(function (arg0_2) {
@@ -111,7 +111,7 @@ const State = exports.State = function (__exports) {
       var arg00__2;
       return ($var25 => ($var24 => o(function (s_8) {
         return _Array("array", s_8);
-      }($var24)))((0, _state.arrayTree)($var25)))((arg00__2 = _m.TimeModule.ms(3000), function (a_9) {
+      }($var24)))((0, _state.aTree)($var25)))((arg00__2 = _m.TimeModule.ms(3000), function (a_9) {
         return (0, _m.at)(arg00__2, a_9);
       })($var26));
     })(function (arg0_3) {

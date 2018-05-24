@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.RValue = undefined;
-exports.objectTree = objectTree;
-exports.arrayTree = arrayTree;
+exports.oTree = oTree;
+exports.aTree = aTree;
 
 var _Symbol2 = require("./fable-core/Symbol");
 
@@ -124,19 +124,18 @@ const Impl = function (__exports) {
     });
   };
 
-  return __exports;
-}({});
-
-function objectTree(pith) {
-  var f;
-
-  const deltac = function (list) {
+  const merge = __exports.merge = function (list) {
     return (0, _Seq.fold)(function (a, b) {
       return (0, _m.merge)(b, a);
     }, (0, _m.empty)(), list);
   };
 
-  return (0, _m.tree)(deltac, (0, _m.map)((f = function (pith_1, o) {
+  return __exports;
+}({});
+
+function oTree(pith) {
+  var f;
+  return (0, _m.tree)(Impl.merge.bind(Impl), (0, _m.map)((f = function (pith_1, o) {
     Impl.ring(function () {
       return {};
     }, pith_1, o);
@@ -145,16 +144,9 @@ function objectTree(pith) {
   }), pith));
 }
 
-function arrayTree(pith) {
+function aTree(pith) {
   var f;
-
-  const deltac = function (list) {
-    return (0, _Seq.fold)(function (a, b) {
-      return (0, _m.merge)(b, a);
-    }, (0, _m.empty)(), list);
-  };
-
-  return (0, _m.tree)(deltac, (0, _m.map)((f = function (pith_1, o) {
+  return (0, _m.tree)(Impl.merge.bind(Impl), (0, _m.map)((f = function (pith_1, o) {
     Impl.ring(function () {
       return [];
     }, pith_1, o);

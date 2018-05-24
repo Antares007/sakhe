@@ -25,10 +25,10 @@ module State =
     }
     open A
     let rez =
-        objectTree << (at << ms) 0. << Pith <| fun o ->
+        oTree << (at << ms) 0. << Pith <| fun o ->
             o << Number "a" << now <| (fun _ -> 1.)
             o << Object "b" << now <| fun _ -> createObj [ "k" ==> 42]
-            o << Object "b" << objectTree << now << Pith <| fun o ->
+            o << Object "b" << oTree << now << Pith <| fun o ->
                 o << Number "k" << now <| function
                     | Some k -> k + 1.
                     | None -> 0.
@@ -41,13 +41,13 @@ module State =
                     { name ="archil"; age = 42 }
                     { name ="archil"; age = 42 } |]
 
-            o << Array "array" << arrayTree << at (ms 3000.) << Pith <| fun a ->
+            o << Array "array" << aTree << at (ms 3000.) << Pith <| fun a ->
                 a << Number 0 << now <| function
                     | Some k -> k + 1.
                     | None -> 42.
                 ()
             ()
-            o << Array "array" << arrayTree << at (ms 3000.) << Pith <| fun a ->
+            o << Array "array" << aTree << at (ms 3000.) << Pith <| fun a ->
                 a << Number 0 << now <| function
                     | Some k -> k + 1.
                     | None -> 0.
@@ -58,9 +58,11 @@ module State =
             (fun s r -> r (Some s))
             (Fable.Core.JsInterop.createEmpty<obj>)
         |> tap console.log
+
     drain rez |> ignore
 
 module Dom =
+    open A
     open PNode
 
     let ap a b = AP (a, b)
@@ -79,25 +81,27 @@ module Dom =
     let Text =
         pnode <| ap (fun () -> (document.createTextNode "") :> Node) (fun n -> n.nodeName = "#text")
     // let (<<|) a b = a (M.now b)
-    open A
 
     let intS = periodic (ms 10.) |> M.scan (fun c _ -> c + 1) 0 |> skip 1 |> multicast
+
     let rec counter d =
-        Div << PNode.tree << at (ms 0.) << Pith <| fun o ->
-            o << Button << PNode.tree << at (ms 0.) << Pith <| fun o ->
-                o << Span << PNode.tree << at (ms 0.) << Pith <| fun o ->
+        Div << tree << at (ms 0.) << Pith <| fun o ->
+            o << Button << tree << at (ms 0.) << Pith <| fun o ->
+                o << Span << tree << at (ms 0.) << Pith <| fun o ->
                     o << Text << at (ms 0.) <| fun text -> text.textContent <- "+"
                 if d > 0 then o <| counter (d - 1)
-            o << Button << PNode.tree << at (ms 0.) << Pith <| fun o ->
-                o << Span << PNode.tree << at (ms 0.) << Pith <| fun o ->
+            o << Button << tree << at (ms 0.) << Pith <| fun o ->
+                o << Span << tree << at (ms 0.) << Pith <| fun o ->
                     o << Text << at (ms 0.) <| fun text -> text.textContent <- "-"
                 if d > 0 then o <| counter (d - 1)
-            o << H3 << PNode.tree << at (ms 0.) << Pith <| fun o ->
+            o << H3 << tree << at (ms 0.) << Pith <| fun o ->
                 o << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
 
     let rez =
-        PNode.tree << now << Pith <| fun o -> o (counter 3)
+        tree << now << Pith <| fun o ->
+            o (counter 3)
         |> scan
             (fun n p -> p(n); n)
             (document.getElementById "root-node")
+
     drain rez |> ignore

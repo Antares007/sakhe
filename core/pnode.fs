@@ -86,4 +86,3 @@ let tree pith =
         Seq.fold (combine (fun p0 p e -> p e;  p0 e)) (now (ignore))
 
     M.tree (DeltaC deltac) (map (pmap ring) pith)
-
