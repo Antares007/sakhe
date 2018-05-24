@@ -5,7 +5,7 @@ open M
 open Fable
 
 [<Fable.Core.Erase>]
-type R<'a> = R of ('a option -> 'a)
+type R<'a> = private R of ('a option -> 'a)
 
 type RValue<'key> =
     | RString of  'key * Stream<string R>
@@ -13,6 +13,11 @@ type RValue<'key> =
     | RBool   of  'key * Stream<bool R>
     | RObject of  'key * Stream<obj R>
     | RArray  of  'key * Stream<obj [] R>
+
+module R =
+    let set a = R <| fun _ -> a
+    let update f = R f
+    let apply s (R r) = Some (r s)
 
 [<AutoOpen>]
 module private Impl =

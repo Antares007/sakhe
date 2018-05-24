@@ -41,48 +41,34 @@ const State = exports.State = function (__exports) {
   };
 
   const emptystring = __exports.emptystring = {};
-  const rez = __exports.rez = (0, _m.tap)(console.log.bind(console), (0, _m.scan)(function (s, _arg4) {
-    return _arg4(s);
-  }, {}, ($var5 => ($var4 => (0, _state.oTree)(($var3 => ($var1 => $var2 => (0, _m.at)($var1, $var2))(_m.TimeModule.ms.bind(_m.TimeModule)($var3)))(0)($var4)))(function (arg0) {
+  const rez = __exports.rez = (0, _m.tap)(console.log.bind(console), (0, _m.scan)(_state.R.apply.bind(_state.R), {}, ($var5 => ($var4 => (0, _state.oTree)(($var3 => ($var1 => $var2 => (0, _m.at)($var1, $var2))(_m.TimeModule.ms.bind(_m.TimeModule)($var3)))(0)($var4)))(function (arg0) {
     return arg0;
   }($var5)))(function (o) {
-    ($var8 => ($var7 => ($var6 => o(function (s_1) {
+    ($var7 => ($var6 => o(function (s_1) {
       return _Number("a", s_1);
-    }($var6)))((0, _m.now)($var7)))(function (arg0_1) {
-      return arg0_1;
-    }($var8)))(function (_arg1) {
-      return 1;
-    });
+    }($var6)))((0, _m.now)($var7)))(_state.R.set(1));
 
-    ($var11 => ($var10 => ($var9 => o(function (s_2) {
+    ($var9 => ($var8 => o(function (s_2) {
       return _Object("b", s_2);
-    }($var9)))((0, _m.now)($var10)))(function (arg0_2) {
-      return arg0_2;
-    }($var11)))(function (_arg2) {
-      return {
-        k: 42
-      };
-    });
+    }($var8)))((0, _m.now)($var9)))(_state.R.set({
+      k: 42
+    }));
 
-    ($var15 => ($var14 => ($var13 => ($var12 => o(function (s_3) {
+    ($var13 => ($var12 => ($var11 => ($var10 => o(function (s_3) {
       return _Object("b", s_3);
-    }($var12)))((0, _state.oTree)($var13)))((0, _m.now)($var14)))(function (arg0_3) {
-      return arg0_3;
-    }($var15)))(function (o_1) {
-      ($var18 => ($var17 => ($var16 => o_1(function (s_4) {
+    }($var10)))((0, _state.oTree)($var11)))((0, _m.now)($var12)))(function (arg0_1) {
+      return arg0_1;
+    }($var13)))(function (o_1) {
+      ($var16 => ($var15 => ($var14 => o_1(function (s_4) {
         return _Number("k", s_4);
-      }($var16)))((0, _m.now)($var17)))(function (arg0_4) {
-        return arg0_4;
-      }($var18)))(function (_arg1_1) {
-        return _arg1_1 == null ? 0 : (0, _Option.getValue)(_arg1_1) + 1;
+      }($var14)))((0, _m.now)($var15)))(_state.R.update.bind(_state.R)($var16)))(function (_arg1) {
+        return _arg1 == null ? 0 : (0, _Option.getValue)(_arg1) + 1;
       });
     });
 
-    ($var21 => ($var20 => ($var19 => o(function (s_5) {
+    ($var19 => ($var18 => ($var17 => o(function (s_5) {
       return _Object("array", s_5);
-    }($var19)))((0, _m.now)($var20)))(function (arg0_5) {
-      return arg0_5;
-    }($var21)))(function (_arg3) {
+    }($var17)))((0, _m.now)($var18)))(_state.R.update.bind(_state.R)($var19)))(function (_arg1_1) {
       return [{
         name: "archil",
         age: 42
@@ -98,41 +84,37 @@ const State = exports.State = function (__exports) {
       }];
     });
 
-    ($var25 => ($var24 => {
+    ($var23 => ($var22 => {
       var arg00__1;
-      return ($var23 => ($var22 => o(function (s_6) {
+      return ($var21 => ($var20 => o(function (s_6) {
         return _Array("array", s_6);
-      }($var22)))((0, _state.aTree)($var23)))((arg00__1 = _m.TimeModule.ms(3000), function (a_6) {
+      }($var20)))((0, _state.aTree)($var21)))((arg00__1 = _m.TimeModule.ms(3000), function (a_6) {
         return (0, _m.at)(arg00__1, a_6);
-      })($var24));
-    })(function (arg0_6) {
-      return arg0_6;
-    }($var25)))(function (a_7) {
-      ($var28 => ($var27 => ($var26 => a_7(function (s_7) {
+      })($var22));
+    })(function (arg0_2) {
+      return arg0_2;
+    }($var23)))(function (a_7) {
+      ($var26 => ($var25 => ($var24 => a_7(function (s_7) {
         return _Number(0, s_7);
-      }($var26)))((0, _m.now)($var27)))(function (arg0_7) {
-        return arg0_7;
-      }($var28)))(function (_arg2_1) {
-        return _arg2_1 == null ? 42 : (0, _Option.getValue)(_arg2_1) + 1;
+      }($var24)))((0, _m.now)($var25)))(_state.R.update.bind(_state.R)($var26)))(function (_arg2) {
+        return _arg2 == null ? 42 : (0, _Option.getValue)(_arg2) + 1;
       });
     });
 
-    ($var32 => ($var31 => {
+    ($var30 => ($var29 => {
       var arg00__2;
-      return ($var30 => ($var29 => o(function (s_8) {
+      return ($var28 => ($var27 => o(function (s_8) {
         return _Array("array", s_8);
-      }($var29)))((0, _state.aTree)($var30)))((arg00__2 = _m.TimeModule.ms(3000), function (a_9) {
+      }($var27)))((0, _state.aTree)($var28)))((arg00__2 = _m.TimeModule.ms(3000), function (a_9) {
         return (0, _m.at)(arg00__2, a_9);
-      })($var31));
-    })(function (arg0_8) {
-      return arg0_8;
-    }($var32)))(function (a_10) {
-      ($var35 => ($var34 => ($var33 => a_10(function (s_9) {
+      })($var29));
+    })(function (arg0_3) {
+      return arg0_3;
+    }($var30)))(function (a_10) {
+      ($var33 => ($var32 => ($var31 => a_10(function (s_9) {
         return _Number(0, s_9);
-      }($var33)))((0, _m.now)($var34)))(function (arg0_9) {
-        return arg0_9;
-      }($var35)))(function (_arg3_1) {
-        return _arg3_1 == null ? 0 : (0, _Option.getValue)(_arg3_1) + 1;
+      }($var31)))((0, _m.now)($var32)))(_state.R.update.bind(_state.R)($var33)))(function (_arg3) {
+        return _arg3 == null ? 0 : (0, _Option.getValue)(_arg3) + 1;
       });
     });
   })));
@@ -157,7 +139,7 @@ const Dom = exports.Dom = function (__exports) {
     });
   };
 
-  const createElm = __exports.createElm = (0, _CurriedLambda2.default)($var38 => ($var36 => $var37 => pnode($var36, $var37))(elementAP($var38)));
+  const createElm = __exports.createElm = (0, _CurriedLambda2.default)($var36 => ($var34 => $var35 => pnode($var34, $var35))(elementAP($var36)));
   const Div = __exports.Div = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("DIV"));
   const A = __exports.A = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("A"));
   const Button = __exports.Button = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("BUTTON"));
@@ -177,36 +159,36 @@ const Dom = exports.Dom = function (__exports) {
   }, 0, (0, _m.periodic)(_m.TimeModule.ms(10)))));
 
   const counter = __exports.counter = function (d) {
-    return ($var41 => ($var40 => {
+    return ($var39 => ($var38 => {
       var arg00_;
-      return ($var39 => Div((0, _pnode.tree)($var39)))((arg00_ = _m.TimeModule.ms(0), function (a) {
+      return ($var37 => Div((0, _pnode.tree)($var37)))((arg00_ = _m.TimeModule.ms(0), function (a) {
         return (0, _m.at)(arg00_, a);
-      })($var40));
+      })($var38));
     })(function (arg0) {
       return arg0;
-    }($var41)))(function (o) {
-      ($var45 => ($var44 => {
+    }($var39)))(function (o) {
+      ($var43 => ($var42 => {
         var arg00__1;
-        return ($var43 => ($var42 => o(Button($var42)))((0, _pnode.tree)($var43)))((arg00__1 = _m.TimeModule.ms(0), function (a_1) {
+        return ($var41 => ($var40 => o(Button($var40)))((0, _pnode.tree)($var41)))((arg00__1 = _m.TimeModule.ms(0), function (a_1) {
           return (0, _m.at)(arg00__1, a_1);
-        })($var44));
+        })($var42));
       })(function (arg0_1) {
         return arg0_1;
-      }($var45)))(function (o_1) {
-        ($var49 => ($var48 => {
+      }($var43)))(function (o_1) {
+        ($var47 => ($var46 => {
           var arg00__2;
-          return ($var47 => ($var46 => o_1(Span($var46)))((0, _pnode.tree)($var47)))((arg00__2 = _m.TimeModule.ms(0), function (a_2) {
+          return ($var45 => ($var44 => o_1(Span($var44)))((0, _pnode.tree)($var45)))((arg00__2 = _m.TimeModule.ms(0), function (a_2) {
             return (0, _m.at)(arg00__2, a_2);
-          })($var48));
+          })($var46));
         })(function (arg0_2) {
           return arg0_2;
-        }($var49)))(function (o_2) {
-          ($var52 => ($var51 => {
+        }($var47)))(function (o_2) {
+          ($var50 => ($var49 => {
             var arg00__3;
-            return ($var50 => o_2(_Text($var50)))((arg00__3 = _m.TimeModule.ms(0), function (a_3) {
+            return ($var48 => o_2(_Text($var48)))((arg00__3 = _m.TimeModule.ms(0), function (a_3) {
               return (0, _m.at)(arg00__3, a_3);
-            })($var51));
-          })(_pnode.Patch.once.bind(_pnode.Patch)($var52)))(function (text) {
+            })($var49));
+          })(_pnode.Patch.once.bind(_pnode.Patch)($var50)))(function (text) {
             text.textContent = "+";
           });
         });
@@ -216,28 +198,28 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var56 => ($var55 => {
+      ($var54 => ($var53 => {
         var arg00__4;
-        return ($var54 => ($var53 => o(Button($var53)))((0, _pnode.tree)($var54)))((arg00__4 = _m.TimeModule.ms(0), function (a_4) {
+        return ($var52 => ($var51 => o(Button($var51)))((0, _pnode.tree)($var52)))((arg00__4 = _m.TimeModule.ms(0), function (a_4) {
           return (0, _m.at)(arg00__4, a_4);
-        })($var55));
+        })($var53));
       })(function (arg0_3) {
         return arg0_3;
-      }($var56)))(function (o_3) {
-        ($var60 => ($var59 => {
+      }($var54)))(function (o_3) {
+        ($var58 => ($var57 => {
           var arg00__5;
-          return ($var58 => ($var57 => o_3(Span($var57)))((0, _pnode.tree)($var58)))((arg00__5 = _m.TimeModule.ms(0), function (a_5) {
+          return ($var56 => ($var55 => o_3(Span($var55)))((0, _pnode.tree)($var56)))((arg00__5 = _m.TimeModule.ms(0), function (a_5) {
             return (0, _m.at)(arg00__5, a_5);
-          })($var59));
+          })($var57));
         })(function (arg0_4) {
           return arg0_4;
-        }($var60)))(function (o_4) {
-          ($var63 => ($var62 => {
+        }($var58)))(function (o_4) {
+          ($var61 => ($var60 => {
             var arg00__6;
-            return ($var61 => o_4(_Text($var61)))((arg00__6 = _m.TimeModule.ms(0), function (a_6) {
+            return ($var59 => o_4(_Text($var59)))((arg00__6 = _m.TimeModule.ms(0), function (a_6) {
               return (0, _m.at)(arg00__6, a_6);
-            })($var62));
-          })(_pnode.Patch.once.bind(_pnode.Patch)($var63)))(function (text_1) {
+            })($var60));
+          })(_pnode.Patch.once.bind(_pnode.Patch)($var61)))(function (text_1) {
             text_1.textContent = "-";
           });
         });
@@ -247,31 +229,31 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var67 => ($var66 => {
+      ($var65 => ($var64 => {
         var arg00__7;
-        return ($var65 => ($var64 => o(H3($var64)))((0, _pnode.tree)($var65)))((arg00__7 = _m.TimeModule.ms(0), function (a_7) {
+        return ($var63 => ($var62 => o(H3($var62)))((0, _pnode.tree)($var63)))((arg00__7 = _m.TimeModule.ms(0), function (a_7) {
           return (0, _m.at)(arg00__7, a_7);
-        })($var66));
+        })($var64));
       })(function (arg0_5) {
         return arg0_5;
-      }($var67)))(function (o_5) {
-        ($var69 => {
+      }($var65)))(function (o_5) {
+        ($var67 => {
           var f_2;
-          return ($var68 => o_5(_Text($var68)))((f_2 = function (i) {
+          return ($var66 => o_5(_Text($var66)))((f_2 = function (i) {
             return _pnode.Patch.once(function (text_2) {
               text_2.textContent = i.toString();
             });
           }, function (arg10_) {
             return (0, _m.map)(f_2, arg10_);
-          })($var69));
+          })($var67));
         })(intS);
       });
     });
   };
 
-  const rez_1 = __exports.rez = (0, _m.scan)(_pnode.Patch.apply.bind(_pnode.Patch), document.getElementById("root-node"), ($var71 => ($var70 => (0, _pnode.tree)((0, _m.now)($var70)))(function (arg0) {
+  const rez_1 = __exports.rez = (0, _m.scan)(_pnode.Patch.apply.bind(_pnode.Patch), document.getElementById("root-node"), ($var69 => ($var68 => (0, _pnode.tree)((0, _m.now)($var68)))(function (arg0) {
     return arg0;
-  }($var71)))(function (o) {
+  }($var69)))(function (o) {
     o(counter(3));
   }));
   (0, _m.drain)(rez_1), void 0;

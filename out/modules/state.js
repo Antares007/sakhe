@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.RValue = undefined;
+exports.R = exports.RValue = undefined;
 exports.oTree = oTree;
 exports.aTree = aTree;
 
@@ -45,6 +45,24 @@ class RValue {
 
 exports.RValue = RValue;
 (0, _Symbol2.setType)("Sakhe.State.RValue", RValue);
+
+const R = exports.R = function (__exports) {
+  const set = __exports.set = function (a) {
+    return function (_arg1) {
+      return a;
+    };
+  };
+
+  const update = __exports.update = function (f) {
+    return f;
+  };
+
+  const apply = __exports.apply = function (s, _arg1) {
+    return (0, _Option.makeSome)(_arg1(s));
+  };
+
+  return __exports;
+}({});
 
 const Impl = function (__exports) {
   const chain = __exports.chain = function (absurd, key, prove, _arg1) {
