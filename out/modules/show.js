@@ -34,25 +34,19 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 const scheduler = exports.scheduler = scheduler_1.newDefaultScheduler();
 
 function drain(s) {
-  core.runEffects(s, scheduler);
+  core.runEffects(s, scheduler), void 0;
 }
 
 function now() {
-  return (0, _CurriedLambda2.default)(function (arg00_) {
-    return core.now(arg00_);
-  });
+  return (0, _CurriedLambda2.default)(core.now.bind(core));
 }
 
 function constant() {
-  return (0, _CurriedLambda2.default)(function (arg00_, arg10_) {
-    return core.constant(arg00_, arg10_);
-  });
+  return (0, _CurriedLambda2.default)(core.constant.bind(core));
 }
 
 function at() {
-  return (0, _CurriedLambda2.default)(function (arg00_, arg10_) {
-    return core.at(arg00_, arg10_);
-  });
+  return (0, _CurriedLambda2.default)(core.at.bind(core));
 }
 
 const State = exports.State = function (__exports) {
@@ -77,13 +71,9 @@ const State = exports.State = function (__exports) {
   };
 
   const emptystring = __exports.emptystring = {};
-  const rez = __exports.rez = core.tap(function (arg00) {
-    console.log(arg00);
-  }, core.scan(function (s, r) {
+  const rez = __exports.rez = core.tap(console.log.bind(console), core.scan(function (s, r) {
     return r(s);
-  }, {}, ($var1 => function (pith) {
-    return (0, _state.objectTree)(pith);
-  }(at()(0)($var1)))(function (o) {
+  }, {}, ($var1 => (0, _state.objectTree)(at()(0)($var1)))(function (o) {
     ($var3 => ($var2 => o(function (s_1) {
       return _Number("a", s_1);
     }($var2)))(now()($var3)))(function (_arg1) {
@@ -100,9 +90,7 @@ const State = exports.State = function (__exports) {
 
     ($var8 => ($var7 => ($var6 => o(function (s_3) {
       return _Object("b", s_3);
-    }($var6)))(function (pith_1) {
-      return (0, _state.objectTree)(pith_1);
-    }($var7)))(now()($var8)))(function (o_1) {
+    }($var6)))((0, _state.objectTree)($var7)))(now()($var8)))(function (o_1) {
       ($var10 => ($var9 => o_1(function (s_4) {
         return _Number("k", s_4);
       }($var9)))(now()($var10)))(function (_arg1_1) {
@@ -130,9 +118,7 @@ const State = exports.State = function (__exports) {
 
     ($var15 => ($var14 => ($var13 => o(function (s_6) {
       return _Array("array", s_6);
-    }($var13)))(function (pith_2) {
-      return (0, _state.arrayTree)(pith_2);
-    }($var14)))(at()(3000)($var15)))(function (a) {
+    }($var13)))((0, _state.arrayTree)($var14)))(at()(3000)($var15)))(function (a) {
       ($var17 => ($var16 => a(function (s_7) {
         return _Number(0, s_7);
       }($var16)))(now()($var17)))(function (_arg2_1) {
@@ -142,9 +128,7 @@ const State = exports.State = function (__exports) {
 
     ($var20 => ($var19 => ($var18 => o(function (s_8) {
       return _Array("array", s_8);
-    }($var18)))(function (pith_3) {
-      return (0, _state.arrayTree)(pith_3);
-    }($var19)))(at()(3000)($var20)))(function (a_1) {
+    }($var18)))((0, _state.arrayTree)($var19)))(at()(3000)($var20)))(function (a_1) {
       ($var22 => ($var21 => a_1(function (s_9) {
         return _Number(0, s_9);
       }($var21)))(now()($var22)))(function (_arg3_1) {
@@ -207,19 +191,9 @@ const Dom = exports.Dom = function (__exports) {
 
   const counter = __exports.counter = function (d) {
     return ($var24 => ($var23 => Div((0, _pnode.tree)($var23)))(at()(0)($var24)))(function (o) {
-      ($var27 => ($var26 => ($var25 => o(function (r) {
-        return Button(r);
-      }($var25)))(function (pith) {
-        return (0, _pnode.tree)(pith);
-      }($var26)))(at()(0)($var27)))(function (o_1) {
-        ($var30 => ($var29 => ($var28 => o_1(function (r_1) {
-          return Span(r_1);
-        }($var28)))(function (pith_1) {
-          return (0, _pnode.tree)(pith_1);
-        }($var29)))(at()(0)($var30)))(function (o_2) {
-          ($var32 => ($var31 => o_2(function (p) {
-            return _Text(p);
-          }($var31)))(at()(0)($var32)))(function (text) {
+      ($var27 => ($var26 => ($var25 => o(Button($var25)))((0, _pnode.tree)($var26)))(at()(0)($var27)))(function (o_1) {
+        ($var30 => ($var29 => ($var28 => o_1(Span($var28)))((0, _pnode.tree)($var29)))(at()(0)($var30)))(function (o_2) {
+          ($var32 => ($var31 => o_2(_Text($var31)))(at()(0)($var32)))(function (text) {
             text.textContent = "+";
           });
         });
@@ -229,19 +203,9 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var35 => ($var34 => ($var33 => o(function (r_2) {
-        return Button(r_2);
-      }($var33)))(function (pith_2) {
-        return (0, _pnode.tree)(pith_2);
-      }($var34)))(at()(0)($var35)))(function (o_3) {
-        ($var38 => ($var37 => ($var36 => o_3(function (r_3) {
-          return Span(r_3);
-        }($var36)))(function (pith_3) {
-          return (0, _pnode.tree)(pith_3);
-        }($var37)))(at()(0)($var38)))(function (o_4) {
-          ($var40 => ($var39 => o_4(function (p_1) {
-            return _Text(p_1);
-          }($var39)))(at()(0)($var40)))(function (text_1) {
+      ($var35 => ($var34 => ($var33 => o(Button($var33)))((0, _pnode.tree)($var34)))(at()(0)($var35)))(function (o_3) {
+        ($var38 => ($var37 => ($var36 => o_3(Span($var36)))((0, _pnode.tree)($var37)))(at()(0)($var38)))(function (o_4) {
+          ($var40 => ($var39 => o_4(_Text($var39)))(at()(0)($var40)))(function (text_1) {
             text_1.textContent = "-";
           });
         });
@@ -251,16 +215,10 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var43 => ($var42 => ($var41 => o(function (r_4) {
-        return H3(r_4);
-      }($var41)))(function (pith_4) {
-        return (0, _pnode.tree)(pith_4);
-      }($var42)))(at()(0)($var43)))(function (o_5) {
+      ($var43 => ($var42 => ($var41 => o(H3($var41)))((0, _pnode.tree)($var42)))(at()(0)($var43)))(function (o_5) {
         ($var47 => {
           var arg00_;
-          return ($var44 => o_5(function (p_2) {
-            return _Text(p_2);
-          }($var44)))((arg00_ = function (i, text_2) {
+          return ($var44 => o_5(_Text($var44)))((arg00_ = function (i, text_2) {
             text_2.textContent = i.toString();
           }, function (arg10_) {
             return core.map($var45 => $var46 => {
@@ -273,10 +231,7 @@ const Dom = exports.Dom = function (__exports) {
   };
 
   const rez_1 = __exports.rez = core.scan(function (n, p) {
-    (function (arg00) {
-      p(arg00);
-    })(n);
-
+    p(n);
     return n;
   }, document.getElementById("root-node"), ($var48 => (0, _pnode.tree)(core.now($var48)))(function (o) {
     o(counter(3));
