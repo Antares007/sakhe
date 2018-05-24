@@ -7,8 +7,9 @@ open A
 
 type Patch<'a> = 'a -> unit
 type AP<'a> = (unit -> 'a) * (Node -> bool)
-type PNode = PNode of Node AP * Stream<Node Patch>
-
+type PNode = private PNode of Node AP * Stream<Node Patch>
+let pnode ap s =
+    PNode (ap, s)
 [<AutoOpen>]
 module private Impl =
     let rec private tryFind f (i: int) (nlist: NodeList) =

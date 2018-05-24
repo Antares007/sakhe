@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PNode = undefined;
+exports.pnode = pnode;
 exports.tree = tree;
 
 var _Symbol2 = require("./fable-core/Symbol");
@@ -44,15 +44,19 @@ class PNode {
 
 }
 
-exports.PNode = PNode;
 (0, _Symbol2.setType)("Sakhe.PNode.PNode", PNode);
 
+function pnode(ap_0, ap_1, s) {
+  const ap = [ap_0, ap_1];
+  return new PNode(0, [ap, s]);
+}
+
 const Impl = function (__exports) {
-  const tryFind = __exports.tryFind = function ($var6, $var7, $var8) {
+  const tryFind = __exports.tryFind = function ($var9, $var10, $var11) {
     tryFind: while (true) {
-      const f = $var6;
-      const i = $var7;
-      const nlist = $var8;
+      const f = $var9;
+      const i = $var10;
+      const nlist = $var11;
 
       if (i >= nlist.length) {
         return null;
@@ -62,9 +66,9 @@ const Impl = function (__exports) {
         if (f(n)) {
           return n;
         } else {
-          $var6 = f;
-          $var7 = i + 1;
-          $var8 = nlist;
+          $var9 = f;
+          $var10 = i + 1;
+          $var11 = nlist;
           continue tryFind;
         }
       }

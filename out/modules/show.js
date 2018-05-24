@@ -13,7 +13,13 @@ var _m = require("./m");
 
 var _a = require("./a");
 
+var _CurriedLambda = require("./fable-core/CurriedLambda");
+
+var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
+
 var _pnode = require("./pnode");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const State = exports.State = function (__exports) {
   const init = __exports.init = function (a, a2b, maybe_a) {
@@ -125,70 +131,59 @@ const Dom = exports.Dom = function (__exports) {
     }];
   };
 
-  const Div = __exports.Div = function (r) {
-    return new _pnode.PNode(0, [elementAP("DIV"), r]);
-  };
+  const createElm = __exports.createElm = (0, _CurriedLambda2.default)($var32 => ($var30 => $var31 => function (tupledArg, s) {
+    return (0, _pnode.pnode)(tupledArg[0], tupledArg[1], s);
+  }($var30, $var31))(elementAP($var32)));
+  const Div = __exports.Div = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("DIV"));
+  const A = __exports.A = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("A"));
+  const Button = __exports.Button = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("BUTTON"));
+  const Span = __exports.Span = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("SPAN"));
+  const H1 = __exports.H1 = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("H1"));
+  const H2 = __exports.H2 = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("H2"));
+  const H3 = __exports.H3 = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("H3"));
 
-  const A = __exports.A = function (r) {
-    return new _pnode.PNode(0, [elementAP("A"), r]);
-  };
-
-  const Button = __exports.Button = function (r) {
-    return new _pnode.PNode(0, [elementAP("BUTTON"), r]);
-  };
-
-  const Span = __exports.Span = function (r) {
-    return new _pnode.PNode(0, [elementAP("SPAN"), r]);
-  };
-
-  const H1 = __exports.H1 = function (r) {
-    return new _pnode.PNode(0, [elementAP("H1"), r]);
-  };
-
-  const H2 = __exports.H2 = function (r) {
-    return new _pnode.PNode(0, [elementAP("H2"), r]);
-  };
-
-  const H3 = __exports.H3 = function (r) {
-    return new _pnode.PNode(0, [elementAP("H3"), r]);
-  };
-
-  const _Text = __exports.Text = function (p) {
-    return new _pnode.PNode(0, [[function () {
+  const _Text = __exports.Text = (0, _CurriedLambda2.default)((() => {
+    const arg00_ = function () {
       return document.createTextNode("");
-    }, function (n) {
+    };
+
+    const arg01_ = function (n) {
       return n.nodeName === "#text";
-    }], p]);
-  };
+    };
+
+    return function (s) {
+      return (0, _pnode.pnode)(arg00_, arg01_, s);
+    };
+  })());
 
   const intS = __exports.intS = (0, _m.multicast)((0, _m.skip)(1, (0, _m.scan)(function (c, _arg1) {
     return c + 1;
   }, 0, (0, _m.periodic)(_m.TimeModule.ms(10)))));
 
   const counter = __exports.counter = function (d) {
-    return ($var32 => ($var31 => {
+    return ($var35 => ($var34 => {
       var arg00_;
-      return ($var30 => Div((0, _pnode.tree)($var30)))((arg00_ = _m.TimeModule.ms(0), function (a) {
+      return ($var33 => Div((0, _pnode.tree)($var33)))((arg00_ = _m.TimeModule.ms(0), function (a) {
         return (0, _m.at)(arg00_, a);
-      })($var31));
-    })((0, _a.pith)($var32)))(function (o) {
-      ($var36 => ($var35 => {
+      })($var34));
+    })((0, _a.pith)($var35)))(function (o) {
+      ($var39 => ($var38 => {
         var arg00__1;
-        return ($var34 => ($var33 => o(Button($var33)))((0, _pnode.tree)($var34)))((arg00__1 = _m.TimeModule.ms(0), function (a_1) {
+        return ($var37 => ($var36 => o(Button($var36)))((0, _pnode.tree)($var37)))((arg00__1 = _m.TimeModule.ms(0), function (a_1) {
           return (0, _m.at)(arg00__1, a_1);
-        })($var35));
-      })((0, _a.pith)($var36)))(function (o_1) {
-        ($var40 => ($var39 => {
+        })($var38));
+      })((0, _a.pith)($var39)))(function (o_1) {
+        ($var43 => ($var42 => {
           var arg00__2;
-          return ($var38 => ($var37 => o_1(Span($var37)))((0, _pnode.tree)($var38)))((arg00__2 = _m.TimeModule.ms(0), function (a_2) {
+          return ($var41 => ($var40 => o_1(Span($var40)))((0, _pnode.tree)($var41)))((arg00__2 = _m.TimeModule.ms(0), function (a_2) {
             return (0, _m.at)(arg00__2, a_2);
-          })($var39));
-        })((0, _a.pith)($var40)))(function (o_2) {
-          ($var42 => {
+          })($var42));
+        })((0, _a.pith)($var43)))(function (o_2) {
+          ($var45 => {
             var arg00__3;
-            return ($var41 => o_2(_Text($var41)))((arg00__3 = _m.TimeModule.ms(0), function (a_3) {
+            return ($var44 => o_2(_Text($var44)))((arg00__3 = _m.TimeModule.ms(0), function (a_3) {
               return (0, _m.at)(arg00__3, a_3);
-            })($var42));
+            })($var45));
           })(function (text) {
             text.textContent = "+";
           });
@@ -199,23 +194,23 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var46 => ($var45 => {
+      ($var49 => ($var48 => {
         var arg00__4;
-        return ($var44 => ($var43 => o(Button($var43)))((0, _pnode.tree)($var44)))((arg00__4 = _m.TimeModule.ms(0), function (a_4) {
+        return ($var47 => ($var46 => o(Button($var46)))((0, _pnode.tree)($var47)))((arg00__4 = _m.TimeModule.ms(0), function (a_4) {
           return (0, _m.at)(arg00__4, a_4);
-        })($var45));
-      })((0, _a.pith)($var46)))(function (o_3) {
-        ($var50 => ($var49 => {
+        })($var48));
+      })((0, _a.pith)($var49)))(function (o_3) {
+        ($var53 => ($var52 => {
           var arg00__5;
-          return ($var48 => ($var47 => o_3(Span($var47)))((0, _pnode.tree)($var48)))((arg00__5 = _m.TimeModule.ms(0), function (a_5) {
+          return ($var51 => ($var50 => o_3(Span($var50)))((0, _pnode.tree)($var51)))((arg00__5 = _m.TimeModule.ms(0), function (a_5) {
             return (0, _m.at)(arg00__5, a_5);
-          })($var49));
-        })((0, _a.pith)($var50)))(function (o_4) {
-          ($var52 => {
+          })($var52));
+        })((0, _a.pith)($var53)))(function (o_4) {
+          ($var55 => {
             var arg00__6;
-            return ($var51 => o_4(_Text($var51)))((arg00__6 = _m.TimeModule.ms(0), function (a_6) {
+            return ($var54 => o_4(_Text($var54)))((arg00__6 = _m.TimeModule.ms(0), function (a_6) {
               return (0, _m.at)(arg00__6, a_6);
-            })($var52));
+            })($var55));
           })(function (text_1) {
             text_1.textContent = "-";
           });
@@ -226,21 +221,21 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var56 => ($var55 => {
+      ($var59 => ($var58 => {
         var arg00__7;
-        return ($var54 => ($var53 => o(H3($var53)))((0, _pnode.tree)($var54)))((arg00__7 = _m.TimeModule.ms(0), function (a_7) {
+        return ($var57 => ($var56 => o(H3($var56)))((0, _pnode.tree)($var57)))((arg00__7 = _m.TimeModule.ms(0), function (a_7) {
           return (0, _m.at)(arg00__7, a_7);
-        })($var55));
-      })((0, _a.pith)($var56)))(function (o_5) {
-        ($var60 => {
+        })($var58));
+      })((0, _a.pith)($var59)))(function (o_5) {
+        ($var63 => {
           var f_6;
-          return ($var57 => o_5(_Text($var57)))((f_6 = function (i, text_2) {
+          return ($var60 => o_5(_Text($var60)))((f_6 = function (i, text_2) {
             text_2.textContent = i.toString();
           }, function (arg10_) {
-            return (0, _m.map)($var58 => $var59 => {
-              f_6($var58, $var59);
+            return (0, _m.map)($var61 => $var62 => {
+              f_6($var61, $var62);
             }, arg10_);
-          })($var60));
+          })($var63));
         })(intS);
       });
     });
@@ -249,7 +244,7 @@ const Dom = exports.Dom = function (__exports) {
   const rez_1 = __exports.rez = (0, _m.scan)(function (n, p) {
     p(n);
     return n;
-  }, document.getElementById("root-node"), ($var62 => ($var61 => (0, _pnode.tree)((0, _m.now)($var61)))((0, _a.pith)($var62)))(function (o) {
+  }, document.getElementById("root-node"), ($var65 => ($var64 => (0, _pnode.tree)((0, _m.now)($var64)))((0, _a.pith)($var65)))(function (o) {
     o(counter(3));
   }));
   (0, _m.drain)(rez_1), void 0;
