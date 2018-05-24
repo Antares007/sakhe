@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Patch = exports.PNode = exports.AP = exports.Prove = exports.Absurd = undefined;
+exports.Patch = exports.Ray = exports.AP = undefined;
 exports.tree = tree;
 
 var _Symbol2 = require("./fable-core/Symbol");
@@ -24,44 +24,6 @@ var _a = require("./a");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class Absurd {
-  constructor(tag, data) {
-    this.tag = tag | 0;
-    this.data = data;
-  }
-
-  [_Symbol3.default.reflection]() {
-    return {
-      type: "Sakhe.PNode.Absurd",
-      interfaces: ["FSharpUnion"],
-      cases: [["Absurd", (0, _Util.Function)([_Util.Unit, (0, _Util.GenericParam)("a")])]]
-    };
-  }
-
-}
-
-exports.Absurd = Absurd;
-(0, _Symbol2.setType)("Sakhe.PNode.Absurd", Absurd);
-
-class Prove {
-  constructor(tag, data) {
-    this.tag = tag | 0;
-    this.data = data;
-  }
-
-  [_Symbol3.default.reflection]() {
-    return {
-      type: "Sakhe.PNode.Prove",
-      interfaces: ["FSharpUnion"],
-      cases: [["Prove", (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"])]]
-    };
-  }
-
-}
-
-exports.Prove = Prove;
-(0, _Symbol2.setType)("Sakhe.PNode.Prove", Prove);
-
 class AP {
   constructor(tag, data) {
     this.tag = tag | 0;
@@ -81,7 +43,7 @@ class AP {
 exports.AP = AP;
 (0, _Symbol2.setType)("Sakhe.PNode.AP", AP);
 
-class PNode {
+class Ray {
   constructor(tag, data) {
     this.tag = tag | 0;
     this.data = data;
@@ -89,18 +51,16 @@ class PNode {
 
   [_Symbol3.default.reflection]() {
     return {
-      type: "Sakhe.PNode.PNode",
+      type: "Sakhe.PNode.Ray",
       interfaces: ["FSharpUnion"],
-      cases: [["PNode", (0, _Util.makeGeneric)(AP, {
-        a: (0, _Util.Interface)("Fable.Import.Browser.Node")
-      }), _Util.Any]]
+      cases: [["RNode", _Util.Any, _Util.Any, _Util.Any]]
     };
   }
 
 }
 
-exports.PNode = PNode;
-(0, _Symbol2.setType)("Sakhe.PNode.PNode", PNode);
+exports.Ray = Ray;
+(0, _Symbol2.setType)("Sakhe.PNode.Ray", Ray);
 
 const Patch = exports.Patch = function (__exports) {
   const once = __exports.once = function (f) {
@@ -205,13 +165,24 @@ function tree(pith) {
   const ring = function (pith_1, o) {
     let c = 0;
     pith_1(function (_arg1) {
-      const prove = _arg1.data[0].data[1];
-      const a = _arg1.data[0].data[0];
+      const prove = _arg1.data[1];
+      const a = _arg1.data[0];
+
+      const prove_1 = function (n) {
+        const matchValue = prove(n);
+
+        if (matchValue == null) {
+          return false;
+        } else {
+          return true;
+        }
+      };
+
       const index = c | 0;
       c = c + 1 | 0;
       o((0, _stream.map)(function (arg20_) {
-        return Impl.chain(a, prove, index, arg20_);
-      }, _arg1.data[1]));
+        return Impl.chain(a, prove_1, index, arg20_);
+      }, _arg1.data[2]));
     });
     o((0, _stream.now)(Patch.once(function (elm) {
       for (let i = elm.childNodes.length - 1; i >= c; i--) {

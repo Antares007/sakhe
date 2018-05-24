@@ -1,10 +1,10 @@
 module Sakhe.Show
 open Fable.Import.Browser
 open Fable.Core.JsInterop
+open Fable.Core
 
 module State =
     open Sakhe.State
-    open Fable.Core
 
     let init (a: 'a) (a2b: 'a -> 'b) (maybe_a:'a option): 'b =
         match maybe_a with
@@ -24,35 +24,23 @@ module State =
     }
     open A
     open Stream
-    let rez =
-        oTree << (at << ms) 0. << Pith.Of <| fun o ->
-            o << Number "a" << now <| R.set 1.
-            o << Object "b" << now <| R.set (createObj [ "k" ==> 42])
-            o << Object "b" << oTree << now << Pith.Of <| fun o ->
-                o << Number "k" << now << R.update <| function
-                    | Some k -> k + 1.
-                    | None -> 0.
-                ()
-            ()
-            o << Object "array" << now << R.update <| fun _ ->
-                unbox [|
-                    { name ="archil"; age = 42 }
-                    { name ="archil"; age = 42 }
-                    { name ="archil"; age = 42 }
-                    { name ="archil"; age = 42 } |]
+    (*
 
-            o << Array "array" << aTree << at (ms 3000.) << Pith.Of <| fun a ->
-                a << Number 0 << now << R.update <| function
-                    | Some k -> k + 1.
-                    | None -> 42.
-                ()
-            ()
-            o << Array "array" << aTree << at (ms 3000.) << Pith.Of <| fun a ->
-                a << Number 0 << now << R.update <| function
-                    | Some k -> k + 1.
+        var achiko = {
+            age: 42
+        }
+
+    *)
+    let rez =
+        oTree << at (ms 0.) << Pith.Of <| fun o ->
+
+            o << Object "achiko" << oTree << at (ms 3000.) << Pith.Of <| fun o ->
+                o << Number "age" <<  at (ms 3000.) << R.update <| function
+                    | Some v -> v + 1.
                     | None -> 0.
                 ()
             ()
+
 
         |> scan
             (R.apply)
@@ -65,11 +53,18 @@ module Dom =
     open A
     open PNode
 
-    let ap a b = AP (a, b)
-    let pnode ap s = PNode (ap, s)
-    let elementAP tag = ap (fun () -> (document.createElement tag) :> Node) (fun n -> n.nodeName = tag)
+    let pnode a p s = RNode (a, p, s)
+    let createElm tag =
+        pnode
+        << Absurd <| fun () ->
+            let elm = document.createElement tag
+            elm :> Node
+        << Prove <| fun (n: Node) ->
+            if n.nodeName = tag then
+                Some (unbox n)
+            else
+                None
 
-    let createElm = pnode << elementAP
     let Div = createElm "DIV"
     let A =  createElm  "A"
     let Button = createElm "BUTTON"
@@ -79,7 +74,9 @@ module Dom =
     let H3 =  createElm  "H3"
 
     let Text =
-        pnode <| ap (fun () -> (document.createTextNode "") :> Node) (fun n -> n.nodeName = "#text")
+        pnode
+        <| Absurd (fun () -> (document.createTextNode "") :> Node)
+        <| Prove (fun (n: Node) -> if n.nodeName = "#text" then Some (unbox n) else None)
     // let (<<|) a b = a (M.now b)
     open Stream
     let intS = periodic (ms 10.) |> Stream.scan (fun c _ -> c + 1) 0 |> skip 1 |> multicast

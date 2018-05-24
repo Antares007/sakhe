@@ -8,10 +8,11 @@ open A
 type Patch<'a when 'a :> Node> = private Patch of ('a -> unit)
 [<Fable.Core.Erase>]
 type Absurd<'a> = Absurd of (unit -> 'a)
+[<Fable.Core.Erase>]
 type Prove<'a, 'b> = Prove of ('a -> 'b option)
 
 type AP<'a> = AP of (unit -> 'a) * (Node -> bool)
-type PNode<'a when 'a :> Node> = PNode of Node AP * Stream.T<Patch<'a>>
+type Ray<'a when 'a :> Node> = RNode of Absurd<'a> * Prove<Node, 'a> * Stream.T<Patch<'a>>
 
 module Patch =
     [<Emit("(function makeOnce (f) {
@@ -84,7 +85,12 @@ let tree pith =
         let mutable c = 0
 
         pith <| function
-        | PNode (AP (a, prove), p) ->
+        | RNode (Absurd a, Prove prove, p) ->
+            let prove n =
+                match prove n with
+                | Some _ -> true
+                | None -> false
+
             let index = c
             c <- c + 1
             o (Stream.map (chain (a, prove) index) p)
