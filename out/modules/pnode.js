@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.ap = ap;
 exports.pnode = pnode;
 exports.tree = tree;
 
@@ -26,6 +27,24 @@ var _a = require("./a");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+class AP {
+  constructor(tag, data) {
+    this.tag = tag | 0;
+    this.data = data;
+  }
+
+  [_Symbol3.default.reflection]() {
+    return {
+      type: "Sakhe.PNode.AP",
+      interfaces: ["FSharpUnion"],
+      cases: [["AP", (0, _Util.Function)([_Util.Unit, (0, _Util.GenericParam)("a")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"])]]
+    };
+  }
+
+}
+
+(0, _Symbol2.setType)("Sakhe.PNode.AP", AP);
+
 class PNode {
   constructor(tag, data) {
     this.tag = tag | 0;
@@ -36,7 +55,9 @@ class PNode {
     return {
       type: "Sakhe.PNode.PNode",
       interfaces: ["FSharpUnion"],
-      cases: [["PNode", (0, _Util.Tuple)([(0, _Util.Function)([_Util.Unit, (0, _Util.Interface)("Fable.Import.Browser.Node")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"])]), (0, _Util.makeGeneric)(_m.Stream, {
+      cases: [["PNode", (0, _Util.makeGeneric)(AP, {
+        a: (0, _Util.Interface)("Fable.Import.Browser.Node")
+      }), (0, _Util.makeGeneric)(_m.Stream, {
         a: (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), _Util.Unit])
       })]]
     };
@@ -46,17 +67,20 @@ class PNode {
 
 (0, _Symbol2.setType)("Sakhe.PNode.PNode", PNode);
 
-function pnode(ap_0, ap_1, s) {
-  const ap = [ap_0, ap_1];
-  return new PNode(0, [ap, s]);
+function ap(a, p) {
+  return new AP(0, [a, p]);
+}
+
+function pnode(ap_1, s) {
+  return new PNode(0, [ap_1, s]);
 }
 
 const Impl = function (__exports) {
-  const tryFind = __exports.tryFind = function ($var9, $var10, $var11) {
+  const tryFind = __exports.tryFind = function ($var8, $var9, $var10) {
     tryFind: while (true) {
-      const f = $var9;
-      const i = $var10;
-      const nlist = $var11;
+      const f = $var8;
+      const i = $var9;
+      const nlist = $var10;
 
       if (i >= nlist.length) {
         return null;
@@ -66,9 +90,9 @@ const Impl = function (__exports) {
         if (f(n)) {
           return n;
         } else {
-          $var9 = f;
-          $var10 = i + 1;
-          $var11 = nlist;
+          $var8 = f;
+          $var9 = i + 1;
+          $var10 = nlist;
           continue tryFind;
         }
       }
@@ -128,10 +152,12 @@ function tree(pith) {
   const ring = function (pith_1, o) {
     let c = 0;
     pith_1(function (_arg1) {
+      const prove = _arg1.data[0].data[1];
+      const a = _arg1.data[0].data[0];
       const index = c | 0;
       c = c + 1 | 0;
       o((0, _m.map)((0, _CurriedLambda2.default)(function (patch) {
-        return Impl.chain(_arg1.data[0][0], _arg1.data[0][1], index, patch);
+        return Impl.chain(a, prove, index, patch);
       }), _arg1.data[1]));
     });
     o((0, _m.now)(function makeOnce(f) {

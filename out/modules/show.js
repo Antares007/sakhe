@@ -13,11 +13,11 @@ var _m = require("./m");
 
 var _a = require("./a");
 
+var _pnode = require("./pnode");
+
 var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
-
-var _pnode = require("./pnode");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -124,16 +124,14 @@ const State = exports.State = function (__exports) {
 
 const Dom = exports.Dom = function (__exports) {
   const elementAP = __exports.elementAP = function (tag) {
-    return [function () {
+    return (0, _pnode.ap)(function () {
       return document.createElement(tag);
     }, function (n) {
       return n.nodeName === tag;
-    }];
+    });
   };
 
-  const createElm = __exports.createElm = (0, _CurriedLambda2.default)($var32 => ($var30 => $var31 => function (tupledArg, s) {
-    return (0, _pnode.pnode)(tupledArg[0], tupledArg[1], s);
-  }($var30, $var31))(elementAP($var32)));
+  const createElm = __exports.createElm = (0, _CurriedLambda2.default)($var32 => ($var30 => $var31 => (0, _pnode.pnode)($var30, $var31))(elementAP($var32)));
   const Div = __exports.Div = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("DIV"));
   const A = __exports.A = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("A"));
   const Button = __exports.Button = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("BUTTON"));
@@ -142,19 +140,11 @@ const Dom = exports.Dom = function (__exports) {
   const H2 = __exports.H2 = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("H2"));
   const H3 = __exports.H3 = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(createElm)("H3"));
 
-  const _Text = __exports.Text = (0, _CurriedLambda2.default)((() => {
-    const arg00_ = function () {
-      return document.createTextNode("");
-    };
-
-    const arg01_ = function (n) {
-      return n.nodeName === "#text";
-    };
-
-    return function (s) {
-      return (0, _pnode.pnode)(arg00_, arg01_, s);
-    };
-  })());
+  const _Text = __exports.Text = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(_pnode.pnode)((0, _pnode.ap)(function () {
+    return document.createTextNode("");
+  }, function (n) {
+    return n.nodeName === "#text";
+  })));
 
   const intS = __exports.intS = (0, _m.multicast)((0, _m.skip)(1, (0, _m.scan)(function (c, _arg1) {
     return c + 1;

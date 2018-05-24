@@ -6,10 +6,13 @@ open M
 open A
 
 type Patch<'a> = 'a -> unit
-type AP<'a> = (unit -> 'a) * (Node -> bool)
+type AP<'a> = private AP of (unit -> 'a) * (Node -> bool)
 type PNode = private PNode of Node AP * Stream<Node Patch>
-let pnode ap s =
-    PNode (ap, s)
+
+let ap a p = AP (a, p)
+
+let pnode ap s = PNode (ap, s)
+
 [<AutoOpen>]
 module private Impl =
     let rec private tryFind f (i: int) (nlist: NodeList) =
@@ -73,10 +76,10 @@ let tree pith =
         let mutable c = 0
 
         pith <| function
-        | PNode (ap, p) ->
+        | PNode (AP (a, prove), p) ->
             let index = c
             c <- c + 1
-            o (M.map (chain ap index) p)
+            o (M.map (chain (a, prove) index) p)
 
         o (M.now (once (fun elm ->
             for i = unbox elm.childNodes.length - 1 downto c do

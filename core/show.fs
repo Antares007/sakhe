@@ -63,9 +63,9 @@ module State =
 module Dom =
     open PNode
 
-    let elementAP (tag: string): AP<Node> =
-        (fun () -> upcast (document.createElement tag)),
-        (fun n -> n.nodeName = tag)
+    let elementAP (tag: string) =
+        ap (fun () -> (document.createElement tag) :> Node) (fun n -> n.nodeName = tag)
+
     let createElm = pnode << elementAP
     let Div = createElm "DIV"
     let A =  createElm  "A"
@@ -76,9 +76,7 @@ module Dom =
     let H3 =  createElm  "H3"
 
     let Text =
-        pnode (
-            (fun () -> upcast (document.createTextNode "")),
-            (fun n -> n.nodeName = "#text"))
+        pnode <| ap (fun () -> (document.createTextNode "") :> Node) (fun n -> n.nodeName = "#text")
     // let (<<|) a b = a (M.now b)
     open A
 
