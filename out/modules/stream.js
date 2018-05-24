@@ -17,6 +17,7 @@ exports.tap = tap;
 exports.periodic = periodic;
 exports.skip = skip;
 exports.multicast = multicast;
+exports.startWith = startWith;
 exports.drain = drain;
 
 var _core = require("@most/core");
@@ -96,6 +97,10 @@ function skip(n, _arg1) {
 
 function multicast(_arg1) {
   return core.multicast(_arg1);
+}
+
+function startWith(a, _arg1) {
+  return core.startWith(a, _arg1);
 }
 
 const scheduler = scheduler_1.newDefaultScheduler();

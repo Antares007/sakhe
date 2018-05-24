@@ -27,6 +27,6 @@ let tap f (T s) = T <| tap f s
 let periodic (Time t) = T <| periodic t
 let skip n (T s) = T <| skip n s
 let multicast (T s) = T <| multicast s
-
+let startWith a (T s) = T <| startWith a s
 let private scheduler = Most.Scheduler.newDefaultScheduler ()
 let drain (T s) = M.runEffects s scheduler
