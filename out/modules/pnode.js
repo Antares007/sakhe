@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Patch = exports.PNode = exports.AP = undefined;
+exports.Patch = exports.PNode = exports.AP = exports.Prove = exports.Absurd = undefined;
 exports.tree = tree;
 
 var _Symbol2 = require("./fable-core/Symbol");
@@ -14,13 +14,53 @@ var _Util = require("./fable-core/Util");
 
 var _Option = require("./fable-core/Option");
 
-var _m = require("./m");
+var _stream = require("./stream");
 
 var _Seq = require("./fable-core/Seq");
+
+var _m = require("./m");
 
 var _a = require("./a");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class Absurd {
+  constructor(tag, data) {
+    this.tag = tag | 0;
+    this.data = data;
+  }
+
+  [_Symbol3.default.reflection]() {
+    return {
+      type: "Sakhe.PNode.Absurd",
+      interfaces: ["FSharpUnion"],
+      cases: [["Absurd", (0, _Util.Function)([_Util.Unit, (0, _Util.GenericParam)("a")])]]
+    };
+  }
+
+}
+
+exports.Absurd = Absurd;
+(0, _Symbol2.setType)("Sakhe.PNode.Absurd", Absurd);
+
+class Prove {
+  constructor(tag, data) {
+    this.tag = tag | 0;
+    this.data = data;
+  }
+
+  [_Symbol3.default.reflection]() {
+    return {
+      type: "Sakhe.PNode.Prove",
+      interfaces: ["FSharpUnion"],
+      cases: [["Prove", (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"])]]
+    };
+  }
+
+}
+
+exports.Prove = Prove;
+(0, _Symbol2.setType)("Sakhe.PNode.Prove", Prove);
 
 class AP {
   constructor(tag, data) {
@@ -169,11 +209,11 @@ function tree(pith) {
       const a = _arg1.data[0].data[0];
       const index = c | 0;
       c = c + 1 | 0;
-      o((0, _m.map)(function (arg20_) {
+      o((0, _stream.map)(function (arg20_) {
         return Impl.chain(a, prove, index, arg20_);
       }, _arg1.data[1]));
     });
-    o((0, _m.now)(Patch.once(function (elm) {
+    o((0, _stream.now)(Patch.once(function (elm) {
       for (let i = elm.childNodes.length - 1; i >= c; i--) {
         elm.removeChild(elm.childNodes[i]), void 0;
       }
@@ -188,10 +228,10 @@ function tree(pith) {
   };
 
   folder = function (arg10__1, arg20__1) {
-    return (0, _m.combine)(f, arg10__1, arg20__1);
+    return (0, _stream.combine)(f, arg10__1, arg20__1);
   };
 
-  const state = (0, _m.now)(function (value) {
+  const state = (0, _stream.now)(function (value) {
     value, void 0;
   });
 
@@ -199,7 +239,7 @@ function tree(pith) {
     return (0, _Seq.fold)(folder, state, source);
   };
 
-  return (0, _m.tree)(deltac, (0, _m.map)(function (arg10__2) {
+  return (0, _m.tree)(deltac, (0, _stream.map)(function (arg10__2) {
     return _a.Pith.map(ring, arg10__2);
   }, pith));
 }

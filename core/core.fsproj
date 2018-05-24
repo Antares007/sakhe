@@ -6,6 +6,7 @@
   <ItemGroup>
     <Compile Include="a.fs" />
     <Compile Include="most.fs" />
+    <Compile Include="stream.fs" />
     <Compile Include="m.fs" />
     <Compile Include="pnode.fs" />
     <Compile Include="state.fs" />

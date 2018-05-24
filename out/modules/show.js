@@ -3,13 +3,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Dom = exports.State = undefined;
+exports.Test = exports.Dom = exports.State = undefined;
 
 var _Option = require("./fable-core/Option");
 
 var _state = require("./state");
 
-var _m = require("./m");
+var _stream = require("./stream");
 
 var _a = require("./a");
 
@@ -43,30 +43,30 @@ const State = exports.State = function (__exports) {
   };
 
   const emptystring = __exports.emptystring = {};
-  const rez = __exports.rez = (0, _m.tap)(console.log.bind(console), (0, _m.scan)(_state.R.apply.bind(_state.R), {}, ($var5 => ($var4 => (0, _state.oTree)(($var3 => ($var1 => $var2 => (0, _m.at)($var1, $var2))(_m.TimeModule.ms.bind(_m.TimeModule)($var3)))(0)($var4)))(_a.Pith.Of.bind(_a.Pith)($var5)))(function (o) {
+  const rez = __exports.rez = (0, _stream.tap)(console.log.bind(console), (0, _stream.scan)(_state.R.apply.bind(_state.R), {}, ($var5 => ($var4 => (0, _state.oTree)(($var3 => ($var1 => $var2 => (0, _stream.at)($var1, $var2))(_stream.TimeModule.ms.bind(_stream.TimeModule)($var3)))(0)($var4)))(_a.Pith.Of.bind(_a.Pith)($var5)))(function (o) {
     ($var7 => ($var6 => o(function (s_1) {
       return _Number("a", s_1);
-    }($var6)))((0, _m.now)($var7)))(_state.R.set(1));
+    }($var6)))((0, _stream.now)($var7)))(_state.R.set(1));
 
     ($var9 => ($var8 => o(function (s_2) {
       return _Object("b", s_2);
-    }($var8)))((0, _m.now)($var9)))(_state.R.set({
+    }($var8)))((0, _stream.now)($var9)))(_state.R.set({
       k: 42
     }));
 
     ($var13 => ($var12 => ($var11 => ($var10 => o(function (s_3) {
       return _Object("b", s_3);
-    }($var10)))((0, _state.oTree)($var11)))((0, _m.now)($var12)))(_a.Pith.Of.bind(_a.Pith)($var13)))(function (o_1) {
+    }($var10)))((0, _state.oTree)($var11)))((0, _stream.now)($var12)))(_a.Pith.Of.bind(_a.Pith)($var13)))(function (o_1) {
       ($var16 => ($var15 => ($var14 => o_1(function (s_4) {
         return _Number("k", s_4);
-      }($var14)))((0, _m.now)($var15)))(_state.R.update.bind(_state.R)($var16)))(function (_arg1) {
+      }($var14)))((0, _stream.now)($var15)))(_state.R.update.bind(_state.R)($var16)))(function (_arg1) {
         return _arg1 == null ? 0 : (0, _Option.getValue)(_arg1) + 1;
       });
     });
 
     ($var19 => ($var18 => ($var17 => o(function (s_5) {
       return _Object("array", s_5);
-    }($var17)))((0, _m.now)($var18)))(_state.R.update.bind(_state.R)($var19)))(function (_arg1_1) {
+    }($var17)))((0, _stream.now)($var18)))(_state.R.update.bind(_state.R)($var19)))(function (_arg1_1) {
       return [{
         name: "archil",
         age: 42
@@ -86,13 +86,13 @@ const State = exports.State = function (__exports) {
       var arg00__1;
       return ($var21 => ($var20 => o(function (s_6) {
         return _Array("array", s_6);
-      }($var20)))((0, _state.aTree)($var21)))((arg00__1 = _m.TimeModule.ms(3000), function (a_8) {
-        return (0, _m.at)(arg00__1, a_8);
+      }($var20)))((0, _state.aTree)($var21)))((arg00__1 = _stream.TimeModule.ms(3000), function (a_8) {
+        return (0, _stream.at)(arg00__1, a_8);
       })($var22));
     })(_a.Pith.Of.bind(_a.Pith)($var23)))(function (a_10) {
       ($var26 => ($var25 => ($var24 => a_10(function (s_7) {
         return _Number(0, s_7);
-      }($var24)))((0, _m.now)($var25)))(_state.R.update.bind(_state.R)($var26)))(function (_arg2) {
+      }($var24)))((0, _stream.now)($var25)))(_state.R.update.bind(_state.R)($var26)))(function (_arg2) {
         return _arg2 == null ? 42 : (0, _Option.getValue)(_arg2) + 1;
       });
     });
@@ -101,18 +101,18 @@ const State = exports.State = function (__exports) {
       var arg00__2;
       return ($var28 => ($var27 => o(function (s_8) {
         return _Array("array", s_8);
-      }($var27)))((0, _state.aTree)($var28)))((arg00__2 = _m.TimeModule.ms(3000), function (a_12) {
-        return (0, _m.at)(arg00__2, a_12);
+      }($var27)))((0, _state.aTree)($var28)))((arg00__2 = _stream.TimeModule.ms(3000), function (a_12) {
+        return (0, _stream.at)(arg00__2, a_12);
       })($var29));
     })(_a.Pith.Of.bind(_a.Pith)($var30)))(function (a_14) {
       ($var33 => ($var32 => ($var31 => a_14(function (s_9) {
         return _Number(0, s_9);
-      }($var31)))((0, _m.now)($var32)))(_state.R.update.bind(_state.R)($var33)))(function (_arg3) {
+      }($var31)))((0, _stream.now)($var32)))(_state.R.update.bind(_state.R)($var33)))(function (_arg3) {
         return _arg3 == null ? 0 : (0, _Option.getValue)(_arg3) + 1;
       });
     });
   })));
-  (0, _m.drain)(rez), void 0;
+  (0, _stream.drain)(rez), void 0;
   return __exports;
 }({});
 
@@ -148,33 +148,33 @@ const Dom = exports.Dom = function (__exports) {
     return n.nodeName === "#text";
   })));
 
-  const intS = __exports.intS = (0, _m.multicast)((0, _m.skip)(1, (0, _m.scan)(function (c, _arg1) {
+  const intS = __exports.intS = (0, _stream.multicast)((0, _stream.skip)(1, (0, _stream.scan)(function (c, _arg1) {
     return c + 1;
-  }, 0, (0, _m.periodic)(_m.TimeModule.ms(10)))));
+  }, 0, (0, _stream.periodic)(_stream.TimeModule.ms(10)))));
 
   const counter = __exports.counter = function (d) {
     return ($var39 => ($var38 => {
       var arg00_;
-      return ($var37 => Div((0, _pnode.tree)($var37)))((arg00_ = _m.TimeModule.ms(0), function (a) {
-        return (0, _m.at)(arg00_, a);
+      return ($var37 => Div((0, _pnode.tree)($var37)))((arg00_ = _stream.TimeModule.ms(0), function (a) {
+        return (0, _stream.at)(arg00_, a);
       })($var38));
     })(_a.Pith.Of.bind(_a.Pith)($var39)))(function (o) {
       ($var43 => ($var42 => {
         var arg00__1;
-        return ($var41 => ($var40 => o(Button($var40)))((0, _pnode.tree)($var41)))((arg00__1 = _m.TimeModule.ms(0), function (a_2) {
-          return (0, _m.at)(arg00__1, a_2);
+        return ($var41 => ($var40 => o(Button($var40)))((0, _pnode.tree)($var41)))((arg00__1 = _stream.TimeModule.ms(0), function (a_2) {
+          return (0, _stream.at)(arg00__1, a_2);
         })($var42));
       })(_a.Pith.Of.bind(_a.Pith)($var43)))(function (o_1) {
         ($var47 => ($var46 => {
           var arg00__2;
-          return ($var45 => ($var44 => o_1(Span($var44)))((0, _pnode.tree)($var45)))((arg00__2 = _m.TimeModule.ms(0), function (a_4) {
-            return (0, _m.at)(arg00__2, a_4);
+          return ($var45 => ($var44 => o_1(Span($var44)))((0, _pnode.tree)($var45)))((arg00__2 = _stream.TimeModule.ms(0), function (a_4) {
+            return (0, _stream.at)(arg00__2, a_4);
           })($var46));
         })(_a.Pith.Of.bind(_a.Pith)($var47)))(function (o_2) {
           ($var50 => ($var49 => {
             var arg00__3;
-            return ($var48 => o_2(_Text($var48)))((arg00__3 = _m.TimeModule.ms(0), function (a_6) {
-              return (0, _m.at)(arg00__3, a_6);
+            return ($var48 => o_2(_Text($var48)))((arg00__3 = _stream.TimeModule.ms(0), function (a_6) {
+              return (0, _stream.at)(arg00__3, a_6);
             })($var49));
           })(_pnode.Patch.once.bind(_pnode.Patch)($var50)))(function (text) {
             text.textContent = "+";
@@ -188,20 +188,20 @@ const Dom = exports.Dom = function (__exports) {
 
       ($var54 => ($var53 => {
         var arg00__4;
-        return ($var52 => ($var51 => o(Button($var51)))((0, _pnode.tree)($var52)))((arg00__4 = _m.TimeModule.ms(0), function (a_7) {
-          return (0, _m.at)(arg00__4, a_7);
+        return ($var52 => ($var51 => o(Button($var51)))((0, _pnode.tree)($var52)))((arg00__4 = _stream.TimeModule.ms(0), function (a_7) {
+          return (0, _stream.at)(arg00__4, a_7);
         })($var53));
       })(_a.Pith.Of.bind(_a.Pith)($var54)))(function (o_3) {
         ($var58 => ($var57 => {
           var arg00__5;
-          return ($var56 => ($var55 => o_3(Span($var55)))((0, _pnode.tree)($var56)))((arg00__5 = _m.TimeModule.ms(0), function (a_9) {
-            return (0, _m.at)(arg00__5, a_9);
+          return ($var56 => ($var55 => o_3(Span($var55)))((0, _pnode.tree)($var56)))((arg00__5 = _stream.TimeModule.ms(0), function (a_9) {
+            return (0, _stream.at)(arg00__5, a_9);
           })($var57));
         })(_a.Pith.Of.bind(_a.Pith)($var58)))(function (o_4) {
           ($var61 => ($var60 => {
             var arg00__6;
-            return ($var59 => o_4(_Text($var59)))((arg00__6 = _m.TimeModule.ms(0), function (a_11) {
-              return (0, _m.at)(arg00__6, a_11);
+            return ($var59 => o_4(_Text($var59)))((arg00__6 = _stream.TimeModule.ms(0), function (a_11) {
+              return (0, _stream.at)(arg00__6, a_11);
             })($var60));
           })(_pnode.Patch.once.bind(_pnode.Patch)($var61)))(function (text_1) {
             text_1.textContent = "-";
@@ -215,8 +215,8 @@ const Dom = exports.Dom = function (__exports) {
 
       ($var65 => ($var64 => {
         var arg00__7;
-        return ($var63 => ($var62 => o(H3($var62)))((0, _pnode.tree)($var63)))((arg00__7 = _m.TimeModule.ms(0), function (a_12) {
-          return (0, _m.at)(arg00__7, a_12);
+        return ($var63 => ($var62 => o(H3($var62)))((0, _pnode.tree)($var63)))((arg00__7 = _stream.TimeModule.ms(0), function (a_12) {
+          return (0, _stream.at)(arg00__7, a_12);
         })($var64));
       })(_a.Pith.Of.bind(_a.Pith)($var65)))(function (o_5) {
         ($var67 => {
@@ -226,16 +226,21 @@ const Dom = exports.Dom = function (__exports) {
               text_2.textContent = i.toString();
             });
           }, function (arg10_) {
-            return (0, _m.map)(f_2, arg10_);
+            return (0, _stream.map)(f_2, arg10_);
           })($var67));
         })(intS);
       });
     });
   };
 
-  const rez_1 = __exports.rez = (0, _m.scan)(_pnode.Patch.apply.bind(_pnode.Patch), document.getElementById("root-node"), ($var69 => ($var68 => (0, _pnode.tree)((0, _m.now)($var68)))(_a.Pith.Of.bind(_a.Pith)($var69)))(function (o) {
+  const rez_1 = __exports.rez = (0, _stream.scan)(_pnode.Patch.apply.bind(_pnode.Patch), document.getElementById("root-node"), ($var69 => ($var68 => (0, _pnode.tree)((0, _stream.now)($var68)))(_a.Pith.Of.bind(_a.Pith)($var69)))(function (o) {
     o(counter(3));
   }));
-  (0, _m.drain)(rez_1), void 0;
+  (0, _stream.drain)(rez_1), void 0;
+  return __exports;
+}({});
+
+const Test = exports.Test = function (__exports) {
+  const a = __exports.a = (0, _stream.now)(1);
   return __exports;
 }({});

@@ -1,5 +1,4 @@
 module Sakhe.Show
-open M
 open Fable.Import.Browser
 open Fable.Core.JsInterop
 
@@ -24,6 +23,7 @@ module State =
         age: int
     }
     open A
+    open Stream
     let rez =
         oTree << (at << ms) 0. << Pith.Of <| fun o ->
             o << Number "a" << now <| R.set 1.
@@ -81,8 +81,8 @@ module Dom =
     let Text =
         pnode <| ap (fun () -> (document.createTextNode "") :> Node) (fun n -> n.nodeName = "#text")
     // let (<<|) a b = a (M.now b)
-
-    let intS = periodic (ms 10.) |> M.scan (fun c _ -> c + 1) 0 |> skip 1 |> multicast
+    open Stream
+    let intS = periodic (ms 10.) |> Stream.scan (fun c _ -> c + 1) 0 |> skip 1 |> multicast
 
     let rec counter d =
         Div << tree << at (ms 0.) << Pith.Of <| fun o ->
@@ -95,7 +95,7 @@ module Dom =
                     o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "-"
                 if d > 0 then o <| counter (d - 1)
             o << H3 << tree << at (ms 0.) << Pith.Of <| fun o ->
-                o << Text << M.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
+                o << Text << Stream.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
 
     let rez =
         tree << now << Pith.Of <| fun o ->
@@ -105,3 +105,7 @@ module Dom =
             (document.getElementById "root-node"  :> Node)
 
     drain rez |> ignore
+
+open Sakhe
+module Test =
+    let a = Stream.now 1

@@ -1,18 +1,17 @@
 module Sakhe.State
 open Fable.Core
 open Sakhe
-open M
 open Fable
 
 [<Fable.Core.Erase>]
 type R<'a> = private R of ('a option -> 'a)
 
 type RValue<'key> =
-    | RString of  'key * Stream<string R>
-    | RNumber of  'key * Stream<float R>
-    | RBool   of  'key * Stream<bool R>
-    | RObject of  'key * Stream<obj R>
-    | RArray  of  'key * Stream<obj [] R>
+    | RString of  'key * Stream.T<string R>
+    | RNumber of  'key * Stream.T<float R>
+    | RBool   of  'key * Stream.T<bool R>
+    | RObject of  'key * Stream.T<obj R>
+    | RArray  of  'key * Stream.T<obj [] R>
 
 module R =
     let set a = R <| fun _ -> a
@@ -77,18 +76,18 @@ module private Impl =
 
     let makeRing absurdObj pith o: unit =
         pith <| function
-        | RString (key, r) -> o (map (chain absurdObj key asString) r)
-        | RNumber (key, r) -> o (map (chain absurdObj key asNumber) r)
-        | RBool (key, r) -> o (map (chain absurdObj key asBool) r)
-        | RObject (key, r) -> o (map (chain absurdObj key asObject)  r)
-        | RArray (key, r) -> o (map (chain absurdObj key asArray) r)
+        | RString (key, r) -> o (Stream.map (chain absurdObj key asString) r)
+        | RNumber (key, r) -> o (Stream.map (chain absurdObj key asNumber) r)
+        | RBool (key, r) -> o (Stream.map (chain absurdObj key asBool) r)
+        | RObject (key, r) -> o (Stream.map (chain absurdObj key asObject)  r)
+        | RArray (key, r) -> o (Stream.map (chain absurdObj key asArray) r)
         ()
 
     let merge list =
-        List.fold (fun a b -> merge b a) (empty ()) list
+        List.fold (fun a b -> Stream.merge b a) (Stream.empty ()) list
 
 let oTree pith =
-        (M.tree (A.DeltaC merge) (M.map (A.Pith.map (makeRing absurdObj)) pith))
+        (M.tree (A.DeltaC merge) (Stream.map (A.Pith.map (makeRing absurdObj)) pith))
 
 let aTree pith =
-        (M.tree (A.DeltaC merge) (M.map (A.Pith.map (makeRing absurdArray)) pith))
+        (M.tree (A.DeltaC merge) (Stream.map (A.Pith.map (makeRing absurdArray)) pith))
