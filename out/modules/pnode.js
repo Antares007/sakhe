@@ -3,8 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ap = ap;
-exports.pnode = pnode;
+exports.PNode = exports.AP = undefined;
 exports.tree = tree;
 
 var _Symbol2 = require("./fable-core/Symbol");
@@ -43,6 +42,7 @@ class AP {
 
 }
 
+exports.AP = AP;
 (0, _Symbol2.setType)("Sakhe.PNode.AP", AP);
 
 class PNode {
@@ -63,15 +63,8 @@ class PNode {
 
 }
 
+exports.PNode = PNode;
 (0, _Symbol2.setType)("Sakhe.PNode.PNode", PNode);
-
-function ap(a, p) {
-  return new AP(0, [a, p]);
-}
-
-function pnode(ap_1, s) {
-  return new PNode(0, [ap_1, s]);
-}
 
 const Impl = function (__exports) {
   const tryFind = __exports.tryFind = function ($var8, $var9, $var10) {
@@ -154,9 +147,12 @@ function tree(pith) {
       const a = _arg1.data[0].data[0];
       const index = c | 0;
       c = c + 1 | 0;
-      o((0, _m.map)((0, _CurriedLambda2.default)(function (patch) {
-        return Impl.chain(a, prove, index, patch);
-      }), _arg1.data[1]));
+      o((0, _m.map)($var3 => $var4 => {
+        var arg;
+        (arg = [a, prove], (0, _CurriedLambda2.default)(function (patch) {
+          return Impl.chain(arg[0], arg[1], index, patch);
+        }))($var3, $var4);
+      }, _arg1.data[1]));
     });
     o((0, _m.now)(function makeOnce(f) {
       var b;
@@ -184,8 +180,8 @@ function tree(pith) {
   };
 
   folder = function (arg10_, arg20_) {
-    return (0, _m.combine)(($var3, $var4) => $var5 => {
-      f($var3, $var4, $var5);
+    return (0, _m.combine)(($var5, $var6) => $var7 => {
+      f($var5, $var6, $var7);
     }, arg10_, arg20_);
   };
 
@@ -197,7 +193,7 @@ function tree(pith) {
     return (0, _Seq.fold)(folder, state, source);
   };
 
-  return (0, _m.tree)((0, _a.deltaC)(deltac), (0, _m.map)(function (arg10__1) {
+  return (0, _m.tree)(deltac, (0, _m.map)(function (arg10__1) {
     return (0, _a.pmap)(ring, arg10__1);
   }, pith));
 }

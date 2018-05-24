@@ -6,12 +6,8 @@ open M
 open A
 
 type Patch<'a> = 'a -> unit
-type AP<'a> = private AP of (unit -> 'a) * (Node -> bool)
-type PNode = private PNode of Node AP * Stream<Node Patch>
-
-let ap a p = AP (a, p)
-
-let pnode ap s = PNode (ap, s)
+type AP<'a> = AP of (unit -> 'a) * (Node -> bool)
+type PNode = PNode of Node AP * Stream<Node Patch>
 
 [<AutoOpen>]
 module private Impl =
@@ -72,7 +68,7 @@ module private Impl =
                 (prove, index, elm))
 
 let tree pith =
-    let ring (pith: (PNode -> unit) -> unit) (o: Stream<Patch<Node>> -> unit): unit =
+    let ring pith o =
         let mutable c = 0
 
         pith <| function
@@ -84,9 +80,10 @@ let tree pith =
         o (M.now (once (fun elm ->
             for i = unbox elm.childNodes.length - 1 downto c do
                 elm.removeChild elm.childNodes.[i] |> ignore)))
+        ()
 
     let deltac =
         Seq.fold (combine (fun p0 p e -> p e;  p0 e)) (now (ignore))
 
-    M.tree (deltaC deltac) (map (pmap ring) pith)
+    M.tree (DeltaC deltac) (map (pmap ring) pith)
 

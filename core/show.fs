@@ -25,10 +25,10 @@ module State =
     }
     open A
     let rez =
-        objectTree << (at << ms) 0. << pith <| fun o ->
+        objectTree << (at << ms) 0. << Pith <| fun o ->
             o << Number "a" << now <| (fun _ -> 1.)
             o << Object "b" << now <| fun _ -> createObj [ "k" ==> 42]
-            o << Object "b" << objectTree << now << pith <| fun o ->
+            o << Object "b" << objectTree << now << Pith <| fun o ->
                 o << Number "k" << now <| function
                     | Some k -> k + 1.
                     | None -> 0.
@@ -41,13 +41,13 @@ module State =
                     { name ="archil"; age = 42 }
                     { name ="archil"; age = 42 } |]
 
-            o << Array "array" << arrayTree << at (ms 3000.) << pith <| fun a ->
+            o << Array "array" << arrayTree << at (ms 3000.) << Pith <| fun a ->
                 a << Number 0 << now <| function
                     | Some k -> k + 1.
                     | None -> 42.
                 ()
             ()
-            o << Array "array" << arrayTree << at (ms 3000.) << pith <| fun a ->
+            o << Array "array" << arrayTree << at (ms 3000.) << Pith <| fun a ->
                 a << Number 0 << now <| function
                     | Some k -> k + 1.
                     | None -> 0.
@@ -63,8 +63,9 @@ module State =
 module Dom =
     open PNode
 
-    let elementAP (tag: string) =
-        ap (fun () -> (document.createElement tag) :> Node) (fun n -> n.nodeName = tag)
+    let ap a b = AP (a, b)
+    let pnode ap s = PNode (ap, s)
+    let elementAP tag = ap (fun () -> (document.createElement tag) :> Node) (fun n -> n.nodeName = tag)
 
     let createElm = pnode << elementAP
     let Div = createElm "DIV"
@@ -82,20 +83,20 @@ module Dom =
 
     let intS = periodic (ms 10.) |> M.scan (fun c _ -> c + 1) 0 |> skip 1 |> multicast
     let rec counter d =
-        Div << PNode.tree << at (ms 0.) << pith <| fun o ->
-            o << Button << PNode.tree << at (ms 0.) << pith <| fun o ->
-                o << Span << PNode.tree << at (ms 0.) << pith <| fun o ->
+        Div << PNode.tree << at (ms 0.) << Pith <| fun o ->
+            o << Button << PNode.tree << at (ms 0.) << Pith <| fun o ->
+                o << Span << PNode.tree << at (ms 0.) << Pith <| fun o ->
                     o << Text << at (ms 0.) <| fun text -> text.textContent <- "+"
                 if d > 0 then o <| counter (d - 1)
-            o << Button << PNode.tree << at (ms 0.) << pith <| fun o ->
-                o << Span << PNode.tree << at (ms 0.) << pith <| fun o ->
+            o << Button << PNode.tree << at (ms 0.) << Pith <| fun o ->
+                o << Span << PNode.tree << at (ms 0.) << Pith <| fun o ->
                     o << Text << at (ms 0.) <| fun text -> text.textContent <- "-"
                 if d > 0 then o <| counter (d - 1)
-            o << H3 << PNode.tree << at (ms 0.) << pith <| fun o ->
+            o << H3 << PNode.tree << at (ms 0.) << Pith <| fun o ->
                 o << Text << M.map (fun i -> fun text -> text.textContent <- string i) <| intS
 
     let rez =
-        PNode.tree << now << pith <| fun o -> o (counter 3)
+        PNode.tree << now << Pith <| fun o -> o (counter 3)
         |> scan
             (fun n p -> p(n); n)
             (document.getElementById "root-node")

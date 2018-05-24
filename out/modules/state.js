@@ -136,7 +136,7 @@ function objectTree(pith) {
     }, (0, _m.empty)(), list);
   };
 
-  return (0, _m.tree)((0, _a.deltaC)(deltac), (0, _m.map)((f = function (pith_1, o) {
+  return (0, _m.tree)(deltac, (0, _m.map)((f = function (pith_1, o) {
     Impl.ring(function () {
       return {};
     }, pith_1, o);
@@ -154,7 +154,7 @@ function arrayTree(pith) {
     }, (0, _m.empty)(), list);
   };
 
-  return (0, _m.tree)((0, _a.deltaC)(deltac), (0, _m.map)((f = function (pith_1, o) {
+  return (0, _m.tree)(deltac, (0, _m.map)((f = function (pith_1, o) {
     Impl.ring(function () {
       return [];
     }, pith_1, o);

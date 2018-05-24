@@ -3,8 +3,6 @@ open Fable.Core
 open Sakhe
 open M
 
-type Pith<'a> = ('a -> unit) -> unit
-
 type R<'a> = 'a option -> 'a
 
 type RValue<'key> =
@@ -66,12 +64,14 @@ module private Impl =
         | RBool (key, r) -> o (M.map (chain absurdObj key asBool) r)
         | RObject (key, r) -> o (M.map (chain absurdObj key asObject)  r)
         | RArray (key, r) -> o (M.map (chain absurdObj key asArray) r)
-open A
-let rec objectTree (pith: Stream<Pith<RValue<string>>>): Stream<R<obj>> =
-    let deltac list = List.fold (fun a b -> merge b a) (empty ()) list
-    M.tree (deltaC deltac) (M.map (pmap (ring absurdObj)) pith)
 
-let arrayTree (pith: Stream<Pith<RValue<int>>>): Stream<R<obj []>> =
+open A
+
+let rec objectTree pith =
     let deltac list = List.fold (fun a b -> merge b a) (empty ()) list
-    M.tree (deltaC deltac) (M.map (pmap (ring absurdArray)) pith)
+    M.tree (DeltaC deltac) (M.map (pmap (ring absurdObj)) pith)
+
+let arrayTree pith =
+    let deltac list = List.fold (fun a b -> merge b a) (empty ()) list
+    M.tree (DeltaC deltac) (M.map (pmap (ring absurdArray)) pith)
 
