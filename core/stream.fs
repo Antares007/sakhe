@@ -1,10 +1,8 @@
 
-module Sakhe.Stream
-open Most
-open Most.M
+namespace Sakhe
 
 [<Fable.Core.Erase>]
-type T<'a> = private T of IStream<'a>
+type S<'a> = private S of Most.IStream<'a>
 
 [<Fable.Core.Erase>]
 type Time = private Time of float
@@ -13,22 +11,25 @@ type Time = private Time of float
 module Time =
     let ms ms = Time ms
 
-let empty () = T <| empty ()
-let now a = T (now a)
-let at (Time t) a = T (at t a)
-let see = at (Time 1.) (at (Time 1.) ())
-let map f (T s) = T (map f s)
-let switchLatest (T hs) = T << switchLatest << M.map (fun (T a) -> a) <| hs
-let combine f (T a) (T b) = T <| combine f a b
-let merge (T a) (T b) = T <| merge a b
-let konst a (T s) = T <| constant a s
-let constant = konst
+module S =
+    open Most
+    open Most.M
 
-let scan f state (T s) = T <| scan f state s
-let tap f (T s) = T <| tap f s
-let periodic (Time t) = T <| periodic t
-let skip n (T s) = T <| skip n s
-let multicast (T s) = T <| multicast s
-let startWith a (T s) = T <| startWith a s
-let private scheduler = Most.Scheduler.newDefaultScheduler ()
-let drain (T s) = M.runEffects s scheduler
+    let empty () = S <| empty ()
+    let now a = S (now a)
+    let at (Time t) a = S (at t a)
+    let map f (S s) = S (map f s)
+    let switchLatest (S hs) = S << switchLatest << M.map (fun (S a) -> a) <| hs
+    let combine f (S a) (S b) = S <| combine f a b
+    let merge (S a) (S b) = S <| merge a b
+    let konst a (S s) = S <| constant a s
+    let constant = konst
+
+    let scan f state (S s) = S <| scan f state s
+    let tap f (S s) = S <| tap f s
+    let periodic (Time t) = S <| periodic t
+    let skip n (S s) = S <| skip n s
+    let multicast (S s) = S <| multicast s
+    let startWith a (S s) = S <| startWith a s
+    let private scheduler = Most.Scheduler.newDefaultScheduler ()
+    let drain (S s) = M.runEffects s scheduler

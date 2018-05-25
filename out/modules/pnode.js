@@ -150,11 +150,11 @@ function tree(pith) {
 
       const index = c | 0;
       c = c + 1 | 0;
-      o((0, _stream.map)(function (arg20_) {
+      o(_stream.S.map(function (arg20_) {
         return Impl.chain(a, prove_1, index, arg20_);
       }, _arg1.data[2]));
     });
-    o((0, _stream.now)(_patch.Patch.once(function (elm) {
+    o(_stream.S.now(_patch.Patch.once(function (elm) {
       for (let i = elm.childNodes.length - 1; i >= c; i--) {
         elm.removeChild(elm.childNodes[i]), void 0;
       }
@@ -169,10 +169,10 @@ function tree(pith) {
   };
 
   folder = function (arg10__1, arg20__1) {
-    return (0, _stream.combine)(f, arg10__1, arg20__1);
+    return _stream.S.combine(f, arg10__1, arg20__1);
   };
 
-  const state = (0, _stream.now)(function (value) {
+  const state = _stream.S.now(function (value) {
     value, void 0;
   });
 
@@ -180,7 +180,7 @@ function tree(pith) {
     return (0, _Seq.fold)(folder, state, source);
   };
 
-  return (0, _m.tree)(deltac, (0, _stream.map)(function (arg10__2) {
+  return (0, _m.tree)(deltac, _stream.S.map(function (arg10__2) {
     return _a.Pith.map(ring, arg10__2);
   }, pith));
 }

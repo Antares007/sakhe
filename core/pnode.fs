@@ -9,7 +9,7 @@ type Absurd<'a> = Absurd of (unit -> 'a)
 type Prove<'a, 'b> = Prove of ('a -> 'b option)
 
 type AP<'a> = AP of (unit -> 'a) * (Node -> bool)
-type Ray<'a when 'a :> Node> = RNode of Absurd<'a> * Prove<Node, 'a> * Stream.T<Patch<'a>>
+type Ray<'a when 'a :> Node> = RNode of Absurd<'a> * Prove<Node, 'a> * S<Patch<'a>>
 
 
 [<AutoOpen>]
@@ -72,14 +72,14 @@ let tree pith =
 
             let index = c
             c <- c + 1
-            o (Stream.map (chain (a, prove) index) p)
+            o (S.map (chain (a, prove) index) p)
 
-        o (Stream.now (Patch.once (fun elm ->
+        o (S.now (Patch.once (fun elm ->
             for i = unbox elm.childNodes.length - 1 downto c do
                 elm.removeChild elm.childNodes.[i] |> ignore)))
         ()
 
     let deltac =
-        Seq.fold (Stream.combine (Patch.combine)) (Stream.now (Patch ignore))
+        Seq.fold (S.combine (Patch.combine)) (S.now (Patch ignore))
 
-    M.tree (DeltaC deltac) (Stream.map (Pith.map ring) pith)
+    M.tree (DeltaC deltac) (S.map (Pith.map ring) pith)

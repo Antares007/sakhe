@@ -53,10 +53,10 @@ const Patch = exports.Patch = function (__exports) {
     };
 
     folder = function (arg10__1, arg20_) {
-      return (0, _stream.combine)(f, arg10__1, arg20_);
+      return _stream.S.combine(f, arg10__1, arg20_);
     };
 
-    const state = (0, _stream.now)(function (value) {
+    const state = _stream.S.now(function (value) {
       value, void 0;
     });
 

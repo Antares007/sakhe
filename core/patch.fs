@@ -27,5 +27,5 @@ module Patch =
 
     let tree pith =
         let deltac =
-            Seq.fold (Stream.combine (combine)) (Stream.now (Patch ignore))
+            Seq.fold (S.combine (combine)) (S.now (Patch ignore))
         M.tree (DeltaC deltac) pith
