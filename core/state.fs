@@ -82,11 +82,13 @@ module private Impl =
         | RArray (key, r) -> o (S.map (chain absurdObj key asArray) r)
         ()
 
-    let merge list =
-        List.fold (fun a b -> S.merge b a) (S.empty ()) list
+
+    let mergeTree pith =
+            M.tree (DeltaC (List.fold (fun a b -> S.merge b a) (S.empty ()))) pith
 
 let oTree pith =
-        (M.tree (DeltaC merge) (S.map (makeRing absurdObj) pith))
+    mergeTree (S.map (makeRing absurdObj) pith)
 
 let aTree pith =
-        (M.tree (DeltaC merge) (S.map (makeRing absurdArray) pith))
+    mergeTree (S.map (makeRing absurdArray) pith)
+
