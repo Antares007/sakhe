@@ -1,7 +1,7 @@
 module Sakhe.Show
-open Fable.Import.Browser
-open Fable.Core.JsInterop
 open Fable.Core
+open Fable.Core.JsInterop
+open Fable.Import.Browser
 
 module State =
     open Sakhe.State
@@ -76,16 +76,15 @@ module Dom =
         <| Absurd (fun () -> (document.createTextNode ""))
         <| Prove (fun (n: Node) -> if n.nodeName = "#text" then Some (unbox n) else None)
     // let (<<|) a b = a (M.now b)
-    open S
-    let intS = periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> skip 1 |> multicast
+    let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
 
-    let statTree t p = t << tree << now << Pith <| p
+    let statTree t p = t << tree << S.now << Pith <| p
     let div = statTree Div
     let btn = statTree Button
     let span = statTree Span
     let h3 = statTree H3
 
-    let text s = Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- s
+    let text s = Text << S.at (ms 0.) << Patch.once <| fun text -> text.textContent <- s
 
     let rec counter d =
         div <| fun o ->
@@ -101,36 +100,34 @@ module Dom =
                 o << Text << S.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
 
     let rez =
-        tree << now << Pith <| fun o ->
+        tree << S.now << Pith <| fun o ->
             o (counter 3)
-        |> scan
+        |> S.scan
             Patch.apply
             (document.getElementById "root-node")
 
-    drain rez |> ignore
+    S.drain rez |> ignore
 
-open Sakhe
 module Test =
-    open S
-    open Sakhe.Patch
+    open Patch
     let a = S.now 1
 
-    tree << now << Pith <| fun o ->
-        o << now << each <| fun (_: unit) ->
+    tree << S.now << Pith <| fun o ->
+        o << S.now << each <| fun (_: unit) ->
             console.log "start patching..."
 
-        o << tree << now << Pith <| fun o ->
-            periodic (ms 1000.)
-            |> konst 1
-            |> scan (+) 0
+        o << tree << S.now << Pith <| fun o ->
+            S.periodic (ms 1000.)
+            |> S.konst 1
+            |> S.scan (+) 0
             |> S.map (fun i -> once <| fun (_: unit) ->
                 console.log ("p", i))
             |> o
 
-            o << now << once <| fun (_) ->
+            o << S.now << once <| fun (_) ->
                 console.log "___"
 
-        o << now << each <| fun (_) ->
+        o << S.now << each <| fun (_) ->
             console.log "...end patching"
 
     |> S.scan apply ()
