@@ -55,7 +55,7 @@ module private Impl =
                 (prove, index, elm))
 
 let tree pith =
-    let ring pith o =
+    let ring (Pith pith) = Pith <| fun o ->
         let mutable c = 0
 
         pith <| function
@@ -77,4 +77,4 @@ let tree pith =
     let deltac =
         Seq.fold (S.combine (Patch.combine)) (S.now (Patch ignore))
 
-    M.tree (DeltaC deltac) (S.map (Pith.map ring) pith)
+    M.tree (DeltaC deltac) (S.map ring pith)

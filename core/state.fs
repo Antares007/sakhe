@@ -73,7 +73,7 @@ module private Impl =
                 setKey key a o
                 o
 
-    let makeRing absurdObj pith o: unit =
+    let makeRing absurdObj (Pith pith) = Pith <| fun o ->
         pith <| function
         | RString (key, r) -> o (S.map (chain absurdObj key asString) r)
         | RNumber (key, r) -> o (S.map (chain absurdObj key asNumber) r)
@@ -86,7 +86,7 @@ module private Impl =
         List.fold (fun a b -> S.merge b a) (S.empty ()) list
 
 let oTree pith =
-        (M.tree (DeltaC merge) (S.map (Pith.map (makeRing absurdObj)) pith))
+        (M.tree (DeltaC merge) (S.map (makeRing absurdObj) pith))
 
 let aTree pith =
-        (M.tree (DeltaC merge) (S.map (Pith.map (makeRing absurdArray)) pith))
+        (M.tree (DeltaC merge) (S.map (makeRing absurdArray) pith))

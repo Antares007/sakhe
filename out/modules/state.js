@@ -21,8 +21,6 @@ var _Seq = require("./fable-core/Seq");
 
 var _m = require("./m");
 
-var _pith = require("./pith");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class RValue {
@@ -93,51 +91,57 @@ const Impl = function (__exports) {
     };
   };
 
-  const makeRing = __exports.makeRing = function (absurdObj, pith, o) {
-    pith(function (_arg1) {
-      var prove;
-      var prove_1;
-      var prove_2;
-      var prove_3;
-      var prove_4;
+  const makeRing = __exports.makeRing = function (absurdObj, _arg1) {
+    return function (o) {
+      _arg1(function (_arg2) {
+        var prove;
+        var prove_1;
+        var prove_2;
+        var prove_3;
+        var prove_4;
 
-      switch (_arg1.tag) {
-        case 1:
-          return o(_stream.S.map((prove = function (arg00_) {
-            return typeof arg00_ === "number" ? arg00_ : null;
-          }, function (arg30_) {
-            return chain(absurdObj, _arg1.data[0], prove, arg30_);
-          }), _arg1.data[1]));
+        switch (_arg2.tag) {
+          case 1:
+            o(_stream.S.map((prove = function (arg00_) {
+              return typeof arg00_ === "number" ? arg00_ : null;
+            }, function (arg30_) {
+              return chain(absurdObj, _arg2.data[0], prove, arg30_);
+            }), _arg2.data[1]));
+            break;
 
-        case 2:
-          return o(_stream.S.map((prove_1 = function (arg00__1) {
-            return typeof arg00__1 === "boolean" ? arg00__1 : null;
-          }, function (arg30__1) {
-            return chain(absurdObj, _arg1.data[0], prove_1, arg30__1);
-          }), _arg1.data[1]));
+          case 2:
+            o(_stream.S.map((prove_1 = function (arg00__1) {
+              return typeof arg00__1 === "boolean" ? arg00__1 : null;
+            }, function (arg30__1) {
+              return chain(absurdObj, _arg2.data[0], prove_1, arg30__1);
+            }), _arg2.data[1]));
+            break;
 
-        case 3:
-          return o(_stream.S.map((prove_2 = function (arg00__2) {
-            return typeof arg00__2 === "object" && arg00__2 != null ? arg00__2 : null;
-          }, function (arg30__2) {
-            return chain(absurdObj, _arg1.data[0], prove_2, arg30__2);
-          }), _arg1.data[1]));
+          case 3:
+            o(_stream.S.map((prove_2 = function (arg00__2) {
+              return typeof arg00__2 === "object" && arg00__2 != null ? arg00__2 : null;
+            }, function (arg30__2) {
+              return chain(absurdObj, _arg2.data[0], prove_2, arg30__2);
+            }), _arg2.data[1]));
+            break;
 
-        case 4:
-          return o(_stream.S.map((prove_3 = function (arg00__3) {
-            return Array.isArray(arg00__3) ? arg00__3 : null;
-          }, function (arg30__3) {
-            return chain(absurdObj, _arg1.data[0], prove_3, arg30__3);
-          }), _arg1.data[1]));
+          case 4:
+            o(_stream.S.map((prove_3 = function (arg00__3) {
+              return Array.isArray(arg00__3) ? arg00__3 : null;
+            }, function (arg30__3) {
+              return chain(absurdObj, _arg2.data[0], prove_3, arg30__3);
+            }), _arg2.data[1]));
+            break;
 
-        default:
-          return o(_stream.S.map((prove_4 = function (arg00__4) {
-            return typeof arg00__4 === "string" ? arg00__4 : null;
-          }, function (arg30__4) {
-            return chain(absurdObj, _arg1.data[0], prove_4, arg30__4);
-          }), _arg1.data[1]));
-      }
-    });
+          default:
+            o(_stream.S.map((prove_4 = function (arg00__4) {
+              return typeof arg00__4 === "string" ? arg00__4 : null;
+            }, function (arg30__4) {
+              return chain(absurdObj, _arg2.data[0], prove_4, arg30__4);
+            }), _arg2.data[1]));
+        }
+      });
+    };
   };
 
   const merge = __exports.merge = function (list) {
@@ -150,23 +154,17 @@ const Impl = function (__exports) {
 }({});
 
 function oTree(pith) {
-  var f;
-  return (0, _m.tree)(Impl.merge.bind(Impl), _stream.S.map((f = function (pith_1, o) {
-    Impl.makeRing(function () {
+  return (0, _m.tree)(Impl.merge.bind(Impl), _stream.S.map(function (arg10_) {
+    return Impl.makeRing(function () {
       return {};
-    }, pith_1, o);
-  }, function (arg10_) {
-    return _pith.Pith.map(f, arg10_);
-  }), pith));
+    }, arg10_);
+  }, pith));
 }
 
 function aTree(pith) {
-  var f;
-  return (0, _m.tree)(Impl.merge.bind(Impl), _stream.S.map((f = function (pith_1, o) {
-    Impl.makeRing(function () {
+  return (0, _m.tree)(Impl.merge.bind(Impl), _stream.S.map(function (arg10_) {
+    return Impl.makeRing(function () {
       return [];
-    }, pith_1, o);
-  }, function (arg10_) {
-    return _pith.Pith.map(f, arg10_);
-  }), pith));
+    }, arg10_);
+  }, pith));
 }

@@ -22,8 +22,6 @@ var _Seq = require("./fable-core/Seq");
 
 var _m = require("./m");
 
-var _pith = require("./pith");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class Ray {
@@ -113,33 +111,37 @@ const Impl = function (__exports) {
 }({});
 
 function tree(pith) {
-  const ring = function (pith_1, o) {
-    let c = 0;
-    pith_1(function (_arg1) {
-      const prove = _arg1.data[1];
-      const a = _arg1.data[0];
+  const ring = function (_arg1) {
+    return function (o) {
+      let c = 0;
 
-      const prove_1 = function (n) {
-        const matchValue = prove(n);
+      _arg1(function (_arg2) {
+        const prove = _arg2.data[1];
+        const a = _arg2.data[0];
 
-        if (matchValue == null) {
-          return false;
-        } else {
-          return true;
+        const prove_1 = function (n) {
+          const matchValue = prove(n);
+
+          if (matchValue == null) {
+            return false;
+          } else {
+            return true;
+          }
+        };
+
+        const index = c | 0;
+        c = c + 1 | 0;
+        o(_stream.S.map(function (arg20_) {
+          return Impl.chain(a, prove_1, index, arg20_);
+        }, _arg2.data[2]));
+      });
+
+      o(_stream.S.now(_patch.Patch.once(function (elm) {
+        for (let i = elm.childNodes.length - 1; i >= c; i--) {
+          elm.removeChild(elm.childNodes[i]), void 0;
         }
-      };
-
-      const index = c | 0;
-      c = c + 1 | 0;
-      o(_stream.S.map(function (arg20_) {
-        return Impl.chain(a, prove_1, index, arg20_);
-      }, _arg1.data[2]));
-    });
-    o(_stream.S.now(_patch.Patch.once(function (elm) {
-      for (let i = elm.childNodes.length - 1; i >= c; i--) {
-        elm.removeChild(elm.childNodes[i]), void 0;
-      }
-    })));
+      })));
+    };
   };
 
   let deltac;
@@ -161,7 +163,5 @@ function tree(pith) {
     return (0, _Seq.fold)(folder, state, source);
   };
 
-  return (0, _m.tree)(deltac, _stream.S.map(function (arg10__2) {
-    return _pith.Pith.map(ring, arg10__2);
-  }, pith));
+  return (0, _m.tree)(deltac, _stream.S.map(ring, pith));
 }

@@ -31,9 +31,9 @@ module State =
 
     *)
     let rez =
-        oTree << at (ms 0.) << Pith.Of <| fun o ->
+        oTree << at (ms 0.) << Pith <| fun o ->
 
-            o << Object "achiko" << oTree << at (ms 3000.) << Pith.Of <| fun o ->
+            o << Object "achiko" << oTree << at (ms 3000.) << Pith <| fun o ->
                 o << Number "age" <<  at (ms 3000.) << R.update <| function
                     | Some v -> v + 1.
                     | None -> 0.
@@ -80,20 +80,20 @@ module Dom =
     let intS = periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> skip 1 |> multicast
 
     let rec counter d =
-        Div << tree << at (ms 0.) << Pith.Of <| fun o ->
-            o << Button << tree << at (ms 0.) << Pith.Of <| fun o ->
-                o << Span << tree << at (ms 0.) << Pith.Of <| fun o ->
+        Div << tree << at (ms 0.) << Pith <| fun o ->
+            o << Button << tree << at (ms 0.) << Pith <| fun o ->
+                o << Span << tree << at (ms 0.) << Pith <| fun o ->
                     o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "+"
                 if d > 0 then o <| counter (d - 1)
-            o << Button << tree << at (ms 0.) << Pith.Of <| fun o ->
-                o << Span << tree << at (ms 0.) << Pith.Of <| fun o ->
+            o << Button << tree << at (ms 0.) << Pith <| fun o ->
+                o << Span << tree << at (ms 0.) << Pith <| fun o ->
                     o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "-"
                 if d > 0 then o <| counter (d - 1)
-            o << H3 << tree << at (ms 0.) << Pith.Of <| fun o ->
+            o << H3 << tree << at (ms 0.) << Pith <| fun o ->
                 o << Text << S.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
 
     let rez =
-        tree << now << Pith.Of <| fun o ->
+        tree << now << Pith <| fun o ->
             o (counter 3)
         |> scan
             Patch.apply
@@ -107,11 +107,11 @@ module Test =
     open Sakhe.Patch
     let a = S.now 1
 
-    tree << now << Pith.Of <| fun o ->
+    tree << now << Pith <| fun o ->
         o << now << each <| fun (_: unit) ->
             console.log "start patching..."
 
-        o << tree << now << Pith.Of <| fun o ->
+        o << tree << now << Pith <| fun o ->
             periodic (ms 1000.)
             |> konst 1
             |> scan (+) 0

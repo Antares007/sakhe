@@ -11,8 +11,6 @@ var _state = require("./state");
 
 var _stream = require("./stream");
 
-var _pith = require("./pith");
-
 var _pnode = require("./pnode");
 
 var _CurriedLambda = require("./fable-core/CurriedLambda");
@@ -46,21 +44,25 @@ const State = exports.State = function (__exports) {
 
   const emptystring = __exports.emptystring = {};
 
-  const rez = __exports.rez = _stream.S.tap(console.log.bind(console), _stream.S.scan(_state.R.apply.bind(_state.R), {}, ($var2 => ($var1 => (0, _state.oTree)(_stream.S.at(_stream.TimeModule.ms(0), $var1)))(_pith.Pith.Of.bind(_pith.Pith)($var2)))(function (o) {
+  const rez = __exports.rez = _stream.S.tap(console.log.bind(console), _stream.S.scan(_state.R.apply.bind(_state.R), {}, ($var2 => ($var1 => (0, _state.oTree)(_stream.S.at(_stream.TimeModule.ms(0), $var1)))(function (arg0) {
+    return arg0;
+  }($var2)))(function (o) {
     ($var6 => ($var5 => {
       var arg00_;
       return ($var4 => ($var3 => o(function (s_1) {
         return _Object("achiko", s_1);
-      }($var3)))((0, _state.oTree)($var4)))((arg00_ = _stream.TimeModule.ms(3000), function (a_1) {
-        return _stream.S.at(arg00_, a_1);
+      }($var3)))((0, _state.oTree)($var4)))((arg00_ = _stream.TimeModule.ms(3000), function (a) {
+        return _stream.S.at(arg00_, a);
       })($var5));
-    })(_pith.Pith.Of.bind(_pith.Pith)($var6)))(function (o_1) {
+    })(function (arg0_1) {
+      return arg0_1;
+    }($var6)))(function (o_1) {
       ($var9 => ($var8 => {
         var arg00__1;
         return ($var7 => o_1(function (s_2) {
           return _Number("age", s_2);
-        }($var7)))((arg00__1 = _stream.TimeModule.ms(3000), function (a_3) {
-          return _stream.S.at(arg00__1, a_3);
+        }($var7)))((arg00__1 = _stream.TimeModule.ms(3000), function (a_1) {
+          return _stream.S.at(arg00__1, a_1);
         })($var8));
       })(_state.R.update.bind(_state.R)($var9)))(function (_arg1) {
         return _arg1 == null ? 0 : (0, _Option.getValue)(_arg1) + 1;
@@ -114,23 +116,29 @@ const Dom = exports.Dom = function (__exports) {
       return ($var15 => Div((0, _pnode.tree)($var15)))((arg00_ = _stream.TimeModule.ms(0), function (a) {
         return _stream.S.at(arg00_, a);
       })($var16));
-    })(_pith.Pith.Of.bind(_pith.Pith)($var17)))(function (o) {
+    })(function (arg0) {
+      return arg0;
+    }($var17)))(function (o) {
       ($var21 => ($var20 => {
         var arg00__1;
-        return ($var19 => ($var18 => o(Button($var18)))((0, _pnode.tree)($var19)))((arg00__1 = _stream.TimeModule.ms(0), function (a_2) {
-          return _stream.S.at(arg00__1, a_2);
+        return ($var19 => ($var18 => o(Button($var18)))((0, _pnode.tree)($var19)))((arg00__1 = _stream.TimeModule.ms(0), function (a_1) {
+          return _stream.S.at(arg00__1, a_1);
         })($var20));
-      })(_pith.Pith.Of.bind(_pith.Pith)($var21)))(function (o_1) {
+      })(function (arg0_1) {
+        return arg0_1;
+      }($var21)))(function (o_1) {
         ($var25 => ($var24 => {
           var arg00__2;
-          return ($var23 => ($var22 => o_1(Span($var22)))((0, _pnode.tree)($var23)))((arg00__2 = _stream.TimeModule.ms(0), function (a_4) {
-            return _stream.S.at(arg00__2, a_4);
+          return ($var23 => ($var22 => o_1(Span($var22)))((0, _pnode.tree)($var23)))((arg00__2 = _stream.TimeModule.ms(0), function (a_2) {
+            return _stream.S.at(arg00__2, a_2);
           })($var24));
-        })(_pith.Pith.Of.bind(_pith.Pith)($var25)))(function (o_2) {
+        })(function (arg0_2) {
+          return arg0_2;
+        }($var25)))(function (o_2) {
           ($var28 => ($var27 => {
             var arg00__3;
-            return ($var26 => o_2(_Text($var26)))((arg00__3 = _stream.TimeModule.ms(0), function (a_6) {
-              return _stream.S.at(arg00__3, a_6);
+            return ($var26 => o_2(_Text($var26)))((arg00__3 = _stream.TimeModule.ms(0), function (a_3) {
+              return _stream.S.at(arg00__3, a_3);
             })($var27));
           })(_patch.Patch.once.bind(_patch.Patch)($var28)))(function (text) {
             text.textContent = "+";
@@ -144,20 +152,24 @@ const Dom = exports.Dom = function (__exports) {
 
       ($var32 => ($var31 => {
         var arg00__4;
-        return ($var30 => ($var29 => o(Button($var29)))((0, _pnode.tree)($var30)))((arg00__4 = _stream.TimeModule.ms(0), function (a_7) {
-          return _stream.S.at(arg00__4, a_7);
+        return ($var30 => ($var29 => o(Button($var29)))((0, _pnode.tree)($var30)))((arg00__4 = _stream.TimeModule.ms(0), function (a_4) {
+          return _stream.S.at(arg00__4, a_4);
         })($var31));
-      })(_pith.Pith.Of.bind(_pith.Pith)($var32)))(function (o_3) {
+      })(function (arg0_3) {
+        return arg0_3;
+      }($var32)))(function (o_3) {
         ($var36 => ($var35 => {
           var arg00__5;
-          return ($var34 => ($var33 => o_3(Span($var33)))((0, _pnode.tree)($var34)))((arg00__5 = _stream.TimeModule.ms(0), function (a_9) {
-            return _stream.S.at(arg00__5, a_9);
+          return ($var34 => ($var33 => o_3(Span($var33)))((0, _pnode.tree)($var34)))((arg00__5 = _stream.TimeModule.ms(0), function (a_5) {
+            return _stream.S.at(arg00__5, a_5);
           })($var35));
-        })(_pith.Pith.Of.bind(_pith.Pith)($var36)))(function (o_4) {
+        })(function (arg0_4) {
+          return arg0_4;
+        }($var36)))(function (o_4) {
           ($var39 => ($var38 => {
             var arg00__6;
-            return ($var37 => o_4(_Text($var37)))((arg00__6 = _stream.TimeModule.ms(0), function (a_11) {
-              return _stream.S.at(arg00__6, a_11);
+            return ($var37 => o_4(_Text($var37)))((arg00__6 = _stream.TimeModule.ms(0), function (a_6) {
+              return _stream.S.at(arg00__6, a_6);
             })($var38));
           })(_patch.Patch.once.bind(_patch.Patch)($var39)))(function (text_1) {
             text_1.textContent = "-";
@@ -171,10 +183,12 @@ const Dom = exports.Dom = function (__exports) {
 
       ($var43 => ($var42 => {
         var arg00__7;
-        return ($var41 => ($var40 => o(H3($var40)))((0, _pnode.tree)($var41)))((arg00__7 = _stream.TimeModule.ms(0), function (a_12) {
-          return _stream.S.at(arg00__7, a_12);
+        return ($var41 => ($var40 => o(H3($var40)))((0, _pnode.tree)($var41)))((arg00__7 = _stream.TimeModule.ms(0), function (a_7) {
+          return _stream.S.at(arg00__7, a_7);
         })($var42));
-      })(_pith.Pith.Of.bind(_pith.Pith)($var43)))(function (o_5) {
+      })(function (arg0_5) {
+        return arg0_5;
+      }($var43)))(function (o_5) {
         ($var45 => {
           var f_2;
           return ($var44 => o_5(_Text($var44)))((f_2 = function (i) {
@@ -189,7 +203,9 @@ const Dom = exports.Dom = function (__exports) {
     });
   };
 
-  const rez_1 = __exports.rez = _stream.S.scan(_patch.Patch.apply.bind(_patch.Patch), document.getElementById("root-node"), ($var47 => ($var46 => (0, _pnode.tree)(_stream.S.now($var46)))(_pith.Pith.Of.bind(_pith.Pith)($var47)))(function (o) {
+  const rez_1 = __exports.rez = _stream.S.scan(_patch.Patch.apply.bind(_patch.Patch), document.getElementById("root-node"), ($var47 => ($var46 => (0, _pnode.tree)(_stream.S.now($var46)))(function (arg0) {
+    return arg0;
+  }($var47)))(function (o) {
     o(counter(3));
   }));
 
@@ -208,12 +224,16 @@ const Test = exports.Test = function (__exports) {
     return function (arg20_) {
       return _stream.S.scan(f, null, arg20_);
     };
-  })()(($var49 => ($var48 => _patch.Patch.tree(_stream.S.now($var48)))(_pith.Pith.Of.bind(_pith.Pith)($var49)))(function (o) {
+  })()(($var49 => ($var48 => _patch.Patch.tree(_stream.S.now($var48)))(function (arg0) {
+    return arg0;
+  }($var49)))(function (o) {
     ($var51 => ($var50 => o(_stream.S.now.bind(_stream.S)($var50)))(_patch.Patch.each.bind(_patch.Patch)($var51)))(function () {
       console.log("start patching...");
     });
 
-    ($var54 => ($var53 => ($var52 => o(_patch.Patch.tree.bind(_patch.Patch)($var52)))(_stream.S.now.bind(_stream.S)($var53)))(_pith.Pith.Of.bind(_pith.Pith)($var54)))(function (o_1) {
+    ($var54 => ($var53 => ($var52 => o(_patch.Patch.tree.bind(_patch.Patch)($var52)))(_stream.S.now.bind(_stream.S)($var53)))(function (arg0_1) {
+      return arg0_1;
+    }($var54)))(function (o_1) {
       o_1(_stream.S.map(function (i) {
         return _patch.Patch.once(function () {
           console.log("p", i);
