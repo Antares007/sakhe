@@ -18,10 +18,6 @@ var _Option = require("./fable-core/Option");
 
 var _stream = require("./stream");
 
-var _Seq = require("./fable-core/Seq");
-
-var _m = require("./m");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class Ray {
@@ -44,11 +40,11 @@ exports.Ray = Ray;
 (0, _Symbol2.setType)("Sakhe.PNode.Ray", Ray);
 
 const Impl = function (__exports) {
-  const tryFind = __exports.tryFind = function ($var3, $var4, $var5) {
+  const tryFind = __exports.tryFind = function ($var6, $var7, $var8) {
     tryFind: while (true) {
-      const f = $var3;
-      const i = $var4;
-      const nlist = $var5;
+      const f = $var6;
+      const i = $var7;
+      const nlist = $var8;
 
       if (i >= nlist.length) {
         return null;
@@ -58,9 +54,9 @@ const Impl = function (__exports) {
         if (f(n)) {
           return n;
         } else {
-          $var3 = f;
-          $var4 = i + 1;
-          $var5 = nlist;
+          $var6 = f;
+          $var7 = i + 1;
+          $var8 = nlist;
           continue tryFind;
         }
       }
@@ -131,37 +127,24 @@ function tree(pith) {
 
         const index = c | 0;
         c = c + 1 | 0;
-        o(_stream.S.map(function (arg20_) {
-          return Impl.chain(a, prove_1, index, arg20_);
-        }, _arg2.data[2]));
+
+        ($var3 => {
+          var f;
+          return o((f = function (arg20_) {
+            return Impl.chain(a, prove_1, index, arg20_);
+          }, function (arg10_) {
+            return _stream.S.map(f, arg10_);
+          })($var3));
+        })(_arg2.data[2]);
       });
 
-      o(_stream.S.now(_patch.Patch.once(function (elm) {
+      ($var5 => ($var4 => o(_stream.S.now.bind(_stream.S)($var4)))(_patch.Patch.once.bind(_patch.Patch)($var5)))(function (elm) {
         for (let i = elm.childNodes.length - 1; i >= c; i--) {
           elm.removeChild(elm.childNodes[i]), void 0;
         }
-      })));
+      });
     };
   };
 
-  let deltac;
-  let folder;
-
-  const f = function (arg00_, arg10_) {
-    return _patch.Patch.combine(arg00_, arg10_);
-  };
-
-  folder = function (arg10__1, arg20__1) {
-    return _stream.S.combine(f, arg10__1, arg20__1);
-  };
-
-  const state = _stream.S.now(function (value) {
-    value, void 0;
-  });
-
-  deltac = function (source) {
-    return (0, _Seq.fold)(folder, state, source);
-  };
-
-  return (0, _m.tree)(deltac, _stream.S.map(ring, pith));
+  return _patch.Patch.tree(_stream.S.map(ring, pith));
 }
