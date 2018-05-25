@@ -5,7 +5,7 @@ open Sakhe
 open A
 
 [<Fable.Core.Erase>]
-type Patch<'a when 'a :> Node> = private Patch of ('a -> unit)
+type Patch<'a> = private Patch of ('a -> unit)
 [<Fable.Core.Erase>]
 type Absurd<'a> = Absurd of (unit -> 'a)
 [<Fable.Core.Erase>]
@@ -32,6 +32,11 @@ module Patch =
             p1 n
             p0 n
     let apply n (Patch p) = p n; n
+
+    let tree pith =
+        let deltac =
+            Seq.fold (Stream.combine (combine)) (Stream.now (Patch ignore))
+        M.tree (DeltaC deltac) pith
 
 [<AutoOpen>]
 module private Impl =

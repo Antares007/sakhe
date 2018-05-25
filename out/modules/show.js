@@ -194,5 +194,14 @@ const Dom = exports.Dom = function (__exports) {
 
 const Test = exports.Test = function (__exports) {
   const a = __exports.a = (0, _stream.now)(1);
+
+  const see = __exports.see = ($var49 => ($var48 => _pnode.Patch.tree((0, _stream.now)($var48)))(_a.Pith.Of.bind(_a.Pith)($var49)))(function (o) {
+    ($var51 => ($var50 => o((0, _stream.now)($var50)))(_pnode.Patch.once.bind(_pnode.Patch)($var51)))(function (_arg1) {});
+
+    ($var54 => ($var53 => ($var52 => o(_pnode.Patch.tree.bind(_pnode.Patch)($var52)))((0, _stream.now)($var53)))(_a.Pith.Of.bind(_a.Pith)($var54)))(function (o_1) {
+      ($var56 => ($var55 => o_1((0, _stream.now)($var55)))(_pnode.Patch.once.bind(_pnode.Patch)($var56)))(function (_arg2) {});
+    });
+  });
+
   return __exports;
 }({});

@@ -105,4 +105,15 @@ module Dom =
 
 open Sakhe
 module Test =
+    open Stream
+    open Sakhe.PNode
     let a = Stream.now 1
+
+    let see = Patch.tree << now << A.Pith.Of <| fun o ->
+        o << now << Patch.once <| fun (_: Node) ->
+            ()
+        o << Patch.tree << now << A.Pith.Of <| fun o ->
+            o << now << Patch.once <| fun (_: Node) ->
+                ()
+            ()
+        ()

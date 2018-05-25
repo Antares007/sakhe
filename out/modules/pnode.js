@@ -3,8 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Patch = exports.Ray = exports.AP = undefined;
-exports.tree = tree;
+exports.tree = exports.Patch = exports.Ray = exports.AP = undefined;
 
 var _Symbol2 = require("./fable-core/Symbol");
 
@@ -12,13 +11,13 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
-var _Option = require("./fable-core/Option");
-
 var _stream = require("./stream");
 
 var _Seq = require("./fable-core/Seq");
 
 var _m = require("./m");
+
+var _Option = require("./fable-core/Option");
 
 var _a = require("./a");
 
@@ -91,6 +90,29 @@ const Patch = exports.Patch = function (__exports) {
     return n;
   };
 
+  const tree = __exports.tree = function (pith) {
+    let deltac;
+    let folder;
+
+    const f = function (arg00_, arg10_) {
+      return combine(arg00_, arg10_);
+    };
+
+    folder = function (arg10__1, arg20_) {
+      return (0, _stream.combine)(f, arg10__1, arg20_);
+    };
+
+    const state = (0, _stream.now)(function (value) {
+      value, void 0;
+    });
+
+    deltac = function (source) {
+      return (0, _Seq.fold)(folder, state, source);
+    };
+
+    return (0, _m.tree)(deltac, pith);
+  };
+
   return __exports;
 }({});
 
@@ -161,7 +183,7 @@ const Impl = function (__exports) {
   return __exports;
 }({});
 
-function tree(pith) {
+function tree_1(pith) {
   const ring = function (pith_1, o) {
     let c = 0;
     pith_1(function (_arg1) {
@@ -214,3 +236,5 @@ function tree(pith) {
     return _a.Pith.map(ring, arg10__2);
   }, pith));
 }
+
+exports.tree = tree_1;
