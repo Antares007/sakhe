@@ -21,7 +21,9 @@ let map f (T s) = T (map f s)
 let switchLatest (T hs) = T << switchLatest << M.map (fun (T a) -> a) <| hs
 let combine f (T a) (T b) = T <| combine f a b
 let merge (T a) (T b) = T <| merge a b
-let constant a (T s) = T <| constant a s
+let konst a (T s) = T <| constant a s
+let constant = konst
+
 let scan f state (T s) = T <| scan f state s
 let tap f (T s) = T <| tap f s
 let periodic (Time t) = T <| periodic t

@@ -110,12 +110,24 @@ module Test =
     open Sakhe.PNode.Patch
     let a = Stream.now 1
 
-    let see = tree << now << Pith.Of <| fun o ->
-        o << now << Of <| fun (_: Node) ->
-            ()
+    tree << now << Pith.Of <| fun o ->
+        o << now << Of <| fun (_: unit) ->
+            console.log "1"
+
         o << tree << now << Pith.Of <| fun o ->
-            o << now << Of <| fun (n) ->
-                n |> ignore
-                ()
-            ()
-        ()
+            periodic (ms 1000.)
+            |> konst 1
+            |> scan (+) 0
+            |> Stream.map (fun i -> Of <| fun (_: unit) ->
+                console.log ("p", i))
+            |> o
+
+            o << now << Of <| fun (_) ->
+                console.log "___"
+
+        o << now << Of <| fun (_) ->
+            console.log "3"
+
+    |> Stream.scan apply ()
+    |> Stream.drain
+    |> ignore

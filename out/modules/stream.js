@@ -11,6 +11,7 @@ exports.map = map;
 exports.switchLatest = switchLatest;
 exports.combine = combine;
 exports.merge = merge;
+exports.konst = konst;
 exports.constant = constant;
 exports.scan = scan;
 exports.tap = tap;
@@ -24,9 +25,15 @@ var _core = require("@most/core");
 
 var core = _interopRequireWildcard(_core);
 
+var _CurriedLambda = require("./fable-core/CurriedLambda");
+
+var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
+
 var _scheduler = require("@most/scheduler");
 
 var scheduler_1 = _interopRequireWildcard(_scheduler);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -75,8 +82,12 @@ function merge(_arg2, _arg1) {
   return core.merge(_arg2, _arg1);
 }
 
-function constant(a, _arg1) {
+function konst(a, _arg1) {
   return core.constant(a, _arg1);
+}
+
+function constant() {
+  return (0, _CurriedLambda2.default)(konst);
 }
 
 function scan(f, state, _arg1) {
