@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Ray = exports.AP = undefined;
+exports.Ray = undefined;
 exports.tree = tree;
 
 var _Symbol2 = require("./fable-core/Symbol");
@@ -25,25 +25,6 @@ var _m = require("./m");
 var _a = require("./a");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-class AP {
-  constructor(tag, data) {
-    this.tag = tag | 0;
-    this.data = data;
-  }
-
-  [_Symbol3.default.reflection]() {
-    return {
-      type: "Sakhe.PNode.AP",
-      interfaces: ["FSharpUnion"],
-      cases: [["AP", (0, _Util.Function)([_Util.Unit, (0, _Util.GenericParam)("a")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"])]]
-    };
-  }
-
-}
-
-exports.AP = AP;
-(0, _Symbol2.setType)("Sakhe.PNode.AP", AP);
 
 class Ray {
   constructor(tag, data) {

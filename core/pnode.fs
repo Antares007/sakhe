@@ -5,12 +5,11 @@ open A
 
 [<Fable.Core.Erase>]
 type Absurd<'a> = Absurd of (unit -> 'a)
+
 [<Fable.Core.Erase>]
 type Prove<'a, 'b> = Prove of ('a -> 'b option)
 
-type AP<'a> = AP of (unit -> 'a) * (Node -> bool)
 type Ray<'a when 'a :> Node> = RNode of Absurd<'a> * Prove<Node, 'a> * S<Patch<'a>>
-
 
 [<AutoOpen>]
 module private Impl =
