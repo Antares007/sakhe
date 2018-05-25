@@ -22,7 +22,7 @@ var _Seq = require("./fable-core/Seq");
 
 var _m = require("./m");
 
-var _a = require("./a");
+var _pith = require("./pith");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -162,6 +162,6 @@ function tree(pith) {
   };
 
   return (0, _m.tree)(deltac, _stream.S.map(function (arg10__2) {
-    return _a.Pith.map(ring, arg10__2);
+    return _pith.Pith.map(ring, arg10__2);
   }, pith));
 }

@@ -7,10 +7,10 @@ exports.tree = tree;
 
 var _stream = require("./stream");
 
-var _a = require("./a");
+var _pith = require("./pith");
 
 function tree(deltac, mpith) {
   return _stream.S.switchLatest(_stream.S.map(function (arg10_) {
-    return _a.Pith.tree(deltac, arg10_);
+    return _pith.Pith.tree(deltac, arg10_);
   }, mpith));
 }

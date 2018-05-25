@@ -1,13 +1,10 @@
 module Sakhe.PNode
+open Fable.Core
 open Fable.Import.Browser
 open Sakhe
 
-[<Fable.Core.Erase>]
-type Absurd<'a> = Absurd of (unit -> 'a)
-
-[<Fable.Core.Erase>]
-type Prove<'a, 'b> = Prove of ('a -> 'b option)
-
+[<Erase>] type Absurd<'a> = Absurd of (unit -> 'a)
+[<Erase>] type Prove<'a, 'b> = Prove of ('a -> 'b option)
 type Ray<'a when 'a :> Node> = RNode of Absurd<'a> * Prove<Node, 'a> * S<Patch<'a>>
 
 [<AutoOpen>]

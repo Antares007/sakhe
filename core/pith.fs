@@ -1,11 +1,8 @@
 ﻿namespace Sakhe
 open Fable.Core
 
-[<Erase>]
-type Pith<'a> = private Pith of (('a -> unit) -> unit)
-
-[<Erase>]
-type DeltaC<'a, 'b> = DeltaC of ('a list -> 'b)
+[<Erase>] type Pith<'a> = private Pith of (('a -> unit) -> unit)
+[<Erase>] type DeltaC<'a, 'b> = DeltaC of ('a list -> 'b)
 
 module Pith =
 

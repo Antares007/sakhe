@@ -1,10 +1,9 @@
 namespace Sakhe
+open Fable.Core
 
-[<Fable.Core.Erase>]
-type Patch<'a> = private Patch of ('a -> unit)
+[<Erase>] type Patch<'a> = private Patch of ('a -> unit)
 
 module Patch =
-    open Fable.Core
     [<Emit("(function makeOnce (f) {
         var b
         return function once (a) {

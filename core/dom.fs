@@ -9,8 +9,6 @@ let see f a = Pith.map f a
 let elementPatchTree<'a when 'a :> Element> (pith: S<Pith<S<Patch<'a>>>>) =
     tree pith
 
-
-
 elementPatchTree << S.now << Pith.Of <| fun o ->
     o << S.now << Patch.once <| fun (n: Element) -> n |> ignore
 

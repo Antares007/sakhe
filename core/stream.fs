@@ -1,11 +1,8 @@
-
 namespace Sakhe
+open Fable.Core
 
-[<Fable.Core.Erase>]
-type S<'a> = private S of Most.IStream<'a>
-
-[<Fable.Core.Erase>]
-type Time = private Time of float
+[<Erase>] type S<'a> = private S of Most.IStream<'a>
+[<Erase>] type Time = private Time of float
 
 [<AutoOpen>]
 module Time =

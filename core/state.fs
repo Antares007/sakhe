@@ -3,8 +3,7 @@ open Fable.Core
 open Sakhe
 open Fable
 
-[<Fable.Core.Erase>]
-type R<'a> = private R of ('a option -> 'a)
+[<Erase>] type R<'a> = private R of ('a option -> 'a)
 
 type RValue<'key> =
     | RString of  'key * S<string R>
