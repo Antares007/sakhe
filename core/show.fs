@@ -56,40 +56,48 @@ module Dom =
         pnode
         << Absurd <| fun () ->
             let elm = document.createElement tag
-            elm :> Node
-        << Prove <| fun (n: Node) ->
+            elm
+        << Prove <| fun n ->
             if n.nodeName = tag then
                 Some (unbox n)
             else
                 None
 
-    let Div = createElm "DIV"
-    let A =  createElm  "A"
+    let Div = createElm    "DIV"
+    let A =  createElm     "A"
     let Button = createElm "BUTTON"
-    let Span = createElm "SPAN"
-    let H1 =  createElm  "H1"
-    let H2 =  createElm  "H2"
-    let H3 =  createElm  "H3"
+    let Span = createElm   "SPAN"
+    let H1 =  createElm    "H1"
+    let H2 =  createElm    "H2"
+    let H3 =  createElm    "H3"
 
     let Text =
         pnode
-        <| Absurd (fun () -> (document.createTextNode "") :> Node)
+        <| Absurd (fun () -> (document.createTextNode ""))
         <| Prove (fun (n: Node) -> if n.nodeName = "#text" then Some (unbox n) else None)
     // let (<<|) a b = a (M.now b)
     open S
     let intS = periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> skip 1 |> multicast
 
+    let statTree t p = t << tree << now << Pith <| p
+    let div = statTree Div
+    let btn = statTree Button
+    let span = statTree Span
+    let h3 = statTree H3
+
+    let text s = Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- s
+
     let rec counter d =
-        Div << tree << at (ms 0.) << Pith <| fun o ->
-            o << Button << tree << at (ms 0.) << Pith <| fun o ->
-                o << Span << tree << at (ms 0.) << Pith <| fun o ->
-                    o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "+"
+        div <| fun o ->
+            o << btn <| fun o ->
+                o << span <| fun o ->
+                    o << text <| "+"
                 if d > 0 then o <| counter (d - 1)
-            o << Button << tree << at (ms 0.) << Pith <| fun o ->
-                o << Span << tree << at (ms 0.) << Pith <| fun o ->
-                    o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "-"
+            o << btn <| fun o ->
+                o << span <| fun o ->
+                    o << text <| "-"
                 if d > 0 then o <| counter (d - 1)
-            o << H3 << tree << at (ms 0.) << Pith <| fun o ->
+            o << h3 <| fun o ->
                 o << Text << S.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
 
     let rez =
@@ -97,7 +105,7 @@ module Dom =
             o (counter 3)
         |> scan
             Patch.apply
-            (document.getElementById "root-node"  :> Node)
+            (document.getElementById "root-node")
 
     drain rez |> ignore
 

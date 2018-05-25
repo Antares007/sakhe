@@ -37,7 +37,7 @@ module private Impl =
                 | Some moved -> movedFrom (moved, childAtIndex)
                 | None -> notFound ()
     let chain (absurd, prove) index (Patch patch) =
-        Patch.once (fun (elm: Node) ->
+        Patch.once (fun (elm: #Node) ->
             matchChildren
                 (
                     (fun () ->
