@@ -12,7 +12,7 @@ var _Seq = require("./fable-core/Seq");
 var _m = require("./m");
 
 const Patch = exports.Patch = function (__exports) {
-  const Of = __exports.Of = function (f) {
+  const once = __exports.once = function (f) {
     return function makeOnce(f) {
       var b;
       return function once(a) {
@@ -24,6 +24,10 @@ const Patch = exports.Patch = function (__exports) {
         return b;
       };
     }(f);
+  };
+
+  const each = __exports.each = function (f) {
+    return f;
   };
 
   const combine = __exports.combine = function (_arg2, _arg1) {

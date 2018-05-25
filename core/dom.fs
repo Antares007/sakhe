@@ -4,7 +4,14 @@ open Sakhe
 open Sakhe.Patch
 let a = Stream.now 1
 
-let elementPatchTree<'a when 'a :> Element> (elm: 'a) pith =
+let elementPatchTree<'a when 'a :> Element> (pith: Stream.T<A.Pith<Stream.T<Patch<'a>>>>) =
     tree pith
-    |> Stream.scan apply elm
-    |> Stream.map ignore
+
+
+
+elementPatchTree << Stream.now << A.Pith.Of <| fun o ->
+    elementPatchTree << Stream.now << A.Pith.Of <| fun o ->
+
+        () |> ignore
+    |> fun see -> see |> ignore
+|> fun see -> see |> ignore

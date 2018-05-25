@@ -85,14 +85,14 @@ module Dom =
         Div << tree << at (ms 0.) << Pith.Of <| fun o ->
             o << Button << tree << at (ms 0.) << Pith.Of <| fun o ->
                 o << Span << tree << at (ms 0.) << Pith.Of <| fun o ->
-                    o << Text << at (ms 0.) << Patch.Of <| fun text -> text.textContent <- "+"
+                    o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "+"
                 if d > 0 then o <| counter (d - 1)
             o << Button << tree << at (ms 0.) << Pith.Of <| fun o ->
                 o << Span << tree << at (ms 0.) << Pith.Of <| fun o ->
-                    o << Text << at (ms 0.) << Patch.Of <| fun text -> text.textContent <- "-"
+                    o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "-"
                 if d > 0 then o <| counter (d - 1)
             o << H3 << tree << at (ms 0.) << Pith.Of <| fun o ->
-                o << Text << Stream.map (fun i -> Patch.Of (fun text -> text.textContent <- string i)) <| intS
+                o << Text << Stream.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
 
     let rez =
         tree << now << Pith.Of <| fun o ->
@@ -111,22 +111,22 @@ module Test =
     let a = Stream.now 1
 
     tree << now << Pith.Of <| fun o ->
-        o << now << Of <| fun (_: unit) ->
-            console.log "1"
+        o << now << each <| fun (_: unit) ->
+            console.log "start patching..."
 
         o << tree << now << Pith.Of <| fun o ->
             periodic (ms 1000.)
             |> konst 1
             |> scan (+) 0
-            |> Stream.map (fun i -> Of <| fun (_: unit) ->
+            |> Stream.map (fun i -> once <| fun (_: unit) ->
                 console.log ("p", i))
             |> o
 
-            o << now << Of <| fun (_) ->
+            o << now << once <| fun (_) ->
                 console.log "___"
 
-        o << now << Of <| fun (_) ->
-            console.log "3"
+        o << now << each <| fun (_) ->
+            console.log "...end patching"
 
     |> Stream.scan apply ()
     |> Stream.drain

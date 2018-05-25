@@ -17,7 +17,8 @@ module Patch =
         }
     })($0)")>]
     let private onceNative (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
-    let Of f = Patch (onceNative f)
+    let once f = Patch (onceNative f)
+    let each f = Patch f
     let combine (Patch combinedChain) (Patch patch) =
         Patch <| fun n ->
             patch n

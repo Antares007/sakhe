@@ -89,7 +89,7 @@ const Impl = function (__exports) {
   };
 
   const chain = __exports.chain = function (absurd, prove, index, _arg1) {
-    return _patch.Patch.Of(function (elm) {
+    return _patch.Patch.once(function (elm) {
       const $var2 = function () {
         const b = absurd();
 
@@ -154,7 +154,7 @@ function tree(pith) {
         return Impl.chain(a, prove_1, index, arg20_);
       }, _arg1.data[2]));
     });
-    o((0, _stream.now)(_patch.Patch.Of(function (elm) {
+    o((0, _stream.now)(_patch.Patch.once(function (elm) {
       for (let i = elm.childNodes.length - 1; i >= c; i--) {
         elm.removeChild(elm.childNodes[i]), void 0;
       }

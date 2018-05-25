@@ -42,7 +42,7 @@ module private Impl =
                 | Some moved -> movedFrom (moved, childAtIndex)
                 | None -> notFound ()
     let chain (absurd, prove) index (Patch patch) =
-        Patch.Of (fun (elm: Node) ->
+        Patch.once (fun (elm: Node) ->
             matchChildren
                 (
                     (fun () ->
@@ -74,7 +74,7 @@ let tree pith =
             c <- c + 1
             o (Stream.map (chain (a, prove) index) p)
 
-        o (Stream.now (Patch.Of (fun elm ->
+        o (Stream.now (Patch.once (fun elm ->
             for i = unbox elm.childNodes.length - 1 downto c do
                 elm.removeChild elm.childNodes.[i] |> ignore)))
         ()
