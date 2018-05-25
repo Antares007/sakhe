@@ -107,7 +107,7 @@ open Sakhe
 module Test =
     open A
     open Stream
-    open Sakhe.PNode.Patch
+    open Sakhe.Patch
     let a = Stream.now 1
 
     tree << now << Pith.Of <| fun o ->

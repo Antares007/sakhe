@@ -1,11 +1,8 @@
 module Sakhe.PNode
-open Fable.Core
 open Fable.Import.Browser
 open Sakhe
 open A
 
-[<Fable.Core.Erase>]
-type Patch<'a> = private Patch of ('a -> unit)
 [<Fable.Core.Erase>]
 type Absurd<'a> = Absurd of (unit -> 'a)
 [<Fable.Core.Erase>]
@@ -14,29 +11,6 @@ type Prove<'a, 'b> = Prove of ('a -> 'b option)
 type AP<'a> = AP of (unit -> 'a) * (Node -> bool)
 type Ray<'a when 'a :> Node> = RNode of Absurd<'a> * Prove<Node, 'a> * Stream.T<Patch<'a>>
 
-module Patch =
-    [<Emit("(function makeOnce (f) {
-        var b
-        return function once (a) {
-            if (f) {
-                b = f.call(this, a)
-                f = null
-            }
-            return b
-        }
-    })($0)")>]
-    let private onceNative (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
-    let Of f = Patch (onceNative f)
-    let combine (Patch combinedChain) (Patch patch) =
-        Patch <| fun n ->
-            patch n
-            combinedChain n
-    let apply n (Patch p) = p n; n
-
-    let tree pith =
-        let deltac =
-            Seq.fold (Stream.combine (combine)) (Stream.now (Patch ignore))
-        M.tree (DeltaC deltac) pith
 
 [<AutoOpen>]
 module private Impl =

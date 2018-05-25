@@ -3,7 +3,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.tree = exports.Patch = exports.Ray = exports.AP = undefined;
+exports.Ray = exports.AP = undefined;
+exports.tree = tree;
 
 var _Symbol2 = require("./fable-core/Symbol");
 
@@ -11,13 +12,15 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
+var _patch = require("./patch");
+
+var _Option = require("./fable-core/Option");
+
 var _stream = require("./stream");
 
 var _Seq = require("./fable-core/Seq");
 
 var _m = require("./m");
-
-var _Option = require("./fable-core/Option");
 
 var _a = require("./a");
 
@@ -61,67 +64,12 @@ class Ray {
 exports.Ray = Ray;
 (0, _Symbol2.setType)("Sakhe.PNode.Ray", Ray);
 
-const Patch = exports.Patch = function (__exports) {
-  const Of = __exports.Of = function (f) {
-    return function makeOnce(f) {
-      var b;
-      return function once(a) {
-        if (f) {
-          b = f.call(this, a);
-          f = null;
-        }
-
-        return b;
-      };
-    }(f);
-  };
-
-  const combine = __exports.combine = function (_arg2, _arg1) {
-    return function (n) {
-      _arg1(n);
-
-      _arg2(n);
-    };
-  };
-
-  const apply = __exports.apply = function (n, _arg1) {
-    _arg1(n);
-
-    return n;
-  };
-
-  const tree = __exports.tree = function (pith) {
-    let deltac;
-    let folder;
-
-    const f = function (arg00_, arg10_) {
-      return combine(arg00_, arg10_);
-    };
-
-    folder = function (arg10__1, arg20_) {
-      return (0, _stream.combine)(f, arg10__1, arg20_);
-    };
-
-    const state = (0, _stream.now)(function (value) {
-      value, void 0;
-    });
-
-    deltac = function (source) {
-      return (0, _Seq.fold)(folder, state, source);
-    };
-
-    return (0, _m.tree)(deltac, pith);
-  };
-
-  return __exports;
-}({});
-
 const Impl = function (__exports) {
-  const tryFind = __exports.tryFind = function ($var4, $var5, $var6) {
+  const tryFind = __exports.tryFind = function ($var3, $var4, $var5) {
     tryFind: while (true) {
-      const f = $var4;
-      const i = $var5;
-      const nlist = $var6;
+      const f = $var3;
+      const i = $var4;
+      const nlist = $var5;
 
       if (i >= nlist.length) {
         return null;
@@ -131,9 +79,9 @@ const Impl = function (__exports) {
         if (f(n)) {
           return n;
         } else {
-          $var4 = f;
-          $var5 = i + 1;
-          $var6 = nlist;
+          $var3 = f;
+          $var4 = i + 1;
+          $var5 = nlist;
           continue tryFind;
         }
       }
@@ -141,7 +89,7 @@ const Impl = function (__exports) {
   };
 
   const chain = __exports.chain = function (absurd, prove, index, _arg1) {
-    return Patch.Of(function (elm) {
+    return _patch.Patch.Of(function (elm) {
       const $var2 = function () {
         const b = absurd();
 
@@ -183,7 +131,7 @@ const Impl = function (__exports) {
   return __exports;
 }({});
 
-function tree_1(pith) {
+function tree(pith) {
   const ring = function (pith_1, o) {
     let c = 0;
     pith_1(function (_arg1) {
@@ -206,7 +154,7 @@ function tree_1(pith) {
         return Impl.chain(a, prove_1, index, arg20_);
       }, _arg1.data[2]));
     });
-    o((0, _stream.now)(Patch.Of(function (elm) {
+    o((0, _stream.now)(_patch.Patch.Of(function (elm) {
       for (let i = elm.childNodes.length - 1; i >= c; i--) {
         elm.removeChild(elm.childNodes[i]), void 0;
       }
@@ -217,7 +165,7 @@ function tree_1(pith) {
   let folder;
 
   const f = function (arg00_, arg10_) {
-    return Patch.combine(arg00_, arg10_);
+    return _patch.Patch.combine(arg00_, arg10_);
   };
 
   folder = function (arg10__1, arg20__1) {
@@ -236,5 +184,3 @@ function tree_1(pith) {
     return _a.Pith.map(ring, arg10__2);
   }, pith));
 }
-
-exports.tree = tree_1;
