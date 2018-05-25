@@ -21,7 +21,7 @@ var _Seq = require("./fable-core/Seq");
 
 var _m = require("./m");
 
-var _a = require("./a");
+var _pith = require("./pith");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -156,7 +156,7 @@ function oTree(pith) {
       return {};
     }, pith_1, o);
   }, function (arg10_) {
-    return _a.Pith.map(f, arg10_);
+    return _pith.Pith.map(f, arg10_);
   }), pith));
 }
 
@@ -167,6 +167,6 @@ function aTree(pith) {
       return [];
     }, pith_1, o);
   }, function (arg10_) {
-    return _a.Pith.map(f, arg10_);
+    return _pith.Pith.map(f, arg10_);
   }), pith));
 }

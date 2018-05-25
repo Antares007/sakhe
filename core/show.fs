@@ -22,7 +22,6 @@ module State =
         name: string
         age: int
     }
-    open A
     open S
     (*
 
@@ -50,7 +49,6 @@ module State =
     drain rez |> ignore
 
 module Dom =
-    open A
     open PNode
 
     let pnode a p s = RNode (a, p, s)
@@ -105,7 +103,6 @@ module Dom =
 
 open Sakhe
 module Test =
-    open A
     open S
     open Sakhe.Patch
     let a = S.now 1

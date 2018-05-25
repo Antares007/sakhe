@@ -87,7 +87,7 @@ module private Impl =
         List.fold (fun a b -> S.merge b a) (S.empty ()) list
 
 let oTree pith =
-        (M.tree (A.DeltaC merge) (S.map (A.Pith.map (makeRing absurdObj)) pith))
+        (M.tree (DeltaC merge) (S.map (Pith.map (makeRing absurdObj)) pith))
 
 let aTree pith =
-        (M.tree (A.DeltaC merge) (S.map (A.Pith.map (makeRing absurdArray)) pith))
+        (M.tree (DeltaC merge) (S.map (Pith.map (makeRing absurdArray)) pith))

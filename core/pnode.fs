@@ -1,7 +1,6 @@
 module Sakhe.PNode
 open Fable.Import.Browser
 open Sakhe
-open A
 
 [<Fable.Core.Erase>]
 type Absurd<'a> = Absurd of (unit -> 'a)

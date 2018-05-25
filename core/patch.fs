@@ -4,7 +4,6 @@ namespace Sakhe
 type Patch<'a> = private Patch of ('a -> unit)
 
 module Patch =
-    open A
     open Fable.Core
     [<Emit("(function makeOnce (f) {
         var b
