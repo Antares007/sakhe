@@ -85,14 +85,14 @@ module Dom =
         Div << tree << at (ms 0.) << Pith.Of <| fun o ->
             o << Button << tree << at (ms 0.) << Pith.Of <| fun o ->
                 o << Span << tree << at (ms 0.) << Pith.Of <| fun o ->
-                    o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "+"
+                    o << Text << at (ms 0.) << Patch.Of <| fun text -> text.textContent <- "+"
                 if d > 0 then o <| counter (d - 1)
             o << Button << tree << at (ms 0.) << Pith.Of <| fun o ->
                 o << Span << tree << at (ms 0.) << Pith.Of <| fun o ->
-                    o << Text << at (ms 0.) << Patch.once <| fun text -> text.textContent <- "-"
+                    o << Text << at (ms 0.) << Patch.Of <| fun text -> text.textContent <- "-"
                 if d > 0 then o <| counter (d - 1)
             o << H3 << tree << at (ms 0.) << Pith.Of <| fun o ->
-                o << Text << Stream.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
+                o << Text << Stream.map (fun i -> Patch.Of (fun text -> text.textContent <- string i)) <| intS
 
     let rez =
         tree << now << Pith.Of <| fun o ->
@@ -105,15 +105,17 @@ module Dom =
 
 open Sakhe
 module Test =
+    open A
     open Stream
-    open Sakhe.PNode
+    open Sakhe.PNode.Patch
     let a = Stream.now 1
 
-    let see = Patch.tree << now << A.Pith.Of <| fun o ->
-        o << now << Patch.once <| fun (_: Node) ->
+    let see = tree << now << Pith.Of <| fun o ->
+        o << now << Of <| fun (_: Node) ->
             ()
-        o << Patch.tree << now << A.Pith.Of <| fun o ->
-            o << now << Patch.once <| fun (_: Node) ->
+        o << tree << now << Pith.Of <| fun o ->
+            o << now << Of <| fun (n) ->
+                n |> ignore
                 ()
             ()
         ()

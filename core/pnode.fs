@@ -26,11 +26,11 @@ module Patch =
         }
     })($0)")>]
     let private onceNative (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
-    let once f = Patch (onceNative f)
-    let combine (Patch p0) (Patch p1) =
+    let Of f = Patch (onceNative f)
+    let combine (Patch combinedChain) (Patch patch) =
         Patch <| fun n ->
-            p1 n
-            p0 n
+            patch n
+            combinedChain n
     let apply n (Patch p) = p n; n
 
     let tree pith =
@@ -68,7 +68,7 @@ module private Impl =
                 | Some moved -> movedFrom (moved, childAtIndex)
                 | None -> notFound ()
     let chain (absurd, prove) index (Patch patch) =
-        Patch.once (fun (elm: Node) ->
+        Patch.Of (fun (elm: Node) ->
             matchChildren
                 (
                     (fun () ->
@@ -100,7 +100,7 @@ let tree pith =
             c <- c + 1
             o (Stream.map (chain (a, prove) index) p)
 
-        o (Stream.now (Patch.once (fun elm ->
+        o (Stream.now (Patch.Of (fun elm ->
             for i = unbox elm.childNodes.length - 1 downto c do
                 elm.removeChild elm.childNodes.[i] |> ignore)))
         ()
