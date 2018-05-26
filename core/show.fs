@@ -76,10 +76,10 @@ module Dom =
     let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
 
     let statTree t p = t << tree << S.now << Pith <| p
-    let div = statTree Div
-    let btn = statTree Button
-    let span = statTree Span
-    let h3 = statTree H3
+    let div p = statTree Div p
+    let btn p = statTree Button p
+    let span p = statTree Span p
+    let h3 p = statTree H3 p
 
     let text s = Text << S.at (ms 0.) << Patch.once <| fun text -> text.textContent <- s
 

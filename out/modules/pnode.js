@@ -86,7 +86,7 @@ const Impl = function (__exports) {
             return value;
           }($var1)))(childAtIndex);
         } else {
-          const matchValue = tryFind(prove, index, childNodes);
+          const matchValue = tryFind(prove, index + 1, childNodes);
 
           if (matchValue == null) {
             $var2();

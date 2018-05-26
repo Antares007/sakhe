@@ -117,18 +117,21 @@ const Dom = exports.Dom = function (__exports) {
     }($var12)))(p);
   };
 
-  const div = __exports.div = (0, _CurriedLambda2.default)(function (p) {
+  const div = __exports.div = function (p) {
     return statTree(Div, p);
-  });
-  const btn = __exports.btn = (0, _CurriedLambda2.default)(function (p) {
+  };
+
+  const btn = __exports.btn = function (p) {
     return statTree(Button, p);
-  });
-  const span = __exports.span = (0, _CurriedLambda2.default)(function (p) {
+  };
+
+  const span = __exports.span = function (p) {
     return statTree(Span, p);
-  });
-  const h3 = __exports.h3 = (0, _CurriedLambda2.default)(function (p) {
+  };
+
+  const h3 = __exports.h3 = function (p) {
     return statTree(H3, p);
-  });
+  };
 
   const text = __exports.text = function (s) {
     return ($var14 => ($var13 => {
