@@ -54,18 +54,18 @@ module private Impl =
                 )
                 (prove, index, elm))
 
+let ring (Pith pith) = Pith <| fun o ->
+    let mutable c = 0
+
+    pith <| function
+    | RNode (absurd, prove, p) ->
+        let index = c
+        c <- c + 1
+        o << S.map (chain absurd prove index) <| p
+
+    o << S.now << Patch.once <| fun elm ->
+        for i = unbox elm.childNodes.length - 1 downto c do
+            elm.removeChild elm.childNodes.[i] |> ignore
+
 let tree pith =
-    let ring (Pith pith) = Pith <| fun o ->
-        let mutable c = 0
-
-        pith <| function
-        | RNode (absurd, prove, p) ->
-            let index = c
-            c <- c + 1
-            o << S.map (chain absurd prove index) <| p
-
-        o << S.now << Patch.once <| fun elm ->
-            for i = unbox elm.childNodes.length - 1 downto c do
-                elm.removeChild elm.childNodes.[i] |> ignore
-
     Patch.tree (S.map ring pith)
