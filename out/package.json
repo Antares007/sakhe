@@ -13,6 +13,6 @@
     "@most/disposable": "^1.1.0",
     "@most/scheduler": "^1.2.0",
     "@most/types": "^1.0.0",
-    "electron": "^2.0.1"
+    "electron": "^2.0.2"
   }
 }
