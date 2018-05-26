@@ -115,6 +115,7 @@ const S = exports.S = function (__exports) {
     let handle = 0;
 
     const step = function (t) {
+      console.timeStamp("step");
       sink.event(scheduler_1.currentTime(), t);
       handle = window.requestAnimationFrame(step);
     };
