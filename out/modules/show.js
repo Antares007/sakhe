@@ -3,13 +3,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Test = exports.Dom = exports.State = undefined;
+exports.Test = exports.Dom = exports.State = exports.AnimationFrame = undefined;
+
+var _stream = require("./stream");
 
 var _Option = require("./fable-core/Option");
 
 var _state = require("./state");
-
-var _stream = require("./stream");
 
 var _pnode = require("./pnode");
 
@@ -21,10 +21,16 @@ var _patch = require("./patch");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+const AnimationFrame = exports.AnimationFrame = function (__exports) {
+  const a = __exports.a = _stream.S.now(1);
+
+  return __exports;
+}({});
+
 const State = exports.State = function (__exports) {
-  const init = __exports.init = function (a, a2b, maybe_a) {
+  const init = __exports.init = function (a_1, a2b, maybe_a) {
     if (maybe_a == null) {
-      return a2b(a);
+      return a2b(a_1);
     } else {
       return a2b((0, _Option.getValue)(maybe_a));
     }
@@ -51,8 +57,8 @@ const State = exports.State = function (__exports) {
       var arg00_;
       return ($var4 => ($var3 => o(function (s_1) {
         return _Object("achiko", s_1);
-      }($var3)))((0, _state.oTree)($var4)))((arg00_ = _stream.TimeModule.ms(3000), function (a) {
-        return _stream.S.at(arg00_, a);
+      }($var3)))((0, _state.oTree)($var4)))((arg00_ = _stream.TimeModule.ms(3000), function (a_1) {
+        return _stream.S.at(arg00_, a_1);
       })($var5));
     })(function (arg0_1) {
       return arg0_1;
@@ -61,8 +67,8 @@ const State = exports.State = function (__exports) {
         var arg00__1;
         return ($var7 => o_1(function (s_2) {
           return _Number("age", s_2);
-        }($var7)))((arg00__1 = _stream.TimeModule.ms(3000), function (a_1) {
-          return _stream.S.at(arg00__1, a_1);
+        }($var7)))((arg00__1 = _stream.TimeModule.ms(3000), function (a_2) {
+          return _stream.S.at(arg00__1, a_2);
         })($var8));
       })(_state.R.update.bind(_state.R)($var9)))(function (_arg1) {
         return _arg1 == null ? 0 : (0, _Option.getValue)(_arg1) + 1;
@@ -75,8 +81,8 @@ const State = exports.State = function (__exports) {
 }({});
 
 const Dom = exports.Dom = function (__exports) {
-  const pnode = __exports.pnode = function (a, p, s) {
-    return new _pnode.Ray(0, [a, p, s]);
+  const pnode = __exports.pnode = function (a_1, p, s) {
+    return new _pnode.Ray(0, [a_1, p, s]);
   };
 
   const createElm = __exports.createElm = function (tag) {
@@ -132,8 +138,8 @@ const Dom = exports.Dom = function (__exports) {
   const text = __exports.text = function (s) {
     return ($var19 => ($var18 => {
       var arg00_;
-      return _Text((arg00_ = _stream.TimeModule.ms(0), function (a) {
-        return _stream.S.at(arg00_, a);
+      return _Text((arg00_ = _stream.TimeModule.ms(0), function (a_1) {
+        return _stream.S.at(arg00_, a_1);
       })($var18));
     })(_patch.Patch.once.bind(_patch.Patch)($var19)))(function (text_1) {
       text_1.textContent = s;
@@ -177,18 +183,20 @@ const Dom = exports.Dom = function (__exports) {
     });
   };
 
-  const rez_1 = __exports.rez = _stream.S.scan(_patch.Patch.apply.bind(_patch.Patch), document.getElementById("root-node"), ($var30 => ($var29 => (0, _pnode.tree)(_stream.S.now($var29)))(function (arg0) {
+  const rez_1 = __exports.rez = _stream.S.scan(_patch.Patch.apply.bind(_patch.Patch), document.getElementById("root-node"), function (arg10__1) {
+    return _stream.S.sample(_stream.S.animationFrame, arg10__1);
+  }(($var30 => ($var29 => (0, _pnode.tree)(_stream.S.now($var29)))(function (arg0) {
     return arg0;
   }($var30)))(function (o) {
     o(counter(3));
-  }));
+  })));
 
   _stream.S.drain(rez_1), void 0;
   return __exports;
 }({});
 
 const Test = exports.Test = function (__exports) {
-  const a = __exports.a = _stream.S.now(1);
+  const a_1 = __exports.a = _stream.S.now(1);
 
   _stream.S.drain((() => {
     const f = function (n, arg10_) {

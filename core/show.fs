@@ -3,6 +3,9 @@ open Fable.Core
 open Fable.Core.JsInterop
 open Fable.Import.Browser
 
+module AnimationFrame =
+    let a = S.now 1
+
 module State =
     open Sakhe.State
 
@@ -102,9 +105,8 @@ module Dom =
     let rez =
         tree << S.now << Pith <| fun o ->
             o (counter 3)
-        |> S.scan
-            Patch.apply
-            (document.getElementById "root-node")
+        |> S.sample S.animationFrame
+        |> S.scan Patch.apply (document.getElementById "root-node")
 
     S.drain rez |> ignore
 

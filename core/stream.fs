@@ -28,5 +28,22 @@ module S =
     let skip n (S s) = S <| skip n s
     let multicast (S s) = S <| multicast s
     let startWith a (S s) = S <| startWith a s
+    let sample (S a) (S b) = S <| M.sample b a
+
     let private scheduler = Most.Scheduler.newDefaultScheduler ()
     let drain (S s) = M.runEffects s scheduler
+
+    open Fable.Import.Browser
+    let animationFrame =
+        S << M.newStream <| fun sink scheduler ->
+        let mutable handle = 0.
+
+        let rec step t =
+            sink.event (scheduler.currentTime (), t)
+            handle <- window.requestAnimationFrame step
+        handle <- window.requestAnimationFrame step
+
+        let dispose _ =
+            window.cancelAnimationFrame handle
+
+        Most.Disposable.disposeWith dispose ()

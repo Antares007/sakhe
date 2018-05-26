@@ -15,7 +15,11 @@ var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _scheduler = require("@most/scheduler");
 
-var scheduler_1 = _interopRequireWildcard(_scheduler);
+var scheduler_2 = _interopRequireWildcard(_scheduler);
+
+var _disposable = require("@most/disposable");
+
+var disposable = _interopRequireWildcard(_disposable);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -97,11 +101,32 @@ const S = exports.S = function (__exports) {
     return core.startWith(a, _arg1);
   };
 
-  const scheduler = scheduler_1.newDefaultScheduler();
+  const sample = __exports.sample = function (_arg2, _arg1) {
+    return core.sample(_arg1, _arg2);
+  };
+
+  const scheduler = scheduler_2.newDefaultScheduler();
 
   const drain = __exports.drain = function (_arg1) {
     return core.runEffects(_arg1, scheduler);
   };
+
+  const animationFrame = __exports.animationFrame = ($var3 => core.newStream($var3))(function (sink, scheduler_1) {
+    let handle = 0;
+
+    const step = function (t) {
+      sink.event(scheduler_1.currentTime(), t);
+      handle = window.requestAnimationFrame(step);
+    };
+
+    handle = window.requestAnimationFrame(step);
+
+    const dispose = function (_arg1) {
+      window.cancelAnimationFrame(handle);
+    };
+
+    return disposable.disposeWith(dispose, null);
+  });
 
   return __exports;
 }({});
