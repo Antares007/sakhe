@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Test = exports.Dom = exports.State = exports.AnimationFrame = undefined;
 
-var _stream = require("./stream");
+var _s = require("./s");
 
 var _Option = require("./fable-core/Option");
 
@@ -22,7 +22,7 @@ var _patch = require("./patch");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const AnimationFrame = exports.AnimationFrame = function (__exports) {
-  const a = __exports.a = _stream.S.now(1);
+  const a = __exports.a = _s.S.now(1);
 
   return __exports;
 }({});
@@ -50,15 +50,15 @@ const State = exports.State = function (__exports) {
 
   const emptystring = __exports.emptystring = {};
 
-  const rez = __exports.rez = _stream.S.tap(console.log.bind(console), _stream.S.scan(_state.R.apply.bind(_state.R), {}, ($var2 => ($var1 => (0, _state.oTree)(_stream.S.at(_stream.TimeModule.ms(0), $var1)))(function (arg0) {
+  const rez = __exports.rez = _s.S.tap(console.log.bind(console), _s.S.scan(_state.R.apply.bind(_state.R), {}, ($var2 => ($var1 => (0, _state.oTree)(_s.S.at(_s.TimeModule.ms(0), $var1)))(function (arg0) {
     return arg0;
   }($var2)))(function (o) {
     ($var6 => ($var5 => {
       var arg00_;
       return ($var4 => ($var3 => o(function (s_1) {
         return _Object("achiko", s_1);
-      }($var3)))((0, _state.oTree)($var4)))((arg00_ = _stream.TimeModule.ms(3000), function (a_1) {
-        return _stream.S.at(arg00_, a_1);
+      }($var3)))((0, _state.oTree)($var4)))((arg00_ = _s.TimeModule.ms(3000), function (a_1) {
+        return _s.S.at(arg00_, a_1);
       })($var5));
     })(function (arg0_1) {
       return arg0_1;
@@ -67,8 +67,8 @@ const State = exports.State = function (__exports) {
         var arg00__1;
         return ($var7 => o_1(function (s_2) {
           return _Number("age", s_2);
-        }($var7)))((arg00__1 = _stream.TimeModule.ms(3000), function (a_2) {
-          return _stream.S.at(arg00__1, a_2);
+        }($var7)))((arg00__1 = _s.TimeModule.ms(3000), function (a_2) {
+          return _s.S.at(arg00__1, a_2);
         })($var8));
       })(_state.R.update.bind(_state.R)($var9)))(function (_arg1) {
         return _arg1 == null ? 0 : (0, _Option.getValue)(_arg1) + 1;
@@ -76,7 +76,7 @@ const State = exports.State = function (__exports) {
     });
   })));
 
-  _stream.S.drain(rez), void 0;
+  _s.S.drain(rez), void 0;
   return __exports;
 }({});
 
@@ -107,12 +107,12 @@ const Dom = exports.Dom = function (__exports) {
     return n.nodeName === "#text";
   }));
 
-  const intS = __exports.intS = _stream.S.multicast(_stream.S.skip(1, _stream.S.scan(function (c, _arg1) {
+  const intS = __exports.intS = _s.S.multicast(_s.S.skip(1, _s.S.scan(function (c, _arg1) {
     return c + 1;
-  }, 0, _stream.S.periodic(_stream.TimeModule.ms(10)))));
+  }, 0, _s.S.periodic(_s.TimeModule.ms(10)))));
 
   const statTree = __exports.statTree = function (t, p) {
-    return ($var12 => ($var11 => ($var10 => t((0, _pnode.tree)($var10)))(_stream.S.now.bind(_stream.S)($var11)))(function (arg0) {
+    return ($var12 => ($var11 => ($var10 => t((0, _pnode.tree)($var10)))(_s.S.now.bind(_s.S)($var11)))(function (arg0) {
       return arg0;
     }($var12)))(p);
   };
@@ -133,8 +133,8 @@ const Dom = exports.Dom = function (__exports) {
   const text = __exports.text = function (s) {
     return ($var14 => ($var13 => {
       var arg00_;
-      return _Text((arg00_ = _stream.TimeModule.ms(0), function (a_1) {
-        return _stream.S.at(arg00_, a_1);
+      return _Text((arg00_ = _s.TimeModule.ms(0), function (a_1) {
+        return _s.S.at(arg00_, a_1);
       })($var13));
     })(_patch.Patch.once.bind(_patch.Patch)($var14)))(function (text_1) {
       text_1.textContent = s;
@@ -171,60 +171,60 @@ const Dom = exports.Dom = function (__exports) {
               text_1.textContent = i.toString();
             });
           }, function (arg10_) {
-            return _stream.S.map(f, arg10_);
+            return _s.S.map(f, arg10_);
           })($var23));
         })(intS);
       });
     });
   };
 
-  const rez_1 = __exports.rez = _stream.S.scan(_patch.Patch.apply.bind(_patch.Patch), document.getElementById("root-node"), function (arg10__1) {
-    return _stream.S.sample(_stream.S.animationFrame, arg10__1);
-  }(($var25 => ($var24 => (0, _pnode.tree)(_stream.S.now($var24)))(function (arg0) {
+  const rez_1 = __exports.rez = _s.S.scan(_patch.Patch.apply.bind(_patch.Patch), document.getElementById("root-node"), function (arg10__1) {
+    return _s.S.sample(_s.S.animationFrame, arg10__1);
+  }(($var25 => ($var24 => (0, _pnode.tree)(_s.S.now($var24)))(function (arg0) {
     return arg0;
   }($var25)))(function (o) {
     o(counter(3));
   })));
 
-  _stream.S.drain(rez_1), void 0;
+  _s.S.drain(rez_1), void 0;
   return __exports;
 }({});
 
 const Test = exports.Test = function (__exports) {
-  const a_1 = __exports.a = _stream.S.now(1);
+  const a_1 = __exports.a = _s.S.now(1);
 
-  _stream.S.drain((() => {
+  _s.S.drain((() => {
     const f = function (n, arg10_) {
       _patch.Patch.apply(null, arg10_);
     };
 
     return function (arg20_) {
-      return _stream.S.scan(f, null, arg20_);
+      return _s.S.scan(f, null, arg20_);
     };
-  })()(($var27 => ($var26 => _patch.Patch.tree(_stream.S.now($var26)))(function (arg0) {
+  })()(($var27 => ($var26 => _patch.Patch.tree(_s.S.now($var26)))(function (arg0) {
     return arg0;
   }($var27)))(function (o) {
-    ($var29 => ($var28 => o(_stream.S.now.bind(_stream.S)($var28)))(_patch.Patch.each.bind(_patch.Patch)($var29)))(function () {
+    ($var29 => ($var28 => o(_s.S.now.bind(_s.S)($var28)))(_patch.Patch.each.bind(_patch.Patch)($var29)))(function () {
       console.log("start patching...");
     });
 
-    ($var32 => ($var31 => ($var30 => o(_patch.Patch.tree.bind(_patch.Patch)($var30)))(_stream.S.now.bind(_stream.S)($var31)))(function (arg0_1) {
+    ($var32 => ($var31 => ($var30 => o(_patch.Patch.tree.bind(_patch.Patch)($var30)))(_s.S.now.bind(_s.S)($var31)))(function (arg0_1) {
       return arg0_1;
     }($var32)))(function (o_1) {
-      o_1(_stream.S.map(function (i) {
+      o_1(_s.S.map(function (i) {
         return _patch.Patch.once(function () {
           console.log("p", i);
         });
-      }, _stream.S.scan(function (x, y) {
+      }, _s.S.scan(function (x, y) {
         return x + y;
-      }, 0, _stream.S.konst(1, _stream.S.periodic(_stream.TimeModule.ms(1000))))));
+      }, 0, _s.S.konst(1, _s.S.periodic(_s.TimeModule.ms(1000))))));
 
-      ($var34 => ($var33 => o_1(_stream.S.now.bind(_stream.S)($var33)))(_patch.Patch.once.bind(_patch.Patch)($var34)))(function () {
+      ($var34 => ($var33 => o_1(_s.S.now.bind(_s.S)($var33)))(_patch.Patch.once.bind(_patch.Patch)($var34)))(function () {
         console.log("___");
       });
     });
 
-    ($var36 => ($var35 => o(_stream.S.now.bind(_stream.S)($var35)))(_patch.Patch.each.bind(_patch.Patch)($var36)))(function () {
+    ($var36 => ($var35 => o(_s.S.now.bind(_s.S)($var35)))(_patch.Patch.each.bind(_patch.Patch)($var36)))(function () {
       console.log("...end patching");
     });
   }))), void 0;

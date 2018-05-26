@@ -7,11 +7,7 @@ exports.S = exports.TimeModule = undefined;
 
 var _core = require("@most/core");
 
-var core = _interopRequireWildcard(_core);
-
-var _CurriedLambda = require("./fable-core/CurriedLambda");
-
-var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
+var core_1 = _interopRequireWildcard(_core);
 
 var _scheduler = require("@most/scheduler");
 
@@ -19,7 +15,11 @@ var scheduler_2 = _interopRequireWildcard(_scheduler);
 
 var _disposable = require("@most/disposable");
 
-var disposable = _interopRequireWildcard(_disposable);
+var disposable_1 = _interopRequireWildcard(_disposable);
+
+var _CurriedLambda = require("./fable-core/CurriedLambda");
+
+var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34,6 +34,10 @@ const TimeModule = exports.TimeModule = function (__exports) {
 }({});
 
 const S = exports.S = function (__exports) {
+  const core = core_1;
+  const scheduler = scheduler_2;
+  const disposable = disposable_1;
+
   const empty = __exports.empty = function () {
     return core.empty();
   };
@@ -51,14 +55,11 @@ const S = exports.S = function (__exports) {
   };
 
   const switchLatest = __exports.switchLatest = function (_arg1) {
-    return ($var2 => {
-      var arg00_;
-      return ($var1 => core.switchLatest($var1))((arg00_ = function (_arg1_1) {
-        return _arg1_1;
-      }, function (arg10_) {
-        return core.map(arg00_, arg10_);
-      })($var2));
-    })(_arg1);
+    return ($var1 => function (arg0) {
+      return arg0;
+    }(core.switchLatest.bind(core)($var1)))(core.map(function (_arg1_1) {
+      return _arg1_1;
+    }, _arg1));
   };
 
   const combine = __exports.combine = function (f, _arg2, _arg1) {
@@ -105,13 +106,13 @@ const S = exports.S = function (__exports) {
     return core.sample(_arg1, _arg2);
   };
 
-  const scheduler = scheduler_2.newDefaultScheduler();
+  const defScheduler = scheduler.newDefaultScheduler();
 
   const drain = __exports.drain = function (_arg1) {
-    return core.runEffects(_arg1, scheduler);
+    return core.runEffects(_arg1, defScheduler);
   };
 
-  const animationFrame = __exports.animationFrame = ($var3 => core.newStream($var3))(function (sink, scheduler_1) {
+  const animationFrame = __exports.animationFrame = core.newStream(function (sink, scheduler_1) {
     let handle = 0;
 
     const step = function (t) {
@@ -128,6 +129,5 @@ const S = exports.S = function (__exports) {
 
     return disposable.disposeWith(dispose, null);
   });
-
   return __exports;
 }({});

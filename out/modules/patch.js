@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Patch = undefined;
 
-var _stream = require("./stream");
+var _s = require("./s");
 
 var _Seq = require("./fable-core/Seq");
 
@@ -53,10 +53,10 @@ const Patch = exports.Patch = function (__exports) {
     };
 
     folder = function (arg10__1, arg20_) {
-      return _stream.S.combine(f, arg10__1, arg20_);
+      return _s.S.combine(f, arg10__1, arg20_);
     };
 
-    const state = _stream.S.now(function (value) {
+    const state = _s.S.now(function (value) {
       value, void 0;
     });
 

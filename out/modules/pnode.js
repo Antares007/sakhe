@@ -17,7 +17,7 @@ var _patch = require("./patch");
 
 var _Option = require("./fable-core/Option");
 
-var _stream = require("./stream");
+var _s = require("./s");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -120,12 +120,12 @@ function ring(_arg1) {
         return o((f = function (arg30_) {
           return Impl.chain(_arg2.data[0], _arg2.data[1], index, arg30_);
         }, function (arg10_) {
-          return _stream.S.map(f, arg10_);
+          return _s.S.map(f, arg10_);
         })($var3));
       })(_arg2.data[2]);
     });
 
-    ($var5 => ($var4 => o(_stream.S.now.bind(_stream.S)($var4)))(_patch.Patch.once.bind(_patch.Patch)($var5)))(function (elm) {
+    ($var5 => ($var4 => o(_s.S.now.bind(_s.S)($var4)))(_patch.Patch.once.bind(_patch.Patch)($var5)))(function (elm) {
       for (let i = elm.childNodes.length - 1; i >= c; i--) {
         elm.removeChild(elm.childNodes[i]), void 0;
       }
@@ -134,5 +134,5 @@ function ring(_arg1) {
 }
 
 function tree(pith) {
-  return _patch.Patch.tree(_stream.S.map(ring, pith));
+  return _patch.Patch.tree(_s.S.map(ring, pith));
 }

@@ -15,7 +15,7 @@ var _Util = require("./fable-core/Util");
 
 var _Option = require("./fable-core/Option");
 
-var _stream = require("./stream");
+var _s = require("./s");
 
 var _m = require("./m");
 
@@ -102,7 +102,7 @@ const Impl = function (__exports) {
 
         switch (_arg2.tag) {
           case 1:
-            o(_stream.S.map((prove = function (arg00_) {
+            o(_s.S.map((prove = function (arg00_) {
               return typeof arg00_ === "number" ? arg00_ : null;
             }, function (arg30_) {
               return chain(absurdObj, _arg2.data[0], prove, arg30_);
@@ -110,7 +110,7 @@ const Impl = function (__exports) {
             break;
 
           case 2:
-            o(_stream.S.map((prove_1 = function (arg00__1) {
+            o(_s.S.map((prove_1 = function (arg00__1) {
               return typeof arg00__1 === "boolean" ? arg00__1 : null;
             }, function (arg30__1) {
               return chain(absurdObj, _arg2.data[0], prove_1, arg30__1);
@@ -118,7 +118,7 @@ const Impl = function (__exports) {
             break;
 
           case 3:
-            o(_stream.S.map((prove_2 = function (arg00__2) {
+            o(_s.S.map((prove_2 = function (arg00__2) {
               return typeof arg00__2 === "object" && arg00__2 != null ? arg00__2 : null;
             }, function (arg30__2) {
               return chain(absurdObj, _arg2.data[0], prove_2, arg30__2);
@@ -126,7 +126,7 @@ const Impl = function (__exports) {
             break;
 
           case 4:
-            o(_stream.S.map((prove_3 = function (arg00__3) {
+            o(_s.S.map((prove_3 = function (arg00__3) {
               return Array.isArray(arg00__3) ? arg00__3 : null;
             }, function (arg30__3) {
               return chain(absurdObj, _arg2.data[0], prove_3, arg30__3);
@@ -134,7 +134,7 @@ const Impl = function (__exports) {
             break;
 
           default:
-            o(_stream.S.map((prove_4 = function (arg00__4) {
+            o(_s.S.map((prove_4 = function (arg00__4) {
               return typeof arg00__4 === "string" ? arg00__4 : null;
             }, function (arg30__4) {
               return chain(absurdObj, _arg2.data[0], prove_4, arg30__4);
@@ -148,8 +148,8 @@ const Impl = function (__exports) {
     var folder;
     var state;
     return (0, _m.tree)((folder = function (a, b) {
-      return _stream.S.merge(b, a);
-    }, state = _stream.S.empty(), function (list) {
+      return _s.S.merge(b, a);
+    }, state = _s.S.empty(), function (list) {
       return (0, _Seq.fold)(folder, state, list);
     }), pith);
   };
@@ -158,7 +158,7 @@ const Impl = function (__exports) {
 }({});
 
 function oTree(pith) {
-  return Impl.mergeTree(_stream.S.map(function (arg10_) {
+  return Impl.mergeTree(_s.S.map(function (arg10_) {
     return Impl.makeRing(function () {
       return {};
     }, arg10_);
@@ -166,7 +166,7 @@ function oTree(pith) {
 }
 
 function aTree(pith) {
-  return Impl.mergeTree(_stream.S.map(function (arg10_) {
+  return Impl.mergeTree(_s.S.map(function (arg10_) {
     return Impl.makeRing(function () {
       return [];
     }, arg10_);

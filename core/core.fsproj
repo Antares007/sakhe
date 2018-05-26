@@ -4,14 +4,18 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="most/types.fs" />
+    <Compile Include="most/core.fs" />
+    <Compile Include="most/scheduler.fs" />
+    <Compile Include="most/disposable.fs" />
     <Compile Include="pith.fs" />
-    <Compile Include="most.fs" />
-    <Compile Include="stream.fs" />
+    <Compile Include="s.fs" />
     <Compile Include="m.fs" />
     <Compile Include="patch.fs" />
     <Compile Include="pnode.fs" />
     <Compile Include="dom.fs" />
     <Compile Include="state.fs" />
+    <Compile Include="most.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
