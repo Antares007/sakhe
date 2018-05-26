@@ -31,7 +31,7 @@ module private Impl =
             if prove childAtIndex then
                 atIndex childAtIndex
             else
-                match tryFind prove index childNodes with
+                match tryFind prove (index + 1) childNodes with
                 | Some moved -> movedFrom (moved, childAtIndex)
                 | None -> notFound ()
 
