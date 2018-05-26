@@ -34,11 +34,14 @@ module S =
     let drain (S s) = M.runEffects s scheduler
 
     open Fable.Import.Browser
+    [<Emit("console.timeStamp($0)")>]
+    let private timeStamp (_:string) = jsNative
     let animationFrame =
         S << M.newStream <| fun sink scheduler ->
         let mutable handle = 0.
 
         let rec step t =
+            timeStamp "step"
             sink.event (scheduler.currentTime (), t)
             handle <- window.requestAnimationFrame step
         handle <- window.requestAnimationFrame step
