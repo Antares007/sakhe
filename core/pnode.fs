@@ -4,8 +4,8 @@ open Fable.Import.Browser
 open Sakhe
 
 [<Erase>] type Absurd<'a> = Absurd of (unit -> 'a)
-[<Erase>] type Prove<'a, 'b> = Prove of ('a -> 'b option)
-type Ray<'a when 'a :> Node> = RNode of Absurd<'a> * Prove<Node, 'a> * S<Patch<'a>>
+[<Erase>] type Prove = Prove of (Node -> bool)
+type Ray<'a when 'a :> Node> = RNode of Absurd<'a> * Prove * S<Patch<'a>>
 
 [<AutoOpen>]
 module private Impl =
@@ -60,11 +60,6 @@ let tree pith =
 
         pith <| function
         | RNode (Absurd a, Prove prove, p) ->
-            let prove n =
-                match prove n with
-                | Some _ -> true
-                | None -> false
-
             let index = c
             c <- c + 1
             o << S.map (chain (a, prove) index) <| p
