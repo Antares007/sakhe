@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Ray = undefined;
+exports.ring = ring;
 exports.tree = tree;
 
 var _Symbol2 = require("./fable-core/Symbol");
@@ -30,7 +31,7 @@ class Ray {
     return {
       type: "Sakhe.PNode.Ray",
       interfaces: ["FSharpUnion"],
-      cases: [["RNode", _Util.Any, _Util.Any, _Util.Any]]
+      cases: [["RNode", (0, _Util.Function)([_Util.Unit, (0, _Util.GenericParam)("a")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"]), _Util.Any]]
     };
   }
 
@@ -42,7 +43,7 @@ exports.Ray = Ray;
 const Impl = function (__exports) {
   const tryFind = __exports.tryFind = function ($var6, $var7, $var8) {
     tryFind: while (true) {
-      const f = $var6;
+      const prove = $var6;
       const i = $var7;
       const nlist = $var8;
 
@@ -51,10 +52,10 @@ const Impl = function (__exports) {
       } else {
         const n = nlist[i];
 
-        if (f(n)) {
+        if (prove(n)) {
           return n;
         } else {
-          $var6 = f;
+          $var6 = prove;
           $var7 = i + 1;
           $var8 = nlist;
           continue tryFind;
@@ -106,45 +107,32 @@ const Impl = function (__exports) {
   return __exports;
 }({});
 
-function tree(pith) {
-  const ring = function (_arg1) {
-    return function (o) {
-      let c = 0;
+function ring(_arg1) {
+  return function (o) {
+    let c = 0;
 
-      _arg1(function (_arg2) {
-        const prove = _arg2.data[1];
-        const a = _arg2.data[0];
+    _arg1(function (_arg2) {
+      const index = c | 0;
+      c = c + 1 | 0;
 
-        const prove_1 = function (n) {
-          const matchValue = prove(n);
+      ($var3 => {
+        var f;
+        return o((f = function (arg30_) {
+          return Impl.chain(_arg2.data[0], _arg2.data[1], index, arg30_);
+        }, function (arg10_) {
+          return _stream.S.map(f, arg10_);
+        })($var3));
+      })(_arg2.data[2]);
+    });
 
-          if (matchValue == null) {
-            return false;
-          } else {
-            return true;
-          }
-        };
-
-        const index = c | 0;
-        c = c + 1 | 0;
-
-        ($var3 => {
-          var f;
-          return o((f = function (arg20_) {
-            return Impl.chain(a, prove_1, index, arg20_);
-          }, function (arg10_) {
-            return _stream.S.map(f, arg10_);
-          })($var3));
-        })(_arg2.data[2]);
-      });
-
-      ($var5 => ($var4 => o(_stream.S.now.bind(_stream.S)($var4)))(_patch.Patch.once.bind(_patch.Patch)($var5)))(function (elm) {
-        for (let i = elm.childNodes.length - 1; i >= c; i--) {
-          elm.removeChild(elm.childNodes[i]), void 0;
-        }
-      });
-    };
+    ($var5 => ($var4 => o(_stream.S.now.bind(_stream.S)($var4)))(_patch.Patch.once.bind(_patch.Patch)($var5)))(function (elm) {
+      for (let i = elm.childNodes.length - 1; i >= c; i--) {
+        elm.removeChild(elm.childNodes[i]), void 0;
+      }
+    });
   };
+}
 
+function tree(pith) {
   return _patch.Patch.tree(_stream.S.map(ring, pith));
 }

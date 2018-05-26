@@ -57,8 +57,8 @@ module Dom =
     let pnode a p s = RNode (a, p, s)
     let createElm tag =
         pnode
-        << Absurd <| fun () -> document.createElement tag
-        << Prove <| fun n -> n.nodeName = tag
+            <| fun () -> document.createElement tag
+            <| fun n -> n.nodeName = tag
 
     let Div = createElm    "DIV"
     let A =  createElm     "A"
@@ -70,9 +70,9 @@ module Dom =
 
     let Text =
         pnode
-            << Absurd <| fun () -> document.createTextNode ""
-            << Prove <| fun (n: Node) -> n.nodeName = "#text"
-    // let (<<|) a b = a (M.now b)
+            <| fun () -> document.createTextNode ""
+            <| fun (n: Node) -> n.nodeName = "#text"
+
     let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
 
     let statTree t p = t << tree << S.now << Pith <| p

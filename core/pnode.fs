@@ -1,23 +1,21 @@
 module Sakhe.PNode
-open Fable.Core
 open Fable.Import.Browser
 open Sakhe
 
-[<Erase>] type Absurd<'a> = Absurd of (unit -> 'a)
-[<Erase>] type Prove = Prove of (Node -> bool)
-type Ray<'a when 'a :> Node> = RNode of Absurd<'a> * Prove * S<Patch<'a>>
+type Ray<'a when 'a :> Node> = RNode of (unit -> 'a) * (Node -> bool) * S<Patch<'a>>
 
 [<AutoOpen>]
 module private Impl =
-    let rec private tryFind f (i: int) (nlist: NodeList) =
+    let rec private tryFind prove (i: int) (nlist: NodeList) =
         if i >= unbox nlist.length then
             None
         else
             let n = nlist.[i]
-            if f n then
+            if prove n then
                 Some n
             else
-                tryFind f (i + 1) nlist
+                tryFind prove (i + 1) nlist
+
     let inline private matchChildren
         (
             notFound: unit -> unit,
@@ -36,7 +34,9 @@ module private Impl =
                 match tryFind prove index childNodes with
                 | Some moved -> movedFrom (moved, childAtIndex)
                 | None -> notFound ()
-    let chain (absurd, prove) index (Patch patch) =
+
+    let chain
+        absurd prove index (Patch patch) =
         Patch.once (fun (elm: #Node) ->
             matchChildren
                 (
@@ -59,10 +59,10 @@ let tree pith =
         let mutable c = 0
 
         pith <| function
-        | RNode (Absurd a, Prove prove, p) ->
+        | RNode (absurd, prove, p) ->
             let index = c
             c <- c + 1
-            o << S.map (chain (a, prove) index) <| p
+            o << S.map (chain absurd prove index) <| p
 
         o << S.now << Patch.once <| fun elm ->
             for i = unbox elm.childNodes.length - 1 downto c do
