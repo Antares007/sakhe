@@ -51,7 +51,8 @@ module State =
             (Some Fable.Core.JsInterop.createEmpty<obj>)
         |> tap console.log
 
-    drain (update rez) |> ignore
+    // drain (update rez)
+    // |> ignore
 
 module Dom =
     open PNode
@@ -131,20 +132,18 @@ module Test =
             console.log "...end patching"
 
     |> S.scan apply ()
-    |> S.drain
+    // |> S.drain
     |> ignore
 
 module Test2 =
 
     let tree pith =
-        Dom.tree State.oTree PNode.tree pith
+        Dom.gTree State.oTree PNode.tree pith
 
     let (rs, ps) = tree << S.now << Pith <| fun o ->
+        o << Sakhe.Dom.A << State.Number "a" << S.now << State.R.set <| 1.
+        o << Dom.B << Dom.Div << S.now << Patch <| ignore
 
-        o (
-            (State.Number "a" << S.now << State.R.set <| 1.),
-            (Dom.Div << S.now << Patch <| ignore)
-        )
 
     S.merge
         (Dom.render (document.getElementById "root-node") ps |> S.map ignore)

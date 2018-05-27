@@ -82,7 +82,6 @@ const State = exports.State = function (__exports) {
     return _s.S.tap(console.log.bind(console), _s.S.scan(_state.R.apply.bind(_state.R), {}, s));
   };
 
-  _s.S.drain(update(rez)), void 0;
   return __exports;
 }({});
 
@@ -209,7 +208,7 @@ const Dom = exports.Dom = function (__exports) {
 const Test = exports.Test = function (__exports) {
   const a_1 = __exports.a = _s.S.now(1);
 
-  _s.S.drain((() => {
+  (() => {
     const f = function (n, arg10_) {
       _patch.Patch.apply(null, arg10_);
     };
@@ -243,27 +242,35 @@ const Test = exports.Test = function (__exports) {
     ($var36 => ($var35 => o(_s.S.now.bind(_s.S)($var35)))(_patch.Patch.each.bind(_patch.Patch)($var36)))(function () {
       console.log("...end patching");
     });
-  }))), void 0;
+  })), void 0;
   return __exports;
 }({});
 
 const Test2 = exports.Test2 = function (__exports) {
   const tree = __exports.tree = function (pith_1) {
-    return (0, _dom.tree)(_state.oTree, _pnode.tree, pith_1);
+    return (0, _dom.gTree)(_state.oTree, _pnode.tree, pith_1);
   };
 
-  const patternInput_142 = ($var38 => ($var37 => tree(_s.S.now($var37)))(function (arg0_2) {
+  const patternInput_143_3 = ($var38 => ($var37 => tree(_s.S.now($var37)))(function (arg0_2) {
     return arg0_2;
   }($var38)))(function (o_2) {
-    o_2([($var40 => ($var39 => State.Number("a", _s.S.now($var39)))(_state.R.set.bind(_state.R)($var40)))(1), ($var42 => ($var41 => Dom.Div(_s.S.now.bind(_s.S)($var41)))(function (arg0_3) {
-      return arg0_3;
-    }($var42)))(function (value) {
+    ($var42 => ($var41 => ($var40 => ($var39 => o_2(function (arg0_3) {
+      return new _dom.O(0, arg0_3);
+    }($var39)))(function (s) {
+      return State.Number("a", s);
+    }($var40)))(_s.S.now.bind(_s.S)($var41)))(_state.R.set.bind(_state.R)($var42)))(1);
+
+    ($var46 => ($var45 => ($var44 => ($var43 => o_2(function (arg0_4) {
+      return new _dom.O(1, arg0_4);
+    }($var43)))(Dom.Div($var44)))(_s.S.now.bind(_s.S)($var45)))(function (arg0_5) {
+      return arg0_5;
+    }($var46)))(function (value) {
       value, void 0;
-    })]);
+    });
   });
 
-  const rs = __exports.rs = patternInput_142[0];
-  const ps = __exports.ps = patternInput_142[1];
+  const rs = __exports.rs = patternInput_143_3[0];
+  const ps = __exports.ps = patternInput_143_3[1];
   _s.S.drain(_s.S.merge(_s.S.map(function (value) {
     value, void 0;
   }, Dom.render(document.getElementById("root-node"), ps)), _s.S.map(function (value_1) {
