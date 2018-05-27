@@ -13,9 +13,8 @@
     <Compile Include="m.fs" />
     <Compile Include="patch.fs" />
     <Compile Include="pnode.fs" />
-    <Compile Include="dom.fs" />
     <Compile Include="state.fs" />
-    <Compile Include="most.fs" />
+    <Compile Include="dom.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
