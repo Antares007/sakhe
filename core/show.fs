@@ -53,9 +53,10 @@ module State =
 
 module Dom =
     open PNode
+    let pnode a p s = PNode (a, p, s)
 
     let createElm tag =
-        PValue.Of
+        pnode
             <| fun () -> document.createElement tag
             <| fun n -> n.nodeName = tag
 
@@ -68,7 +69,7 @@ module Dom =
     let H3 =  createElm    "H3"
 
     let Text =
-        PValue.Of
+        pnode
             <| fun () -> document.createTextNode ""
             <| fun (n: Node) -> n.nodeName = "#text"
 
