@@ -2,7 +2,10 @@ module Sakhe.PNode
 open Fable.Import.Browser
 open Sakhe
 
-type PValue<'a when 'a :> Node> = PNode of (unit -> 'a) * (Node -> bool) * S<Patch<'a>>
+type PValue<'a when 'a :> Node> = private PNode of (unit -> 'a) * (Node -> bool) * S<Patch<'a>>
+
+module PValue =
+    let Of a p s = PNode (a, p, s)
 
 [<AutoOpen>]
 module private Impl =
