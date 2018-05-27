@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Ray = undefined;
+exports.PValue = undefined;
 exports.ring = ring;
 exports.tree = tree;
 
@@ -21,7 +21,7 @@ var _s = require("./s");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class Ray {
+class PValue {
   constructor(tag, data) {
     this.tag = tag | 0;
     this.data = data;
@@ -29,16 +29,16 @@ class Ray {
 
   [_Symbol3.default.reflection]() {
     return {
-      type: "Sakhe.PNode.Ray",
+      type: "Sakhe.PNode.PValue",
       interfaces: ["FSharpUnion"],
-      cases: [["RNode", (0, _Util.Function)([_Util.Unit, (0, _Util.GenericParam)("a")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"]), _Util.Any]]
+      cases: [["PNode", (0, _Util.Function)([_Util.Unit, (0, _Util.GenericParam)("a")]), (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.Node"), "boolean"]), _Util.Any]]
     };
   }
 
 }
 
-exports.Ray = Ray;
-(0, _Symbol2.setType)("Sakhe.PNode.Ray", Ray);
+exports.PValue = PValue;
+(0, _Symbol2.setType)("Sakhe.PNode.PValue", PValue);
 
 const Impl = function (__exports) {
   const tryFind = __exports.tryFind = function ($var6, $var7, $var8) {

@@ -54,7 +54,7 @@ module State =
 module Dom =
     open PNode
 
-    let pnode a p s = RNode (a, p, s)
+    let pnode a p s = PNode (a, p, s)
     let createElm tag =
         pnode
             <| fun () -> document.createElement tag

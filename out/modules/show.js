@@ -82,7 +82,7 @@ const State = exports.State = function (__exports) {
 
 const Dom = exports.Dom = function (__exports) {
   const pnode = __exports.pnode = function (a_1, p, s) {
-    return new _pnode.Ray(0, [a_1, p, s]);
+    return new _pnode.PValue(0, [a_1, p, s]);
   };
 
   const createElm = __exports.createElm = function (tag) {

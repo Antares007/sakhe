@@ -2,7 +2,7 @@ module Sakhe.PNode
 open Fable.Import.Browser
 open Sakhe
 
-type Ray<'a when 'a :> Node> = RNode of (unit -> 'a) * (Node -> bool) * S<Patch<'a>>
+type PValue<'a when 'a :> Node> = PNode of (unit -> 'a) * (Node -> bool) * S<Patch<'a>>
 
 [<AutoOpen>]
 module private Impl =
@@ -58,7 +58,7 @@ let ring (Pith pith) = Pith <| fun o ->
     let mutable c = 0
 
     pith <| function
-    | RNode (absurd, prove, p) ->
+    | PNode (absurd, prove, p) ->
         let index = c
         c <- c + 1
         o << S.map (chain absurd prove index) <| p
