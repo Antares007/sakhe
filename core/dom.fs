@@ -1,18 +1,21 @@
 module Sakhe.Dom
-open Fable.Import.Browser
 open Sakhe
-open Sakhe.Patch
-let a = S.now 1
 
-let see f (Pith a) = Pith (f a)
+let ring (Pith pith) =
+    let mutable abList = []
+    pith <| fun prv -> abList <- prv :: abList
+    let (aPith, bPith) =
+        List.fold
+            (fun (aP, bP) (a, b) -> ((fun o -> o a; aP o), (fun o -> o b; bP o)))
+            (ignore, ignore)
+            abList
+    (Pith aPith, Pith bPith)
 
-let elementPatchTree<'a when 'a :> Element> (pith: S<Pith<S<Patch<'a>>>>) =
-    tree pith
+let tree aTree bTree pith =
+    let abPS = S.map ring pith |> S.multicast
+    let aPS = S.map fst abPS
+    let bPS = S.map snd abPS
+    (aTree aPS, bTree bPS)
 
-elementPatchTree << S.now << Pith <| fun o ->
-    o << S.now << Patch.once <| fun (n: Element) -> n |> ignore
-
-    o << unbox << elementPatchTree << S.now << Pith <| fun o ->
-        o << S.now << Patch.once <| fun (n: HTMLDivElement) -> n |> ignore
-
-|> fun see -> see |> ignore
+let see pith =
+    tree State.aTree PNode.tree pith
