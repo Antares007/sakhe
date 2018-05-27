@@ -106,7 +106,7 @@ module Dom =
         tree << S.now << Pith <| fun o ->
             o (counter 3)
 
-    S.drain (render (document.getElementById "root-node") rez) |> ignore
+    (render (document.getElementById "root-node") rez) |> ignore
 
 module Test =
     open Patch
@@ -139,7 +139,15 @@ module Test2 =
     let tree pith =
         Dom.tree State.oTree PNode.tree pith
 
-    tree << S.now << Pith <| fun o ->
-        let see = o
-        ()
-    |> (fun see -> see |> ignore)
+    let (rs, ps) = tree << S.now << Pith <| fun o ->
+
+        o (
+            (State.Number "a" << S.now << State.R.set <| 1.),
+            (Dom.Div << S.now << Patch <| ignore)
+        )
+
+    S.merge
+        (Dom.render (document.getElementById "root-node") ps |> S.map ignore)
+        (State.update rs |> S.map ignore)
+    |> S.drain
+    |> ignore
