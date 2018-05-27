@@ -44,12 +44,14 @@ module State =
             ()
 
 
+    let update s =
+        s
         |> scan
             (R.apply)
             (Some Fable.Core.JsInterop.createEmpty<obj>)
         |> tap console.log
 
-    drain rez |> ignore
+    drain (update rez) |> ignore
 
 module Dom =
     open PNode
@@ -95,14 +97,16 @@ module Dom =
                 if d > 0 then o <| counter (d - 1)
             o << h3 <| fun o ->
                 o << Text << S.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
+    let render elm s =
+        s
+        |> S.sample S.animationFrame
+        |> S.scan Patch.apply elm
 
     let rez =
         tree << S.now << Pith <| fun o ->
             o (counter 3)
-        |> S.sample S.animationFrame
-        |> S.scan Patch.apply (document.getElementById "root-node")
 
-    S.drain rez |> ignore
+    S.drain (render (document.getElementById "root-node") rez) |> ignore
 
 module Test =
     open Patch
@@ -129,3 +133,13 @@ module Test =
     |> S.scan apply ()
     |> S.drain
     |> ignore
+
+module Test2 =
+
+    let tree pith =
+        Dom.tree State.oTree PNode.tree pith
+
+    tree << S.now << Pith <| fun o ->
+        let see = o
+        ()
+    |> (fun see -> see |> ignore)

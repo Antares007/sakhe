@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Test = exports.Dom = exports.State = exports.AnimationFrame = undefined;
+exports.Test2 = exports.Test = exports.Dom = exports.State = exports.AnimationFrame = undefined;
 
 var _s = require("./s");
 
@@ -18,6 +18,8 @@ var _CurriedLambda = require("./fable-core/CurriedLambda");
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _patch = require("./patch");
+
+var _dom = require("./dom");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -50,13 +52,13 @@ const State = exports.State = function (__exports) {
 
   const emptystring = __exports.emptystring = {};
 
-  const rez = __exports.rez = _s.S.tap(console.log.bind(console), _s.S.scan(_state.R.apply.bind(_state.R), {}, ($var2 => ($var1 => (0, _state.oTree)(_s.S.at(_s.TimeModule.ms(0), $var1)))(function (arg0) {
+  const rez = __exports.rez = ($var2 => ($var1 => (0, _state.oTree)(_s.S.at(_s.TimeModule.ms(0), $var1)))(function (arg0) {
     return arg0;
   }($var2)))(function (o) {
     ($var6 => ($var5 => {
       var arg00_;
-      return ($var4 => ($var3 => o(function (s_1) {
-        return _Object("achiko", s_1);
+      return ($var4 => ($var3 => o(function (s) {
+        return _Object("achiko", s);
       }($var3)))((0, _state.oTree)($var4)))((arg00_ = _s.TimeModule.ms(3000), function (a_1) {
         return _s.S.at(arg00_, a_1);
       })($var5));
@@ -65,8 +67,8 @@ const State = exports.State = function (__exports) {
     }($var6)))(function (o_1) {
       ($var9 => ($var8 => {
         var arg00__1;
-        return ($var7 => o_1(function (s_2) {
-          return _Number("age", s_2);
+        return ($var7 => o_1(function (s_1) {
+          return _Number("age", s_1);
         }($var7)))((arg00__1 = _s.TimeModule.ms(3000), function (a_2) {
           return _s.S.at(arg00__1, a_2);
         })($var8));
@@ -74,9 +76,13 @@ const State = exports.State = function (__exports) {
         return _arg1 == null ? 0 : (0, _Option.getValue)(_arg1) + 1;
       });
     });
-  })));
+  });
 
-  _s.S.drain(rez), void 0;
+  const update = __exports.update = function (s) {
+    return _s.S.tap(console.log.bind(console), _s.S.scan(_state.R.apply.bind(_state.R), {}, s));
+  };
+
+  _s.S.drain(update(rez)), void 0;
   return __exports;
 }({});
 
@@ -181,15 +187,22 @@ const Dom = exports.Dom = function (__exports) {
     });
   };
 
-  const rez_1 = __exports.rez = _s.S.scan(_patch.Patch.apply.bind(_patch.Patch), document.getElementById("root-node"), function (arg10__1) {
-    return _s.S.sample(_s.S.animationFrame, arg10__1);
-  }(($var25 => ($var24 => (0, _pnode.tree)(_s.S.now($var24)))(function (arg0) {
+  const render = __exports.render = function (elm, s) {
+    var f;
+    return (f = _patch.Patch.apply.bind(_patch.Patch), function (arg20_) {
+      return _s.S.scan(f, elm, arg20_);
+    })(function (arg10__1) {
+      return _s.S.sample(_s.S.animationFrame, arg10__1);
+    }(s));
+  };
+
+  const rez_1 = __exports.rez = ($var25 => ($var24 => (0, _pnode.tree)(_s.S.now($var24)))(function (arg0) {
     return arg0;
   }($var25)))(function (o) {
     o(counter(3));
-  })));
+  });
 
-  _s.S.drain(rez_1), void 0;
+  _s.S.drain(render(document.getElementById("root-node"), rez_1)), void 0;
   return __exports;
 }({});
 
@@ -231,5 +244,19 @@ const Test = exports.Test = function (__exports) {
       console.log("...end patching");
     });
   }))), void 0;
+  return __exports;
+}({});
+
+const Test2 = exports.Test2 = function (__exports) {
+  const tree = __exports.tree = function (pith_1) {
+    return (0, _dom.tree)(_state.oTree, _pnode.tree, pith_1);
+  };
+
+  (function (see) {
+    see, void 0;
+  })(($var38 => ($var37 => tree(_s.S.now($var37)))(function (arg0_2) {
+    return arg0_2;
+  }($var38)))(function (o_2) {}));
+
   return __exports;
 }({});
