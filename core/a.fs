@@ -2,9 +2,9 @@
 open Fable.Core
 
 [<Erase>] type Pith<'a> = Pith of (('a -> unit) -> unit)
-[<Erase>] type DeltaC<'a, 'b> = DeltaC of ('a list -> 'b)
 
-module Pith =
+module A =
+    [<Erase>] type DeltaC<'a, 'b> = DeltaC of ('a list -> 'b)
 
     let tree (DeltaC deltac) (Pith pith) =
         let mutable list = []

@@ -2,4 +2,4 @@
 open Sakhe
 
 let tree (deltac) mpith =
-    mpith |> S.map (Pith.tree deltac) |> S.switchLatest
+    mpith |> S.map (A.tree deltac) |> S.switchLatest
