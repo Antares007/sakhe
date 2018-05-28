@@ -70,16 +70,23 @@ module Dom =
 
     let rec counter d =
         div <| fun o ->
-            o << btn <| fun o ->
+            let ep = new Event<_>()
+            let em = new Event<_>()
+            let sum =
+                S.merge
+                    (S.toStream em |> S.konst -1)
+                    (S.toStream ep |> S.konst 1)
+                |> S.scan (+) 0
+            o << Button << tree (P.once (fun x -> x.addEventListener_click ep.Trigger)) << S.now << Pith <| fun o ->
                 o << span <| fun o ->
                     o << text <| "+"
                 if d > 0 then o <| counter (d - 1)
-            o << btn <| fun o ->
+            o << Button << tree (P.once (fun x -> x.addEventListener_click em.Trigger)) << S.now << Pith <| fun o ->
                 o << span <| fun o ->
                     o << text <| "-"
                 if d > 0 then o <| counter (d - 1)
             o << h3 <| fun o ->
-                o << Text << S.map (fun i -> P.once (fun text -> text.textContent <- string i)) <| intS
+                o << Text << S.map (fun i -> P.once (fun text -> text.textContent <- string i)) <| sum
     let render elm s =
         s
         |> S.sample S.animationFrame
@@ -89,7 +96,9 @@ module Dom =
         tree (P.once ignore) << S.now << Pith <| fun o ->
             o (counter 3)
 
-    (render (document.getElementById "root-node") rez) |> ignore
+    (render (document.getElementById "root-node") rez)
+    |> S.drain
+    |> ignore
 
 module Test2 =
     open State
@@ -113,5 +122,5 @@ module Test2 =
     S.merge
         (render (document.getElementById "root-node") (snd rez) |> S.map ignore)
         (update (fst rez) |> S.map ignore)
-    |> S.drain
+    // |> S.drain
     |> ignore

@@ -34,7 +34,7 @@ module S =
 
     let toStream (e: Event<_>) =
         let ms = core.MulticastSource.Create (core.never ())
-        core.newStream <| fun sink scheduler ->
+        S << core.newStream <| fun sink scheduler ->
             let onNext v = ms.event (scheduler.currentTime (), v)
             let d1 = Observable.subscribe onNext e.Publish
             let d2 = ms.run (sink, scheduler)

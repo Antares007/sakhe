@@ -112,7 +112,9 @@ const S = exports.S = function (__exports) {
 
   const toStream = __exports.toStream = function (e) {
     const ms_1 = new core.MulticastSource(core.never());
-    return core.newStream.bind(core)(function (sink, scheduler_1) {
+    return ($var2 => function (arg0) {
+      return arg0;
+    }(core.newStream.bind(core)($var2)))(function (sink, scheduler_1) {
       const onNext = function (v) {
         ms_1.event(scheduler_1.currentTime(), v);
       };

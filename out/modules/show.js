@@ -19,6 +19,10 @@ var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _p = require("./p");
 
+var _Event2 = require("./fable-core/Event");
+
+var _Event3 = _interopRequireDefault(_Event2);
+
 var _g = require("./g");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -157,9 +161,25 @@ const Dom = exports.Dom = function (__exports) {
 
   const counter = __exports.counter = function (d) {
     return div(function (o) {
-      ($var15 => o(btn($var15)))(function (o_1) {
-        ($var16 => o_1(span($var16)))(function (o_2) {
-          ($var17 => o_2(text($var17)))("+");
+      const ep = new _Event3.default();
+      const em = new _Event3.default();
+
+      const sum = _s.S.scan(function (x, y) {
+        return x + y;
+      }, 0, _s.S.merge(_s.S.konst(-1, _s.S.toStream(em)), _s.S.konst(1, _s.S.toStream(ep))));
+
+      ($var18 => ($var17 => ($var16 => {
+        var s;
+        return ($var15 => o(Button($var15)))((s = _p.P.once(function (x_1) {
+          x_1.addEventListener("click", ep.Trigger.bind(ep));
+        }), function (pith) {
+          return (0, _pnode.tree)(s, pith);
+        })($var16));
+      })(_s.S.now.bind(_s.S)($var17)))(function (arg0) {
+        return arg0;
+      }($var18)))(function (o_1) {
+        ($var19 => o_1(span($var19)))(function (o_2) {
+          ($var20 => o_2(text($var20)))("+");
         });
 
         if (d > 0) {
@@ -167,9 +187,18 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var18 => o(btn($var18)))(function (o_3) {
-        ($var19 => o_3(span($var19)))(function (o_4) {
-          ($var20 => o_4(text($var20)))("-");
+      ($var24 => ($var23 => ($var22 => {
+        var s_2;
+        return ($var21 => o(Button($var21)))((s_2 = _p.P.once(function (x_2) {
+          x_2.addEventListener("click", em.Trigger.bind(em));
+        }), function (pith_1) {
+          return (0, _pnode.tree)(s_2, pith_1);
+        })($var22));
+      })(_s.S.now.bind(_s.S)($var23)))(function (arg0_1) {
+        return arg0_1;
+      }($var24)))(function (o_3) {
+        ($var25 => o_3(span($var25)))(function (o_4) {
+          ($var26 => o_4(text($var26)))("-");
         });
 
         if (d > 0) {
@@ -177,17 +206,17 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var21 => o(h3($var21)))(function (o_5) {
-        ($var23 => {
+      ($var27 => o(h3($var27)))(function (o_5) {
+        ($var29 => {
           var f;
-          return ($var22 => o_5(_Text($var22)))((f = function (i) {
+          return ($var28 => o_5(_Text($var28)))((f = function (i) {
             return _p.P.once(function (text_1) {
               text_1.textContent = i.toString();
             });
           }, function (arg10_) {
             return _s.S.map(f, arg10_);
-          })($var23));
-        })(intS);
+          })($var29));
+        })(sum);
       });
     });
   };
@@ -201,15 +230,15 @@ const Dom = exports.Dom = function (__exports) {
     }(s));
   };
 
-  const rez_1 = __exports.rez = ($var25 => ($var24 => (0, _pnode.tree)(_p.P.once(function (value) {
+  const rez_1 = __exports.rez = ($var31 => ($var30 => (0, _pnode.tree)(_p.P.once(function (value) {
     value, void 0;
-  }), _s.S.now($var24)))(function (arg0) {
+  }), _s.S.now($var30)))(function (arg0) {
     return arg0;
-  }($var25)))(function (o) {
+  }($var31)))(function (o) {
     o(counter(3));
   });
 
-  render(document.getElementById("root-node"), rez_1), void 0;
+  _s.S.drain(render(document.getElementById("root-node"), rez_1)), void 0;
   return __exports;
 }({});
 
@@ -225,57 +254,57 @@ const Test2 = exports.Test2 = function (__exports) {
 
   const g = __exports.g = function (key, p_0, p_1) {
     const p = [p_0, p_1];
-    return new _g.G(2, [($var26 => function (s) {
+    return new _g.G(2, [($var32 => function (s) {
       return State.Object(key, s);
     }(function (tuple) {
       return tuple[0];
-    }($var26)))(p), ($var27 => Dom.Div(function (tuple_1) {
+    }($var32)))(p), ($var33 => Dom.Div(function (tuple_1) {
       return tuple_1[1];
-    }($var27)))(p)]);
+    }($var33)))(p)]);
   };
 
-  const rez_2 = __exports.rez = ($var29 => ($var28 => tree(_s.S.now($var28)))(function (arg0) {
+  const rez_2 = __exports.rez = ($var35 => ($var34 => tree(_s.S.now($var34)))(function (arg0) {
     return arg0;
-  }($var29)))(function (o) {
-    ($var33 => ($var32 => ($var31 => ($var30 => o(function (arg0_1) {
+  }($var35)))(function (o) {
+    ($var39 => ($var38 => ($var37 => ($var36 => o(function (arg0_1) {
       return new _g.G(0, arg0_1);
-    }($var30)))(function (s) {
+    }($var36)))(function (s) {
       return State.Number("a", s);
-    }($var31)))(_s.S.now.bind(_s.S)($var32)))(_state.R.set.bind(_state.R)($var33)))(1);
+    }($var37)))(_s.S.now.bind(_s.S)($var38)))(_state.R.set.bind(_state.R)($var39)))(1);
 
-    ($var37 => ($var36 => ($var35 => ($var34 => o(function (arg0_2) {
+    ($var43 => ($var42 => ($var41 => ($var40 => o(function (arg0_2) {
       return new _g.G(1, arg0_2);
-    }($var34)))(Dom.Div($var35)))(_s.S.now.bind(_s.S)($var36)))(function (arg0_3) {
+    }($var40)))(Dom.Div($var41)))(_s.S.now.bind(_s.S)($var42)))(function (arg0_3) {
       return arg0_3;
-    }($var37)))(function (elm) {
+    }($var43)))(function (elm) {
       elm.innerHTML = "<h1>hello world!</h1>";
     });
 
-    ($var41 => ($var40 => ($var39 => ($var38 => o(function (tupledArg) {
+    ($var47 => ($var46 => ($var45 => ($var44 => o(function (tupledArg) {
       return g("hmmm", tupledArg[0], tupledArg[1]);
-    }($var38)))(tree($var39)))(_s.S.now.bind(_s.S)($var40)))(function (arg0_4) {
+    }($var44)))(tree($var45)))(_s.S.now.bind(_s.S)($var46)))(function (arg0_4) {
       return arg0_4;
-    }($var41)))(function (o_1) {
-      ($var45 => ($var44 => ($var43 => ($var42 => o_1(function (arg0_5) {
+    }($var47)))(function (o_1) {
+      ($var51 => ($var50 => ($var49 => ($var48 => o_1(function (arg0_5) {
         return new _g.G(0, arg0_5);
-      }($var42)))(function (s_1) {
+      }($var48)))(function (s_1) {
         return State.Number("aa", s_1);
-      }($var43)))(_s.S.now.bind(_s.S)($var44)))(_state.R.set.bind(_state.R)($var45)))(2);
+      }($var49)))(_s.S.now.bind(_s.S)($var50)))(_state.R.set.bind(_state.R)($var51)))(2);
 
-      ($var49 => ($var48 => ($var47 => ($var46 => o_1(function (arg0_6) {
+      ($var55 => ($var54 => ($var53 => ($var52 => o_1(function (arg0_6) {
         return new _g.G(1, arg0_6);
-      }($var46)))(Dom.Div($var47)))(_s.S.now.bind(_s.S)($var48)))(function (arg0_7) {
+      }($var52)))(Dom.Div($var53)))(_s.S.now.bind(_s.S)($var54)))(function (arg0_7) {
         return arg0_7;
-      }($var49)))(function (elm_1) {
+      }($var55)))(function (elm_1) {
         elm_1.innerHTML = "<h2>hello world!</h2>";
       });
     });
   });
 
-  _s.S.drain(_s.S.merge(_s.S.map(function (value) {
+  _s.S.merge(_s.S.map(function (value) {
     value, void 0;
   }, Dom.render(document.getElementById("root-node"), rez_2[1])), _s.S.map(function (value_1) {
     value_1, void 0;
-  }, State.update(rez_2[0])))), void 0;
+  }, State.update(rez_2[0]))), void 0;
   return __exports;
 }({});
