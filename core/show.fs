@@ -112,19 +112,19 @@ module Dom =
 module Test2 =
 
     let tree pith =
-        Dom.gTree State.treeObj (PNode.tree (P.once ignore)) pith
+        G.tree State.treeObj (PNode.tree (P.once ignore)) pith
 
     let g key p =
-        Dom.AB (
+        G.AB (
             (State.Object key << fst <| p),
             (Dom.Div << snd <| p)
         )
     let (rs, ps) = tree << S.now << Pith <| fun o ->
-        o << Sakhe.Dom.A << State.Number "a" << S.now << State.R.set <| 1.
-        o << Dom.B << Dom.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
+        o << G.A << State.Number "a" << S.now << State.R.set <| 1.
+        o << G.B << Dom.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
         o << g "hmmm" << tree << S.now << Pith <| fun o ->
-            o << Sakhe.Dom.A << State.Number "aa" << S.now << State.R.set <| 2.
-            o << Dom.B << Dom.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
+            o << G.A << State.Number "aa" << S.now << State.R.set <| 2.
+            o << G.B << Dom.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
 
     S.merge
         (Dom.render (document.getElementById "root-node") ps |> S.map ignore)

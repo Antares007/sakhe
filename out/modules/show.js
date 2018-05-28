@@ -19,7 +19,7 @@ var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _p = require("./p");
 
-var _dom = require("./dom");
+var _g = require("./g");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -119,9 +119,9 @@ const Dom = exports.Dom = function (__exports) {
   const statTree = __exports.statTree = function (t, p) {
     return ($var12 => ($var11 => ($var10 => {
       var s;
-      return t((s = _s.S.now(_p.P.once(function (value) {
+      return t((s = _p.P.once(function (value) {
         value, void 0;
-      })), function (pith) {
+      }), function (pith) {
         return (0, _pnode.tree)(s, pith);
       })($var10));
     })(_s.S.now.bind(_s.S)($var11)))(function (arg0) {
@@ -202,9 +202,9 @@ const Dom = exports.Dom = function (__exports) {
     }(s));
   };
 
-  const rez_1 = __exports.rez = ($var25 => ($var24 => (0, _pnode.tree)(_s.S.now(_p.P.once(function (value) {
+  const rez_1 = __exports.rez = ($var25 => ($var24 => (0, _pnode.tree)(_p.P.once(function (value) {
     value, void 0;
-  })), _s.S.now($var24)))(function (arg0) {
+  }), _s.S.now($var24)))(function (arg0) {
     return arg0;
   }($var25)))(function (o) {
     o(counter(3));
@@ -217,16 +217,16 @@ const Dom = exports.Dom = function (__exports) {
 const Test2 = exports.Test2 = function (__exports) {
   const tree = __exports.tree = function (pith) {
     var s;
-    return (0, _dom.gTree)(_state.treeObj, (s = _s.S.now(_p.P.once(function (value) {
+    return (0, _g.tree)(_state.treeObj, (s = _p.P.once(function (value) {
       value, void 0;
-    })), function (pith_2) {
+    }), function (pith_2) {
       return (0, _pnode.tree)(s, pith_2);
     }), pith);
   };
 
   const g = __exports.g = function (key, p_0, p_1) {
     const p = [p_0, p_1];
-    return new _dom.O(2, [($var26 => function (s) {
+    return new _g.G(2, [($var26 => function (s) {
       return State.Object(key, s);
     }(function (tuple) {
       return tuple[0];
@@ -235,17 +235,17 @@ const Test2 = exports.Test2 = function (__exports) {
     }($var27)))(p)]);
   };
 
-  const patternInput_122_25 = ($var29 => ($var28 => tree(_s.S.now($var28)))(function (arg0) {
+  const patternInput_122_27 = ($var29 => ($var28 => tree(_s.S.now($var28)))(function (arg0) {
     return arg0;
   }($var29)))(function (o) {
     ($var33 => ($var32 => ($var31 => ($var30 => o(function (arg0_1) {
-      return new _dom.O(0, arg0_1);
+      return new _g.G(0, arg0_1);
     }($var30)))(function (s) {
       return State.Number("a", s);
     }($var31)))(_s.S.now.bind(_s.S)($var32)))(_state.R.set.bind(_state.R)($var33)))(1);
 
     ($var37 => ($var36 => ($var35 => ($var34 => o(function (arg0_2) {
-      return new _dom.O(1, arg0_2);
+      return new _g.G(1, arg0_2);
     }($var34)))(Dom.Div($var35)))(_s.S.now.bind(_s.S)($var36)))(function (arg0_3) {
       return arg0_3;
     }($var37)))(function (elm) {
@@ -258,13 +258,13 @@ const Test2 = exports.Test2 = function (__exports) {
       return arg0_4;
     }($var41)))(function (o_1) {
       ($var45 => ($var44 => ($var43 => ($var42 => o_1(function (arg0_5) {
-        return new _dom.O(0, arg0_5);
+        return new _g.G(0, arg0_5);
       }($var42)))(function (s_1) {
         return State.Number("aa", s_1);
       }($var43)))(_s.S.now.bind(_s.S)($var44)))(_state.R.set.bind(_state.R)($var45)))(2);
 
       ($var49 => ($var48 => ($var47 => ($var46 => o_1(function (arg0_6) {
-        return new _dom.O(1, arg0_6);
+        return new _g.G(1, arg0_6);
       }($var46)))(Dom.Div($var47)))(_s.S.now.bind(_s.S)($var48)))(function (arg0_7) {
         return arg0_7;
       }($var49)))(function (elm_1) {
@@ -273,8 +273,8 @@ const Test2 = exports.Test2 = function (__exports) {
     });
   });
 
-  const rs = __exports.rs = patternInput_122_25[0];
-  const ps = __exports.ps = patternInput_122_25[1];
+  const rs = __exports.rs = patternInput_122_27[0];
+  const ps = __exports.ps = patternInput_122_27[1];
   _s.S.drain(_s.S.merge(_s.S.map(function (value) {
     value, void 0;
   }, Dom.render(document.getElementById("root-node"), ps)), _s.S.map(function (value_1) {

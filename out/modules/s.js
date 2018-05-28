@@ -117,7 +117,7 @@ const S = exports.S = function (__exports) {
   const treeCombine = __exports.treeCombine = function (f, s, pith) {
     return tree(function (arg10_, arg20_) {
       return combine(f, arg10_, arg20_);
-    }, s, pith);
+    }, now(s), pith);
   };
 
   const treeMerge = __exports.treeMerge = function (s, pith) {

@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.R = exports.RValue = undefined;
-exports.tree = tree;
 exports.treeObj = treeObj;
 exports.treeArr = treeArr;
 
@@ -144,8 +143,8 @@ const Impl = function (__exports) {
   return __exports;
 }({});
 
-function tree(a, s, pith) {
-  return _s.S.treeMerge(s, _s.S.map(function (arg10_) {
+function tree(a, pith) {
+  return _s.S.treeMerge(_s.S.empty(), _s.S.map(function (arg10_) {
     return Impl.makeRing(a, arg10_);
   }, pith));
 }
@@ -153,11 +152,11 @@ function tree(a, s, pith) {
 function treeObj(pith) {
   return tree(function () {
     return {};
-  }, _s.S.empty(), pith);
+  }, pith);
 }
 
 function treeArr(pith) {
   return tree(function () {
     return [];
-  }, _s.S.empty(), pith);
+  }, pith);
 }
