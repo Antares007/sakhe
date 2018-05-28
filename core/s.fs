@@ -32,6 +32,9 @@ module S =
     let startWith a (S s) = S <| core.startWith (a, s)
     let sample (S a) (S b) = S <| core.sample (b, a)
 
+    let tree (deltac) mpith =
+        mpith |> map (A.tree deltac) |> switchLatest
+
     let private defScheduler = scheduler.newDefaultScheduler ()
     let drain (S s) = core.runEffects (s, defScheduler)
 

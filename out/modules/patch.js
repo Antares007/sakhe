@@ -9,8 +9,6 @@ var _s = require("./s");
 
 var _Seq = require("./fable-core/Seq");
 
-var _m = require("./m");
-
 const Patch = exports.Patch = function (__exports) {
   const once = __exports.once = function (f) {
     return function makeOnce(f) {
@@ -64,7 +62,7 @@ const Patch = exports.Patch = function (__exports) {
       return (0, _Seq.fold)(folder, state, source);
     };
 
-    return (0, _m.tree)(deltac, pith);
+    return _s.S.tree(deltac, pith);
   };
 
   return __exports;

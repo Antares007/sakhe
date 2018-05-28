@@ -26,4 +26,4 @@ module Patch =
     let tree pith =
         let deltac =
             Seq.fold (S.combine (combine)) (S.now (Patch ignore))
-        M.tree (A.DeltaC deltac) pith
+        S.tree (A.DeltaC deltac) pith

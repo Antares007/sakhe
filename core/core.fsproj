@@ -10,7 +10,6 @@
     <Compile Include="most/disposable.fs" />
     <Compile Include="a.fs" />
     <Compile Include="s.fs" />
-    <Compile Include="m.fs" />
     <Compile Include="patch.fs" />
     <Compile Include="pnode.fs" />
     <Compile Include="state.fs" />

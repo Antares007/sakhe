@@ -17,8 +17,6 @@ var _Option = require("./fable-core/Option");
 
 var _s = require("./s");
 
-var _m = require("./m");
-
 var _Seq = require("./fable-core/Seq");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -147,7 +145,7 @@ const Impl = function (__exports) {
   const mergeTree = __exports.mergeTree = function (pith) {
     var folder;
     var state;
-    return (0, _m.tree)((folder = function (a, b) {
+    return _s.S.tree((folder = function (a, b) {
       return _s.S.merge(b, a);
     }, state = _s.S.empty(), function (list) {
       return (0, _Seq.fold)(folder, state, list);

@@ -84,7 +84,7 @@ module private Impl =
 
 
     let mergeTree pith =
-            M.tree (A.DeltaC (List.fold (fun a b -> S.merge b a) (S.empty ()))) pith
+            S.tree (A.DeltaC (List.fold (fun a b -> S.merge b a) (S.empty ()))) pith
 
 let oTree pith =
     mergeTree (S.map (makeRing absurdObj) pith)
