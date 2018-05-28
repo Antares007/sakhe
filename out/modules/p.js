@@ -3,13 +3,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Patch = undefined;
+exports.P = undefined;
 
 var _s = require("./s");
 
 var _Seq = require("./fable-core/Seq");
 
-const Patch = exports.Patch = function (__exports) {
+const P = exports.P = function (__exports) {
   const once = __exports.once = function (f) {
     return function makeOnce(f) {
       var b;

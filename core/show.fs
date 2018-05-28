@@ -84,7 +84,7 @@ module Dom =
     let span p = statTree Span p
     let h3 p = statTree H3 p
 
-    let text s = Text << S.at (ms 0.) << Patch.once <| fun text -> text.textContent <- s
+    let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
 
     let rec counter d =
         div <| fun o ->
@@ -97,11 +97,11 @@ module Dom =
                     o << text <| "-"
                 if d > 0 then o <| counter (d - 1)
             o << h3 <| fun o ->
-                o << Text << S.map (fun i -> Patch.once (fun text -> text.textContent <- string i)) <| intS
+                o << Text << S.map (fun i -> P.once (fun text -> text.textContent <- string i)) <| intS
     let render elm s =
         s
         |> S.sample S.animationFrame
-        |> S.scan Patch.apply elm
+        |> S.scan P.apply elm
 
     let rez =
         tree << S.now << Pith <| fun o ->
@@ -110,7 +110,7 @@ module Dom =
     (render (document.getElementById "root-node") rez) |> ignore
 
 module Test =
-    open Patch
+    open P
     let a = S.now 1
 
     tree << S.now << Pith <| fun o ->
@@ -147,10 +147,10 @@ module Test2 =
         )
     let (rs, ps) = tree << S.now << Pith <| fun o ->
         o << Sakhe.Dom.A << State.Number "a" << S.now << State.R.set <| 1.
-        o << Dom.B << Dom.Div << S.now << Patch <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
+        o << Dom.B << Dom.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
         o << g "hmmm" << tree << S.now << Pith <| fun o ->
             o << Sakhe.Dom.A << State.Number "aa" << S.now << State.R.set <| 2.
-            o << Dom.B << Dom.Div << S.now << Patch <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
+            o << Dom.B << Dom.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
 
     S.merge
         (Dom.render (document.getElementById "root-node") ps |> S.map ignore)

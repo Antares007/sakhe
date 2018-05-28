@@ -17,7 +17,7 @@ var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
-var _patch = require("./patch");
+var _p = require("./p");
 
 var _dom = require("./dom");
 
@@ -144,7 +144,7 @@ const Dom = exports.Dom = function (__exports) {
       return _Text((arg00_ = _s.TimeModule.ms(0), function (a_1) {
         return _s.S.at(arg00_, a_1);
       })($var13));
-    })(_patch.Patch.once.bind(_patch.Patch)($var14)))(function (text_1) {
+    })(_p.P.once.bind(_p.P)($var14)))(function (text_1) {
       text_1.textContent = s;
     });
   };
@@ -175,7 +175,7 @@ const Dom = exports.Dom = function (__exports) {
         ($var23 => {
           var f;
           return ($var22 => o_5(_Text($var22)))((f = function (i) {
-            return _patch.Patch.once(function (text_1) {
+            return _p.P.once(function (text_1) {
               text_1.textContent = i.toString();
             });
           }, function (arg10_) {
@@ -188,7 +188,7 @@ const Dom = exports.Dom = function (__exports) {
 
   const render = __exports.render = function (elm, s) {
     var f;
-    return (f = _patch.Patch.apply.bind(_patch.Patch), function (arg20_) {
+    return (f = _p.P.apply.bind(_p.P), function (arg20_) {
       return _s.S.scan(f, elm, arg20_);
     })(function (arg10__1) {
       return _s.S.sample(_s.S.animationFrame, arg10__1);
@@ -210,36 +210,36 @@ const Test = exports.Test = function (__exports) {
 
   (() => {
     const f = function (n, arg10_) {
-      _patch.Patch.apply(null, arg10_);
+      _p.P.apply(null, arg10_);
     };
 
     return function (arg20_) {
       return _s.S.scan(f, null, arg20_);
     };
-  })()(($var27 => ($var26 => _patch.Patch.tree(_s.S.now($var26)))(function (arg0) {
+  })()(($var27 => ($var26 => _p.P.tree(_s.S.now($var26)))(function (arg0) {
     return arg0;
   }($var27)))(function (o) {
-    ($var29 => ($var28 => o(_s.S.now.bind(_s.S)($var28)))(_patch.Patch.each.bind(_patch.Patch)($var29)))(function () {
+    ($var29 => ($var28 => o(_s.S.now.bind(_s.S)($var28)))(_p.P.each.bind(_p.P)($var29)))(function () {
       console.log("start patching...");
     });
 
-    ($var32 => ($var31 => ($var30 => o(_patch.Patch.tree.bind(_patch.Patch)($var30)))(_s.S.now.bind(_s.S)($var31)))(function (arg0_1) {
+    ($var32 => ($var31 => ($var30 => o(_p.P.tree.bind(_p.P)($var30)))(_s.S.now.bind(_s.S)($var31)))(function (arg0_1) {
       return arg0_1;
     }($var32)))(function (o_1) {
       o_1(_s.S.map(function (i) {
-        return _patch.Patch.once(function () {
+        return _p.P.once(function () {
           console.log("p", i);
         });
       }, _s.S.scan(function (x, y) {
         return x + y;
       }, 0, _s.S.konst(1, _s.S.periodic(_s.TimeModule.ms(1000))))));
 
-      ($var34 => ($var33 => o_1(_s.S.now.bind(_s.S)($var33)))(_patch.Patch.once.bind(_patch.Patch)($var34)))(function () {
+      ($var34 => ($var33 => o_1(_s.S.now.bind(_s.S)($var33)))(_p.P.once.bind(_p.P)($var34)))(function () {
         console.log("___");
       });
     });
 
-    ($var36 => ($var35 => o(_s.S.now.bind(_s.S)($var35)))(_patch.Patch.each.bind(_patch.Patch)($var36)))(function () {
+    ($var36 => ($var35 => o(_s.S.now.bind(_s.S)($var35)))(_p.P.each.bind(_p.P)($var36)))(function () {
       console.log("...end patching");
     });
   })), void 0;
@@ -262,7 +262,7 @@ const Test2 = exports.Test2 = function (__exports) {
     }($var38)))(p)]);
   };
 
-  const patternInput_148_8 = ($var40 => ($var39 => tree(_s.S.now($var39)))(function (arg0_2) {
+  const patternInput_148_13 = ($var40 => ($var39 => tree(_s.S.now($var39)))(function (arg0_2) {
     return arg0_2;
   }($var40)))(function (o_2) {
     ($var44 => ($var43 => ($var42 => ($var41 => o_2(function (arg0_3) {
@@ -300,8 +300,8 @@ const Test2 = exports.Test2 = function (__exports) {
     });
   });
 
-  const rs = __exports.rs = patternInput_148_8[0];
-  const ps = __exports.ps = patternInput_148_8[1];
+  const rs = __exports.rs = patternInput_148_13[0];
+  const ps = __exports.ps = patternInput_148_13[1];
   _s.S.drain(_s.S.merge(_s.S.map(function (value) {
     value, void 0;
   }, Dom.render(document.getElementById("root-node"), ps)), _s.S.map(function (value_1) {

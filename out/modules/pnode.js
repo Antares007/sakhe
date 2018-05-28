@@ -13,7 +13,7 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
-var _patch = require("./patch");
+var _p = require("./p");
 
 var _Option = require("./fable-core/Option");
 
@@ -65,7 +65,7 @@ const Impl = function (__exports) {
   };
 
   const chain = __exports.chain = function (absurd, prove, index, _arg1) {
-    return _patch.Patch.once(function (elm) {
+    return _p.P.once(function (elm) {
       const $var2 = function () {
         const b = absurd();
 
@@ -125,7 +125,7 @@ function ring(_arg1) {
       })(_arg2.data[2]);
     });
 
-    ($var5 => ($var4 => o(_s.S.now.bind(_s.S)($var4)))(_patch.Patch.once.bind(_patch.Patch)($var5)))(function (elm) {
+    ($var5 => ($var4 => o(_s.S.now.bind(_s.S)($var4)))(_p.P.once.bind(_p.P)($var5)))(function (elm) {
       for (let i = elm.childNodes.length - 1; i >= c; i--) {
         elm.removeChild(elm.childNodes[i]), void 0;
       }
@@ -134,5 +134,5 @@ function ring(_arg1) {
 }
 
 function tree(pith) {
-  return _patch.Patch.tree(_s.S.map(ring, pith));
+  return _p.P.tree(_s.S.map(ring, pith));
 }

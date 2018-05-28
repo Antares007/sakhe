@@ -1,9 +1,9 @@
 namespace Sakhe
 open Fable.Core
 
-[<Erase>] type Patch<'a> = private Patch of ('a -> unit)
+[<Erase>] type P<'a> = private P of ('a -> unit)
 
-module Patch =
+module P =
     [<Emit("(function makeOnce (f) {
         var b
         return function once (a) {
@@ -15,15 +15,15 @@ module Patch =
         }
     })($0)")>]
     let private onceNative (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
-    let once f = Patch (onceNative f)
-    let each f = Patch f
-    let combine (Patch combinedChain) (Patch patch) =
-        Patch <| fun n ->
+    let once f = P (onceNative f)
+    let each f = P f
+    let combine (P combinedChain) (P patch) =
+        P <| fun n ->
             patch n
             combinedChain n
-    let apply n (Patch p) = p n; n
+    let apply n (P p) = p n; n
 
     let tree pith =
         let deltac =
-            Seq.fold (S.combine (combine)) (S.now (Patch ignore))
+            Seq.fold (S.combine (combine)) (S.now (P ignore))
         S.tree (A.DeltaC deltac) pith

@@ -2,7 +2,7 @@ module Sakhe.PNode
 open Fable.Import.Browser
 open Sakhe
 
-type PValue<'a when 'a :> Node> = PNode of (unit -> 'a) * (Node -> bool) * S<Patch<'a>>
+type PValue<'a when 'a :> Node> = PNode of (unit -> 'a) * (Node -> bool) * S<P<'a>>
 
 [<AutoOpen>]
 module private Impl =
@@ -36,8 +36,8 @@ module private Impl =
                 | None -> notFound ()
 
     let chain
-        absurd prove index (Patch patch) =
-        Patch.once (fun (elm: #Node) ->
+        absurd prove index (P patch) =
+        P.once (fun (elm: #Node) ->
             matchChildren
                 (
                     (fun () ->
@@ -63,9 +63,9 @@ let ring (Pith pith) = Pith <| fun o ->
         c <- c + 1
         o << S.map (chain absurd prove index) <| p
 
-    o << S.now << Patch.once <| fun elm ->
+    o << S.now << P.once <| fun elm ->
         for i = unbox elm.childNodes.length - 1 downto c do
             elm.removeChild elm.childNodes.[i] |> ignore
 
-let tree pith: S<Patch<#Element>> =
-    Patch.tree (S.map ring pith)
+let tree pith: S<P<#Element>> =
+    P.tree (S.map ring pith)
