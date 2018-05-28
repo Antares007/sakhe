@@ -251,7 +251,13 @@ const Test2 = exports.Test2 = function (__exports) {
     return (0, _dom.gTree)(_state.oTree, _pnode.tree, pith_1);
   };
 
-  const patternInput_143_3 = ($var38 => ($var37 => tree(_s.S.now($var37)))(function (arg0_2) {
+  const g = __exports.g = function (key, x_1, y_1) {
+    return new _dom.O(2, [function (s) {
+      return State.Object(key, s);
+    }(x_1), Dom.Div(y_1)]);
+  };
+
+  const patternInput_148_2 = ($var38 => ($var37 => tree(_s.S.now($var37)))(function (arg0_2) {
     return arg0_2;
   }($var38)))(function (o_2) {
     ($var42 => ($var41 => ($var40 => ($var39 => o_2(function (arg0_3) {
@@ -264,13 +270,33 @@ const Test2 = exports.Test2 = function (__exports) {
       return new _dom.O(1, arg0_4);
     }($var43)))(Dom.Div($var44)))(_s.S.now.bind(_s.S)($var45)))(function (arg0_5) {
       return arg0_5;
-    }($var46)))(function (value) {
-      value, void 0;
+    }($var46)))(function (elm) {
+      elm.innerHTML = "<h1>hello world!</h1>";
+    });
+
+    ($var50 => ($var49 => ($var48 => ($var47 => o_2(function (tupledArg) {
+      return g("hmmm", tupledArg[0], tupledArg[1]);
+    }($var47)))(tree($var48)))(_s.S.now.bind(_s.S)($var49)))(function (arg0_6) {
+      return arg0_6;
+    }($var50)))(function (o_3) {
+      ($var54 => ($var53 => ($var52 => ($var51 => o_3(function (arg0_7) {
+        return new _dom.O(0, arg0_7);
+      }($var51)))(function (s_1) {
+        return State.Number("aa", s_1);
+      }($var52)))(_s.S.now.bind(_s.S)($var53)))(_state.R.set.bind(_state.R)($var54)))(2);
+
+      ($var58 => ($var57 => ($var56 => ($var55 => o_3(function (arg0_8) {
+        return new _dom.O(1, arg0_8);
+      }($var55)))(Dom.Div($var56)))(_s.S.now.bind(_s.S)($var57)))(function (arg0_9) {
+        return arg0_9;
+      }($var58)))(function (elm_1) {
+        elm_1.innerHTML = "<h2>hello world!</h2>";
+      });
     });
   });
 
-  const rs = __exports.rs = patternInput_143_3[0];
-  const ps = __exports.ps = patternInput_143_3[1];
+  const rs = __exports.rs = patternInput_148_2[0];
+  const ps = __exports.ps = patternInput_148_2[1];
   _s.S.drain(_s.S.merge(_s.S.map(function (value) {
     value, void 0;
   }, Dom.render(document.getElementById("root-node"), ps)), _s.S.map(function (value_1) {

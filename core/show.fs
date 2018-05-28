@@ -140,10 +140,17 @@ module Test2 =
     let tree pith =
         Dom.gTree State.oTree PNode.tree pith
 
+    let g key (x, y) =
+        Dom.AB (
+            (State.Object key <| x),
+            (Dom.Div <| y)
+        )
     let (rs, ps) = tree << S.now << Pith <| fun o ->
         o << Sakhe.Dom.A << State.Number "a" << S.now << State.R.set <| 1.
-        o << Dom.B << Dom.Div << S.now << Patch <| ignore
-
+        o << Dom.B << Dom.Div << S.now << Patch <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
+        o << g "hmmm" << tree << S.now << Pith <| fun o ->
+            o << Sakhe.Dom.A << State.Number "aa" << S.now << State.R.set <| 2.
+            o << Dom.B << Dom.Div << S.now << Patch <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
 
     S.merge
         (Dom.render (document.getElementById "root-node") ps |> S.map ignore)
