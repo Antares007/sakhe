@@ -251,52 +251,57 @@ const Test2 = exports.Test2 = function (__exports) {
     return (0, _dom.gTree)(_state.oTree, _pnode.tree, pith_1);
   };
 
-  const g = __exports.g = function (key, x_1, y_1) {
-    return new _dom.O(2, [function (s) {
+  const g = __exports.g = function (key, p_0, p_1) {
+    const p = [p_0, p_1];
+    return new _dom.O(2, [($var37 => function (s) {
       return State.Object(key, s);
-    }(x_1), Dom.Div(y_1)]);
+    }(function (tuple) {
+      return tuple[0];
+    }($var37)))(p), ($var38 => Dom.Div(function (tuple_1) {
+      return tuple_1[1];
+    }($var38)))(p)]);
   };
 
-  const patternInput_148_2 = ($var38 => ($var37 => tree(_s.S.now($var37)))(function (arg0_2) {
+  const patternInput_148_5 = ($var40 => ($var39 => tree(_s.S.now($var39)))(function (arg0_2) {
     return arg0_2;
-  }($var38)))(function (o_2) {
-    ($var42 => ($var41 => ($var40 => ($var39 => o_2(function (arg0_3) {
+  }($var40)))(function (o_2) {
+    ($var44 => ($var43 => ($var42 => ($var41 => o_2(function (arg0_3) {
       return new _dom.O(0, arg0_3);
-    }($var39)))(function (s) {
+    }($var41)))(function (s) {
       return State.Number("a", s);
-    }($var40)))(_s.S.now.bind(_s.S)($var41)))(_state.R.set.bind(_state.R)($var42)))(1);
+    }($var42)))(_s.S.now.bind(_s.S)($var43)))(_state.R.set.bind(_state.R)($var44)))(1);
 
-    ($var46 => ($var45 => ($var44 => ($var43 => o_2(function (arg0_4) {
+    ($var48 => ($var47 => ($var46 => ($var45 => o_2(function (arg0_4) {
       return new _dom.O(1, arg0_4);
-    }($var43)))(Dom.Div($var44)))(_s.S.now.bind(_s.S)($var45)))(function (arg0_5) {
+    }($var45)))(Dom.Div($var46)))(_s.S.now.bind(_s.S)($var47)))(function (arg0_5) {
       return arg0_5;
-    }($var46)))(function (elm) {
+    }($var48)))(function (elm) {
       elm.innerHTML = "<h1>hello world!</h1>";
     });
 
-    ($var50 => ($var49 => ($var48 => ($var47 => o_2(function (tupledArg) {
+    ($var52 => ($var51 => ($var50 => ($var49 => o_2(function (tupledArg) {
       return g("hmmm", tupledArg[0], tupledArg[1]);
-    }($var47)))(tree($var48)))(_s.S.now.bind(_s.S)($var49)))(function (arg0_6) {
+    }($var49)))(tree($var50)))(_s.S.now.bind(_s.S)($var51)))(function (arg0_6) {
       return arg0_6;
-    }($var50)))(function (o_3) {
-      ($var54 => ($var53 => ($var52 => ($var51 => o_3(function (arg0_7) {
+    }($var52)))(function (o_3) {
+      ($var56 => ($var55 => ($var54 => ($var53 => o_3(function (arg0_7) {
         return new _dom.O(0, arg0_7);
-      }($var51)))(function (s_1) {
+      }($var53)))(function (s_1) {
         return State.Number("aa", s_1);
-      }($var52)))(_s.S.now.bind(_s.S)($var53)))(_state.R.set.bind(_state.R)($var54)))(2);
+      }($var54)))(_s.S.now.bind(_s.S)($var55)))(_state.R.set.bind(_state.R)($var56)))(2);
 
-      ($var58 => ($var57 => ($var56 => ($var55 => o_3(function (arg0_8) {
+      ($var60 => ($var59 => ($var58 => ($var57 => o_3(function (arg0_8) {
         return new _dom.O(1, arg0_8);
-      }($var55)))(Dom.Div($var56)))(_s.S.now.bind(_s.S)($var57)))(function (arg0_9) {
+      }($var57)))(Dom.Div($var58)))(_s.S.now.bind(_s.S)($var59)))(function (arg0_9) {
         return arg0_9;
-      }($var58)))(function (elm_1) {
+      }($var60)))(function (elm_1) {
         elm_1.innerHTML = "<h2>hello world!</h2>";
       });
     });
   });
 
-  const rs = __exports.rs = patternInput_148_2[0];
-  const ps = __exports.ps = patternInput_148_2[1];
+  const rs = __exports.rs = patternInput_148_5[0];
+  const ps = __exports.ps = patternInput_148_5[1];
   _s.S.drain(_s.S.merge(_s.S.map(function (value) {
     value, void 0;
   }, Dom.render(document.getElementById("root-node"), ps)), _s.S.map(function (value_1) {

@@ -140,10 +140,10 @@ module Test2 =
     let tree pith =
         Dom.gTree State.oTree PNode.tree pith
 
-    let g key (x, y) =
+    let g key p =
         Dom.AB (
-            (State.Object key <| x),
-            (Dom.Div <| y)
+            (State.Object key << fst <| p),
+            (Dom.Div << snd <| p)
         )
     let (rs, ps) = tree << S.now << Pith <| fun o ->
         o << Sakhe.Dom.A << State.Number "a" << S.now << State.R.set <| 1.
