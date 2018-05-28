@@ -17,8 +17,6 @@ var _Option = require("./fable-core/Option");
 
 var _s = require("./s");
 
-var _Seq = require("./fable-core/Seq");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class RValue {
@@ -142,21 +140,11 @@ const Impl = function (__exports) {
     };
   };
 
-  const mergeTree = __exports.mergeTree = function (pith) {
-    var folder;
-    var state;
-    return _s.S.tree((folder = function (a, b) {
-      return _s.S.merge(b, a);
-    }, state = _s.S.empty(), function (list) {
-      return (0, _Seq.fold)(folder, state, list);
-    }), pith);
-  };
-
   return __exports;
 }({});
 
 function oTree(pith) {
-  return Impl.mergeTree(_s.S.map(function (arg10_) {
+  return _s.S.mergeTree(_s.S.empty(), _s.S.map(function (arg10_) {
     return Impl.makeRing(function () {
       return {};
     }, arg10_);
@@ -164,7 +152,7 @@ function oTree(pith) {
 }
 
 function aTree(pith) {
-  return Impl.mergeTree(_s.S.map(function (arg10_) {
+  return _s.S.mergeTree(_s.S.empty(), _s.S.map(function (arg10_) {
     return Impl.makeRing(function () {
       return [];
     }, arg10_);

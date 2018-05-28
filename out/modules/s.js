@@ -125,6 +125,15 @@ const S = exports.S = function (__exports) {
     }), pith);
   };
 
+  const mergeTree = __exports.mergeTree = function (s, pith) {
+    var folder;
+    return tree((folder = function (a, b) {
+      return merge(b, a);
+    }, function (list) {
+      return (0, _Seq.fold)(folder, s, list);
+    }), pith);
+  };
+
   const defScheduler = scheduler.newDefaultScheduler();
 
   const drain = __exports.drain = function (_arg1) {

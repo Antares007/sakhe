@@ -1,7 +1,6 @@
 module Sakhe.State
 open Fable.Core
 open Sakhe
-open Fable
 
 [<Erase>] type R<'a> = private R of ('a option -> 'a)
 
@@ -82,13 +81,9 @@ module private Impl =
         | RArray (key, r) -> o (S.map (chain absurdObj key asArray) r)
         ()
 
-
-    let mergeTree pith =
-            S.tree (A.DeltaC (List.fold (fun a b -> S.merge b a) (S.empty ()))) pith
-
 let oTree pith =
-    mergeTree (S.map (makeRing absurdObj) pith)
+    S.mergeTree (S.empty ()) (S.map (makeRing absurdObj) pith)
 
 let aTree pith =
-    mergeTree (S.map (makeRing absurdArray) pith)
+    S.mergeTree (S.empty ()) (S.map (makeRing absurdArray) pith)
 

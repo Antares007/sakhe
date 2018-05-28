@@ -38,6 +38,9 @@ module S =
     let combineTree f s pith =
         tree (A.DeltaC (Seq.fold (combine f) s)) pith
 
+    let mergeTree s pith =
+        tree (A.DeltaC (List.fold (fun a b -> merge b a) s)) pith
+
 
     let private defScheduler = scheduler.newDefaultScheduler ()
     let drain (S s) = core.runEffects (s, defScheduler)
