@@ -235,7 +235,7 @@ const Test2 = exports.Test2 = function (__exports) {
     }($var27)))(p)]);
   };
 
-  const patternInput_122_27 = ($var29 => ($var28 => tree(_s.S.now($var28)))(function (arg0) {
+  const rez_2 = __exports.rez = ($var29 => ($var28 => tree(_s.S.now($var28)))(function (arg0) {
     return arg0;
   }($var29)))(function (o) {
     ($var33 => ($var32 => ($var31 => ($var30 => o(function (arg0_1) {
@@ -273,12 +273,10 @@ const Test2 = exports.Test2 = function (__exports) {
     });
   });
 
-  const rs = __exports.rs = patternInput_122_27[0];
-  const ps = __exports.ps = patternInput_122_27[1];
   _s.S.drain(_s.S.merge(_s.S.map(function (value) {
     value, void 0;
-  }, Dom.render(document.getElementById("root-node"), ps)), _s.S.map(function (value_1) {
+  }, Dom.render(document.getElementById("root-node"), rez_2[1])), _s.S.map(function (value_1) {
     value_1, void 0;
-  }, State.update(rs)))), void 0;
+  }, State.update(rez_2[0])))), void 0;
   return __exports;
 }({});

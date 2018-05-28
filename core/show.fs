@@ -110,24 +110,26 @@ module Dom =
     (render (document.getElementById "root-node") rez) |> ignore
 
 module Test2 =
-
+    open State
+    open Dom
     let tree pith =
         G.tree State.treeObj (PNode.tree (P.once ignore)) pith
 
     let g key p =
         G.AB (
-            (State.Object key << fst <| p),
-            (Dom.Div << snd <| p)
+            (Object key << fst <| p),
+            (Div << snd <| p)
         )
-    let (rs, ps) = tree << S.now << Pith <| fun o ->
-        o << G.A << State.Number "a" << S.now << State.R.set <| 1.
-        o << G.B << Dom.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
+
+    let rez = tree << S.now << Pith <| fun o ->
+        o << G.A << Number "a" << S.now << R.set <| 1.
+        o << G.B << Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
         o << g "hmmm" << tree << S.now << Pith <| fun o ->
-            o << G.A << State.Number "aa" << S.now << State.R.set <| 2.
-            o << G.B << Dom.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
+            o << G.A << Number "aa" << S.now << R.set <| 2.
+            o << G.B << Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
 
     S.merge
-        (Dom.render (document.getElementById "root-node") ps |> S.map ignore)
-        (State.update rs |> S.map ignore)
+        (render (document.getElementById "root-node") (snd rez) |> S.map ignore)
+        (update (fst rez) |> S.map ignore)
     |> S.drain
     |> ignore
