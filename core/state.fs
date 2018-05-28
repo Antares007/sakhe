@@ -81,12 +81,12 @@ module private Impl =
         | RArray (key, r) -> o (S.map (chain absurdObj key asArray) r)
         ()
 
-let tree a s pith =
-    S.treeMerge s (S.map (makeRing a) pith)
+let private tree a pith =
+    S.treeMerge (S.empty ()) (S.map (makeRing a) pith)
 
 let treeObj pith =
-    tree absurdObj (S.empty ()) pith
+    tree absurdObj  pith
 
 let treeArr pith =
-    tree absurdArray (S.empty ()) pith
+    tree absurdArray pith
 
