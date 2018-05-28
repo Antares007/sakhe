@@ -7,8 +7,6 @@ exports.P = undefined;
 
 var _s = require("./s");
 
-var _Seq = require("./fable-core/Seq");
-
 const P = exports.P = function (__exports) {
   const once = __exports.once = function (f) {
     return function makeOnce(f) {
@@ -43,26 +41,9 @@ const P = exports.P = function (__exports) {
   };
 
   const tree = __exports.tree = function (pith) {
-    let deltac;
-    let folder;
-
-    const f = function (arg00_, arg10_) {
-      return combine(arg00_, arg10_);
-    };
-
-    folder = function (arg10__1, arg20_) {
-      return _s.S.combine(f, arg10__1, arg20_);
-    };
-
-    const state = _s.S.now(function (value) {
+    return _s.S.combineTree(combine, _s.S.now(function (value) {
       value, void 0;
-    });
-
-    deltac = function (source) {
-      return (0, _Seq.fold)(folder, state, source);
-    };
-
-    return _s.S.tree(deltac, pith);
+    }), pith);
   };
 
   return __exports;

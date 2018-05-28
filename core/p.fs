@@ -24,6 +24,4 @@ module P =
     let apply n (P p) = p n; n
 
     let tree pith =
-        let deltac =
-            Seq.fold (S.combine (combine)) (S.now (P ignore))
-        S.tree (A.DeltaC deltac) pith
+        S.combineTree combine (S.now (P ignore)) pith

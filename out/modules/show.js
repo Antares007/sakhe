@@ -262,7 +262,7 @@ const Test2 = exports.Test2 = function (__exports) {
     }($var38)))(p)]);
   };
 
-  const patternInput_148_13 = ($var40 => ($var39 => tree(_s.S.now($var39)))(function (arg0_2) {
+  const patternInput_148_14 = ($var40 => ($var39 => tree(_s.S.now($var39)))(function (arg0_2) {
     return arg0_2;
   }($var40)))(function (o_2) {
     ($var44 => ($var43 => ($var42 => ($var41 => o_2(function (arg0_3) {
@@ -300,8 +300,8 @@ const Test2 = exports.Test2 = function (__exports) {
     });
   });
 
-  const rs = __exports.rs = patternInput_148_13[0];
-  const ps = __exports.ps = patternInput_148_13[1];
+  const rs = __exports.rs = patternInput_148_14[0];
+  const ps = __exports.ps = patternInput_148_14[1];
   _s.S.drain(_s.S.merge(_s.S.map(function (value) {
     value, void 0;
   }, Dom.render(document.getElementById("root-node"), ps)), _s.S.map(function (value_1) {

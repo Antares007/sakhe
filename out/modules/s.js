@@ -23,6 +23,8 @@ var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _a = require("./a");
 
+var _Seq = require("./fable-core/Seq");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -112,6 +114,15 @@ const S = exports.S = function (__exports) {
     return switchLatest(map(function (arg10_) {
       return _a.A.tree(deltac, arg10_);
     }, mpith));
+  };
+
+  const combineTree = __exports.combineTree = function (f, s, pith) {
+    var folder;
+    return tree((folder = function (arg10_, arg20_) {
+      return combine(f, arg10_, arg20_);
+    }, function (source) {
+      return (0, _Seq.fold)(folder, s, source);
+    }), pith);
   };
 
   const defScheduler = scheduler.newDefaultScheduler();
