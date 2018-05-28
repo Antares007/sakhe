@@ -144,7 +144,7 @@ const Impl = function (__exports) {
 }({});
 
 function oTree(pith) {
-  return _s.S.mergeTree(_s.S.empty(), _s.S.map(function (arg10_) {
+  return _s.S.treeMerge(_s.S.empty(), _s.S.map(function (arg10_) {
     return Impl.makeRing(function () {
       return {};
     }, arg10_);
@@ -152,7 +152,7 @@ function oTree(pith) {
 }
 
 function aTree(pith) {
-  return _s.S.mergeTree(_s.S.empty(), _s.S.map(function (arg10_) {
+  return _s.S.treeMerge(_s.S.empty(), _s.S.map(function (arg10_) {
     return Impl.makeRing(function () {
       return [];
     }, arg10_);

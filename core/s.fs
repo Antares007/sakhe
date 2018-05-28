@@ -35,12 +35,14 @@ module S =
     let tree (deltac) mpith =
         mpith |> map (A.tree deltac) |> switchLatest
 
-    let combineTree f s pith =
-        tree (A.DeltaC (Seq.fold (combine f) s)) pith
+    let treeFold f s pith =
+        tree (A.DeltaC (List.fold f s)) pith
 
-    let mergeTree s pith =
-        tree (A.DeltaC (List.fold (fun a b -> merge b a) s)) pith
+    let treeCombine f s pith =
+        treeFold (combine f) s pith
 
+    let treeMerge s pith =
+        treeFold (fun a b -> merge b a) s pith
 
     let private defScheduler = scheduler.newDefaultScheduler ()
     let drain (S s) = core.runEffects (s, defScheduler)

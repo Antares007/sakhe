@@ -116,22 +116,22 @@ const S = exports.S = function (__exports) {
     }, mpith));
   };
 
-  const combineTree = __exports.combineTree = function (f, s, pith) {
-    var folder;
-    return tree((folder = function (arg10_, arg20_) {
-      return combine(f, arg10_, arg20_);
-    }, function (source) {
-      return (0, _Seq.fold)(folder, s, source);
-    }), pith);
+  const treeFold = __exports.treeFold = function (f, s, pith) {
+    return tree(function (list) {
+      return (0, _Seq.fold)(f, s, list);
+    }, pith);
   };
 
-  const mergeTree = __exports.mergeTree = function (s, pith) {
-    var folder;
-    return tree((folder = function (a, b) {
+  const treeCombine = __exports.treeCombine = function (f, s, pith) {
+    return treeFold(function (arg10_, arg20_) {
+      return combine(f, arg10_, arg20_);
+    }, s, pith);
+  };
+
+  const treeMerge = __exports.treeMerge = function (s, pith) {
+    return treeFold(function (a, b) {
       return merge(b, a);
-    }, function (list) {
-      return (0, _Seq.fold)(folder, s, list);
-    }), pith);
+    }, s, pith);
   };
 
   const defScheduler = scheduler.newDefaultScheduler();

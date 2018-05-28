@@ -82,8 +82,8 @@ module private Impl =
         ()
 
 let oTree pith =
-    S.mergeTree (S.empty ()) (S.map (makeRing absurdObj) pith)
+    S.treeMerge (S.empty ()) (S.map (makeRing absurdObj) pith)
 
 let aTree pith =
-    S.mergeTree (S.empty ()) (S.map (makeRing absurdArray) pith)
+    S.treeMerge (S.empty ()) (S.map (makeRing absurdArray) pith)
 

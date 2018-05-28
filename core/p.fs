@@ -24,4 +24,4 @@ module P =
     let apply n (P p) = p n; n
 
     let tree pith =
-        S.combineTree combine (S.now (P ignore)) pith
+        S.treeCombine combine (S.now (P ignore)) pith

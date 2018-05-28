@@ -41,7 +41,7 @@ const P = exports.P = function (__exports) {
   };
 
   const tree = __exports.tree = function (pith) {
-    return _s.S.combineTree(combine, _s.S.now(function (value) {
+    return _s.S.treeCombine(combine, _s.S.now(function (value) {
       value, void 0;
     }), pith);
   };
