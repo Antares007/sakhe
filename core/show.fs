@@ -78,7 +78,7 @@ module Dom =
 
     let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
 
-    let statTree t p = t << tree << S.now << Pith <| p
+    let statTree t p = t << tree (S.now (P.once ignore)) << S.now << Pith <| p
     let div p = statTree Div p
     let btn p = statTree Button p
     let span p = statTree Span p
@@ -104,41 +104,15 @@ module Dom =
         |> S.scan P.apply elm
 
     let rez =
-        tree << S.now << Pith <| fun o ->
+        tree (S.now (P.once ignore)) << S.now << Pith <| fun o ->
             o (counter 3)
 
     (render (document.getElementById "root-node") rez) |> ignore
 
-module Test =
-    open P
-    let a = S.now 1
-
-    tree << S.now << Pith <| fun o ->
-        o << S.now << each <| fun (_: unit) ->
-            console.log "start patching..."
-
-        o << tree << S.now << Pith <| fun o ->
-            S.periodic (ms 1000.)
-            |> S.konst 1
-            |> S.scan (+) 0
-            |> S.map (fun i -> once <| fun (_: unit) ->
-                console.log ("p", i))
-            |> o
-
-            o << S.now << once <| fun (_) ->
-                console.log "___"
-
-        o << S.now << each <| fun (_) ->
-            console.log "...end patching"
-
-    |> S.scan apply ()
-    // |> S.drain
-    |> ignore
-
 module Test2 =
 
     let tree pith =
-        Dom.gTree State.treeObj PNode.tree pith
+        Dom.gTree State.treeObj (PNode.tree (S.now (P.once ignore))) pith
 
     let g key p =
         Dom.AB (

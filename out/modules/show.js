@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Test2 = exports.Test = exports.Dom = exports.State = exports.AnimationFrame = undefined;
+exports.Test2 = exports.Dom = exports.State = exports.AnimationFrame = undefined;
 
 var _s = require("./s");
 
@@ -117,7 +117,14 @@ const Dom = exports.Dom = function (__exports) {
   }, 0, _s.S.periodic(_s.TimeModule.ms(10)))));
 
   const statTree = __exports.statTree = function (t, p) {
-    return ($var12 => ($var11 => ($var10 => t((0, _pnode.tree)($var10)))(_s.S.now.bind(_s.S)($var11)))(function (arg0) {
+    return ($var12 => ($var11 => ($var10 => {
+      var s;
+      return t((s = _s.S.now(_p.P.once(function (value) {
+        value, void 0;
+      })), function (pith) {
+        return (0, _pnode.tree)(s, pith);
+      })($var10));
+    })(_s.S.now.bind(_s.S)($var11)))(function (arg0) {
       return arg0;
     }($var12)))(p);
   };
@@ -195,7 +202,9 @@ const Dom = exports.Dom = function (__exports) {
     }(s));
   };
 
-  const rez_1 = __exports.rez = ($var25 => ($var24 => (0, _pnode.tree)(_s.S.now($var24)))(function (arg0) {
+  const rez_1 = __exports.rez = ($var25 => ($var24 => (0, _pnode.tree)(_s.S.now(_p.P.once(function (value) {
+    value, void 0;
+  })), _s.S.now($var24)))(function (arg0) {
     return arg0;
   }($var25)))(function (o) {
     o(counter(3));
@@ -205,103 +214,67 @@ const Dom = exports.Dom = function (__exports) {
   return __exports;
 }({});
 
-const Test = exports.Test = function (__exports) {
-  const a_1 = __exports.a = _s.S.now(1);
-
-  (() => {
-    const f = function (n, arg10_) {
-      _p.P.apply(null, arg10_);
-    };
-
-    return function (arg20_) {
-      return _s.S.scan(f, null, arg20_);
-    };
-  })()(($var27 => ($var26 => _p.P.tree(_s.S.now($var26)))(function (arg0) {
-    return arg0;
-  }($var27)))(function (o) {
-    ($var29 => ($var28 => o(_s.S.now.bind(_s.S)($var28)))(_p.P.each.bind(_p.P)($var29)))(function () {
-      console.log("start patching...");
-    });
-
-    ($var32 => ($var31 => ($var30 => o(_p.P.tree.bind(_p.P)($var30)))(_s.S.now.bind(_s.S)($var31)))(function (arg0_1) {
-      return arg0_1;
-    }($var32)))(function (o_1) {
-      o_1(_s.S.map(function (i) {
-        return _p.P.once(function () {
-          console.log("p", i);
-        });
-      }, _s.S.scan(function (x, y) {
-        return x + y;
-      }, 0, _s.S.konst(1, _s.S.periodic(_s.TimeModule.ms(1000))))));
-
-      ($var34 => ($var33 => o_1(_s.S.now.bind(_s.S)($var33)))(_p.P.once.bind(_p.P)($var34)))(function () {
-        console.log("___");
-      });
-    });
-
-    ($var36 => ($var35 => o(_s.S.now.bind(_s.S)($var35)))(_p.P.each.bind(_p.P)($var36)))(function () {
-      console.log("...end patching");
-    });
-  })), void 0;
-  return __exports;
-}({});
-
 const Test2 = exports.Test2 = function (__exports) {
-  const tree = __exports.tree = function (pith_1) {
-    return (0, _dom.gTree)(_state.treeObj, _pnode.tree, pith_1);
+  const tree = __exports.tree = function (pith) {
+    var s;
+    return (0, _dom.gTree)(_state.treeObj, (s = _s.S.now(_p.P.once(function (value) {
+      value, void 0;
+    })), function (pith_2) {
+      return (0, _pnode.tree)(s, pith_2);
+    }), pith);
   };
 
   const g = __exports.g = function (key, p_0, p_1) {
     const p = [p_0, p_1];
-    return new _dom.O(2, [($var37 => function (s) {
+    return new _dom.O(2, [($var26 => function (s) {
       return State.Object(key, s);
     }(function (tuple) {
       return tuple[0];
-    }($var37)))(p), ($var38 => Dom.Div(function (tuple_1) {
+    }($var26)))(p), ($var27 => Dom.Div(function (tuple_1) {
       return tuple_1[1];
-    }($var38)))(p)]);
+    }($var27)))(p)]);
   };
 
-  const patternInput_148_24 = ($var40 => ($var39 => tree(_s.S.now($var39)))(function (arg0_2) {
-    return arg0_2;
-  }($var40)))(function (o_2) {
-    ($var44 => ($var43 => ($var42 => ($var41 => o_2(function (arg0_3) {
-      return new _dom.O(0, arg0_3);
-    }($var41)))(function (s) {
+  const patternInput_122_25 = ($var29 => ($var28 => tree(_s.S.now($var28)))(function (arg0) {
+    return arg0;
+  }($var29)))(function (o) {
+    ($var33 => ($var32 => ($var31 => ($var30 => o(function (arg0_1) {
+      return new _dom.O(0, arg0_1);
+    }($var30)))(function (s) {
       return State.Number("a", s);
-    }($var42)))(_s.S.now.bind(_s.S)($var43)))(_state.R.set.bind(_state.R)($var44)))(1);
+    }($var31)))(_s.S.now.bind(_s.S)($var32)))(_state.R.set.bind(_state.R)($var33)))(1);
 
-    ($var48 => ($var47 => ($var46 => ($var45 => o_2(function (arg0_4) {
-      return new _dom.O(1, arg0_4);
-    }($var45)))(Dom.Div($var46)))(_s.S.now.bind(_s.S)($var47)))(function (arg0_5) {
-      return arg0_5;
-    }($var48)))(function (elm) {
+    ($var37 => ($var36 => ($var35 => ($var34 => o(function (arg0_2) {
+      return new _dom.O(1, arg0_2);
+    }($var34)))(Dom.Div($var35)))(_s.S.now.bind(_s.S)($var36)))(function (arg0_3) {
+      return arg0_3;
+    }($var37)))(function (elm) {
       elm.innerHTML = "<h1>hello world!</h1>";
     });
 
-    ($var52 => ($var51 => ($var50 => ($var49 => o_2(function (tupledArg) {
+    ($var41 => ($var40 => ($var39 => ($var38 => o(function (tupledArg) {
       return g("hmmm", tupledArg[0], tupledArg[1]);
-    }($var49)))(tree($var50)))(_s.S.now.bind(_s.S)($var51)))(function (arg0_6) {
-      return arg0_6;
-    }($var52)))(function (o_3) {
-      ($var56 => ($var55 => ($var54 => ($var53 => o_3(function (arg0_7) {
-        return new _dom.O(0, arg0_7);
-      }($var53)))(function (s_1) {
+    }($var38)))(tree($var39)))(_s.S.now.bind(_s.S)($var40)))(function (arg0_4) {
+      return arg0_4;
+    }($var41)))(function (o_1) {
+      ($var45 => ($var44 => ($var43 => ($var42 => o_1(function (arg0_5) {
+        return new _dom.O(0, arg0_5);
+      }($var42)))(function (s_1) {
         return State.Number("aa", s_1);
-      }($var54)))(_s.S.now.bind(_s.S)($var55)))(_state.R.set.bind(_state.R)($var56)))(2);
+      }($var43)))(_s.S.now.bind(_s.S)($var44)))(_state.R.set.bind(_state.R)($var45)))(2);
 
-      ($var60 => ($var59 => ($var58 => ($var57 => o_3(function (arg0_8) {
-        return new _dom.O(1, arg0_8);
-      }($var57)))(Dom.Div($var58)))(_s.S.now.bind(_s.S)($var59)))(function (arg0_9) {
-        return arg0_9;
-      }($var60)))(function (elm_1) {
+      ($var49 => ($var48 => ($var47 => ($var46 => o_1(function (arg0_6) {
+        return new _dom.O(1, arg0_6);
+      }($var46)))(Dom.Div($var47)))(_s.S.now.bind(_s.S)($var48)))(function (arg0_7) {
+        return arg0_7;
+      }($var49)))(function (elm_1) {
         elm_1.innerHTML = "<h2>hello world!</h2>";
       });
     });
   });
 
-  const rs = __exports.rs = patternInput_148_24[0];
-  const ps = __exports.ps = patternInput_148_24[1];
+  const rs = __exports.rs = patternInput_122_25[0];
+  const ps = __exports.ps = patternInput_122_25[1];
   _s.S.drain(_s.S.merge(_s.S.map(function (value) {
     value, void 0;
   }, Dom.render(document.getElementById("root-node"), ps)), _s.S.map(function (value_1) {

@@ -23,5 +23,5 @@ module P =
             combinedChain n
     let apply n (P p) = p n; n
 
-    let tree pith =
-        S.treeCombine combine (S.now (P ignore)) pith
+    let tree s pith =
+        S.treeCombine combine s pith

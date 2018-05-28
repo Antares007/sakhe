@@ -133,6 +133,6 @@ function ring(_arg1) {
   };
 }
 
-function tree(pith) {
-  return _p.P.tree(_s.S.map(ring, pith));
+function tree(s, pith) {
+  return _p.P.tree(s, _s.S.map(ring, pith));
 }

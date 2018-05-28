@@ -41,6 +41,3 @@ let tree aTree bTree pith =
     let aPS = S.map fst abPS
     let bPS = S.map snd abPS
     (aTree aPS, bTree bPS)
-
-let see pith =
-    tree State.treeArr PNode.tree pith

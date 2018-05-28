@@ -40,10 +40,8 @@ const P = exports.P = function (__exports) {
     return n;
   };
 
-  const tree = __exports.tree = function (pith) {
-    return _s.S.treeCombine(combine, _s.S.now(function (value) {
-      value, void 0;
-    }), pith);
+  const tree = __exports.tree = function (s, pith) {
+    return _s.S.treeCombine(combine, s, pith);
   };
 
   return __exports;

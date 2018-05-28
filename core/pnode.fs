@@ -67,5 +67,5 @@ let ring (Pith pith) = Pith <| fun o ->
         for i = unbox elm.childNodes.length - 1 downto c do
             elm.removeChild elm.childNodes.[i] |> ignore
 
-let tree pith: S<P<#Element>> =
-    P.tree (S.map ring pith)
+let tree s pith: S<P<#Element>> =
+    P.tree s (S.map ring pith)

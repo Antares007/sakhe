@@ -8,7 +8,6 @@ exports.oRing = oRing;
 exports.gTree = gTree;
 exports.ring = ring;
 exports.tree = tree;
-exports.see = see;
 
 var _Symbol2 = require("./fable-core/Symbol");
 
@@ -23,10 +22,6 @@ var _List2 = _interopRequireDefault(_List);
 var _Seq = require("./fable-core/Seq");
 
 var _s = require("./s");
-
-var _state = require("./state");
-
-var _pnode = require("./pnode");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -135,8 +130,4 @@ function tree(aTree, bTree, pith) {
   }, abPS);
 
   return [aTree(aPS), bTree(bPS)];
-}
-
-function see(pith) {
-  return tree(_state.treeArr, _pnode.tree, pith);
 }
