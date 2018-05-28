@@ -34,9 +34,9 @@ module State =
 
     *)
     let rez =
-        oTree << at (ms 0.) << Pith <| fun o ->
+        treeObj << at (ms 0.) << Pith <| fun o ->
 
-            o << Object "achiko" << oTree << at (ms 3000.) << Pith <| fun o ->
+            o << Object "achiko" << treeObj << at (ms 3000.) << Pith <| fun o ->
                 o << Number "age" <<  at (ms 3000.) << R.update <| function
                     | Some v -> v + 1.
                     | None -> 0.
@@ -138,7 +138,7 @@ module Test =
 module Test2 =
 
     let tree pith =
-        Dom.gTree State.oTree PNode.tree pith
+        Dom.gTree State.treeObj PNode.tree pith
 
     let g key p =
         Dom.AB (

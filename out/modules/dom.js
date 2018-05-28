@@ -138,5 +138,5 @@ function tree(aTree, bTree, pith) {
 }
 
 function see(pith) {
-  return tree(_state.aTree, _pnode.tree, pith);
+  return tree(_state.treeArr, _pnode.tree, pith);
 }

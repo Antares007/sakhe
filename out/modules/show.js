@@ -52,14 +52,14 @@ const State = exports.State = function (__exports) {
 
   const emptystring = __exports.emptystring = {};
 
-  const rez = __exports.rez = ($var2 => ($var1 => (0, _state.oTree)(_s.S.at(_s.TimeModule.ms(0), $var1)))(function (arg0) {
+  const rez = __exports.rez = ($var2 => ($var1 => (0, _state.treeObj)(_s.S.at(_s.TimeModule.ms(0), $var1)))(function (arg0) {
     return arg0;
   }($var2)))(function (o) {
     ($var6 => ($var5 => {
       var arg00_;
       return ($var4 => ($var3 => o(function (s) {
         return _Object("achiko", s);
-      }($var3)))((0, _state.oTree)($var4)))((arg00_ = _s.TimeModule.ms(3000), function (a_1) {
+      }($var3)))((0, _state.treeObj)($var4)))((arg00_ = _s.TimeModule.ms(3000), function (a_1) {
         return _s.S.at(arg00_, a_1);
       })($var5));
     })(function (arg0_1) {
@@ -248,7 +248,7 @@ const Test = exports.Test = function (__exports) {
 
 const Test2 = exports.Test2 = function (__exports) {
   const tree = __exports.tree = function (pith_1) {
-    return (0, _dom.gTree)(_state.oTree, _pnode.tree, pith_1);
+    return (0, _dom.gTree)(_state.treeObj, _pnode.tree, pith_1);
   };
 
   const g = __exports.g = function (key, p_0, p_1) {
@@ -262,7 +262,7 @@ const Test2 = exports.Test2 = function (__exports) {
     }($var38)))(p)]);
   };
 
-  const patternInput_148_20 = ($var40 => ($var39 => tree(_s.S.now($var39)))(function (arg0_2) {
+  const patternInput_148_21 = ($var40 => ($var39 => tree(_s.S.now($var39)))(function (arg0_2) {
     return arg0_2;
   }($var40)))(function (o_2) {
     ($var44 => ($var43 => ($var42 => ($var41 => o_2(function (arg0_3) {
@@ -300,8 +300,8 @@ const Test2 = exports.Test2 = function (__exports) {
     });
   });
 
-  const rs = __exports.rs = patternInput_148_20[0];
-  const ps = __exports.ps = patternInput_148_20[1];
+  const rs = __exports.rs = patternInput_148_21[0];
+  const ps = __exports.ps = patternInput_148_21[1];
   _s.S.drain(_s.S.merge(_s.S.map(function (value) {
     value, void 0;
   }, Dom.render(document.getElementById("root-node"), ps)), _s.S.map(function (value_1) {

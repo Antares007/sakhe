@@ -43,4 +43,4 @@ let tree aTree bTree pith =
     (aTree aPS, bTree bPS)
 
 let see pith =
-    tree State.aTree PNode.tree pith
+    tree State.treeArr PNode.tree pith
