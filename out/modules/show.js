@@ -50,8 +50,6 @@ const State = exports.State = function (__exports) {
     return new _state.RValue(4, [k, s]);
   };
 
-  const emptystring = __exports.emptystring = {};
-
   const rez = __exports.rez = ($var2 => ($var1 => (0, _state.treeObj)(_s.S.at(_s.TimeModule.ms(0), $var1)))(function (arg0) {
     return arg0;
   }($var2)))(function (o) {
@@ -82,6 +80,7 @@ const State = exports.State = function (__exports) {
     return _s.S.tap(console.log.bind(console), _s.S.scan(_state.R.apply.bind(_state.R), {}, s));
   };
 
+  _s.S.drain(update(rez)), void 0;
   return __exports;
 }({});
 

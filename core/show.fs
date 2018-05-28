@@ -14,45 +14,27 @@ module State =
         | Some a -> a2b a
         | None   -> a2b a
 
-
-    // let define key d = RValue (x, d)
     let Number k s = RNumber (k, s)
     let Object k s = RObject (k, s)
     let Array k s = RArray (k, s)
 
-    let emptystring = createEmpty<obj []>
-    type [<Pojo>] Person = {
-        name: string
-        age: int
-    }
-    open S
-    (*
-
-        var achiko = {
-            age: 42
-        }
-
-    *)
     let rez =
-        treeObj << at (ms 0.) << Pith <| fun o ->
-
-            o << Object "achiko" << treeObj << at (ms 3000.) << Pith <| fun o ->
-                o << Number "age" <<  at (ms 3000.) << R.update <| function
+        treeObj << S.at (ms 0.) << Pith <| fun o ->
+            o << Object "achiko" << treeObj << S.at (ms 3000.) << Pith <| fun o ->
+                o << Number "age" <<  S.at (ms 3000.) << R.update <| function
                     | Some v -> v + 1.
                     | None -> 0.
                 ()
             ()
 
-
     let update s =
         s
-        |> scan
+        |> S.scan
             (R.apply)
             (Some Fable.Core.JsInterop.createEmpty<obj>)
-        |> tap console.log
-
-    // drain (update rez)
-    // |> ignore
+        |> S.tap console.log
+    S.drain (update rez)
+    |> ignore
 
 module Dom =
     open PNode
