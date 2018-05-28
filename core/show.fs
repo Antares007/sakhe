@@ -78,7 +78,7 @@ module Dom =
 
     let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
 
-    let statTree t p = t << tree (S.now (P.once ignore)) << S.now << Pith <| p
+    let statTree t p = t << tree (P.once ignore) << S.now << Pith <| p
     let div p = statTree Div p
     let btn p = statTree Button p
     let span p = statTree Span p
@@ -104,7 +104,7 @@ module Dom =
         |> S.scan P.apply elm
 
     let rez =
-        tree (S.now (P.once ignore)) << S.now << Pith <| fun o ->
+        tree (P.once ignore) << S.now << Pith <| fun o ->
             o (counter 3)
 
     (render (document.getElementById "root-node") rez) |> ignore
@@ -112,7 +112,7 @@ module Dom =
 module Test2 =
 
     let tree pith =
-        Dom.gTree State.treeObj (PNode.tree (S.now (P.once ignore))) pith
+        Dom.gTree State.treeObj (PNode.tree (P.once ignore)) pith
 
     let g key p =
         Dom.AB (
