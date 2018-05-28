@@ -21,6 +21,8 @@ var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
+var _Observable = require("./fable-core/Observable");
+
 var _a = require("./a");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -106,6 +108,25 @@ const S = exports.S = function (__exports) {
 
   const sample = __exports.sample = function (_arg2, _arg1) {
     return core.sample(_arg1, _arg2);
+  };
+
+  const toStream = __exports.toStream = function (e) {
+    const ms_1 = new core.MulticastSource(core.never());
+    return core.newStream.bind(core)(function (sink, scheduler_1) {
+      const onNext = function (v) {
+        ms_1.event(scheduler_1.currentTime(), v);
+      };
+
+      const d1 = (0, _Observable.subscribe)(onNext, e.Publish);
+      const d2 = ms_1.run(sink, scheduler_1);
+
+      const dispose = function (_arg1) {
+        d1.Dispose();
+        d2.dispose();
+      };
+
+      return disposable.disposeWith(dispose, null);
+    });
   };
 
   const tree = __exports.tree = function (f, s, mpith) {

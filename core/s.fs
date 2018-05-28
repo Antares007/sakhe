@@ -32,6 +32,17 @@ module S =
     let startWith a (S s) = S <| core.startWith (a, s)
     let sample (S a) (S b) = S <| core.sample (b, a)
 
+    let toStream (e: Event<_>) =
+        let ms = core.MulticastSource.Create (core.never ())
+        core.newStream <| fun sink scheduler ->
+            let onNext v = ms.event (scheduler.currentTime (), v)
+            let d1 = Observable.subscribe onNext e.Publish
+            let d2 = ms.run (sink, scheduler)
+            let dispose _ =
+                d1.Dispose ()
+                d2.dispose ()
+            disposable.disposeWith (dispose, ())
+
     let tree f s mpith =
         mpith |> map (A.tree f s) |> switchLatest
 
