@@ -23,8 +23,6 @@ var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
 
 var _a = require("./a");
 
-var _Seq = require("./fable-core/Seq");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -110,26 +108,20 @@ const S = exports.S = function (__exports) {
     return core.sample(_arg1, _arg2);
   };
 
-  const tree = __exports.tree = function (deltac, mpith) {
-    return switchLatest(map(function (arg10_) {
-      return _a.A.tree(deltac, arg10_);
+  const tree = __exports.tree = function (f, s, mpith) {
+    return switchLatest(map(function (arg20_) {
+      return _a.A.tree(f, s, arg20_);
     }, mpith));
   };
 
-  const treeFold = __exports.treeFold = function (f, s, pith) {
-    return tree(function (list) {
-      return (0, _Seq.fold)(f, s, list);
-    }, pith);
-  };
-
   const treeCombine = __exports.treeCombine = function (f, s, pith) {
-    return treeFold(function (arg10_, arg20_) {
+    return tree(function (arg10_, arg20_) {
       return combine(f, arg10_, arg20_);
     }, s, pith);
   };
 
   const treeMerge = __exports.treeMerge = function (s, pith) {
-    return treeFold(function (a, b) {
+    return tree(function (a, b) {
       return merge(b, a);
     }, s, pith);
   };

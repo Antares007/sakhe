@@ -32,17 +32,14 @@ module S =
     let startWith a (S s) = S <| core.startWith (a, s)
     let sample (S a) (S b) = S <| core.sample (b, a)
 
-    let tree (deltac) mpith =
-        mpith |> map (A.tree deltac) |> switchLatest
-
-    let treeFold f s pith =
-        tree (A.DeltaC (List.fold f s)) pith
+    let tree f s mpith =
+        mpith |> map (A.tree f s) |> switchLatest
 
     let treeCombine f s pith =
-        treeFold (combine f) s pith
+        tree (combine f) s pith
 
     let treeMerge s pith =
-        treeFold (fun a b -> merge b a) s pith
+        tree (fun a b -> merge b a) s pith
 
     let private defScheduler = scheduler.newDefaultScheduler ()
     let drain (S s) = core.runEffects (s, defScheduler)

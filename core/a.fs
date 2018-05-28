@@ -4,9 +4,8 @@ open Fable.Core
 [<Erase>] type Pith<'a> = Pith of (('a -> unit) -> unit)
 
 module A =
-    [<Erase>] type DeltaC<'a, 'b> = DeltaC of ('a list -> 'b)
 
-    let tree (DeltaC deltac) (Pith pith) =
+    let tree f s (Pith pith) =
         let mutable list = []
         pith (fun a -> list <- a :: list)
-        deltac list
+        List.fold f s list
