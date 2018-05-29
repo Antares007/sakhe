@@ -65,6 +65,40 @@ module Dom =
 
     let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
 
+    type IApi =
+        abstract Div: (IApi -> unit) -> unit
+        abstract Span: (IApi -> unit) -> unit
+        abstract Button: (IApi -> unit) -> unit
+        abstract H3: (IApi -> unit) -> unit
+        abstract Text: string S -> unit
+
+    let rec apiRing pith o: unit =
+        pith { new IApi with
+            member __.Div pith =
+                o << Div << tree (P.once ignore) << S.now << Pith << apiRing <| pith
+            member __.Span pith =
+                o << Span << tree (P.once ignore) << S.now << Pith << apiRing <| pith
+            member __.Button pith =
+                o << Button << tree (P.once ignore) << S.now << Pith << apiRing <| pith
+            member __.H3 pith =
+                o << H3 << tree (P.once ignore) << S.now << Pith << apiRing <| pith
+            member __.Text s =
+                o << Text << S.map (fun str -> P.once (fun text -> text.textContent <- str)) <| s
+            }
+
+    let rec counter2 d (o: IApi) =
+        o.Div <| fun o ->
+            o.Button <| fun o ->
+                o.Span <| fun o ->
+                    o.Text << S.now <| "+"
+                if d > 0 then o.Div << counter2 <| d - 1
+            o.Button <| fun o ->
+                o.Span <| fun o ->
+                    o.Text << S.now <| "-"
+                if d > 0 then o.Div << counter2 <| d - 1
+            o.H3 <| fun o ->
+                o.Text << S.now <| "0"
+
     let rec counter d =
         div <| fun o ->
             let ep = new Event<_>()
@@ -93,6 +127,7 @@ module Dom =
     let rez =
         tree (P.once ignore) << S.now << Pith <| fun o ->
             o (counter 3)
+            o << Div << tree (P.once ignore) << S.now << Pith << apiRing << counter2 <| 3
 
     (render (document.getElementById "root-node") rez)
     |> S.drain
