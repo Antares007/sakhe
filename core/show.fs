@@ -68,18 +68,6 @@ module Dom =
 
     let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
 
-    type IApi =
-        abstract Div : unit -> (IApi -> unit) -> unit
-
-    let o = createEmpty<IApi>
-
-    o.Div () <| fun o ->
-        o.Div () <| fun o ->
-            o.Div () <| fun o ->
-                o.Div () <| fun o ->
-                    o.Div |> ignore
-
-
     let rec counter d =
         div <| fun o ->
             let ep = new Event<_>()
