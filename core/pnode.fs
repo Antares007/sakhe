@@ -4,9 +4,7 @@ open Sakhe
 
 type PNode = private PNode of (unit -> Node) * (Node -> bool) * S<P<Node>>
 
-let element<'a when 'a :> Element> (a: unit -> 'a) p (s: 'a P S) =
-    PNode (unbox a, p, unbox s)
-let charData<'a when 'a :> CharacterData> (a: unit -> 'a) p (s: 'a P S) =
+let pnode<'a when 'a :> Node> (a: unit -> 'a) p (s: 'a P S) =
     PNode (unbox a, p, unbox s)
 
 [<AutoOpen>]

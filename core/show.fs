@@ -36,13 +36,9 @@ module State =
 
 module Dom =
     open PNode
-    // let pnode<'a when 'a :> Element> (a: unit -> 'a) p (s: 'a P S) =
-    //     Element (unbox a, p, unbox s)
-    // let ptext<'a when 'a :> CharacterData> (a: unit -> 'a) p (s: 'a P S) =
-    //     CharData (unbox a, p, unbox s)
 
     let createElm tag =
-        element
+        pnode
             <| fun () -> document.createElement tag
             <| fun n -> n.nodeName = tag
 
@@ -55,7 +51,7 @@ module Dom =
     let H3 =  createElm    "H3"
 
     let Text =
-        charData
+        pnode
             <| fun () -> document.createTextNode ""
             <| fun (n: Node) -> n.nodeName = "#text"
 
