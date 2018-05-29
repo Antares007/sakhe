@@ -11,11 +11,11 @@ var _Option = require("./fable-core/Option");
 
 var _state = require("./state");
 
-var _pnode = require("./pnode");
-
 var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
+
+var _pnode = require("./pnode");
 
 var _p = require("./p");
 
@@ -89,12 +89,8 @@ const State = exports.State = function (__exports) {
 }({});
 
 const Dom = exports.Dom = function (__exports) {
-  const pnode = __exports.pnode = function (a_1, p, s) {
-    return new _pnode.PValue(0, [a_1, p, s]);
-  };
-
   const createElm = __exports.createElm = function (tag) {
-    return (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(pnode)(function () {
+    return (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(_pnode.element)(function () {
       return document.createElement(tag);
     }))(function (n) {
       return n.nodeName === tag;
@@ -109,7 +105,7 @@ const Dom = exports.Dom = function (__exports) {
   const H2 = __exports.H2 = (0, _CurriedLambda2.default)(createElm("H2"));
   const H3 = __exports.H3 = (0, _CurriedLambda2.default)(createElm("H3"));
 
-  const _Text = __exports.Text = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(pnode)(function () {
+  const _Text = __exports.Text = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(_pnode.charData)(function () {
     return document.createTextNode("");
   }))(function (n) {
     return n.nodeName === "#text";

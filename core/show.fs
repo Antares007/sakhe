@@ -36,10 +36,13 @@ module State =
 
 module Dom =
     open PNode
-    let pnode a p s = PNode (a, p, s)
+    // let pnode<'a when 'a :> Element> (a: unit -> 'a) p (s: 'a P S) =
+    //     Element (unbox a, p, unbox s)
+    // let ptext<'a when 'a :> CharacterData> (a: unit -> 'a) p (s: 'a P S) =
+    //     CharData (unbox a, p, unbox s)
 
     let createElm tag =
-        pnode
+        element
             <| fun () -> document.createElement tag
             <| fun n -> n.nodeName = tag
 
@@ -52,7 +55,7 @@ module Dom =
     let H3 =  createElm    "H3"
 
     let Text =
-        pnode
+        charData
             <| fun () -> document.createTextNode ""
             <| fun (n: Node) -> n.nodeName = "#text"
 
@@ -85,6 +88,7 @@ module Dom =
                 if d > 0 then o <| counter (d - 1)
             o << h3 <| fun o ->
                 o << Text << S.map (fun i -> P.once (fun text -> text.textContent <- string i)) <| sum
+
     let render elm s =
         s
         |> S.sample S.animationFrame

@@ -2,7 +2,15 @@ module Sakhe.PNode
 open Fable.Import.Browser
 open Sakhe
 
-type PValue<'a when 'a :> Node> = PNode of (unit -> 'a) * (Node -> bool) * S<P<'a>>
+type PNode =
+    private
+    | Element of (unit -> Element) * (Node -> bool) * S<P<Element>>
+    | CharData of (unit -> CharacterData) * (Node -> bool) * S<P<CharacterData>>
+
+let element<'a when 'a :> Element> (a: unit -> 'a) p (s: 'a P S) =
+    Element (unbox a, p, unbox s)
+let charData<'a when 'a :> CharacterData> (a: unit -> 'a) p (s: 'a P S) =
+    CharData (unbox a, p, unbox s)
 
 [<AutoOpen>]
 module private Impl =
@@ -56,12 +64,14 @@ module private Impl =
 
 let ring (Pith pith) = Pith <| fun o ->
     let mutable c = 0
-
-    pith <| function
-    | PNode (absurd, prove, p) ->
+    let chain2 absurd prove p =
         let index = c
         c <- c + 1
         o << S.map (chain absurd prove index) <| p
+
+    pith <| function
+    | Element (a, p, x)  -> chain2 a p x
+    | CharData (a, p, x)  -> chain2 a p x
 
     o << S.now << P.once <| fun elm ->
         for i = unbox elm.childNodes.length - 1 downto c do
