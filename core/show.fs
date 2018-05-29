@@ -1,6 +1,4 @@
 module Sakhe.Show
-open Fable.Core
-open Fable.Core.JsInterop
 open Fable.Import.Browser
 
 module AnimationFrame =
