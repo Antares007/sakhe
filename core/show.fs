@@ -65,36 +65,40 @@ module Dom =
 
     let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
 
+    type DomEvents<'a> = | Click of (Fable.Import.Browser.MouseEvent -> 'a)
+
     type IApi =
-        abstract Div: (IApi -> unit) -> unit
-        abstract Span: (IApi -> unit) -> unit
-        abstract Button: (IApi -> unit) -> unit
-        abstract H3: (IApi -> unit) -> unit
-        abstract Text: string S -> unit
+        abstract Actions : int S with get
+        abstract Div<'b> : DomEvents<'b> list -> ((IApi -> unit) -> unit)
+        abstract Span<'b> : DomEvents<'b> list -> ((IApi -> unit) -> unit)
+        abstract Button<'b> : DomEvents<'b> list -> ((IApi -> unit) -> unit)
+        abstract H3<'b> : DomEvents<'b> list -> ((IApi -> unit) -> unit)
+        abstract Text : string S -> unit
 
     let rec apiRing pith o: unit =
         let elm t pith =
             o << t << tree (P.once ignore) << S.now << Pith << apiRing <| pith
         pith { new IApi with
-            member __.Div pith = elm Div pith
-            member __.Span pith = elm Span pith
-            member __.Button pith = elm Button pith
-            member __.H3 pith = elm H3 pith
+            member __.Actions = S.now 1
+            member __.Div _ = fun pith -> elm Div pith
+            member __.Span _ = fun pith -> elm Span pith
+            member __.Button _ = fun pith -> elm Button pith
+            member __.H3 _ = fun pith -> elm H3 pith
             member __.Text s =
                 o << Text << S.map (fun str -> P.once (fun text -> text.textContent <- str)) <| s
             }
 
     let rec counter2 d (o: IApi) =
-        o.Div <| fun o ->
-            o.Button <| fun o ->
-                o.Span <| fun o ->
+        o.Div [] <| fun o ->
+            o.Button [] <| fun o ->
+                o.Span [] <| fun o ->
                     o.Text << S.now <| "+"
-                if d > 0 then o.Div << counter2 <| d - 1
-            o.Button <| fun o ->
-                o.Span <| fun o ->
+                if d > 0 then o.Div [] << counter2 <| d - 1
+            o.Button [] <| fun o ->
+                o.Span [] <| fun o ->
                     o.Text << S.now <| "-"
-                if d > 0 then o.Div << counter2 <| d - 1
-            o.H3 <| fun o ->
+                if d > 0 then o.Div [] << counter2 <| d - 1
+            o.H3 [] <| fun o ->
                 o.Text << S.now <| "0"
 
     let rec counter d =

@@ -23,6 +23,12 @@ var _Symbol2 = require("./fable-core/Symbol");
 
 var _Symbol3 = _interopRequireDefault(_Symbol2);
 
+var _Util = require("./fable-core/Util");
+
+var _List = require("./fable-core/List");
+
+var _List2 = _interopRequireDefault(_List);
+
 var _Event2 = require("./fable-core/Event");
 
 var _Event3 = _interopRequireDefault(_Event2);
@@ -159,6 +165,23 @@ const Dom = exports.Dom = function (__exports) {
     });
   };
 
+  const DomEvents = __exports.DomEvents = class DomEvents {
+    constructor(tag, data) {
+      this.tag = tag | 0;
+      this.data = data;
+    }
+
+    [_Symbol3.default.reflection]() {
+      return {
+        type: "Sakhe.Show.Dom.DomEvents",
+        interfaces: ["FSharpUnion"],
+        cases: [["Click", (0, _Util.Function)([(0, _Util.Interface)("Fable.Import.Browser.MouseEvent"), (0, _Util.GenericParam)("a")])]]
+      };
+    }
+
+  };
+  (0, _Symbol2.setType)("Sakhe.Show.Dom.DomEvents", DomEvents);
+
   const apiRing = __exports.apiRing = function (pith, o) {
     const elm = function (t, pith_1) {
       ($var21 => ($var18 => ($var17 => ($var16 => {
@@ -176,20 +199,32 @@ const Dom = exports.Dom = function (__exports) {
     };
 
     pith({
-      Div(pith_4) {
-        elm(Div, pith_4);
+      get Actions() {
+        return _s.S.now(1);
       },
 
-      Span(pith_4) {
-        elm(Span, pith_4);
+      Div(_arg1) {
+        return pith_4 => {
+          elm(Div, pith_4);
+        };
       },
 
-      Button(pith_4) {
-        elm(Button, pith_4);
+      Span(_arg2) {
+        return pith_4 => {
+          elm(Span, pith_4);
+        };
       },
 
-      H3(pith_4) {
-        elm(H3, pith_4);
+      Button(_arg3) {
+        return pith_4 => {
+          elm(Button, pith_4);
+        };
+      },
+
+      H3(_arg4) {
+        return pith_4 => {
+          elm(H3, pith_4);
+        };
       },
 
       Text(s_1) {
@@ -211,30 +246,30 @@ const Dom = exports.Dom = function (__exports) {
   };
 
   const counter2 = __exports.counter2 = function (d, o) {
-    o.Div.bind(o)(function (o_1) {
-      o_1.Button.bind(o_1)(function (o_2) {
-        o_2.Span.bind(o_2)(function (o_3) {
+    o.Div(new _List2.default())(function (o_1) {
+      o_1.Button(new _List2.default())(function (o_2) {
+        o_2.Span(new _List2.default())(function (o_3) {
           ($var24 => o_3.Text.bind(o_3)(_s.S.now.bind(_s.S)($var24)))("+");
         });
 
         if (d > 0) {
-          ($var27 => o_2.Div.bind(o_2)(($var25 => $var26 => {
+          ($var27 => o_2.Div(new _List2.default())(($var25 => $var26 => {
             counter2($var25, $var26);
           })($var27)))(d - 1);
         }
       });
-      o_1.Button.bind(o_1)(function (o_5) {
-        o_5.Span.bind(o_5)(function (o_6) {
+      o_1.Button(new _List2.default())(function (o_5) {
+        o_5.Span(new _List2.default())(function (o_6) {
           ($var28 => o_6.Text.bind(o_6)(_s.S.now.bind(_s.S)($var28)))("-");
         });
 
         if (d > 0) {
-          ($var31 => o_5.Div.bind(o_5)(($var29 => $var30 => {
+          ($var31 => o_5.Div(new _List2.default())(($var29 => $var30 => {
             counter2($var29, $var30);
           })($var31)))(d - 1);
         }
       });
-      o_1.H3.bind(o_1)(function (o_8) {
+      o_1.H3(new _List2.default())(function (o_8) {
         ($var32 => o_8.Text.bind(o_8)(_s.S.now.bind(_s.S)($var32)))("0");
       });
     });
