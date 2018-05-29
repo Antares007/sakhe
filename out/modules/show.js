@@ -9,7 +9,7 @@ var _s = require("./s");
 
 var _Option = require("./fable-core/Option");
 
-var _state = require("./state");
+var _r = require("./r");
 
 var _CurriedLambda = require("./fable-core/CurriedLambda");
 
@@ -43,25 +43,25 @@ const State = exports.State = function (__exports) {
   };
 
   const _Number = __exports.Number = function (k, s) {
-    return new _state.RValue(1, [k, s]);
+    return new _r.RValue(1, [k, s]);
   };
 
   const _Object = __exports.Object = function (k, s) {
-    return new _state.RValue(3, [k, s]);
+    return new _r.RValue(3, [k, s]);
   };
 
   const _Array = __exports.Array = function (k, s) {
-    return new _state.RValue(4, [k, s]);
+    return new _r.RValue(4, [k, s]);
   };
 
-  const rez = __exports.rez = ($var2 => ($var1 => (0, _state.treeObj)(_s.S.at(_s.TimeModule.ms(0), $var1)))(function (arg0) {
+  const rez = __exports.rez = ($var2 => ($var1 => (0, _r.treeObj)(_s.S.at(_s.TimeModule.ms(0), $var1)))(function (arg0) {
     return arg0;
   }($var2)))(function (o) {
     ($var6 => ($var5 => {
       var arg00_;
       return ($var4 => ($var3 => o(function (s) {
         return _Object("achiko", s);
-      }($var3)))((0, _state.treeObj)($var4)))((arg00_ = _s.TimeModule.ms(3000), function (a_1) {
+      }($var3)))((0, _r.treeObj)($var4)))((arg00_ = _s.TimeModule.ms(3000), function (a_1) {
         return _s.S.at(arg00_, a_1);
       })($var5));
     })(function (arg0_1) {
@@ -74,14 +74,14 @@ const State = exports.State = function (__exports) {
         }($var7)))((arg00__1 = _s.TimeModule.ms(3000), function (a_2) {
           return _s.S.at(arg00__1, a_2);
         })($var8));
-      })((0, _state.update)($var9)))(function (_arg1) {
+      })((0, _r.update)($var9)))(function (_arg1) {
         return _arg1 == null ? 0 : (0, _Option.getValue)(_arg1) + 1;
       });
     });
   });
 
   const update = __exports.update = function (s) {
-    return _s.S.tap(console.log.bind(console), _s.S.scan(_state.apply, {}, s));
+    return _s.S.tap(console.log.bind(console), _s.S.scan(_r.apply, {}, s));
   };
 
   _s.S.drain(update(rez)), void 0;
@@ -241,7 +241,7 @@ const Dom = exports.Dom = function (__exports) {
 const Test2 = exports.Test2 = function (__exports) {
   const tree = __exports.tree = function (pith) {
     var s;
-    return (0, _g.tree)(_state.treeObj, (s = _p.P.once(function (value) {
+    return (0, _g.tree)(_r.treeObj, (s = _p.P.once(function (value) {
       value, void 0;
     }), function (pith_2) {
       return (0, _pnode.tree)(s, pith_2);
@@ -266,7 +266,7 @@ const Test2 = exports.Test2 = function (__exports) {
       return new _g.G(0, arg0_1);
     }($var36)))(function (s) {
       return State.Number("a", s);
-    }($var37)))(_s.S.now.bind(_s.S)($var38)))((0, _state.set)($var39)))(1);
+    }($var37)))(_s.S.now.bind(_s.S)($var38)))((0, _r.set)($var39)))(1);
 
     ($var43 => ($var42 => ($var41 => ($var40 => o(function (arg0_2) {
       return new _g.G(1, arg0_2);
@@ -285,7 +285,7 @@ const Test2 = exports.Test2 = function (__exports) {
         return new _g.G(0, arg0_5);
       }($var48)))(function (s_1) {
         return State.Number("aa", s_1);
-      }($var49)))(_s.S.now.bind(_s.S)($var50)))((0, _state.set)($var51)))(2);
+      }($var49)))(_s.S.now.bind(_s.S)($var50)))((0, _r.set)($var51)))(2);
 
       ($var55 => ($var54 => ($var53 => ($var52 => o_1(function (arg0_6) {
         return new _g.G(1, arg0_6);

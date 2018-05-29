@@ -12,8 +12,8 @@
     <Compile Include="s.fs" />
     <Compile Include="p.fs" />
     <Compile Include="g.fs" />
+    <Compile Include="r.fs" />
     <Compile Include="pnode.fs" />
-    <Compile Include="state.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

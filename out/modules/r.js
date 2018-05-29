@@ -30,7 +30,7 @@ class RValue {
 
   [_Symbol3.default.reflection]() {
     return {
-      type: "Sakhe.State.RValue",
+      type: "Sakhe.R.RValue",
       interfaces: ["FSharpUnion", "System.IEquatable"],
       cases: [["RString", (0, _Util.GenericParam)("key"), _Util.Any], ["RNumber", (0, _Util.GenericParam)("key"), _Util.Any], ["RBool", (0, _Util.GenericParam)("key"), _Util.Any], ["RObject", (0, _Util.GenericParam)("key"), _Util.Any], ["RArray", (0, _Util.GenericParam)("key"), _Util.Any]]
     };
@@ -43,7 +43,7 @@ class RValue {
 }
 
 exports.RValue = RValue;
-(0, _Symbol2.setType)("Sakhe.State.RValue", RValue);
+(0, _Symbol2.setType)("Sakhe.R.RValue", RValue);
 
 function set(a) {
   return function (_arg1) {
