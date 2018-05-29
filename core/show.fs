@@ -73,15 +73,13 @@ module Dom =
         abstract Text: string S -> unit
 
     let rec apiRing pith o: unit =
+        let elm t pith =
+            o << t << tree (P.once ignore) << S.now << Pith << apiRing <| pith
         pith { new IApi with
-            member __.Div pith =
-                o << Div << tree (P.once ignore) << S.now << Pith << apiRing <| pith
-            member __.Span pith =
-                o << Span << tree (P.once ignore) << S.now << Pith << apiRing <| pith
-            member __.Button pith =
-                o << Button << tree (P.once ignore) << S.now << Pith << apiRing <| pith
-            member __.H3 pith =
-                o << H3 << tree (P.once ignore) << S.now << Pith << apiRing <| pith
+            member __.Div pith = elm Div pith
+            member __.Span pith = elm Span pith
+            member __.Button pith = elm Button pith
+            member __.H3 pith = elm H3 pith
             member __.Text s =
                 o << Text << S.map (fun str -> P.once (fun text -> text.textContent <- str)) <| s
             }
