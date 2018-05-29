@@ -19,7 +19,7 @@ module State =
     let rez =
         treeObj << S.at (ms 0.) << Pith <| fun o ->
             o << Object "achiko" << treeObj << S.at (ms 3000.) << Pith <| fun o ->
-                o << Number "age" <<  S.at (ms 3000.) << R.update <| function
+                o << Number "age" <<  S.at (ms 3000.) << State.update <| function
                     | Some v -> v + 1.
                     | None -> 0.
                 ()
@@ -28,7 +28,7 @@ module State =
     let update s =
         s
         |> S.scan
-            (R.apply)
+            (State.apply)
             (Some Fable.Core.JsInterop.createEmpty<obj>)
         |> S.tap console.log
     S.drain (update rez)
@@ -111,10 +111,10 @@ module Test2 =
         )
 
     let rez = tree << S.now << Pith <| fun o ->
-        o << G.A << Number "a" << S.now << R.set <| 1.
+        o << G.A << Number "a" << S.now << State.set <| 1.
         o << G.B << Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
         o << g "hmmm" << tree << S.now << Pith <| fun o ->
-            o << G.A << Number "aa" << S.now << R.set <| 2.
+            o << G.A << Number "aa" << S.now << State.set <| 2.
             o << G.B << Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
 
     S.merge

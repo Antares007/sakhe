@@ -11,10 +11,9 @@ type RValue<'key> =
     | RObject of  'key * S<obj R>
     | RArray  of  'key * S<obj [] R>
 
-module R =
-    let set a = R <| fun _ -> a
-    let update f = R f
-    let apply s (R r) = Some (r s)
+let set a = R <| fun _ -> a
+let update f = R f
+let apply s (R r) = Some (r s)
 
 [<AutoOpen>]
 module private Impl =
@@ -89,4 +88,3 @@ let treeObj pith =
 
 let treeArr pith =
     tree absurdArray pith
-

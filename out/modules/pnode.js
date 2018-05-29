@@ -3,8 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.element = element;
-exports.charData = charData;
+exports.pnode = pnode;
 exports.ring = ring;
 exports.tree = tree;
 
@@ -40,20 +39,16 @@ class PNode {
 
 (0, _Symbol2.setType)("Sakhe.PNode.PNode", PNode);
 
-function element(a, p, s) {
-  return new PNode(0, [a, p, s]);
-}
-
-function charData(a, p, s) {
+function pnode(a, p, s) {
   return new PNode(0, [a, p, s]);
 }
 
 const Impl = function (__exports) {
-  const tryFind = __exports.tryFind = function ($var12, $var13, $var14) {
+  const tryFind = __exports.tryFind = function ($var9, $var10, $var11) {
     tryFind: while (true) {
-      const prove = $var12;
-      const i = $var13;
-      const nlist = $var14;
+      const prove = $var9;
+      const i = $var10;
+      const nlist = $var11;
 
       if (i >= nlist.length) {
         return null;
@@ -63,9 +58,9 @@ const Impl = function (__exports) {
         if (prove(n)) {
           return n;
         } else {
-          $var12 = prove;
-          $var13 = i + 1;
-          $var14 = nlist;
+          $var9 = prove;
+          $var10 = i + 1;
+          $var11 = nlist;
           continue tryFind;
         }
       }

@@ -74,14 +74,14 @@ const State = exports.State = function (__exports) {
         }($var7)))((arg00__1 = _s.TimeModule.ms(3000), function (a_2) {
           return _s.S.at(arg00__1, a_2);
         })($var8));
-      })(_state.R.update.bind(_state.R)($var9)))(function (_arg1) {
+      })((0, _state.update)($var9)))(function (_arg1) {
         return _arg1 == null ? 0 : (0, _Option.getValue)(_arg1) + 1;
       });
     });
   });
 
   const update = __exports.update = function (s) {
-    return _s.S.tap(console.log.bind(console), _s.S.scan(_state.R.apply.bind(_state.R), {}, s));
+    return _s.S.tap(console.log.bind(console), _s.S.scan(_state.apply, {}, s));
   };
 
   _s.S.drain(update(rez)), void 0;
@@ -90,7 +90,7 @@ const State = exports.State = function (__exports) {
 
 const Dom = exports.Dom = function (__exports) {
   const createElm = __exports.createElm = function (tag) {
-    return (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(_pnode.element)(function () {
+    return (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(_pnode.pnode)(function () {
       return document.createElement(tag);
     }))(function (n) {
       return n.nodeName === tag;
@@ -105,7 +105,7 @@ const Dom = exports.Dom = function (__exports) {
   const H2 = __exports.H2 = (0, _CurriedLambda2.default)(createElm("H2"));
   const H3 = __exports.H3 = (0, _CurriedLambda2.default)(createElm("H3"));
 
-  const _Text = __exports.Text = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(_pnode.charData)(function () {
+  const _Text = __exports.Text = (0, _CurriedLambda2.default)((0, _CurriedLambda2.default)((0, _CurriedLambda2.default)(_pnode.pnode)(function () {
     return document.createTextNode("");
   }))(function (n) {
     return n.nodeName === "#text";
@@ -266,7 +266,7 @@ const Test2 = exports.Test2 = function (__exports) {
       return new _g.G(0, arg0_1);
     }($var36)))(function (s) {
       return State.Number("a", s);
-    }($var37)))(_s.S.now.bind(_s.S)($var38)))(_state.R.set.bind(_state.R)($var39)))(1);
+    }($var37)))(_s.S.now.bind(_s.S)($var38)))((0, _state.set)($var39)))(1);
 
     ($var43 => ($var42 => ($var41 => ($var40 => o(function (arg0_2) {
       return new _g.G(1, arg0_2);
@@ -285,7 +285,7 @@ const Test2 = exports.Test2 = function (__exports) {
         return new _g.G(0, arg0_5);
       }($var48)))(function (s_1) {
         return State.Number("aa", s_1);
-      }($var49)))(_s.S.now.bind(_s.S)($var50)))(_state.R.set.bind(_state.R)($var51)))(2);
+      }($var49)))(_s.S.now.bind(_s.S)($var50)))((0, _state.set)($var51)))(2);
 
       ($var55 => ($var54 => ($var53 => ($var52 => o_1(function (arg0_6) {
         return new _g.G(1, arg0_6);
