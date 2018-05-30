@@ -57,17 +57,16 @@ module Dom =
 
         let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
 
-        let statTree t p = t << tree (P.once ignore) << S.now << Pith <| p
+        let statTree t p = t << tree (S.now << P.once <| ignore) << S.now << Pith <| p
         let div p = statTree Div p
         let btn p = statTree Button p
         let span p = statTree Span p
         let h3 p = statTree H3 p
 
         let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
-        let tree pith = tree (P.once ignore) pith
 
-    type DomEvents<'a> =
-        | Click of (MouseEvent -> 'a)
+    type DomEvents =
+        | Click of (MouseEvent -> unit)
 
     type Actions =
         | Plus
@@ -76,32 +75,48 @@ module Dom =
     let konst a _ = a
 
 
-    let on_ f (s: #Element P S) =
-        S.map << P.add <| f <| s
-        |> S.disposeWith id
+    let on_ f (s: 'a P S) =
+        let d = ref (fun () -> ())
+        S.map << P.add <| (fun a ->
+            d := f a
+            ) <| s
+        |> S.disposeWith (fun () ->
+            let d = !d
+            d ())
 
-    let on (l: 'a DomEvents list) (s: #Element P S) =
-        S.map << P.add <| fun x ->
-            x |> ignore
+    let on (l: DomEvents list) (s: #HTMLElement P S) =
+        on_ <| fun (e: #HTMLElement) ->
+            List.fold
+                (fun d -> function
+                    | Click h ->
+                        e.addEventListener_click (h)
+                        console.log "add"
+                        fun () ->
+                            d ()
+                            e.removeEventListener ("click", unbox h)
+                            console.log "remove"
+                )
+                (fun () -> ())
+                l
         <| s
-
 
     let rec counter d =
         H.div <| fun o ->
             let ep = new Event<_>()
-            let em = new Event<_>()
             let sum =
-                S.merge
-                    (S.toStream em |> S.konst -1)
-                    (S.toStream ep |> S.konst 1)
-                |> S.scan (+) 0
+                S.toStream ep
+                |> S.scan
+                    (fun m -> function
+                        |Plus  -> m + 1
+                        |Minus -> m - 1)
+                    0
 
-            o << H.Button << on [ Click << konst <| Plus] << H.tree << S.now << Pith <| fun o ->
+            o << H.Button << PNode.tree (S.now << P.once <| ignore ) << S.now << Pith <| fun o ->
                 o << H.span <| fun o ->
                     o << H.text <| "+"
                 if d > 0 then o <| counter (d - 1)
 
-            o << H.Button << on [ Click << konst <| Minus] << H.tree << S.now << Pith <| fun o ->
+            o << H.Button << PNode.tree (S.now << P.once <| ignore ) << S.now << Pith <| fun o ->
                 o << H.span <| fun o ->
                     o << H.text <| "-"
                 if d > 0 then o <| counter (d - 1)
@@ -115,7 +130,7 @@ module Dom =
         |> S.scan P.apply elm
 
     let rez =
-        H.tree << S.now << Pith <| fun o ->
+        PNode.tree (S.now << P.once <| ignore) << S.now << Pith <| fun o ->
             o << counter <| 3
 
     (render (document.getElementById "root-node") rez)
@@ -126,7 +141,7 @@ module Test2 =
     open State
     open Dom
     let tree pith =
-        G.tree R.treeObj (PNode.tree (P.once ignore)) pith
+        G.tree R.treeObj (PNode.tree (S.now << P.once <| ignore)) pith
 
     let g key p =
         G.AB (

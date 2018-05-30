@@ -7,6 +7,8 @@ exports.P = undefined;
 
 var _s = require("./s");
 
+var _a = require("./a");
+
 const P = exports.P = function (__exports) {
   const once = __exports.once = function (f) {
     return function makeOnce(f) {
@@ -49,7 +51,13 @@ const P = exports.P = function (__exports) {
   };
 
   const tree = __exports.tree = function (s, pith) {
-    return _s.S.treeCombine(combine, s, pith);
+    var f_1;
+    var f;
+    return _s.S.switchLatest(_s.S.map((f_1 = (f = combine, function (arg10__1, arg20_) {
+      return _s.S.combine(f, arg10__1, arg20_);
+    }), function (arg20__1) {
+      return _a.A.tree(f_1, s, arg20__1);
+    }), pith));
   };
 
   return __exports;

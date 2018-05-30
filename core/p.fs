@@ -28,4 +28,6 @@ module P =
     let apply n (P p) = p n; n
 
     let tree s pith =
-        S.treeCombine combine s pith
+         S.switchLatest (S.map (A.tree (S.combine combine) s) pith)
+        // S.tree (S.combine combine) (S.now s) pith
+        // S.treeCombine combine s pith
