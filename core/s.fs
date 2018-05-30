@@ -32,6 +32,14 @@ module S =
     let startWith a (S s) = S <| core.startWith (a, s)
     let sample (S a) (S b) = S <| core.sample (b, a)
 
+    let disposeWith d (S s) =
+        S << core.newStream <| fun sink scheduler ->
+            let ds = s.run (sink, scheduler)
+            let dispose _ =
+                ds.dispose ()
+                d ()
+            disposable.disposeWith (dispose, ())
+
     let toStream (e: Event<_>) =
         let ms = core.MulticastSource.Create (core.never ())
         S << core.newStream <| fun sink scheduler ->

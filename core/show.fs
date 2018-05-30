@@ -35,74 +35,59 @@ module State =
     |> ignore
 
 module Dom =
-    open PNode
+    module H =
+        open PNode
+        let createElm tag =
+            pnode
+                <| fun () -> document.createElement tag
+                <| fun n -> n.nodeName = tag
 
-    let createElm tag =
-        pnode
-            <| fun () -> document.createElement tag
-            <| fun n -> n.nodeName = tag
+        let Div = createElm    "DIV"
+        let A =  createElm     "A"
+        let Button = createElm "BUTTON"
+        let Span = createElm   "SPAN"
+        let H1 =  createElm    "H1"
+        let H2 =  createElm    "H2"
+        let H3 =  createElm    "H3"
 
-    let Div = createElm    "DIV"
-    let A =  createElm     "A"
-    let Button = createElm "BUTTON"
-    let Span = createElm   "SPAN"
-    let H1 =  createElm    "H1"
-    let H2 =  createElm    "H2"
-    let H3 =  createElm    "H3"
+        let Text =
+            pnode
+                <| fun () -> document.createTextNode ""
+                <| fun (n: Node) -> n.nodeName = "#text"
 
-    let Text =
-        pnode
-            <| fun () -> document.createTextNode ""
-            <| fun (n: Node) -> n.nodeName = "#text"
+        let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
 
-    let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
+        let statTree t p = t << tree (P.once ignore) << S.now << Pith <| p
+        let div p = statTree Div p
+        let btn p = statTree Button p
+        let span p = statTree Span p
+        let h3 p = statTree H3 p
 
-    let statTree t p = t << tree (P.once ignore) << S.now << Pith <| p
-    let div p = statTree Div p
-    let btn p = statTree Button p
-    let span p = statTree Span p
-    let h3 p = statTree H3 p
+        let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
+        let tree pith = tree (P.once ignore) pith
 
-    let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
+    type DomEvents<'a> =
+        | Click of (MouseEvent -> 'a)
 
-    type DomEvents<'a> = | Click of (Fable.Import.Browser.MouseEvent -> 'a)
+    type Actions =
+        | Plus
+        | Minus
 
-    type IApi =
-        abstract Actions : int S with get
-        abstract Div<'b> : DomEvents<'b> list -> ((IApi -> unit) -> unit)
-        abstract Span<'b> : DomEvents<'b> list -> ((IApi -> unit) -> unit)
-        abstract Button<'b> : DomEvents<'b> list -> ((IApi -> unit) -> unit)
-        abstract H3<'b> : DomEvents<'b> list -> ((IApi -> unit) -> unit)
-        abstract Text : string S -> unit
+    let konst a _ = a
 
-    let rec apiRing pith o: unit =
-        let elm t pith =
-            o << t << tree (P.once ignore) << S.now << Pith << apiRing <| pith
-        pith { new IApi with
-            member __.Actions = S.now 1
-            member __.Div _ = fun pith -> elm Div pith
-            member __.Span _ = fun pith -> elm Span pith
-            member __.Button _ = fun pith -> elm Button pith
-            member __.H3 _ = fun pith -> elm H3 pith
-            member __.Text s =
-                o << Text << S.map (fun str -> P.once (fun text -> text.textContent <- str)) <| s
-            }
 
-    let rec counter2 d (o: IApi) =
-        o.Div [] <| fun o ->
-            o.Button [] <| fun o ->
-                o.Span [] <| fun o ->
-                    o.Text << S.now <| "+"
-                if d > 0 then o.Div [] << counter2 <| d - 1
-            o.Button [] <| fun o ->
-                o.Span [] <| fun o ->
-                    o.Text << S.now <| "-"
-                if d > 0 then o.Div [] << counter2 <| d - 1
-            o.H3 [] <| fun o ->
-                o.Text << S.now <| "0"
+    let on_ f (s: #Element P S) =
+        S.map << P.add <| f <| s
+        |> S.disposeWith id
+
+    let on (l: 'a DomEvents list) (s: #Element P S) =
+        S.map << P.add <| fun x ->
+            x |> ignore
+        <| s
+
 
     let rec counter d =
-        div <| fun o ->
+        H.div <| fun o ->
             let ep = new Event<_>()
             let em = new Event<_>()
             let sum =
@@ -110,16 +95,19 @@ module Dom =
                     (S.toStream em |> S.konst -1)
                     (S.toStream ep |> S.konst 1)
                 |> S.scan (+) 0
-            o << Button << tree (P.once (fun x -> x.addEventListener_click ep.Trigger)) << S.now << Pith <| fun o ->
-                o << span <| fun o ->
-                    o << text <| "+"
+
+            o << H.Button << on [ Click << konst <| Plus] << H.tree << S.now << Pith <| fun o ->
+                o << H.span <| fun o ->
+                    o << H.text <| "+"
                 if d > 0 then o <| counter (d - 1)
-            o << Button << tree (P.once (fun x -> x.addEventListener_click em.Trigger)) << S.now << Pith <| fun o ->
-                o << span <| fun o ->
-                    o << text <| "-"
+
+            o << H.Button << on [ Click << konst <| Minus] << H.tree << S.now << Pith <| fun o ->
+                o << H.span <| fun o ->
+                    o << H.text <| "-"
                 if d > 0 then o <| counter (d - 1)
-            o << h3 <| fun o ->
-                o << Text << S.map (fun i -> P.once (fun text -> text.textContent <- string i)) <| sum
+
+            o << H.h3 <| fun o ->
+                o << H.Text << S.map (fun i -> P.once (fun text -> text.textContent <- string i)) <| sum
 
     let render elm s =
         s
@@ -127,9 +115,8 @@ module Dom =
         |> S.scan P.apply elm
 
     let rez =
-        tree (P.once ignore) << S.now << Pith <| fun o ->
-            o (counter 3)
-            o << Div << tree (P.once ignore) << S.now << Pith << apiRing << counter2 <| 3
+        H.tree << S.now << Pith <| fun o ->
+            o << counter <| 3
 
     (render (document.getElementById "root-node") rez)
     |> S.drain
@@ -144,15 +131,15 @@ module Test2 =
     let g key p =
         G.AB (
             (Object key << fst <| p),
-            (Div << snd <| p)
+            (H.Div << snd <| p)
         )
 
     let rez = tree << S.now << Pith <| fun o ->
         o << G.A << Number "a" << S.now << R.set <| 1.
-        o << G.B << Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
+        o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
         o << g "hmmm" << tree << S.now << Pith <| fun o ->
             o << G.A << Number "aa" << S.now << R.set <| 2.
-            o << G.B << Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
+            o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
 
     S.merge
         (render (document.getElementById "root-node") (snd rez) |> S.map ignore)

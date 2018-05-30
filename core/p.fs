@@ -16,7 +16,11 @@ module P =
     })($0)")>]
     let private onceNative (_: 'a -> 'b): 'a -> 'b = Exceptions.jsNative
     let once f = P (onceNative f)
-    let each f = P f
+
+    let chain f (P p): P<_> = f p
+    let add f (P p) = once <| fun a ->
+        p a
+        f a
     let combine (P combinedChain) (P patch) =
         P <| fun n ->
             patch n

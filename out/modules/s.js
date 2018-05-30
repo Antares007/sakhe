@@ -110,11 +110,26 @@ const S = exports.S = function (__exports) {
     return core.sample(_arg1, _arg2);
   };
 
-  const toStream = __exports.toStream = function (e) {
-    const ms_1 = new core.MulticastSource(core.never());
+  const disposeWith = __exports.disposeWith = function (d, _arg1) {
     return ($var2 => function (arg0) {
       return arg0;
     }(core.newStream.bind(core)($var2)))(function (sink, scheduler_1) {
+      const ds = _arg1.run(sink, scheduler_1);
+
+      const dispose = function (_arg2) {
+        ds.dispose();
+        d();
+      };
+
+      return disposable.disposeWith(dispose, null);
+    });
+  };
+
+  const toStream = __exports.toStream = function (e) {
+    const ms_1 = new core.MulticastSource(core.never());
+    return ($var3 => function (arg0) {
+      return arg0;
+    }(core.newStream.bind(core)($var3)))(function (sink, scheduler_1) {
       const onNext = function (v) {
         ms_1.event(scheduler_1.currentTime(), v);
       };
