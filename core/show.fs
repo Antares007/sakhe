@@ -65,8 +65,8 @@ module Dom =
 
         let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
 
-    type DomEvents =
-        | Click of (MouseEvent -> unit)
+    type DomEvents<'a> =
+        | Click of (MouseEvent -> 'a)
 
     type Actions =
         | Plus
@@ -74,31 +74,10 @@ module Dom =
 
     let konst a _ = a
 
+    let OnP (_: 'a DomEvents list): HTMLElement P =
+        P.once ignore
 
-    let on_ f (s: 'a P S) =
-        let d = ref (fun () -> ())
-        S.map << P.add <| (fun a ->
-            d := f a
-            ) <| s
-        |> S.disposeWith (fun () ->
-            let d = !d
-            d ())
-
-    let on (l: DomEvents list) (s: #HTMLElement P S) =
-        on_ <| fun (e: #HTMLElement) ->
-            List.fold
-                (fun d -> function
-                    | Click h ->
-                        e.addEventListener_click (h)
-                        console.log "add"
-                        fun () ->
-                            d ()
-                            e.removeEventListener ("click", unbox h)
-                            console.log "remove"
-                )
-                (fun () -> ())
-                l
-        <| s
+    let On s = S.map OnP s
 
     let rec counter d =
         H.div <| fun o ->
@@ -110,7 +89,8 @@ module Dom =
                         |Plus  -> m + 1
                         |Minus -> m - 1)
                     0
-
+            let ons = On <| S.now [Click (fun _ -> Plus)]
+            ons |> ignore
             o << H.Button << PNode.tree (S.now << P.once <| ignore ) << S.now << Pith <| fun o ->
                 o << H.span <| fun o ->
                     o << H.text <| "+"
