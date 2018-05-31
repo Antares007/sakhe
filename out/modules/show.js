@@ -25,13 +25,9 @@ var _Symbol3 = _interopRequireDefault(_Symbol2);
 
 var _Util = require("./fable-core/Util");
 
-var _Seq = require("./fable-core/Seq");
-
 var _Event2 = require("./fable-core/Event");
 
 var _Event3 = _interopRequireDefault(_Event2);
-
-var _List = require("./fable-core/List");
 
 var _g = require("./g");
 
@@ -127,16 +123,14 @@ const Dom = exports.Dom = function (__exports) {
     }, 0, _s.S.periodic(_s.TimeModule.ms(10)))));
 
     const statTree = __exports.statTree = function (t, p) {
-      return ($var13 => ($var12 => ($var11 => {
+      return ($var12 => ($var11 => ($var10 => {
         var s;
-        return t((s = ($var10 => _s.S.now(_p.P.once($var10)))(function (value) {
-          value, void 0;
-        }), function (pith) {
+        return t((s = _s.S.now(_p.P.empty()), function (pith) {
           return (0, _pnode.tree)(s, pith);
-        })($var11));
-      })(_s.S.now.bind(_s.S)($var12)))(function (arg0) {
+        })($var10));
+      })(_s.S.now.bind(_s.S)($var11)))(function (arg0) {
         return arg0;
-      }($var13)))(p);
+      }($var12)))(p);
     };
 
     const div = __exports.div = function (p) {
@@ -156,12 +150,12 @@ const Dom = exports.Dom = function (__exports) {
     };
 
     const text = __exports.text = function (s) {
-      return ($var15 => ($var14 => {
+      return ($var14 => ($var13 => {
         var arg00_;
         return _Text((arg00_ = _s.TimeModule.ms(0), function (a_1) {
           return _s.S.at(arg00_, a_1);
-        })($var14));
-      })(_p.P.once.bind(_p.P)($var15)))(function (text_1) {
+        })($var13));
+      })(_p.P.once.bind(_p.P)($var14)))(function (text_1) {
         text_1.textContent = s;
       });
     };
@@ -213,50 +207,6 @@ const Dom = exports.Dom = function (__exports) {
     return a_1;
   };
 
-  const OnP = __exports.OnP = function (e, l) {
-    const d = {
-      contents: function () {
-        null, void 0;
-      }
-    };
-
-    const p = _p.P.once(function (elm) {
-      d.contents = (0, _Seq.fold)((0, _CurriedLambda2.default)(function (d_1, _arg1) {
-        const h = function (arg) {
-          e.Trigger(_arg1.data(arg));
-        };
-
-        elm.addEventListener("click", h);
-        console.log("add");
-        return function () {
-          elm.removeEventListener("click", h);
-          console.log("remove");
-          d_1();
-        };
-      }), function () {
-        null, void 0;
-      }, l);
-    });
-
-    return [p, d];
-  };
-
-  const On = __exports.On = function (e, s) {
-    return _s.S.map(function (tupledArg) {
-      const d = tupledArg[0][1].contents;
-      d();
-      return tupledArg[1][0];
-    }, _s.S.pairwise([_p.P.once(function (value) {
-      value, void 0;
-    }), {
-      contents: function () {
-        null, void 0;
-      }
-    }], _s.S.map(function (l) {
-      return OnP(e, l);
-    }, s)));
-  };
-
   const counter = __exports.counter = function (d) {
     return H.div(function (o) {
       const acts = new _Event3.default();
@@ -265,20 +215,16 @@ const Dom = exports.Dom = function (__exports) {
         return _arg1.tag === 1 ? m - 1 : m + 1;
       }, 0, _s.S.toStream(acts));
 
-      ($var19 => ($var18 => ($var17 => {
-        var s_1;
-        return ($var16 => o(H.Button($var16)))((s_1 = function (s) {
-          return On(acts, s);
-        }(_s.S.now((0, _List.ofArray)([new DomEvents(0, function (_arg1_1) {
-          return new Actions(0);
-        })]))), function (pith) {
-          return (0, _pnode.tree)(s_1, pith);
-        })($var17));
-      })(_s.S.now.bind(_s.S)($var18)))(function (arg0) {
+      ($var18 => ($var17 => ($var16 => {
+        var s;
+        return ($var15 => o(H.Button($var15)))((s = _s.S.now(_p.P.empty()), function (pith) {
+          return (0, _pnode.tree)(s, pith);
+        })($var16));
+      })(_s.S.now.bind(_s.S)($var17)))(function (arg0) {
         return arg0;
-      }($var19)))(function (o_1) {
-        ($var20 => o_1(H.span.bind(H)($var20)))(function (o_2) {
-          ($var21 => o_2(H.text.bind(H)($var21)))("+");
+      }($var18)))(function (o_1) {
+        ($var19 => o_1(H.span.bind(H)($var19)))(function (o_2) {
+          ($var20 => o_2(H.text.bind(H)($var20)))("+");
         });
 
         if (d > 0) {
@@ -286,20 +232,16 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var25 => ($var24 => ($var23 => {
-        var s_4;
-        return ($var22 => o(H.Button($var22)))((s_4 = function (s_3) {
-          return On(acts, s_3);
-        }(_s.S.now((0, _List.ofArray)([new DomEvents(0, function (_arg2) {
-          return new Actions(1);
-        })]))), function (pith_1) {
-          return (0, _pnode.tree)(s_4, pith_1);
-        })($var23));
-      })(_s.S.now.bind(_s.S)($var24)))(function (arg0_1) {
+      ($var24 => ($var23 => ($var22 => {
+        var s_2;
+        return ($var21 => o(H.Button($var21)))((s_2 = _s.S.now(_p.P.empty()), function (pith_1) {
+          return (0, _pnode.tree)(s_2, pith_1);
+        })($var22));
+      })(_s.S.now.bind(_s.S)($var23)))(function (arg0_1) {
         return arg0_1;
-      }($var25)))(function (o_3) {
-        ($var26 => o_3(H.span.bind(H)($var26)))(function (o_4) {
-          ($var27 => o_4(H.text.bind(H)($var27)))("-");
+      }($var24)))(function (o_3) {
+        ($var25 => o_3(H.span.bind(H)($var25)))(function (o_4) {
+          ($var26 => o_4(H.text.bind(H)($var26)))("-");
         });
 
         if (d > 0) {
@@ -307,16 +249,16 @@ const Dom = exports.Dom = function (__exports) {
         }
       });
 
-      ($var28 => o(H.h3.bind(H)($var28)))(function (o_5) {
-        ($var30 => {
+      ($var27 => o(H.h3.bind(H)($var27)))(function (o_5) {
+        ($var29 => {
           var f;
-          return ($var29 => o_5(H.Text($var29)))((f = function (i) {
+          return ($var28 => o_5(H.Text($var28)))((f = function (i) {
             return _p.P.once(function (text_1) {
               text_1.textContent = i.toString();
             });
           }, function (arg10_) {
             return _s.S.map(f, arg10_);
-          })($var30));
+          })($var29));
         })(sum);
       });
     });
@@ -331,12 +273,10 @@ const Dom = exports.Dom = function (__exports) {
     }(s));
   };
 
-  const rez_1 = __exports.rez = ($var33 => ($var31 => (0, _pnode.tree)(($var32 => _s.S.now(_p.P.once($var32)))(function (value) {
-    value, void 0;
-  }), _s.S.now($var31)))(function (arg0) {
+  const rez_1 = __exports.rez = ($var31 => ($var30 => (0, _pnode.tree)(_s.S.now(_p.P.empty()), _s.S.now($var30)))(function (arg0) {
     return arg0;
-  }($var33)))(function (o) {
-    ($var34 => o(counter($var34)))(3);
+  }($var31)))(function (o) {
+    ($var32 => o(counter($var32)))(3);
   });
 
   _s.S.drain(render(document.getElementById("root-node"), rez_1)), void 0;
@@ -346,57 +286,55 @@ const Dom = exports.Dom = function (__exports) {
 const Test2 = exports.Test2 = function (__exports) {
   const tree = __exports.tree = function (pith) {
     var s;
-    return (0, _g.tree)(_r.treeObj, (s = ($var35 => _s.S.now(_p.P.once($var35)))(function (value) {
-      value, void 0;
-    }), function (pith_2) {
+    return (0, _g.tree)(_r.treeObj, (s = _s.S.now(_p.P.empty()), function (pith_2) {
       return (0, _pnode.tree)(s, pith_2);
     }), pith);
   };
 
   const g = __exports.g = function (key, p_0, p_1) {
     const p = [p_0, p_1];
-    return new _g.G(2, [($var36 => function (s) {
+    return new _g.G(2, [($var33 => function (s) {
       return State.Object(key, s);
     }(function (tuple) {
       return tuple[0];
-    }($var36)))(p), ($var37 => Dom.H.Div(function (tuple_1) {
+    }($var33)))(p), ($var34 => Dom.H.Div(function (tuple_1) {
       return tuple_1[1];
-    }($var37)))(p)]);
+    }($var34)))(p)]);
   };
 
-  const rez_2 = __exports.rez = ($var39 => ($var38 => tree(_s.S.now($var38)))(function (arg0) {
+  const rez_2 = __exports.rez = ($var36 => ($var35 => tree(_s.S.now($var35)))(function (arg0) {
     return arg0;
-  }($var39)))(function (o) {
-    ($var43 => ($var42 => ($var41 => ($var40 => o(function (arg0_1) {
+  }($var36)))(function (o) {
+    ($var40 => ($var39 => ($var38 => ($var37 => o(function (arg0_1) {
       return new _g.G(0, arg0_1);
-    }($var40)))(function (s) {
+    }($var37)))(function (s) {
       return State.Number("a", s);
-    }($var41)))(_s.S.now.bind(_s.S)($var42)))((0, _r.set)($var43)))(1);
+    }($var38)))(_s.S.now.bind(_s.S)($var39)))((0, _r.set)($var40)))(1);
 
-    ($var47 => ($var46 => ($var45 => ($var44 => o(function (arg0_2) {
+    ($var44 => ($var43 => ($var42 => ($var41 => o(function (arg0_2) {
       return new _g.G(1, arg0_2);
-    }($var44)))(Dom.H.Div($var45)))(_s.S.now.bind(_s.S)($var46)))(function (arg0_3) {
+    }($var41)))(Dom.H.Div($var42)))(_s.S.now.bind(_s.S)($var43)))(function (arg0_3) {
       return arg0_3;
-    }($var47)))(function (elm) {
+    }($var44)))(function (elm) {
       elm.innerHTML = "<h1>hello world!</h1>";
     });
 
-    ($var51 => ($var50 => ($var49 => ($var48 => o(function (tupledArg) {
+    ($var48 => ($var47 => ($var46 => ($var45 => o(function (tupledArg) {
       return g("hmmm", tupledArg[0], tupledArg[1]);
-    }($var48)))(tree($var49)))(_s.S.now.bind(_s.S)($var50)))(function (arg0_4) {
+    }($var45)))(tree($var46)))(_s.S.now.bind(_s.S)($var47)))(function (arg0_4) {
       return arg0_4;
-    }($var51)))(function (o_1) {
-      ($var55 => ($var54 => ($var53 => ($var52 => o_1(function (arg0_5) {
+    }($var48)))(function (o_1) {
+      ($var52 => ($var51 => ($var50 => ($var49 => o_1(function (arg0_5) {
         return new _g.G(0, arg0_5);
-      }($var52)))(function (s_1) {
+      }($var49)))(function (s_1) {
         return State.Number("aa", s_1);
-      }($var53)))(_s.S.now.bind(_s.S)($var54)))((0, _r.set)($var55)))(2);
+      }($var50)))(_s.S.now.bind(_s.S)($var51)))((0, _r.set)($var52)))(2);
 
-      ($var59 => ($var58 => ($var57 => ($var56 => o_1(function (arg0_6) {
+      ($var56 => ($var55 => ($var54 => ($var53 => o_1(function (arg0_6) {
         return new _g.G(1, arg0_6);
-      }($var56)))(Dom.H.Div($var57)))(_s.S.now.bind(_s.S)($var58)))(function (arg0_7) {
+      }($var53)))(Dom.H.Div($var54)))(_s.S.now.bind(_s.S)($var55)))(function (arg0_7) {
         return arg0_7;
-      }($var59)))(function (elm_1) {
+      }($var56)))(function (elm_1) {
         elm_1.innerHTML = "<h2>hello world!</h2>";
       });
     });

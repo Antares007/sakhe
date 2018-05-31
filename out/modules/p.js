@@ -24,6 +24,10 @@ const P = exports.P = function (__exports) {
     }(f);
   };
 
+  const empty = __exports.empty = function () {
+    return once(function (_arg1) {});
+  };
+
   const chain = __exports.chain = function (f, _arg1) {
     return f(_arg1);
   };

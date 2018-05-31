@@ -57,7 +57,7 @@ module Dom =
 
         let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
 
-        let statTree t p = t << tree (S.now << P.once <| ignore) << S.now << Pith <| p
+        let statTree t p = t << tree (S.now P.empty) << S.now << Pith <| p
         let div p = statTree Div p
         let btn p = statTree Button p
         let span p = statTree Span p
@@ -74,33 +74,6 @@ module Dom =
 
     let konst a _ = a
 
-    let OnP (e: Event<'a>) (l: 'a DomEvents list) =
-        let d = ref ignore
-        let p = P.once <| fun (elm: HTMLElement) ->
-            d := List.fold
-                    (fun d -> function
-                    | Click f ->
-                        let h arg =
-                            e.Trigger (f arg)
-                        elm.addEventListener_click h
-                        console.log "add"
-                        fun () ->
-                            elm.removeEventListener ("click", unbox h)
-                            console.log "remove"
-                            d ()
-                    )
-                    ignore
-                    l
-        (p, d)
-
-    let On e s =
-        S.map (OnP e) s
-        |> S.pairwise (P.once ignore, (ref ignore))
-        |> S.map (fun ((_, refd), c) ->
-            let d = !refd
-            d ()
-            fst c)
-
 
     let rec counter d =
         H.div <| fun o ->
@@ -113,12 +86,12 @@ module Dom =
                         |Minus -> m - 1)
                     0
 
-            o << H.Button << PNode.tree (On acts <| S.now [Click (fun _ -> Plus)]) << S.now << Pith <| fun o ->
+            o << H.Button << PNode.tree (S.now P.empty) << S.now << Pith <| fun o ->
                 o << H.span <| fun o ->
                     o << H.text <| "+"
                 if d > 0 then o <| counter (d - 1)
 
-            o << H.Button << PNode.tree (On acts <| S.now [Click (fun _ -> Minus)]) << S.now << Pith <| fun o ->
+            o << H.Button << PNode.tree (S.now P.empty) << S.now << Pith <| fun o ->
                 o << H.span <| fun o ->
                     o << H.text <| "-"
                 if d > 0 then o <| counter (d - 1)
@@ -132,7 +105,7 @@ module Dom =
         |> S.scan P.apply elm
 
     let rez =
-        PNode.tree (S.now << P.once <| ignore) << S.now << Pith <| fun o ->
+        PNode.tree (S.now P.empty) << S.now << Pith <| fun o ->
             o << counter <| 3
 
     (render (document.getElementById "root-node") rez)
@@ -143,7 +116,7 @@ module Test2 =
     open State
     open Dom
     let tree pith =
-        G.tree R.treeObj (PNode.tree (S.now << P.once <| ignore)) pith
+        G.tree R.treeObj (PNode.tree (S.now P.empty)) pith
 
     let g key p =
         G.AB (
