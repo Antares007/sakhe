@@ -74,29 +74,51 @@ module Dom =
 
     let konst a _ = a
 
-    let OnP (_: 'a DomEvents list): HTMLElement P =
-        P.once ignore
+    let OnP (e: Event<'a>) (l: 'a DomEvents list) =
+        let d = ref ignore
+        let p = P.once <| fun (elm: HTMLElement) ->
+            d := List.fold
+                    (fun d -> function
+                    | Click f ->
+                        let h arg =
+                            e.Trigger (f arg)
+                        elm.addEventListener_click h
+                        console.log "add"
+                        fun () ->
+                            elm.removeEventListener ("click", unbox h)
+                            console.log "remove"
+                            d ()
+                    )
+                    ignore
+                    l
+        (p, d)
 
-    let On s = S.map OnP s
+    let On e s =
+        S.map (OnP e) s
+        |> S.pairwise (P.once ignore, (ref ignore))
+        |> S.map (fun ((_, refd), c) ->
+            let d = !refd
+            d ()
+            fst c)
+
 
     let rec counter d =
         H.div <| fun o ->
-            let ep = new Event<_>()
+            let acts = new Event<_>()
             let sum =
-                S.toStream ep
+                S.toStream acts
                 |> S.scan
                     (fun m -> function
                         |Plus  -> m + 1
                         |Minus -> m - 1)
                     0
-            let ons = On <| S.now [Click (fun _ -> Plus)]
-            ons |> ignore
-            o << H.Button << PNode.tree (S.now << P.once <| ignore ) << S.now << Pith <| fun o ->
+
+            o << H.Button << PNode.tree (On acts <| S.now [Click (fun _ -> Plus)]) << S.now << Pith <| fun o ->
                 o << H.span <| fun o ->
                     o << H.text <| "+"
                 if d > 0 then o <| counter (d - 1)
 
-            o << H.Button << PNode.tree (S.now << P.once <| ignore ) << S.now << Pith <| fun o ->
+            o << H.Button << PNode.tree (On acts <| S.now [Click (fun _ -> Minus)]) << S.now << Pith <| fun o ->
                 o << H.span <| fun o ->
                     o << H.text <| "-"
                 if d > 0 then o <| counter (d - 1)

@@ -46,6 +46,10 @@ const S = exports.S = function (__exports) {
     return core.empty();
   };
 
+  const never = __exports.never = function () {
+    return core.never();
+  };
+
   const now = __exports.now = function (a) {
     return core.now(a);
   };
@@ -108,6 +112,22 @@ const S = exports.S = function (__exports) {
 
   const sample = __exports.sample = function (_arg2, _arg1) {
     return core.sample(_arg1, _arg2);
+  };
+
+  const loop = __exports.loop = function (f, a, _arg1) {
+    return core.loop(function (a_1, b) {
+      const patternInput = f(a_1, b);
+      return {
+        seed: patternInput[0],
+        value: patternInput[1]
+      };
+    }, a, _arg1);
+  };
+
+  const pairwise = __exports.pairwise = function (initial, s) {
+    return loop(function (prev, curr) {
+      return [curr, [prev, curr]];
+    }, initial, s);
   };
 
   const disposeWith = __exports.disposeWith = function (d, _arg1) {
