@@ -18,10 +18,6 @@ module P =
     let once f = P (onceNative f)
     let empty<'a> = once (fun (_: 'a) -> ())
 
-    let chain f (P p): P<_> = f p
-    let add f (P p) = once <| fun a ->
-        p a
-        f a
     let combine (P combinedChain) (P patch) =
         P <| fun n ->
             patch n

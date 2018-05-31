@@ -28,18 +28,6 @@ const P = exports.P = function (__exports) {
     return once(function (_arg1) {});
   };
 
-  const chain = __exports.chain = function (f, _arg1) {
-    return f(_arg1);
-  };
-
-  const add = __exports.add = function (f, _arg1) {
-    return once(function (a) {
-      _arg1(a);
-
-      f(a);
-    });
-  };
-
   const combine = __exports.combine = function (_arg2, _arg1) {
     return function (n) {
       _arg1(n);
