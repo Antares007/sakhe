@@ -37,6 +37,9 @@ module S =
             let (s, v) = f a b
             {seed = s; value = v}), a, b)
 
+    let pairwise initial s =
+        loop (fun prev curr -> (curr, (prev, curr))) initial s
+
     let disposeWith d (S s) =
         S << core.newStream <| fun sink scheduler ->
             let ds = s.run (sink, scheduler)
