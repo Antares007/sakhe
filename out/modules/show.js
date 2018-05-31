@@ -218,7 +218,12 @@ const Dom = exports.Dom = function (__exports) {
 
       ($var18 => ($var17 => ($var16 => {
         var s;
-        return ($var15 => o(H.Button($var15)))((s = _s.S.now(_p.P.empty()), function (pith) {
+        return ($var15 => o(H.Button($var15)))((s = _s.S.now(_p.P.once((0, _CurriedLambda2.default)(function (_arg1_1) {
+          console.log("patch");
+          return function () {
+            console.log("unpatch");
+          };
+        }))), function (pith) {
           return (0, _pnode.tree)(s, pith);
         })($var16));
       })(_s.S.now.bind(_s.S)($var17)))(function (arg0) {
@@ -275,12 +280,11 @@ const Dom = exports.Dom = function (__exports) {
     }(s));
   };
 
-  const rez_1 = __exports.rez = ($var31 => ($var30 => (0, _pnode.tree)(_s.S.now(_p.P.empty()), _s.S.now($var30)))(function (arg0) {
-    return arg0;
-  }($var31)))(function (o) {
-    ($var32 => o(counter($var32)))(3);
-  });
+  const piths = __exports.piths = _s.S.konst(function (o) {
+    ($var30 => o(counter($var30)))(0);
+  }, _s.S.periodic(_s.TimeModule.ms(1000)));
 
+  const rez_1 = __exports.rez = (0, _pnode.tree)(_s.S.now(_p.P.empty()), piths);
   _s.S.drain(render(document.getElementById("root-node"), rez_1)), void 0;
   return __exports;
 }({});
@@ -295,49 +299,49 @@ const Test2 = exports.Test2 = function (__exports) {
 
   const g = __exports.g = function (key, p_0, p_1) {
     const p = [p_0, p_1];
-    return new _g.G(2, [($var33 => function (s) {
+    return new _g.G(2, [($var31 => function (s) {
       return State.Object(key, s);
     }(function (tuple) {
       return tuple[0];
-    }($var33)))(p), ($var34 => Dom.H.Div(function (tuple_1) {
+    }($var31)))(p), ($var32 => Dom.H.Div(function (tuple_1) {
       return tuple_1[1];
-    }($var34)))(p)]);
+    }($var32)))(p)]);
   };
 
-  const rez_2 = __exports.rez = ($var36 => ($var35 => tree(_s.S.now($var35)))(function (arg0) {
+  const rez_2 = __exports.rez = ($var34 => ($var33 => tree(_s.S.now($var33)))(function (arg0) {
     return arg0;
-  }($var36)))(function (o) {
-    ($var40 => ($var39 => ($var38 => ($var37 => o(function (arg0_1) {
+  }($var34)))(function (o) {
+    ($var38 => ($var37 => ($var36 => ($var35 => o(function (arg0_1) {
       return new _g.G(0, arg0_1);
-    }($var37)))(function (s) {
+    }($var35)))(function (s) {
       return State.Number("a", s);
-    }($var38)))(_s.S.now.bind(_s.S)($var39)))((0, _r.set)($var40)))(1);
+    }($var36)))(_s.S.now.bind(_s.S)($var37)))((0, _r.set)($var38)))(1);
 
-    ($var44 => ($var43 => ($var42 => ($var41 => o(function (arg0_2) {
+    ($var42 => ($var41 => ($var40 => ($var39 => o(function (arg0_2) {
       return new _g.G(1, arg0_2);
-    }($var41)))(Dom.H.Div($var42)))(_s.S.now.bind(_s.S)($var43)))(function (arg0_3) {
+    }($var39)))(Dom.H.Div($var40)))(_s.S.now.bind(_s.S)($var41)))(function (arg0_3) {
       return arg0_3;
-    }($var44)))((0, _CurriedLambda2.default)(function (elm) {
+    }($var42)))((0, _CurriedLambda2.default)(function (elm) {
       elm.innerHTML = "<h1>hello world!</h1>";
       return function () {};
     }));
 
-    ($var48 => ($var47 => ($var46 => ($var45 => o(function (tupledArg) {
+    ($var46 => ($var45 => ($var44 => ($var43 => o(function (tupledArg) {
       return g("hmmm", tupledArg[0], tupledArg[1]);
-    }($var45)))(tree($var46)))(_s.S.now.bind(_s.S)($var47)))(function (arg0_4) {
+    }($var43)))(tree($var44)))(_s.S.now.bind(_s.S)($var45)))(function (arg0_4) {
       return arg0_4;
-    }($var48)))(function (o_1) {
-      ($var52 => ($var51 => ($var50 => ($var49 => o_1(function (arg0_5) {
+    }($var46)))(function (o_1) {
+      ($var50 => ($var49 => ($var48 => ($var47 => o_1(function (arg0_5) {
         return new _g.G(0, arg0_5);
-      }($var49)))(function (s_1) {
+      }($var47)))(function (s_1) {
         return State.Number("aa", s_1);
-      }($var50)))(_s.S.now.bind(_s.S)($var51)))((0, _r.set)($var52)))(2);
+      }($var48)))(_s.S.now.bind(_s.S)($var49)))((0, _r.set)($var50)))(2);
 
-      ($var56 => ($var55 => ($var54 => ($var53 => o_1(function (arg0_6) {
+      ($var54 => ($var53 => ($var52 => ($var51 => o_1(function (arg0_6) {
         return new _g.G(1, arg0_6);
-      }($var53)))(Dom.H.Div($var54)))(_s.S.now.bind(_s.S)($var55)))(function (arg0_7) {
+      }($var51)))(Dom.H.Div($var52)))(_s.S.now.bind(_s.S)($var53)))(function (arg0_7) {
         return arg0_7;
-      }($var56)))((0, _CurriedLambda2.default)(function (elm_1) {
+      }($var54)))((0, _CurriedLambda2.default)(function (elm_1) {
         elm_1.innerHTML = "<h2>hello world!</h2>";
         return function () {};
       }));

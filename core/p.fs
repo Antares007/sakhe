@@ -26,6 +26,19 @@ module P =
     let apply n (P p) = p n |> ignore; n
 
     let tree s pith =
-         S.switchLatest (S.map (A.tree (S.combine combine) s) pith)
+        let cmb = S.combine combine
+        let d = ref (fun () -> ())
+        let ring pith =
+            A.tree cmb s pith
+            |> S.merge (S.never ())
+            |> S.map (fun (P p) -> once (fun elm ->
+                d := p elm
+                !d))
+            |> S.disposeWith (fun () ->
+                let d = !d
+                d())
+
+        S.switchLatest (S.map ring pith)
+            |> S.tap (fun x -> Fable.Import.Browser.console.log "a")
         // S.tree (S.combine combine) (S.now s) pith
         // S.treeCombine combine s pith

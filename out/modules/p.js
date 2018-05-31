@@ -61,13 +61,35 @@ const P = exports.P = function (__exports) {
   };
 
   const tree = __exports.tree = function (s, pith) {
-    var f_1;
-    var f;
-    return _s.S.switchLatest(_s.S.map((f_1 = (f = combine, function (arg10__1, arg20_) {
+    let cmb;
+
+    const f = function (arg00_, arg10_) {
+      return combine(arg00_, arg10_);
+    };
+
+    cmb = function (arg10__1, arg20_) {
       return _s.S.combine(f, arg10__1, arg20_);
-    }), function (arg20__1) {
-      return _a.A.tree(f_1, s, arg20__1);
-    }), pith));
+    };
+
+    const d = {
+      contents: function () {}
+    };
+
+    const ring = function (pith_1) {
+      return _s.S.disposeWith(function () {
+        const d_1 = d.contents;
+        d_1();
+      }, _s.S.map(function (_arg1) {
+        return once((0, _CurriedLambda2.default)(function (elm) {
+          d.contents = (0, _CurriedLambda2.default)(_arg1)(elm);
+          return d.contents;
+        }));
+      }, _s.S.merge(_s.S.never(), _a.A.tree(cmb, s, pith_1))));
+    };
+
+    return _s.S.tap(function (x) {
+      console.log("a");
+    }, _s.S.switchLatest(_s.S.map(ring, pith)));
   };
 
   return __exports;

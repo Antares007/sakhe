@@ -86,7 +86,9 @@ module Dom =
                         |Minus -> m - 1)
                     0
 
-            o << H.Button << PNode.tree (S.now P.empty) << S.now << Pith <| fun o ->
+            o << H.Button << PNode.tree (S.now (P.once (fun _ ->
+                            console.log "patch"
+                            (fun () -> console.log "unpatch")))) << S.now << Pith <| fun o ->
                 o << H.span <| fun o ->
                     o << H.text <| "+"
                 if d > 0 then o <| counter (d - 1)
@@ -104,9 +106,10 @@ module Dom =
         |> S.sample S.animationFrame
         |> S.scan P.apply elm
 
+    let piths = S.periodic (ms 1000.) |> S.konst (Pith (fun o ->
+            o << counter <| 0))
     let rez =
-        PNode.tree (S.now P.empty) << S.now << Pith <| fun o ->
-            o << counter <| 3
+        PNode.tree (S.now P.empty) <| piths
 
     (render (document.getElementById "root-node") rez)
     |> S.drain
