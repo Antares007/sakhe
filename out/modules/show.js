@@ -155,9 +155,10 @@ const Dom = exports.Dom = function (__exports) {
         return _Text((arg00_ = _s.TimeModule.ms(0), function (a_1) {
           return _s.S.at(arg00_, a_1);
         })($var13));
-      })(_p.P.once.bind(_p.P)($var14)))(function (text_1) {
+      })(_p.P.once.bind(_p.P)($var14)))((0, _CurriedLambda2.default)(function (text_1) {
         text_1.textContent = s;
-      });
+        return function () {};
+      }));
     };
 
     return __exports;
@@ -253,9 +254,10 @@ const Dom = exports.Dom = function (__exports) {
         ($var29 => {
           var f;
           return ($var28 => o_5(H.Text($var28)))((f = function (i) {
-            return _p.P.once(function (text_1) {
+            return _p.P.once((0, _CurriedLambda2.default)(function (text_1) {
               text_1.textContent = i.toString();
-            });
+              return function () {};
+            }));
           }, function (arg10_) {
             return _s.S.map(f, arg10_);
           })($var29));
@@ -315,9 +317,10 @@ const Test2 = exports.Test2 = function (__exports) {
       return new _g.G(1, arg0_2);
     }($var41)))(Dom.H.Div($var42)))(_s.S.now.bind(_s.S)($var43)))(function (arg0_3) {
       return arg0_3;
-    }($var44)))(function (elm) {
+    }($var44)))((0, _CurriedLambda2.default)(function (elm) {
       elm.innerHTML = "<h1>hello world!</h1>";
-    });
+      return function () {};
+    }));
 
     ($var48 => ($var47 => ($var46 => ($var45 => o(function (tupledArg) {
       return g("hmmm", tupledArg[0], tupledArg[1]);
@@ -334,9 +337,10 @@ const Test2 = exports.Test2 = function (__exports) {
         return new _g.G(1, arg0_6);
       }($var53)))(Dom.H.Div($var54)))(_s.S.now.bind(_s.S)($var55)))(function (arg0_7) {
         return arg0_7;
-      }($var56)))(function (elm_1) {
+      }($var56)))((0, _CurriedLambda2.default)(function (elm_1) {
         elm_1.innerHTML = "<h2>hello world!</h2>";
-      });
+        return function () {};
+      }));
     });
   });
 

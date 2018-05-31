@@ -63,7 +63,7 @@ module Dom =
         let span p = statTree Span p
         let h3 p = statTree H3 p
 
-        let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
+        let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s; (fun () -> ())
 
     type DomEvents<'a> =
         | Click of (MouseEvent -> 'a)
@@ -97,7 +97,7 @@ module Dom =
                 if d > 0 then o <| counter (d - 1)
 
             o << H.h3 <| fun o ->
-                o << H.Text << S.map (fun i -> P.once (fun text -> text.textContent <- string i)) <| sum
+                o << H.Text << S.map (fun i -> P.once (fun text -> text.textContent <- string i; (fun () -> ()))) <| sum
 
     let render elm s =
         s
@@ -126,10 +126,10 @@ module Test2 =
 
     let rez = tree << S.now << Pith <| fun o ->
         o << G.A << Number "a" << S.now << R.set <| 1.
-        o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
+        o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"; (fun () -> ())
         o << g "hmmm" << tree << S.now << Pith <| fun o ->
             o << G.A << Number "aa" << S.now << R.set <| 2.
-            o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
+            o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"; (fun () -> ())
 
     S.merge
         (render (document.getElementById "root-node") (snd rez) |> S.map ignore)

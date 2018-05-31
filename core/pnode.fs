@@ -45,17 +45,18 @@ module private Impl =
                 (
                     (fun () ->
                         let b = absurd()
-                        patch b
+                        patch b |> ignore
                         elm.insertBefore (b, unbox elm.childNodes.[index]) |> ignore
                     ),
-                    unbox >> patch,
+                    unbox >> patch >> ignore,
                     (fun (moved, from) ->
                         let b = unbox moved
-                        patch b
+                        patch b |> ignore
                         elm.insertBefore (b, from) |> ignore
                     )
                 )
-                (prove, index, elm))
+                (prove, index, elm)
+            (fun () -> ()))
 
 let ring (Pith pith) = Pith <| fun o ->
     let mutable c = 0
@@ -69,6 +70,7 @@ let ring (Pith pith) = Pith <| fun o ->
     o << S.now << P.once <| fun elm ->
         for i = unbox elm.childNodes.length - 1 downto c do
             elm.removeChild elm.childNodes.[i] |> ignore
+        (fun () -> ())
 
 let tree s pith: S<P<#Element>> =
     P.tree s (S.map ring pith)

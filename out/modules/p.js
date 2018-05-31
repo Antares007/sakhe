@@ -5,40 +5,58 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.P = undefined;
 
+var _CurriedLambda = require("./fable-core/CurriedLambda");
+
+var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
+
+var _Map = require("./fable-core/Map");
+
 var _s = require("./s");
 
 var _a = require("./a");
 
-const P = exports.P = function (__exports) {
-  const once = __exports.once = function (f) {
-    return function makeOnce(f) {
-      var b;
-      return function once(a) {
-        if (f) {
-          b = f.call(this, a);
-          f = null;
-        }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-        return b;
-      };
-    }(f);
+const P = exports.P = function (__exports) {
+  const memoize = function (f) {
+    var cache;
+    return (0, _CurriedLambda2.default)((cache = new Map(), function (x) {
+      const patternInput = (0, _Map.tryGetValue)(cache, x, null);
+
+      if (patternInput[0]) {
+        return patternInput[1];
+      } else {
+        const v = f(x);
+        cache.set(x, v);
+        return v;
+      }
+    }));
+  };
+
+  const once = __exports.once = function (f) {
+    return memoize((0, _CurriedLambda2.default)(function (a) {
+      null, void 0;
+      return memoize((0, _CurriedLambda2.default)(f)(a));
+    }));
   };
 
   const empty = __exports.empty = function () {
-    return once(function (_arg1) {});
+    return once(function (_arg1, unitVar0) {});
   };
 
   const combine = __exports.combine = function (_arg2, _arg1) {
-    return function (n) {
-      _arg1(n);
-
-      _arg2(n);
-    };
+    return once((0, _CurriedLambda2.default)(function (n) {
+      const d1 = (0, _CurriedLambda2.default)(_arg1)(n);
+      const d2 = (0, _CurriedLambda2.default)(_arg2)(n);
+      return function () {
+        d1();
+        d2();
+      };
+    }));
   };
 
   const apply = __exports.apply = function (n, _arg1) {
-    _arg1(n);
-
+    (0, _CurriedLambda2.default)(_arg1)(n), void 0;
     return n;
   };
 
