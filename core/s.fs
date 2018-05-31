@@ -15,6 +15,7 @@ module S =
     let private disposable = JsInterop.importAll<Disposable.IExports> "@most/disposable"
 
     let empty () = S <| core.empty ()
+    let never () = S <| core.never ()
     let now a = S (core.now a)
     let at (Time t) a = S <| core.at (t, a)
     let map f (S s) = S <| core.map (f, s)
