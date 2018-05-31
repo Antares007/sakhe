@@ -64,7 +64,7 @@ module S =
         mpith |> map (A.tree f s) |> switchLatest
 
     let treeCombine f s pith =
-        tree (combine f) (now s) pith
+        tree (combine f) s pith
 
     let treeMerge s pith =
         tree (fun a b -> merge b a) s pith
