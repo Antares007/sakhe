@@ -32,6 +32,11 @@ module S =
     let startWith a (S s) = S <| core.startWith (a, s)
     let sample (S a) (S b) = S <| core.sample (b, a)
 
+    let loop f a (S b) =
+        S <| core.loop ((fun a b ->
+            let (s, v) = f a b
+            {seed = s; value = v}), a, b)
+
     let disposeWith d (S s) =
         S << core.newStream <| fun sink scheduler ->
             let ds = s.run (sink, scheduler)
