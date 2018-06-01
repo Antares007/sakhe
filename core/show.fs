@@ -1,141 +1,66 @@
 module Sakhe.Show
 open Fable.Import.Browser
+open UpdateMonad
 
-module AnimationFrame =
-    let a = S.now 1
+module Writer =
+    /// Writer monad has no readable state
+    type WriterState = NoState
 
-module State =
-    open Sakhe.R
+    /// Updates of writer monad form a list
+    type WriterUpdate<'TLog> =
+      | Log of list<'TLog>
+      /// Returns the empty log (monoid unit)
+      static member Unit = Log []
+      /// Combines two logs (operation of the monoid)
+      static member Combine(Log a, Log b) = Log(List.append a b)
+      /// Applying updates to state does not affect the state
+      static member Apply(NoState, _) = NoState
 
-    let init (a: 'a) (a2b: 'a -> 'b) (maybe_a:'a option): 'b =
-        match maybe_a with
-        | Some a -> a2b a
-        | None   -> a2b a
+    /// Writes the specified value to the log
+    let write v = UM (fun s -> (Log [v], ()))
+    /// Runs a "writer monad computation" and returns
+    /// the log, together with the final result
+    let writeRun (UM f) = let (Log l, v) = f NoState in l, v
 
-    let Number k s = RNumber (k, s)
-    let Object k s = RObject (k, s)
-    let Array k s = RArray (k, s)
+    /// Writes '20' to the log and returns "world"
+    let demo3 = update {
+      do! write 20
+      return "world" }
 
-    let rez =
-        treeObj << S.at (ms 0.) << Pith <| fun o ->
-            o << Object "achiko" << treeObj << S.at (ms 3000.) << Pith <| fun o ->
-                o << Number "age" <<  S.at (ms 3000.) << R.update <| function
-                    | Some v -> v + 1.
-                    | None -> 0.
-                ()
-            ()
+    /// Calls 'demo3' and then writes 10 to the log
+    let demo4 = update {
+      let! w = demo3
+      do! write 10
+      return "Hello " + w }
 
-    let update s =
-        s
-        |> S.scan
-            (R.apply)
-            (Some Fable.Core.JsInterop.createEmpty<obj>)
-        |> S.tap console.log
-    // S.drain (update rez)
-    // |> ignore
-
-module Dom =
-    module H =
-        open PNode
-        let createElm tag =
-            pnode
-                <| fun () -> document.createElement tag
-                <| fun n -> n.nodeName = tag
-
-        let Div = createElm    "DIV"
-        let A =  createElm     "A"
-        let Button = createElm "BUTTON"
-        let Span = createElm   "SPAN"
-        let H1 =  createElm    "H1"
-        let H2 =  createElm    "H2"
-        let H3 =  createElm    "H3"
-
-        let Text =
-            pnode
-                <| fun () -> document.createTextNode ""
-                <| fun (n: Node) -> n.nodeName = "#text"
-
-        let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
-
-        let statTree t p = t << tree (S.now P.empty) << S.now << Pith <| p
-        let div p = statTree Div p
-        let btn p = statTree Button p
-        let span p = statTree Span p
-        let h3 p = statTree H3 p
-
-        let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
-
-    type DomEvents<'a> =
-        | Click of (MouseEvent -> 'a)
-
-    type Actions =
-        | Plus
-        | Minus
-
-    let konst a _ = a
+    /// Returns: [[20,10],"Hello world"]
+    printfn "%A" (demo4 |> writeRun)
 
 
-    let rec counter d =
-        H.div <| fun o ->
-            let acts = new Event<_>()
-            let sum =
-                S.toStream acts
-                |> S.scan
-                    (fun m -> function
-                        |Plus  -> m + 1
-                        |Minus -> m - 1)
-                    0
+module Reader =
+    /// The state of the reader is 'int'
+    type ReaderState = int
+    /// Trivial monoid of updates
+    type ReaderUpdate =
+      | NoUpdate
+      static member Unit = NoUpdate
+      static member Combine(NoUpdate, NoUpdate) = NoUpdate
+      static member Apply(s, NoUpdate) = s
 
-            o << H.Button << PNode.tree (S.now (P.once (fun _ ->
-                            console.log "patch"
-                            ))) << S.now << Pith <| fun o ->
-                o << H.span <| fun o ->
-                    o << H.text <| "+"
-                if d > 0 then o <| counter (d - 1)
+    /// Read the current state (int) and return it as 'int'
+    let read = UM (fun (s:ReaderState) ->
+      (NoUpdate, s))
+    /// Run computation and return the result
+    let readRun (s:ReaderState) (UM f) = f s |> snd
 
-            o << H.Button << PNode.tree (S.now P.empty) << S.now << Pith <| fun o ->
-                o << H.span <| fun o ->
-                    o << H.text <| "-"
-                if d > 0 then o <| counter (d - 1)
+    /// Returns state + 1
+    let demo1 = update {
+      let! v = read
+      return v + 1 }
+    /// Returns the result of demo1 + 1
+    let demo2 = update {
+      let! v = demo1
+      return v + 1 }
 
-            o << H.h3 <| fun o ->
-                o << H.Text << S.map (fun i -> P.once (fun text -> text.textContent <- string i)) <| sum
-
-    let render elm s =
-        s
-        |> S.sample S.animationFrame
-        |> S.scan P.apply elm
-
-    let piths = S.periodic (ms 1000.) |> S.konst (Pith (fun o ->
-            o << counter <| 0))
-    let rez =
-        PNode.tree (S.now P.empty) <| piths
-
-    (render (document.getElementById "root-node") rez)
-    |> S.drain
-    |> ignore
-
-module Test2 =
-    open State
-    open Dom
-    let tree pith =
-        G.tree R.treeObj (PNode.tree (S.now P.empty)) pith
-
-    let g key p =
-        G.AB (
-            (Object key << fst <| p),
-            (H.Div << snd <| p)
-        )
-
-    let rez = tree << S.now << Pith <| fun o ->
-        o << G.A << Number "a" << S.now << R.set <| 1.
-        o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
-        o << g "hmmm" << tree << S.now << Pith <| fun o ->
-            o << G.A << Number "aa" << S.now << R.set <| 2.
-            o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
-
-    S.merge
-        (render (document.getElementById "root-node") (snd rez) |> S.map ignore)
-        (State.update (fst rez) |> S.map ignore)
-    // |> S.drain
-    |> ignore
+    /// Returns: 42
+    printfn "%A" (readRun 40 demo2)
