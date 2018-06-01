@@ -3,6 +3,30 @@ open Fable.Core
 
 [<Erase>] type P<'a> = private P of ('a -> unit)
 
+module State =
+    open Fable.Import.Browser
+
+    type S<'State,'Value> =
+        S of ('State -> 'Value * 'State)
+
+    let runS (S f) state = f state
+
+    let returnS x =
+        let run state =
+            x, state
+        S run
+
+    let bindS f xS =
+        let run state =
+            let x, newState = runS xS state
+            runS (f x) newState
+        S run
+
+    let xS = returnS (P <| fun (_:int) -> ())
+    let see = runS xS "1"
+    // let tree s pith =
+    //     S.treeCombine (fun a b -> returnS (a, b)) s pith
+
 module P =
     open System.Collections.Generic
 
