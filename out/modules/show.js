@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Reader = exports.Writer = undefined;
+exports.State = exports.Reader = exports.Writer = undefined;
 
 var _Symbol2 = require("./fable-core/Symbol");
 
@@ -85,7 +85,7 @@ const Writer = exports.Writer = function (__exports) {
   (0, _Symbol2.setType)("Sakhe.Show.Writer.WriterUpdate", WriterUpdate);
 
   const write = __exports.write = function (v) {
-    return new _update.UpdateMonad(0, function (s) {
+    return new _update.UpdateMonad(0, function (_arg1) {
       return [new WriterUpdate(0, (0, _List.ofArray)([v])), null];
     });
   };
@@ -97,65 +97,51 @@ const Writer = exports.Writer = function (__exports) {
     return [l, patternInput[1]];
   };
 
-  const demo3 = __exports.demo3 = function (builder_) {
-    return new _update.UpdateMonad(0, s_3 => {
-      const patternInput_3 = new _update.UpdateMonad(0, s_2 => [null, null]).data(s_3);
+  const Demo = __exports.Demo = function (__exports) {
+    const demo3 = __exports.demo3 = function (builder_) {
+      return new _update.UpdateMonad(0, s => {
+        const patternInput = write(20).data(s);
 
-      const patternInput_4 = function () {
-        return new _update.UpdateMonad(0, s_1 => {
-          const patternInput = write(20).data(s_1);
+        const patternInput_1 = function () {
+          return new _update.UpdateMonad(0, _arg1_1 => [WriterUpdate.Unit, "world"]);
+        }();
 
-          const patternInput_1 = function () {
-            return new _update.UpdateMonad(0, s => [WriterUpdate.Unit, "world"]);
-          }();
+        const patternInput_2 = patternInput_1.data(WriterUpdate.Apply(s, patternInput[0]));
+        return [WriterUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+      });
+    }(_update.update);
 
-          const patternInput_2 = patternInput_1.data(WriterUpdate.Apply(s_1, patternInput[0]));
-          return [WriterUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
-        });
-      }();
+    const demo4 = __exports.demo4 = function (builder_) {
+      return new _update.UpdateMonad(0, s_1 => {
+        const patternInput_3 = demo3.data(s_1);
 
-      const patternInput_5 = patternInput_4.data(null);
-      return [null, patternInput_5[1]];
-    });
-  }(_update.update);
+        const patternInput_4 = function (_arg1) {
+          return new _update.UpdateMonad(0, s => {
+            const patternInput = write(10).data(s);
 
-  const demo4 = __exports.demo4 = function (builder_) {
-    return new _update.UpdateMonad(0, s_4 => {
-      const patternInput_6 = new _update.UpdateMonad(0, s_3 => [null, null]).data(s_4);
+            const patternInput_1 = function () {
+              return new _update.UpdateMonad(0, _arg1_1 => [WriterUpdate.Unit, "Hello " + _arg1]);
+            }();
 
-      const patternInput_7 = function () {
-        return new _update.UpdateMonad(0, s_2 => {
-          const patternInput_3 = demo3.data(s_2);
+            const patternInput_2 = patternInput_1.data(WriterUpdate.Apply(s, patternInput[0]));
+            return [WriterUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+          });
+        }(patternInput_3[1]);
 
-          const patternInput_4 = function (_arg1) {
-            return new _update.UpdateMonad(0, s_1 => {
-              const patternInput = write(10).data(s_1);
+        const patternInput_5 = patternInput_4.data(WriterUpdate.Apply(s_1, patternInput_3[0]));
+        return [WriterUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
+      });
+    }(_update.update);
 
-              const patternInput_1 = function () {
-                return new _update.UpdateMonad(0, s => [WriterUpdate.Unit, "Hello " + _arg1]);
-              }();
+    (() => {
+      const clo1 = (0, _String.toConsole)((0, _String.printf)("%A"));
+      return function (tupledArg) {
+        clo1([tupledArg[0], tupledArg[1]]);
+      };
+    })()(writeRun(demo4));
+    return __exports;
+  }({});
 
-              const patternInput_2 = patternInput_1.data(WriterUpdate.Apply(s_1, patternInput[0]));
-              return [WriterUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
-            });
-          }(patternInput_3[1]);
-
-          const patternInput_5 = patternInput_4.data(WriterUpdate.Apply(s_2, patternInput_3[0]));
-          return [WriterUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
-        });
-      }();
-
-      const patternInput_8 = patternInput_7.data(null);
-      return [null, patternInput_8[1]];
-    });
-  }(_update.update);
-
-  (() => {
-    const clo1 = (0, _String.toConsole)((0, _String.printf)("%A"));
-    return function (tupledArg) {
-      clo1([tupledArg[0], tupledArg[1]]);
-    };
-  })()(writeRun(demo4));
   return __exports;
 }({});
 
@@ -203,50 +189,198 @@ const Reader = exports.Reader = function (__exports) {
     return _arg1.data(s)[1];
   };
 
-  const demo1 = __exports.demo1 = function (builder_) {
-    return new _update.UpdateMonad(0, s_3 => {
-      const patternInput_3 = new _update.UpdateMonad(0, s_2 => [null, null]).data(s_3);
+  const Demo = __exports.Demo = function (__exports) {
+    const demo1 = __exports.demo1 = function (builder_) {
+      return new _update.UpdateMonad(0, s => {
+        const patternInput = read.data(s);
 
-      const patternInput_4 = function () {
-        return new _update.UpdateMonad(0, s_1 => {
-          const patternInput = read.data(s_1);
+        const patternInput_1 = function (_arg1) {
+          return new _update.UpdateMonad(0, _arg1_1 => [ReaderUpdate.Unit, _arg1 + 1]);
+        }(patternInput[1]);
 
-          const patternInput_1 = function (_arg1) {
-            return new _update.UpdateMonad(0, s => [ReaderUpdate.Unit, _arg1 + 1]);
-          }(patternInput[1]);
+        const patternInput_2 = patternInput_1.data(ReaderUpdate.Apply(s, patternInput[0]));
+        return [ReaderUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+      });
+    }(_update.update);
 
-          const patternInput_2 = patternInput_1.data(ReaderUpdate.Apply(s_1, patternInput[0]));
-          return [ReaderUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
-        });
-      }();
+    const demo2 = __exports.demo2 = function (builder_) {
+      return new _update.UpdateMonad(0, s => {
+        const patternInput = demo1.data(s);
 
-      const patternInput_5 = patternInput_4.data(null);
-      return [null, patternInput_5[1]];
+        const patternInput_1 = function (_arg1) {
+          return new _update.UpdateMonad(0, _arg1_1 => [ReaderUpdate.Unit, _arg1 + 1]);
+        }(patternInput[1]);
+
+        const patternInput_2 = patternInput_1.data(ReaderUpdate.Apply(s, patternInput[0]));
+        return [ReaderUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+      });
+    }(_update.update);
+
+    (0, _String.toConsole)((0, _String.printf)("%A"))(readRun(40, demo2));
+    return __exports;
+  }({});
+
+  return __exports;
+}({});
+
+const State = exports.State = function (__exports) {
+  const StateState = __exports.StateState = class StateState {
+    constructor(tag, data) {
+      this.tag = tag | 0;
+      this.data = data;
+    }
+
+    [_Symbol3.default.reflection]() {
+      return {
+        type: "Sakhe.Show.State.StateState",
+        interfaces: ["FSharpUnion", "System.IEquatable", "System.IComparable"],
+        cases: [["State", (0, _Util.GenericParam)("T")]]
+      };
+    }
+
+    Equals(other) {
+      return this === other || this.tag === other.tag && (0, _Util.equals)(this.data, other.data);
+    }
+
+    CompareTo(other) {
+      return (0, _Util.compareUnions)(this, other) | 0;
+    }
+
+  };
+  (0, _Symbol2.setType)("Sakhe.Show.State.StateState", StateState);
+  const StateUpdate = __exports.StateUpdate = class StateUpdate {
+    constructor(tag, data) {
+      this.tag = tag | 0;
+      this.data = data;
+    }
+
+    [_Symbol3.default.reflection]() {
+      return {
+        type: "Sakhe.Show.State.StateUpdate",
+        interfaces: ["FSharpUnion", "System.IEquatable", "System.IComparable"],
+        cases: [["Set", (0, _Util.GenericParam)("T")], ["SetNop"]]
+      };
+    }
+
+    Equals(other) {
+      return this === other || this.tag === other.tag && (0, _Util.equals)(this.data, other.data);
+    }
+
+    CompareTo(other) {
+      return (0, _Util.compareUnions)(this, other) | 0;
+    }
+
+    static get Unit() {
+      return new StateUpdate(1);
+    }
+
+    static Combine(a, b) {
+      const matchValue = [a, b];
+
+      if (matchValue[0].tag === 0) {
+        if (matchValue[1].tag === 0) {
+          return new StateUpdate(0, matchValue[1].data);
+        } else {
+          return matchValue[0];
+        }
+      } else {
+        return matchValue[1];
+      }
+    }
+
+    static Apply(s, p) {
+      if (p.tag === 0) {
+        return new StateState(0, p.data);
+      } else {
+        return s;
+      }
+    }
+
+  };
+  (0, _Symbol2.setType)("Sakhe.Show.State.StateUpdate", StateUpdate);
+
+  const set = __exports.set = function (s) {
+    return new _update.UpdateMonad(0, function (_arg1) {
+      return [new StateUpdate(0, s), null];
     });
-  }(_update.update);
+  };
 
-  const demo2 = __exports.demo2 = function (builder_) {
-    return new _update.UpdateMonad(0, s_3 => {
-      const patternInput_3 = new _update.UpdateMonad(0, s_2 => [null, null]).data(s_3);
-
-      const patternInput_4 = function () {
-        return new _update.UpdateMonad(0, s_1 => {
-          const patternInput = demo1.data(s_1);
-
-          const patternInput_1 = function (_arg1) {
-            return new _update.UpdateMonad(0, s => [ReaderUpdate.Unit, _arg1 + 1]);
-          }(patternInput[1]);
-
-          const patternInput_2 = patternInput_1.data(ReaderUpdate.Apply(s_1, patternInput[0]));
-          return [ReaderUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
-        });
-      }();
-
-      const patternInput_5 = patternInput_4.data(null);
-      return [null, patternInput_5[1]];
+  const get = __exports.get = function () {
+    return new _update.UpdateMonad(0, function (_arg1) {
+      return [new StateUpdate(1), _arg1.data];
     });
-  }(_update.update);
+  };
 
-  (0, _String.toConsole)((0, _String.printf)("%A"))(readRun(40, demo2));
+  const setRun = __exports.setRun = function (s, _arg1) {
+    return _arg1.data(new StateState(0, s))[1];
+  };
+
+  const Demo = __exports.Demo = function (__exports) {
+    const demo5 = __exports.demo5 = function (builder_) {
+      return new _update.UpdateMonad(0, s_1 => {
+        const patternInput_3 = get().data(s_1);
+
+        const patternInput_4 = function (_arg1) {
+          return new _update.UpdateMonad(0, s => {
+            const patternInput = set(_arg1 + 42).data(s);
+
+            const patternInput_1 = function () {
+              return new _update.UpdateMonad(0, _arg1_1 => [StateUpdate.Unit, "hello"]);
+            }();
+
+            const patternInput_2 = patternInput_1.data(StateUpdate.Apply(s, patternInput[0]));
+            return [StateUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+          });
+        }(patternInput_3[1]);
+
+        const patternInput_5 = patternInput_4.data(StateUpdate.Apply(s_1, patternInput_3[0]));
+        return [StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
+      });
+    }(_update.update);
+
+    const demo6 = __exports.demo6 = function (builder_) {
+      return new _update.UpdateMonad(0, s_3 => {
+        const patternInput_9 = get().data(s_3);
+
+        const patternInput_10 = function (_arg1) {
+          return new _update.UpdateMonad(0, s_2 => {
+            const patternInput_6 = set(-42).data(s_2);
+
+            const patternInput_7 = function () {
+              return new _update.UpdateMonad(0, s_1 => {
+                const patternInput_3 = demo5.data(s_1);
+
+                const patternInput_4 = function (_arg3) {
+                  return new _update.UpdateMonad(0, s => {
+                    const patternInput = get().data(s);
+
+                    const patternInput_1 = function (_arg4) {
+                      return new _update.UpdateMonad(0, _arg1_1 => [StateUpdate.Unit, _arg3 + _arg4.toString()]);
+                    }(patternInput[1]);
+
+                    const patternInput_2 = patternInput_1.data(StateUpdate.Apply(s, patternInput[0]));
+                    return [StateUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+                  });
+                }(patternInput_3[1]);
+
+                const patternInput_5 = patternInput_4.data(StateUpdate.Apply(s_1, patternInput_3[0]));
+                return [StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
+              });
+            }();
+
+            const patternInput_8 = patternInput_7.data(StateUpdate.Apply(s_2, patternInput_6[0]));
+            return [StateUpdate.Combine(patternInput_6[0], patternInput_8[0]), patternInput_8[1]];
+          });
+        }(patternInput_9[1]);
+
+        const patternInput_11 = patternInput_10.data(StateUpdate.Apply(s_3, patternInput_9[0]));
+        return [StateUpdate.Combine(patternInput_9[0], patternInput_11[0]), patternInput_11[1]];
+      });
+    }(_update.update);
+
+    (0, _String.toConsole)((0, _String.printf)("%A"))(setRun(0, demo6));
+    return __exports;
+  }({});
+
   return __exports;
 }({});

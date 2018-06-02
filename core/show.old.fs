@@ -1,4 +1,5 @@
-module Sakhe.Show.old
+module Sakhe.Show.Old
+open Sakhe
 open Fable.Import.Browser
 
 module AnimationFrame =
