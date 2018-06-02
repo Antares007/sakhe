@@ -16,6 +16,7 @@ module S =
     let private scheduler = JsInterop.importAll<Scheduler.IExports> "@most/scheduler"
     let private disposable = JsInterop.importAll<Disposable.IExports> "@most/disposable"
 
+    let throwError err =  S <| core.throwError err
     let empty () = S <| core.empty ()
     let never () = S <| core.never ()
     let now a = S (core.now a)
@@ -26,7 +27,12 @@ module S =
     let merge (S a) (S b) = S <| core.merge (a, b)
     let konst a (S s) = S <| core.constant (a, s)
     let constant = konst
-    let continueWith (S comp1) (S comp2) = S <| core.continueWith ((fun () -> comp2), comp1)
+    let continueWith (f) (S s) = S <| core.continueWith ((fun a ->
+        let (S bs) = f a
+        bs), s)
+    let recoverWith f (S s) = S <| core.recoverWith ((fun err ->
+        let (S s) = f err
+        s), s)
 
     let scan f state (S s) = S <| core.scan (f, state, s)
     let tap f (S s) = S <| core.tap (f, s)
@@ -68,20 +74,21 @@ module S =
         member x.Delay(f: unit -> S<'a>): S<'a> = x.Bind (x.Zero (), f)
 
         member __.Using<'a, 'b when 'a :> IDisposable>(res: 'a, f: 'a -> S<'b>): S<'b> =
-            f res |> disposeWith (fun () -> res.Dispose())
+            f res
+            |> continueWith (fun () -> res.Dispose(); empty())
+            |> recoverWith  (fun err -> res.Dispose(); throwError err)
 
         member x.For(sq: S<'a> seq, (f: 'a -> S<'b>)): S<'b> =
-
-
             let rec loop (en: System.Collections.Generic.IEnumerator<S<'a>>): S<'b> =
                 if en.MoveNext() then
-                    let sb = bind en.Current f
-                    sb |> continueWith (fun ())
+                    bind en.Current f |> continueWith (fun () -> loop en)
                 else
                     empty ()
-
             x.Using(sq.GetEnumerator(), loop)
 
+        member __.Yield(a) = now a
+
+        member __.YieldFrom s : S<_> = s
 
     let toStream (e: Event<_>) =
         let ms = core.MulticastSource.Create (core.never ())

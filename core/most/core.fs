@@ -55,7 +55,7 @@ type [<AllowNullLiteral>] IExports =
     abstract ``delay``: dt: float * Stream<'A> -> Stream<'A>
 
     abstract ``recoverWith``: p: (Error -> Stream<'A>) * Stream<'A> -> Stream<'A>
-    abstract ``throwError``: e: Error -> Stream<unit>
+    abstract ``throwError``: e: Error -> Stream<'A>
 
     abstract ``filter``: p: ('A -> bool) * Stream<'A> -> Stream<'A>
     abstract ``skipRepeats``: s: Stream<'A> -> Stream<'A>
