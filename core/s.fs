@@ -101,9 +101,9 @@ module S =
             |> continueWith (fun () -> compensation (); empty ())
             |> recoverWith  (fun err -> compensation(); throwError err)
 
-        member x.While(guard: unit -> bool, s: S<'a>): S<'a> =
-            s
-            |> continueWith (fun () -> if guard () then x.While (guard, s) else empty ())
+        member __.While(guard: unit -> bool, s: S<'a>): S<'a> =
+            let rec loop () = continueWith (fun () -> if guard () then loop () else empty ()) s
+            loop ()
 
         member __.Yield(a) = now a
 

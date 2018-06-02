@@ -262,7 +262,9 @@ const S = exports.S = function (__exports) {
     }
 
     While(guard, s) {
-      return Primitives.continueWith(() => guard() ? this.While(guard, s) : Primitives.empty(), s);
+      const loop_1 = () => Primitives.continueWith(() => guard() ? loop_1() : Primitives.empty(), s);
+
+      return loop_1();
     }
 
     Yield(a) {
