@@ -52,6 +52,15 @@ const S = exports.S = function (__exports) {
     return core.throwError(err);
   };
 
+  const delayS = __exports.delayS = function (f) {
+    return ($var1 => function (arg0) {
+      return arg0;
+    }(core.newStream.bind(core)($var1)))(function (sink, scheduler_1) {
+      const patternInput = f();
+      return core.run(sink, scheduler_1, patternInput);
+    });
+  };
+
   const empty = __exports.empty = function () {
     return core.empty();
   };
@@ -73,9 +82,9 @@ const S = exports.S = function (__exports) {
   };
 
   const switchLatest = __exports.switchLatest = function (_arg1) {
-    return ($var1 => function (arg0) {
+    return ($var2 => function (arg0) {
       return arg0;
-    }(core.switchLatest.bind(core)($var1)))(core.map(function (_arg1_1) {
+    }(core.switchLatest.bind(core)($var2)))(core.map(function (_arg1_1) {
       return _arg1_1;
     }, _arg1));
   };
@@ -172,9 +181,9 @@ const S = exports.S = function (__exports) {
   };
 
   const disposeWith = __exports.disposeWith = function (d, _arg1) {
-    return ($var2 => function (arg0) {
+    return ($var3 => function (arg0) {
       return arg0;
-    }(core.newStream.bind(core)($var2)))(function (sink, scheduler_1) {
+    }(core.newStream.bind(core)($var3)))(function (sink, scheduler_1) {
       const ds = _arg1.run(sink, scheduler_1);
 
       const dispose = function (_arg2) {
@@ -209,7 +218,7 @@ const S = exports.S = function (__exports) {
     }
 
     Delay(f) {
-      return chain(f, now());
+      return delayS(f);
     }
 
     Using(res, f) {
@@ -249,9 +258,7 @@ const S = exports.S = function (__exports) {
     }
 
     While(guard, s) {
-      return takeWhile($var3 => guard((value => {
-        value, void 0;
-      })($var3)), s);
+      return continueWith(() => guard() ? this.While(guard, s) : empty(), s);
     }
 
     Yield(a) {

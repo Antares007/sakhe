@@ -3,7 +3,8 @@ open Fable.Core
 open Fable.Import.Most
 open System
 
-[<Erase>] type S<'a> = private S of Stream<'a>
+[<Erase>] type S<'a> =
+            private S of Stream<'a>
 
 [<Erase>] type Time = private Time of float
 
@@ -17,6 +18,10 @@ module S =
     let private disposable = JsInterop.importAll<Disposable.IExports> "@most/disposable"
 
     let throwError err = S <| core.throwError err
+    let delayS (f: unit -> S<'a>): S<'a> =
+        S << core.newStream <| fun sink scheduler ->
+            let (S s) = f()
+            core.run (sink, scheduler, s)
     let empty () = S <| core.empty ()
     let never () = S <| core.never ()
     let now a = S (core.now a)
@@ -73,7 +78,7 @@ module S =
 
         member __.Zero(): S<'a> = empty ()
 
-        member __.Delay(f: unit -> S<'a>): S<'a> = chain f (now ())
+        member __.Delay(f: unit -> S<'a>): S<'a> = delayS f
 
         member __.Using<'a, 'b when 'a :> IDisposable>(res: 'a, f: 'a -> S<'b>): S<'b> =
             (f res)
@@ -97,7 +102,9 @@ module S =
             |> continueWith (fun () -> compensation (); empty ())
             |> recoverWith  (fun err -> compensation(); throwError err)
 
-        member __.While(guard: unit -> bool, s: S<'a>): S<'a> = takeWhile (ignore >> guard) s
+        member x.While(guard: unit -> bool, s: S<'a>): S<'a> =
+            s
+            |> continueWith (fun () -> if guard () then x.While (guard, s) else empty ())
 
         member __.Yield(a) = now a
 

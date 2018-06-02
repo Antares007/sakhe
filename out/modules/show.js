@@ -390,14 +390,10 @@ const State = exports.State = function (__exports) {
 const Stream = exports.Stream = function (__exports) {
   const s = __exports.s = function (builder_) {
     return builder_.Delay(function () {
-      return builder_.While(function () {
-        return true;
-      }, builder_.Delay(function () {
-        return builder_.Combine(builder_.Yield("a"), builder_.Delay(function () {
-          return builder_.Bind(_s.S.delay(_s.TimeModule.ms(2000), _s.S.now()), function () {
-            return builder_.Yield(".");
-          });
-        }));
+      return builder_.Combine(builder_.Yield("a"), builder_.Delay(function () {
+        return builder_.Bind(_s.S.delay(_s.TimeModule.ms(2000), _s.S.now()), function () {
+          return builder_.Yield(".");
+        });
       }));
     });
   }(_s.S.stream);
