@@ -119,8 +119,13 @@ module Stream =
     open Sakhe.S
 
     let s = stream {
-        yield "a"
-        do! delay (ms 2000.) (now ())
-        yield "."
+        while true do
+            yield ""
+            yield "<"
+            for i = 0 to 10 do
+                do! delay (ms 100.) (now ())
+                yield string i
+            do! delay (ms 2000.) (now ())
+            yield ">"
     }
     s |> tap console.log |> drain |> ignore

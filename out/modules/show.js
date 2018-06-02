@@ -19,6 +19,8 @@ var _update = require("./update");
 
 var _String = require("./fable-core/String");
 
+var _Seq = require("./fable-core/Seq");
+
 var _s = require("./s");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -390,14 +392,26 @@ const State = exports.State = function (__exports) {
 const Stream = exports.Stream = function (__exports) {
   const s = __exports.s = function (builder_) {
     return builder_.Delay(function () {
-      return builder_.Combine(builder_.Yield("a"), builder_.Delay(function () {
-        return builder_.Bind(_s.S.delay(_s.TimeModule.ms(2000), _s.S.now()), function () {
-          return builder_.Yield(".");
-        });
+      return builder_.While(function () {
+        return true;
+      }, builder_.Delay(function () {
+        return builder_.Combine(builder_.Yield(""), builder_.Delay(function () {
+          return builder_.Combine(builder_.Yield("<"), builder_.Delay(function () {
+            return builder_.Combine(builder_.For((0, _Seq.range)(0, 10), function (_arg1) {
+              return builder_.Bind(_s.S.Primitives.delay(_s.TimeModule.ms(100), _s.S.Primitives.now()), function () {
+                return builder_.Yield(_arg1.toString());
+              });
+            }), builder_.Delay(function () {
+              return builder_.Bind(_s.S.Primitives.delay(_s.TimeModule.ms(2000), _s.S.Primitives.now()), function () {
+                return builder_.Yield(">");
+              });
+            }));
+          }));
+        }));
       }));
     });
   }(_s.S.stream);
 
-  _s.S.drain(_s.S.tap(console.log.bind(console), s)), void 0;
+  _s.S.drain(_s.S.Primitives.tap(console.log.bind(console), s)), void 0;
   return __exports;
 }({});
