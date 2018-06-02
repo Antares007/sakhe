@@ -1,8 +1,10 @@
 namespace Sakhe
 open Fable.Core
 open Fable.Import.Most
+open System
 
 [<Erase>] type S<'a> = private S of Stream<'a>
+
 [<Erase>] type Time = private Time of float
 
 [<AutoOpen>]
@@ -14,20 +16,6 @@ module S =
     let private scheduler = JsInterop.importAll<Scheduler.IExports> "@most/scheduler"
     let private disposable = JsInterop.importAll<Disposable.IExports> "@most/disposable"
 
-    type StreamBuilder() =
-        member __.Bind(S m, f: _ -> S<_>): S<_> =
-            let chain a =
-                let (S s) = f a
-                s
-            S <| core.chain (chain, m)
-
-        member __.Combine(S comp1, S comp2) =
-            S <| core.continueWith ((fun () -> comp2), comp1)
-
-        member __.Zero() = S <| core.empty ()
-
-        member x.Delay(f: _ -> S<_>) = x.Bind (x.Zero (), f)
-
     let empty () = S <| core.empty ()
     let never () = S <| core.never ()
     let now a = S (core.now a)
@@ -38,6 +26,7 @@ module S =
     let merge (S a) (S b) = S <| core.merge (a, b)
     let konst a (S s) = S <| core.constant (a, s)
     let constant = konst
+    let continueWith (S comp1) (S comp2) = S <| core.continueWith ((fun () -> comp2), comp1)
 
     let scan f state (S s) = S <| core.scan (f, state, s)
     let tap f (S s) = S <| core.tap (f, s)
@@ -62,6 +51,37 @@ module S =
                 ds.dispose ()
                 d ()
             disposable.disposeWith (dispose, ())
+
+    type StreamBuilder() =
+        let bind (S a) f =
+            let chain a =
+                let (S s) = f a
+                s
+            S <| core.chain (chain, a)
+        member __.Bind(s: S<'a>, f: 'a -> S<'b>): S<'b> = bind s f
+
+        member __.Combine(S comp1: S<'a>, S comp2: S<'a>): S<'a> =
+            S <| core.continueWith ((fun () -> comp2), comp1)
+
+        member __.Zero(): S<'a> = empty ()
+
+        member x.Delay(f: unit -> S<'a>): S<'a> = x.Bind (x.Zero (), f)
+
+        member __.Using<'a, 'b when 'a :> IDisposable>(res: 'a, f: 'a -> S<'b>): S<'b> =
+            f res |> disposeWith (fun () -> res.Dispose())
+
+        member x.For(sq: S<'a> seq, (f: 'a -> S<'b>)): S<'b> =
+
+
+            let rec loop (en: System.Collections.Generic.IEnumerator<S<'a>>): S<'b> =
+                if en.MoveNext() then
+                    let sb = bind en.Current f
+                    sb |> con
+                else
+                    empty ()
+
+            x.Using(sq.GetEnumerator(), loop)
+
 
     let toStream (e: Event<_>) =
         let ms = core.MulticastSource.Create (core.never ())
