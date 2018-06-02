@@ -19,9 +19,23 @@ module Writer =
 
     /// Runs a "writer monad computation" and returns
     /// the log, together with the final result
-    let writeRun (UM f) = let (Log l, v) = f NoState in l, v
+    let writeRun (UM f) =
+        let (Log l, v) = f NoState
+        l, v
 
     module Demo =
+        let ret (a: 'a): UpdateMonad<WriterState, WriterUpdate<int>, 'a> =
+            UpdateMonad.ret a
+
+
+
+        ret "hello"
+        |> UpdateMonad.chain (fun s -> (write 20) |> UpdateMonad.chain (fun _ -> ret "H "))
+        |> UpdateMonad.chain (fun s -> UpdateMonad.ret (s + " world"))
+        |> writeRun
+        |> printfn "a: %A"
+
+
         /// Writes '20' to the log and returns "world"
         let demo3 = update {
           do! write 20

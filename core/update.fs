@@ -16,6 +16,18 @@ let inline combine< ^S when ^S: (static member Combine : ^S * ^S -> ^S )> a b : 
 let inline apply< ^S, ^U when ^U : (static member Apply : ^S * ^U -> ^S )> s a : ^S =
   (^U : (static member Apply : ^S * ^U -> ^S) (s, a))
 
+let inline ret v: UpdateMonad<'S, 'U, 'T> = UM (fun _ -> (unit(), v))
+
+let inline chain f (UM u1) = UM <| fun s ->
+    // Run the first computation to get first update
+    // 'u1', then run 'f' to get second computation
+    let (u1, x) = u1 s
+    let (UM u2) = f x
+    // Apply 'u1' to original state & run second computation
+    // then return result with combined state updates
+    let (u2, y) = u2 (apply s u1)
+    (combine u1 u2, y)
+
 type UpdateBuilder() =
     /// Returns the specified value, together
     /// with empty update obtained using 'unit'
@@ -23,16 +35,7 @@ type UpdateBuilder() =
         UM (fun _ -> (unit(), v))
 
     /// Compose two update monad computations
-    member inline __.Bind(UM u1, f:'T -> UpdateMonad<'S, 'U, 'R>) =
-        UM <| fun s ->
-            // Run the first computation to get first update
-            // 'u1', then run 'f' to get second computation
-            let (u1, x) = u1 s
-            let (UM u2) = f x
-            // Apply 'u1' to original state & run second computation
-            // then return result with combined state updates
-            let (u2, y) = u2 (apply s u1)
-            (combine u1 u2, y)
+    member inline __.Bind(m, f) = chain f m
 
 //     /// Represents monadic computation that returns unit
 //     /// (e.g. we can now omit 'else' branch in 'if' computation)
