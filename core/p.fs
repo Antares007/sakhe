@@ -4,7 +4,6 @@ open Fable.Core
 [<Erase>] type P<'a> = private P of ('a -> unit)
 
 module State =
-    open Fable.Import.Browser
 
     type S<'State,'Value> =
         S of ('State -> 'Value * 'State)

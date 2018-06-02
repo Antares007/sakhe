@@ -106,7 +106,6 @@ module State =
         // and then return the final state
         let demo6 = update {
             // for _ in 1 .. 10 do
-            let! v = get
             do! set (-42)
             let! m = demo5
             let! s = get

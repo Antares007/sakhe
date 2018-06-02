@@ -343,42 +343,33 @@ const State = exports.State = function (__exports) {
     }(_update.update);
 
     const demo6 = __exports.demo6 = function (builder_) {
-      return new _update.UpdateMonad(0, s_3 => {
-        const patternInput_9 = get().data(s_3);
+      return new _update.UpdateMonad(0, s_2 => {
+        const patternInput_6 = set(-42).data(s_2);
 
-        const patternInput_10 = function (_arg1) {
-          return new _update.UpdateMonad(0, s_2 => {
-            const patternInput_6 = set(-42).data(s_2);
+        const patternInput_7 = function () {
+          return new _update.UpdateMonad(0, s_1 => {
+            const patternInput_3 = demo5.data(s_1);
 
-            const patternInput_7 = function () {
-              return new _update.UpdateMonad(0, s_1 => {
-                const patternInput_3 = demo5.data(s_1);
+            const patternInput_4 = function (_arg2) {
+              return new _update.UpdateMonad(0, s => {
+                const patternInput = get().data(s);
 
-                const patternInput_4 = function (_arg3) {
-                  return new _update.UpdateMonad(0, s => {
-                    const patternInput = get().data(s);
+                const patternInput_1 = function (_arg3) {
+                  return new _update.UpdateMonad(0, _arg1_1 => [StateUpdate.Unit, _arg2 + _arg3.toString()]);
+                }(patternInput[1]);
 
-                    const patternInput_1 = function (_arg4) {
-                      return new _update.UpdateMonad(0, _arg1_1 => [StateUpdate.Unit, _arg3 + _arg4.toString()]);
-                    }(patternInput[1]);
-
-                    const patternInput_2 = patternInput_1.data(StateUpdate.Apply(s, patternInput[0]));
-                    return [StateUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
-                  });
-                }(patternInput_3[1]);
-
-                const patternInput_5 = patternInput_4.data(StateUpdate.Apply(s_1, patternInput_3[0]));
-                return [StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
+                const patternInput_2 = patternInput_1.data(StateUpdate.Apply(s, patternInput[0]));
+                return [StateUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
               });
-            }();
+            }(patternInput_3[1]);
 
-            const patternInput_8 = patternInput_7.data(StateUpdate.Apply(s_2, patternInput_6[0]));
-            return [StateUpdate.Combine(patternInput_6[0], patternInput_8[0]), patternInput_8[1]];
+            const patternInput_5 = patternInput_4.data(StateUpdate.Apply(s_1, patternInput_3[0]));
+            return [StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
           });
-        }(patternInput_9[1]);
+        }();
 
-        const patternInput_11 = patternInput_10.data(StateUpdate.Apply(s_3, patternInput_9[0]));
-        return [StateUpdate.Combine(patternInput_9[0], patternInput_11[0]), patternInput_11[1]];
+        const patternInput_8 = patternInput_7.data(StateUpdate.Apply(s_2, patternInput_6[0]));
+        return [StateUpdate.Combine(patternInput_6[0], patternInput_8[0]), patternInput_8[1]];
       });
     }(_update.update);
 
@@ -398,11 +389,11 @@ const Stream = exports.Stream = function (__exports) {
         return builder_.Combine(builder_.Yield(""), builder_.Delay(function () {
           return builder_.Combine(builder_.Yield("<"), builder_.Delay(function () {
             return builder_.Combine(builder_.For((0, _Seq.range)(0, 10), function (_arg1) {
-              return builder_.Bind(_s.S.Primitives.delay(_s.TimeModule.ms(100), _s.S.Primitives.now()), function () {
+              return builder_.Bind(_s.S.delay(_s.TimeModule.ms(100), _s.S.now()), function () {
                 return builder_.Yield(_arg1.toString());
               });
             }), builder_.Delay(function () {
-              return builder_.Bind(_s.S.Primitives.delay(_s.TimeModule.ms(2000), _s.S.Primitives.now()), function () {
+              return builder_.Bind(_s.S.delay(_s.TimeModule.ms(2000), _s.S.now()), function () {
                 return builder_.Yield(">");
               });
             }));
@@ -412,6 +403,6 @@ const Stream = exports.Stream = function (__exports) {
     });
   }(_s.S.stream);
 
-  _s.S.drain(_s.S.Primitives.tap(console.log.bind(console), s)), void 0;
+  _s.S.drain(_s.S.tap(console.log.bind(console), s)), void 0;
   return __exports;
 }({});

@@ -48,166 +48,162 @@ const S = exports.S = function (__exports) {
   const scheduler = scheduler_2;
   const disposable = disposable_1;
 
-  const Primitives = __exports.Primitives = function (__exports) {
-    const throwError = __exports.throwError = function (err) {
-      return core.throwError(err);
+  const throwError = __exports.throwError = function (err) {
+    return core.throwError(err);
+  };
+
+  const defer = __exports.defer = function (f) {
+    return ($var1 => function (arg0) {
+      return arg0;
+    }(core.newStream.bind(core)($var1)))(function (sink, scheduler_1) {
+      const patternInput = f();
+      return core.run(sink, scheduler_1, patternInput);
+    });
+  };
+
+  const empty = __exports.empty = function () {
+    return core.empty();
+  };
+
+  const never = __exports.never = function () {
+    return core.never();
+  };
+
+  const now = __exports.now = function (a) {
+    return core.now(a);
+  };
+
+  const at = __exports.at = function (_arg1, a) {
+    return core.at(_arg1, a);
+  };
+
+  const map = __exports.map = function (f, _arg1) {
+    return core.map(f, _arg1);
+  };
+
+  const switchLatest = __exports.switchLatest = function (_arg1) {
+    return ($var2 => function (arg0) {
+      return arg0;
+    }(core.switchLatest.bind(core)($var2)))(core.map(function (_arg1_1) {
+      return _arg1_1;
+    }, _arg1));
+  };
+
+  const combine = __exports.combine = function (f, _arg2, _arg1) {
+    return core.combine(f, _arg2, _arg1);
+  };
+
+  const merge = __exports.merge = function (_arg2, _arg1) {
+    return core.merge(_arg2, _arg1);
+  };
+
+  const konst = __exports.konst = function (a, _arg1) {
+    return core.constant(a, _arg1);
+  };
+
+  const constant = __exports.constant = function () {
+    return (0, _CurriedLambda2.default)(konst);
+  };
+
+  const takeWhile = __exports.takeWhile = function (p, _arg1) {
+    return core.takeWhile(p, _arg1);
+  };
+
+  const continueWith = __exports.continueWith = function (f, _arg1) {
+    return core.continueWith(function () {
+      const patternInput = f();
+      return patternInput;
+    }, _arg1);
+  };
+
+  const recoverWith = __exports.recoverWith = function (f, _arg1) {
+    return core.recoverWith(function (err) {
+      const patternInput = f(err);
+      return patternInput;
+    }, _arg1);
+  };
+
+  const scan = __exports.scan = function (f, state, _arg1) {
+    return core.scan(f, state, _arg1);
+  };
+
+  const tap = __exports.tap = function (f, _arg1) {
+    return core.tap(f, _arg1);
+  };
+
+  const periodic = __exports.periodic = function (_arg1) {
+    return core.periodic(_arg1);
+  };
+
+  const skip = __exports.skip = function (n, _arg1) {
+    return core.skip(n, _arg1);
+  };
+
+  const multicast = __exports.multicast = function (_arg1) {
+    return core.multicast(_arg1);
+  };
+
+  const startWith = __exports.startWith = function (a, _arg1) {
+    return core.startWith(a, _arg1);
+  };
+
+  const sample = __exports.sample = function (_arg2, _arg1) {
+    return core.sample(_arg1, _arg2);
+  };
+
+  const delay = __exports.delay = function (_arg2, _arg1) {
+    return core.delay(_arg2, _arg1);
+  };
+
+  const chain = __exports.chain = function (f, _arg1) {
+    const chain_1 = function (a) {
+      const patternInput = f(a);
+      return patternInput;
     };
 
-    const defer = __exports.defer = function (f) {
-      return ($var1 => function (arg0) {
-        return arg0;
-      }(core.newStream.bind(core)($var1)))(function (sink, scheduler_1) {
-        const patternInput = f();
-        return core.run(sink, scheduler_1, patternInput);
-      });
-    };
+    return core.chain(chain_1, _arg1);
+  };
 
-    const empty = __exports.empty = function () {
-      return core.empty();
-    };
+  const loop = __exports.loop = function (f, a, _arg1) {
+    return core.loop(function (a_1, b) {
+      const patternInput = f(a_1, b);
+      return {
+        seed: patternInput[0],
+        value: patternInput[1]
+      };
+    }, a, _arg1);
+  };
 
-    const never = __exports.never = function () {
-      return core.never();
-    };
+  const pairwise = __exports.pairwise = function (initial, s) {
+    return loop(function (prev, curr) {
+      return [curr, [prev, curr]];
+    }, initial, s);
+  };
 
-    const now = __exports.now = function (a) {
-      return core.now(a);
-    };
+  const using = __exports.using = function (res, f) {
+    return recoverWith(function (err) {
+      res.Dispose();
+      return throwError(err);
+    }, continueWith(function () {
+      res.Dispose();
+      return empty();
+    }, f(res)));
+  };
 
-    const at = __exports.at = function (_arg1, a) {
-      return core.at(_arg1, a);
-    };
+  const disposeWith = __exports.disposeWith = function (d, _arg1) {
+    return ($var3 => function (arg0) {
+      return arg0;
+    }(core.newStream.bind(core)($var3)))(function (sink, scheduler_1) {
+      const ds = _arg1.run(sink, scheduler_1);
 
-    const map = __exports.map = function (f, _arg1) {
-      return core.map(f, _arg1);
-    };
-
-    const switchLatest = __exports.switchLatest = function (_arg1) {
-      return ($var2 => function (arg0) {
-        return arg0;
-      }(core.switchLatest.bind(core)($var2)))(core.map(function (_arg1_1) {
-        return _arg1_1;
-      }, _arg1));
-    };
-
-    const combine = __exports.combine = function (f, _arg2, _arg1) {
-      return core.combine(f, _arg2, _arg1);
-    };
-
-    const merge = __exports.merge = function (_arg2, _arg1) {
-      return core.merge(_arg2, _arg1);
-    };
-
-    const konst = __exports.konst = function (a, _arg1) {
-      return core.constant(a, _arg1);
-    };
-
-    const constant = __exports.constant = function () {
-      return (0, _CurriedLambda2.default)(konst);
-    };
-
-    const takeWhile = __exports.takeWhile = function (p, _arg1) {
-      return core.takeWhile(p, _arg1);
-    };
-
-    const continueWith = __exports.continueWith = function (f, _arg1) {
-      return core.continueWith(function () {
-        const patternInput = f();
-        return patternInput;
-      }, _arg1);
-    };
-
-    const recoverWith = __exports.recoverWith = function (f, _arg1) {
-      return core.recoverWith(function (err) {
-        const patternInput = f(err);
-        return patternInput;
-      }, _arg1);
-    };
-
-    const scan = __exports.scan = function (f, state, _arg1) {
-      return core.scan(f, state, _arg1);
-    };
-
-    const tap = __exports.tap = function (f, _arg1) {
-      return core.tap(f, _arg1);
-    };
-
-    const periodic = __exports.periodic = function (_arg1) {
-      return core.periodic(_arg1);
-    };
-
-    const skip = __exports.skip = function (n, _arg1) {
-      return core.skip(n, _arg1);
-    };
-
-    const multicast = __exports.multicast = function (_arg1) {
-      return core.multicast(_arg1);
-    };
-
-    const startWith = __exports.startWith = function (a, _arg1) {
-      return core.startWith(a, _arg1);
-    };
-
-    const sample = __exports.sample = function (_arg2, _arg1) {
-      return core.sample(_arg1, _arg2);
-    };
-
-    const delay = __exports.delay = function (_arg2, _arg1) {
-      return core.delay(_arg2, _arg1);
-    };
-
-    const chain = __exports.chain = function (f, _arg1) {
-      const chain_1 = function (a) {
-        const patternInput = f(a);
-        return patternInput;
+      const dispose = function (_arg2) {
+        ds.dispose();
+        d();
       };
 
-      return core.chain(chain_1, _arg1);
-    };
-
-    const loop = __exports.loop = function (f, a, _arg1) {
-      return core.loop(function (a_1, b) {
-        const patternInput = f(a_1, b);
-        return {
-          seed: patternInput[0],
-          value: patternInput[1]
-        };
-      }, a, _arg1);
-    };
-
-    const pairwise = __exports.pairwise = function (initial, s) {
-      return loop(function (prev, curr) {
-        return [curr, [prev, curr]];
-      }, initial, s);
-    };
-
-    const using = __exports.using = function (res, f) {
-      return recoverWith(function (err) {
-        res.Dispose();
-        return throwError(err);
-      }, continueWith(function () {
-        res.Dispose();
-        return empty();
-      }, f(res)));
-    };
-
-    const disposeWith = __exports.disposeWith = function (d, _arg1) {
-      return ($var3 => function (arg0) {
-        return arg0;
-      }(core.newStream.bind(core)($var3)))(function (sink, scheduler_1) {
-        const ds = _arg1.run(sink, scheduler_1);
-
-        const dispose = function (_arg2) {
-          ds.dispose();
-          d();
-        };
-
-        return disposable.disposeWith(dispose, null);
-      });
-    };
-
-    return __exports;
-  }({});
+      return disposable.disposeWith(dispose, null);
+    });
+  };
 
   const StreamBuilder = __exports.StreamBuilder = class StreamBuilder {
     [_Symbol3.default.reflection]() {
@@ -220,59 +216,59 @@ const S = exports.S = function (__exports) {
     constructor() {}
 
     Bind(s, f) {
-      return Primitives.chain(f, s);
+      return chain(f, s);
     }
 
     Delay(f) {
-      return Primitives.defer(f);
+      return defer(f);
     }
 
     Combine(sa, sb) {
-      return Primitives.continueWith(() => sb, sa);
+      return continueWith(() => sb, sa);
     }
 
     Zero() {
-      return Primitives.empty();
+      return empty();
     }
 
     Using(res, f) {
-      return Primitives.using(res, f);
+      return using(res, f);
     }
 
     For(sq, f) {
       const loop_1 = en => {
         if (en.MoveNext()) {
-          return Primitives.continueWith(() => loop_1(en), f(en.get_Current));
+          return continueWith(() => loop_1(en), f(en.get_Current));
         } else {
-          return Primitives.empty();
+          return empty();
         }
       };
 
-      return Primitives.using((0, _Seq.getEnumerator)(sq), loop_1);
+      return using((0, _Seq.getEnumerator)(sq), loop_1);
     }
 
     TryWith(s, h) {
-      return Primitives.recoverWith(err => h(new Error(err.message)), s);
+      return recoverWith(err => h(new Error(err.message)), s);
     }
 
     TryFinally(s, compensation) {
-      return Primitives.recoverWith(err => {
+      return recoverWith(err => {
         compensation();
-        return Primitives.throwError(err);
-      }, Primitives.continueWith(() => {
+        return throwError(err);
+      }, continueWith(() => {
         compensation();
-        return Primitives.empty();
+        return empty();
       }, s));
     }
 
     While(guard, s) {
-      const loop_1 = () => Primitives.continueWith(() => guard() ? loop_1() : Primitives.empty(), s);
+      const loop_1 = () => continueWith(() => guard() ? loop_1() : empty(), s);
 
       return loop_1();
     }
 
     Yield(a) {
-      return Primitives.now(a);
+      return now(a);
     }
 
     YieldFrom(s) {
@@ -305,20 +301,20 @@ const S = exports.S = function (__exports) {
   };
 
   const tree = __exports.tree = function (f, s, mpith) {
-    return Primitives.switchLatest(Primitives.map(function (arg20_) {
+    return switchLatest(map(function (arg20_) {
       return _a.A.tree(f, s, arg20_);
     }, mpith));
   };
 
   const treeCombine = __exports.treeCombine = function (f, s, pith) {
     return tree(function (arg10_, arg20_) {
-      return Primitives.combine(f, arg10_, arg20_);
+      return combine(f, arg10_, arg20_);
     }, s, pith);
   };
 
   const treeMerge = __exports.treeMerge = function (s, pith) {
     return tree(function (a, b) {
-      return Primitives.merge(b, a);
+      return merge(b, a);
     }, s, pith);
   };
 
