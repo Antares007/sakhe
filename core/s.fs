@@ -76,7 +76,7 @@ module S =
             let rec loop (en: System.Collections.Generic.IEnumerator<S<'a>>): S<'b> =
                 if en.MoveNext() then
                     let sb = bind en.Current f
-                    sb |> con
+                    sb |> continueWith (fun ())
                 else
                     empty ()
 
