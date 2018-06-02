@@ -181,6 +181,16 @@ const S = exports.S = function (__exports) {
       }, initial, s);
     };
 
+    const using = __exports.using = function (res, f) {
+      return recoverWith(function (err) {
+        res.Dispose();
+        return throwError(err);
+      }, continueWith(function () {
+        res.Dispose();
+        return empty();
+      }, f(res)));
+    };
+
     const disposeWith = __exports.disposeWith = function (d, _arg1) {
       return ($var3 => function (arg0) {
         return arg0;
@@ -226,13 +236,7 @@ const S = exports.S = function (__exports) {
     }
 
     Using(res, f) {
-      return Primitives.recoverWith(err => {
-        res.Dispose();
-        return Primitives.throwError(err);
-      }, Primitives.continueWith(() => {
-        res.Dispose();
-        return Primitives.empty();
-      }, f(res)));
+      return Primitives.using(res, f);
     }
 
     For(sq, f) {
@@ -244,7 +248,7 @@ const S = exports.S = function (__exports) {
         }
       };
 
-      return this.Using((0, _Seq.getEnumerator)(sq), loop_1);
+      return Primitives.using((0, _Seq.getEnumerator)(sq), loop_1);
     }
 
     TryWith(s, h) {

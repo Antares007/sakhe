@@ -64,6 +64,11 @@ module S =
         let pairwise initial s =
             loop (fun prev curr -> (curr, (prev, curr))) initial s
 
+        let using<'a, 'b when 'a :> IDisposable> (res: 'a) (f: 'a -> S<'b>): S<'b> =
+            (f res)
+            |> continueWith (fun () -> res.Dispose(); empty())
+            |> recoverWith  (fun err -> res.Dispose(); throwError err)
+
         let disposeWith d (S s) =
             S << core.newStream <| fun sink scheduler ->
                 let ds = s.run (sink, scheduler)
@@ -81,17 +86,15 @@ module S =
         member __.Zero(): S<'a> = empty ()
 
         member __.Using<'a, 'b when 'a :> IDisposable>(res: 'a, f: 'a -> S<'b>): S<'b> =
-            (f res)
-            |> continueWith (fun () -> res.Dispose(); empty())
-            |> recoverWith  (fun err -> res.Dispose(); throwError err)
+            using res f
 
-        member x.For(sq: seq<'T>, (f: 'T -> S<'U>)): S<'U> =
+        member __.For(sq: seq<'T>, (f: 'T -> S<'U>)): S<'U> =
             let rec loop (en: System.Collections.Generic.IEnumerator<'T>): S<'U> =
                 if en.MoveNext() then
                     f en.Current |> continueWith (fun () -> loop en)
                 else
                     empty ()
-            x.Using(sq.GetEnumerator(), loop)
+            using (sq.GetEnumerator ()) loop
 
         member __.TryWith(s: S<_>, h: Exception -> S<_>) =
             recoverWith (fun err -> h (new Exception(err.message))) s
@@ -101,13 +104,13 @@ module S =
             |> continueWith (fun () -> compensation (); empty ())
             |> recoverWith  (fun err -> compensation(); throwError err)
 
-        member __.While(guard: unit -> bool, s: S<'a>): S<'a> =
+        member  __.While(guard: unit -> bool, s: S<'a>): S<'a> =
             let rec loop () = continueWith (fun () -> if guard () then loop () else empty ()) s
             loop ()
 
-        member __.Yield(a) = now a
+        member  __.Yield(a) = now a
 
-        member __.YieldFrom s : S<_> = s
+        member  __.YieldFrom s : S<_> = s
 
     let stream = StreamBuilder()
 
