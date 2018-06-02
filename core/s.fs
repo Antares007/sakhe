@@ -14,6 +14,20 @@ module S =
     let private scheduler = JsInterop.importAll<Scheduler.IExports> "@most/scheduler"
     let private disposable = JsInterop.importAll<Disposable.IExports> "@most/disposable"
 
+    type StreamBuilder() =
+        member __.Bind(S m, f: _ -> S<_>): S<_> =
+            let chain a =
+                let (S s) = f a
+                s
+            S <| core.chain (chain, m)
+
+        member __.Combine(S comp1, S comp2) =
+            S <| core.continueWith ((fun () -> comp2), comp1)
+
+        member __.Zero() = S <| core.empty ()
+
+        member x.Delay(f: _ -> S<_>) = x.Bind (x.Zero (), f)
+
     let empty () = S <| core.empty ()
     let never () = S <| core.never ()
     let now a = S (core.now a)
