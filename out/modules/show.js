@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.State = exports.Reader = exports.Writer = undefined;
+exports.Stream = exports.State = exports.Reader = exports.Writer = undefined;
 
 var _Symbol2 = require("./fable-core/Symbol");
 
@@ -18,6 +18,8 @@ var _List2 = _interopRequireDefault(_List);
 var _update = require("./update");
 
 var _String = require("./fable-core/String");
+
+var _s = require("./s");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -382,5 +384,24 @@ const State = exports.State = function (__exports) {
     return __exports;
   }({});
 
+  return __exports;
+}({});
+
+const Stream = exports.Stream = function (__exports) {
+  const s = __exports.s = function (builder_) {
+    return builder_.Delay(function () {
+      return builder_.While(function () {
+        return true;
+      }, builder_.Delay(function () {
+        return builder_.Combine(builder_.Yield("a"), builder_.Delay(function () {
+          return builder_.Bind(_s.S.delay(_s.TimeModule.ms(2000), _s.S.now()), function () {
+            return builder_.Yield(".");
+          });
+        }));
+      }));
+    });
+  }(_s.S.stream);
+
+  _s.S.drain(_s.S.tap(console.log.bind(console), s)), void 0;
   return __exports;
 }({});

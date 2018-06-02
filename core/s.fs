@@ -16,7 +16,7 @@ module S =
     let private scheduler = JsInterop.importAll<Scheduler.IExports> "@most/scheduler"
     let private disposable = JsInterop.importAll<Disposable.IExports> "@most/disposable"
 
-    let throwError err =  S <| core.throwError err
+    let throwError err = S <| core.throwError err
     let empty () = S <| core.empty ()
     let never () = S <| core.never ()
     let now a = S (core.now a)
@@ -27,6 +27,7 @@ module S =
     let merge (S a) (S b) = S <| core.merge (a, b)
     let konst a (S s) = S <| core.constant (a, s)
     let constant = konst
+    let takeWhile p (S s) = S <| core.takeWhile (p, s)
     let continueWith (f) (S s) = S <| core.continueWith ((fun a ->
         let (S bs) = f a
         bs), s)
@@ -41,6 +42,12 @@ module S =
     let multicast (S s) = S <| core.multicast s
     let startWith a (S s) = S <| core.startWith (a, s)
     let sample (S a) (S b) = S <| core.sample (b, a)
+    let delay (Time t) (S s) = S <| core.delay (t, s)
+    let chain f (S a)  =
+        let chain a =
+            let (S s) = f a
+            s
+        S <| core.chain (chain, a)
 
     let loop f a (S b) =
         S <| core.loop ((fun a b ->
@@ -59,36 +66,44 @@ module S =
             disposable.disposeWith (dispose, ())
 
     type StreamBuilder() =
-        let bind (S a) f =
-            let chain a =
-                let (S s) = f a
-                s
-            S <| core.chain (chain, a)
-        member __.Bind(s: S<'a>, f: 'a -> S<'b>): S<'b> = bind s f
+        member __.Bind(s: S<'a>, f: 'a -> S<'b>): S<'b> = chain f s
 
         member __.Combine(S comp1: S<'a>, S comp2: S<'a>): S<'a> =
             S <| core.continueWith ((fun () -> comp2), comp1)
 
         member __.Zero(): S<'a> = empty ()
 
-        member x.Delay(f: unit -> S<'a>): S<'a> = x.Bind (x.Zero (), f)
+        member __.Delay(f: unit -> S<'a>): S<'a> = chain f (now ())
 
         member __.Using<'a, 'b when 'a :> IDisposable>(res: 'a, f: 'a -> S<'b>): S<'b> =
-            f res
+            (f res)
             |> continueWith (fun () -> res.Dispose(); empty())
             |> recoverWith  (fun err -> res.Dispose(); throwError err)
 
         member x.For(sq: S<'a> seq, (f: 'a -> S<'b>)): S<'b> =
             let rec loop (en: System.Collections.Generic.IEnumerator<S<'a>>): S<'b> =
                 if en.MoveNext() then
-                    bind en.Current f |> continueWith (fun () -> loop en)
+                    chain f en.Current
+                    |> continueWith (fun () -> loop en)
                 else
                     empty ()
             x.Using(sq.GetEnumerator(), loop)
 
+        member __.TryWith(s: S<_>, h: Exception -> S<_>) =
+            recoverWith (fun err -> h (new Exception(err.message))) s
+
+        member __.TryFinally(s: S<_>, compensation) =
+            s
+            |> continueWith (fun () -> compensation (); empty ())
+            |> recoverWith  (fun err -> compensation(); throwError err)
+
+        member __.While(guard: unit -> bool, s: S<'a>): S<'a> = takeWhile (ignore >> guard) s
+
         member __.Yield(a) = now a
 
         member __.YieldFrom s : S<_> = s
+
+    let stream = StreamBuilder()
 
     let toStream (e: Event<_>) =
         let ms = core.MulticastSource.Create (core.never ())

@@ -113,3 +113,15 @@ module State =
             return (m + (string s)) }
         // Run the sample with initial state 0
         printfn "%A" (demo6 |> setRun 0)
+
+module Stream =
+    open Fable.Import.Browser
+    open Sakhe.S
+
+    let s = stream {
+        while true do
+            yield "a"
+            do! delay (ms 2000.) (now ())
+            yield "."
+    }
+    s |> tap console.log |> drain |> ignore
