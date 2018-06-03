@@ -24,18 +24,6 @@ module Writer =
         l, v
 
     module Demo =
-        let ret (a: 'a): UpdateMonad<WriterState, WriterUpdate<int>, 'a> =
-            UpdateMonad.ret a
-
-
-
-        ret "hello"
-        |> UpdateMonad.chain (fun s -> (write 20) |> UpdateMonad.chain (fun _ -> ret "H "))
-        |> UpdateMonad.chain (fun s -> UpdateMonad.ret (s + " world"))
-        |> writeRun
-        |> printfn "a: %A"
-
-
         /// Writes '20' to the log and returns "world"
         let demo3 = update {
           do! write 20
@@ -48,7 +36,7 @@ module Writer =
           return "Hello " + w }
 
         /// Returns: [[20,10],"Hello world"]
-        printfn "%A" (demo4 |> writeRun)
+        // printfn "%A" (demo4 |> writeRun)
 
 module Reader =
     type ReaderState = int
@@ -78,7 +66,7 @@ module Reader =
           return v + 1 }
 
         /// Returns: 42
-        printfn "%A" (readRun 40 demo2)
+        // printfn "%A" (readRun 40 demo2)
 
 module State =
     /// Wraps a state of type 'T
@@ -111,21 +99,28 @@ module State =
     let setRun s (UM f) = f (State s) |> snd
 
     module Demo =
+        let tree<'s, 'r> pith: UpdateMonad<StateState<'s>, StateUpdate<'s>, 'r> S = failwith ""
+
         // Increments the state by one
         let demo5 = update {
-            let! v = get
-            do! set (v + 42)
-            return "hello"}
+            do! set ([20])
+            }
+
         // Call 'demo5' repeatedly in a loop
         // and then return the final state
-        let demo6 = update {
-            // for _ in 1 .. 10 do
-            do! set (-42)
-            let! m = demo5
+        let insert = update {
             let! s = get
-            return (m + (string s)) }
+            do! set (10 :: s)
+        }
+
+        let demo6 = update {
+            do! demo5
+            do! insert
+            let! s = get
+            return sprintf "%A" s }
+
         // Run the sample with initial state 0
-        printfn "%A" (demo6 |> setRun 0)
+        printfn "%A" (demo6 |> setRun [])
 
 module Stream =
     open Fable.Import.Browser
@@ -135,10 +130,10 @@ module Stream =
         while true do
             yield ""
             yield "<"
-            for i = 0 to 10 do
-                do! delay (ms 100.) (now ())
+            for i = 1 to 3 do
+                do! at (ms 100.) ()
                 yield string i
-            do! delay (ms 2000.) (now ())
             yield ">"
+            do! at (ms 2000.) ()
     }
     s |> tap console.log |> drain |> ignore
