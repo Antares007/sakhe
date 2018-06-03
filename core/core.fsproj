@@ -11,6 +11,7 @@
     <Compile Include="a.fs" />
     <Compile Include="s.fs" />
     <Compile Include="update.fs" />
+    <Compile Include="state.fs" />
     <Compile Include="p.fs" />
     <Compile Include="g.fs" />
     <Compile Include="r.fs" />

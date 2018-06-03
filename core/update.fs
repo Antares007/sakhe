@@ -1,4 +1,4 @@
-module UpdateMonad
+module Update
 
 /// Represents an update monad - given a state, produce
 /// value and an update that can be applied to the state

@@ -21,7 +21,7 @@ class UpdateMonad {
 
   [_Symbol3.default.reflection]() {
     return {
-      type: "UpdateMonad.UpdateMonad",
+      type: "Update.UpdateMonad",
       interfaces: ["FSharpUnion"],
       cases: [["UM", (0, _Util.Function)([(0, _Util.GenericParam)("TState"), (0, _Util.Tuple)([(0, _Util.GenericParam)("TUpdate"), (0, _Util.GenericParam)("T")])])]]
     };
@@ -30,12 +30,12 @@ class UpdateMonad {
 }
 
 exports.UpdateMonad = UpdateMonad;
-(0, _Symbol2.setType)("UpdateMonad.UpdateMonad", UpdateMonad);
+(0, _Symbol2.setType)("Update.UpdateMonad", UpdateMonad);
 
 class UpdateBuilder {
   [_Symbol3.default.reflection]() {
     return {
-      type: "UpdateMonad.UpdateBuilder",
+      type: "Update.UpdateBuilder",
       properties: {}
     };
   }
@@ -45,5 +45,5 @@ class UpdateBuilder {
 }
 
 exports.UpdateBuilder = UpdateBuilder;
-(0, _Symbol2.setType)("UpdateMonad.UpdateBuilder", UpdateBuilder);
+(0, _Symbol2.setType)("Update.UpdateBuilder", UpdateBuilder);
 const update = exports.update = new UpdateBuilder();
