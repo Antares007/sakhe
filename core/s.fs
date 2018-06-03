@@ -32,6 +32,7 @@ module S =
     let merge (S a) (S b) = S <| core.merge (a, b)
     let konst a (S s) = S <| core.constant (a, s)
     let constant = konst
+    let take (n: int) (S s) = S <| core.take (unbox n, s)
     let takeWhile p (S s) = S <| core.takeWhile (p, s)
     let continueWith (f) (S s) = S <| core.continueWith ((fun a ->
         let (S bs) = f a

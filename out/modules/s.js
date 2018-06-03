@@ -105,6 +105,10 @@ const S = exports.S = function (__exports) {
     return (0, _CurriedLambda2.default)(konst);
   };
 
+  const take = __exports.take = function (n, _arg1) {
+    return core.take(n, _arg1);
+  };
+
   const takeWhile = __exports.takeWhile = function (p, _arg1) {
     return core.takeWhile(p, _arg1);
   };

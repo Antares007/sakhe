@@ -353,33 +353,51 @@ const State = exports.State = function (__exports) {
     }(_update.update);
 
     const demo6 = __exports.demo6 = function (builder_) {
-      return new _update.UpdateMonad(0, s_2 => {
-        const patternInput_6 = demo5.data(s_2);
+      return new _update.UpdateMonad(0, s_4 => {
+        const patternInput_12 = demo5.data(s_4);
 
-        const patternInput_7 = function () {
-          return new _update.UpdateMonad(0, s_1 => {
-            const patternInput_3 = insert.data(s_1);
+        const patternInput_13 = function () {
+          return new _update.UpdateMonad(0, s_3 => {
+            const patternInput_9 = insert.data(s_3);
 
-            const patternInput_4 = function () {
-              return new _update.UpdateMonad(0, s => {
-                const patternInput = get().data(s);
+            const patternInput_10 = function () {
+              return new _update.UpdateMonad(0, s_2 => {
+                const patternInput_6 = insert.data(s_2);
 
-                const patternInput_1 = function (_arg3) {
-                  return new _update.UpdateMonad(0, _arg1_1 => [StateUpdate.Unit, (0, _String.toText)((0, _String.printf)("%A"))(_arg3)]);
-                }(patternInput[1]);
+                const patternInput_7 = function () {
+                  return new _update.UpdateMonad(0, s_1 => {
+                    const patternInput_3 = insert.data(s_1);
 
-                const patternInput_2 = patternInput_1.data(StateUpdate.Apply(s, patternInput[0]));
-                return [StateUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+                    const patternInput_4 = function () {
+                      return new _update.UpdateMonad(0, s => {
+                        const patternInput = get().data(s);
+
+                        const patternInput_1 = function (_arg5) {
+                          return new _update.UpdateMonad(0, _arg1_1 => [StateUpdate.Unit, (0, _String.toText)((0, _String.printf)("%A"))(_arg5)]);
+                        }(patternInput[1]);
+
+                        const patternInput_2 = patternInput_1.data(StateUpdate.Apply(s, patternInput[0]));
+                        return [StateUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+                      });
+                    }();
+
+                    const patternInput_5 = patternInput_4.data(StateUpdate.Apply(s_1, patternInput_3[0]));
+                    return [StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
+                  });
+                }();
+
+                const patternInput_8 = patternInput_7.data(StateUpdate.Apply(s_2, patternInput_6[0]));
+                return [StateUpdate.Combine(patternInput_6[0], patternInput_8[0]), patternInput_8[1]];
               });
             }();
 
-            const patternInput_5 = patternInput_4.data(StateUpdate.Apply(s_1, patternInput_3[0]));
-            return [StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
+            const patternInput_11 = patternInput_10.data(StateUpdate.Apply(s_3, patternInput_9[0]));
+            return [StateUpdate.Combine(patternInput_9[0], patternInput_11[0]), patternInput_11[1]];
           });
         }();
 
-        const patternInput_8 = patternInput_7.data(StateUpdate.Apply(s_2, patternInput_6[0]));
-        return [StateUpdate.Combine(patternInput_6[0], patternInput_8[0]), patternInput_8[1]];
+        const patternInput_14 = patternInput_13.data(StateUpdate.Apply(s_4, patternInput_12[0]));
+        return [StateUpdate.Combine(patternInput_12[0], patternInput_14[0]), patternInput_14[1]];
       });
     }(_update.update);
 
@@ -418,6 +436,6 @@ const Stream = exports.Stream = function (__exports) {
     });
   }(_s.S.stream);
 
-  _s.S.drain(_s.S.tap(console.log.bind(console), s)), void 0;
+  _s.S.drain(_s.S.tap(console.log.bind(console), _s.S.take(22, s))), void 0;
   return __exports;
 }({});

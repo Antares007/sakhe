@@ -105,7 +105,7 @@ module State =
         // Increments the state by one
         let demo5 = update {
             do! set ([20])
-            }
+        }
 
         // Call 'demo5' repeatedly in a loop
         // and then return the final state
@@ -116,6 +116,8 @@ module State =
 
         let demo6 = update {
             do! demo5
+            do! insert
+            do! insert
             do! insert
             let! s = get
             return sprintf "%A" s }
@@ -137,4 +139,4 @@ module Stream =
             yield ">"
             do! at (ms 2000.) ()
     }
-    s |> tap console.log |> drain |> ignore
+    s |> take 22 |> tap console.log |> drain |> ignore
