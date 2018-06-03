@@ -30,6 +30,13 @@ let inline chain f (UM u1): UpdateMonad<'s,'u,'b> =
         let (u2, y) = u2 (apply s u1)
         (combine u1 u2, y)
 
+open Sakhe
+
+let sTree<'a,'b> : ('a -> 'b -> 'a) S -> ('a -> 'b Pith -> 'a) S =
+    S.map A.tree
+let see2<'a, 'b> = sTree (S.now (fun (a: 'a) (_: 'b) -> a))
+see2 |> ignore
+
 type UpdateBuilder() =
     /// Returns the specified value, together
     /// with empty update obtained using 'unit'

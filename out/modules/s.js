@@ -159,6 +159,10 @@ const S = exports.S = function (__exports) {
     return core.delay(_arg2, _arg1);
   };
 
+  const ap = __exports.ap = function (_arg2, _arg1) {
+    return core.ap(_arg2, _arg1);
+  };
+
   const chain = __exports.chain = function (f, _arg1) {
     const chain_1 = function (a) {
       const patternInput = f(a);

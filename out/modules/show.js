@@ -223,10 +223,6 @@ const Reader = exports.Reader = function (__exports) {
 }({});
 
 const State = exports.State = function (__exports) {
-  const tree = __exports.tree = function (pith) {
-    throw new Error("");
-  };
-
   const demo5 = __exports.demo5 = function (builder_) {
     return new _update.UpdateMonad(0, s => {
       const patternInput = (0, _state.set)((0, _List.ofArray)([20])).data(s);

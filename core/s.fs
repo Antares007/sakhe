@@ -49,6 +49,7 @@ module S =
     let startWith a (S s) = S <| core.startWith (a, s)
     let sample (S a) (S b) = S <| core.sample (b, a)
     let delay (Time t) (S s) = S <| core.delay (t, s)
+    let ap (S fs) (S s) = S <| core.ap (fs, s)
     let chain f (S a)  =
         let chain a =
             let (S s) = f a
