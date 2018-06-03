@@ -105,37 +105,55 @@ const Writer = exports.Writer = function (__exports) {
 
   const Demo = __exports.Demo = function (__exports) {
     const demo3 = __exports.demo3 = function (builder_) {
-      return new _update.UpdateMonad(0, s => {
-        const patternInput = write(20).data(s);
-
-        const patternInput_1 = function () {
-          return new _update.UpdateMonad(0, _arg1_1 => [WriterUpdate.Unit, "world"]);
-        }();
-
-        const patternInput_2 = patternInput_1.data(WriterUpdate.Apply(s, patternInput[0]));
-        return [WriterUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
-      });
-    }(_update.update);
-
-    const demo4 = __exports.demo4 = function (builder_) {
       return new _update.UpdateMonad(0, s_1 => {
-        const patternInput_3 = demo3.data(s_1);
+        const patternInput_3 = new _update.UpdateMonad(0, _arg1_2 => [WriterUpdate.Unit, null]).data(s_1);
 
-        const patternInput_4 = function (_arg1) {
+        const patternInput_4 = function () {
           return new _update.UpdateMonad(0, s => {
-            const patternInput = write(10).data(s);
+            const patternInput = write(20).data(s);
 
             const patternInput_1 = function () {
-              return new _update.UpdateMonad(0, _arg1_1 => [WriterUpdate.Unit, "Hello " + _arg1]);
+              return new _update.UpdateMonad(0, _arg1_1 => [WriterUpdate.Unit, "world"]);
             }();
 
             const patternInput_2 = patternInput_1.data(WriterUpdate.Apply(s, patternInput[0]));
             return [WriterUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
           });
-        }(patternInput_3[1]);
+        }();
 
         const patternInput_5 = patternInput_4.data(WriterUpdate.Apply(s_1, patternInput_3[0]));
         return [WriterUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
+      });
+    }(_update.update);
+
+    const demo4 = __exports.demo4 = function (builder_) {
+      return new _update.UpdateMonad(0, s_2 => {
+        const patternInput_6 = new _update.UpdateMonad(0, _arg1_2 => [WriterUpdate.Unit, null]).data(s_2);
+
+        const patternInput_7 = function () {
+          return new _update.UpdateMonad(0, s_1 => {
+            const patternInput_3 = demo3.data(s_1);
+
+            const patternInput_4 = function (_arg1) {
+              return new _update.UpdateMonad(0, s => {
+                const patternInput = write(10).data(s);
+
+                const patternInput_1 = function () {
+                  return new _update.UpdateMonad(0, _arg1_1 => [WriterUpdate.Unit, "Hello " + _arg1]);
+                }();
+
+                const patternInput_2 = patternInput_1.data(WriterUpdate.Apply(s, patternInput[0]));
+                return [WriterUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+              });
+            }(patternInput_3[1]);
+
+            const patternInput_5 = patternInput_4.data(WriterUpdate.Apply(s_1, patternInput_3[0]));
+            return [WriterUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
+          });
+        }();
+
+        const patternInput_8 = patternInput_7.data(WriterUpdate.Apply(s_2, patternInput_6[0]));
+        return [WriterUpdate.Combine(patternInput_6[0], patternInput_8[0]), patternInput_8[1]];
       });
     }(_update.update);
 
@@ -191,28 +209,46 @@ const Reader = exports.Reader = function (__exports) {
 
   const Demo = __exports.Demo = function (__exports) {
     const demo1 = __exports.demo1 = function (builder_) {
-      return new _update.UpdateMonad(0, s => {
-        const patternInput = read.data(s);
+      return new _update.UpdateMonad(0, s_1 => {
+        const patternInput_3 = new _update.UpdateMonad(0, _arg1_2 => [ReaderUpdate.Unit, null]).data(s_1);
 
-        const patternInput_1 = function (_arg1) {
-          return new _update.UpdateMonad(0, _arg1_1 => [ReaderUpdate.Unit, _arg1 + 1]);
-        }(patternInput[1]);
+        const patternInput_4 = function () {
+          return new _update.UpdateMonad(0, s => {
+            const patternInput = read.data(s);
 
-        const patternInput_2 = patternInput_1.data(ReaderUpdate.Apply(s, patternInput[0]));
-        return [ReaderUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+            const patternInput_1 = function (_arg1) {
+              return new _update.UpdateMonad(0, _arg1_1 => [ReaderUpdate.Unit, _arg1 + 1]);
+            }(patternInput[1]);
+
+            const patternInput_2 = patternInput_1.data(ReaderUpdate.Apply(s, patternInput[0]));
+            return [ReaderUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+          });
+        }();
+
+        const patternInput_5 = patternInput_4.data(ReaderUpdate.Apply(s_1, patternInput_3[0]));
+        return [ReaderUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
       });
     }(_update.update);
 
     const demo2 = __exports.demo2 = function (builder_) {
-      return new _update.UpdateMonad(0, s => {
-        const patternInput = demo1.data(s);
+      return new _update.UpdateMonad(0, s_1 => {
+        const patternInput_3 = new _update.UpdateMonad(0, _arg1_2 => [ReaderUpdate.Unit, null]).data(s_1);
 
-        const patternInput_1 = function (_arg1) {
-          return new _update.UpdateMonad(0, _arg1_1 => [ReaderUpdate.Unit, _arg1 + 1]);
-        }(patternInput[1]);
+        const patternInput_4 = function () {
+          return new _update.UpdateMonad(0, s => {
+            const patternInput = demo1.data(s);
 
-        const patternInput_2 = patternInput_1.data(ReaderUpdate.Apply(s, patternInput[0]));
-        return [ReaderUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+            const patternInput_1 = function (_arg1) {
+              return new _update.UpdateMonad(0, _arg1_1 => [ReaderUpdate.Unit, _arg1 + 1]);
+            }(patternInput[1]);
+
+            const patternInput_2 = patternInput_1.data(ReaderUpdate.Apply(s, patternInput[0]));
+            return [ReaderUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+          });
+        }();
+
+        const patternInput_5 = patternInput_4.data(ReaderUpdate.Apply(s_1, patternInput_3[0]));
+        return [ReaderUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
       });
     }(_update.update);
 
@@ -224,25 +260,12 @@ const Reader = exports.Reader = function (__exports) {
 
 const State = exports.State = function (__exports) {
   const demo5 = __exports.demo5 = function (builder_) {
-    return new _update.UpdateMonad(0, s => {
-      const patternInput = (0, _state.set)((0, _List.ofArray)([20])).data(s);
-
-      const patternInput_1 = function () {
-        return new _update.UpdateMonad(0, _arg1_1 => [_state.StateUpdate.Unit, null]);
-      }();
-
-      const patternInput_2 = patternInput_1.data(_state.StateUpdate.Apply(s, patternInput[0]));
-      return [_state.StateUpdate.Combine(patternInput[0], patternInput_2[0]), null];
-    });
-  }(_update.update);
-
-  const insert = __exports.insert = function (builder_) {
     return new _update.UpdateMonad(0, s_1 => {
-      const patternInput_3 = (0, _state.get)().data(s_1);
+      const patternInput_3 = new _update.UpdateMonad(0, _arg1_2 => [_state.StateUpdate.Unit, null]).data(s_1);
 
-      const patternInput_4 = function (_arg1) {
+      const patternInput_4 = function () {
         return new _update.UpdateMonad(0, s => {
-          const patternInput = (0, _state.set)(new _List2.default(10, _arg1)).data(s);
+          const patternInput = (0, _state.set)((0, _List.ofArray)([20])).data(s);
 
           const patternInput_1 = function () {
             return new _update.UpdateMonad(0, _arg1_1 => [_state.StateUpdate.Unit, null]);
@@ -251,59 +274,99 @@ const State = exports.State = function (__exports) {
           const patternInput_2 = patternInput_1.data(_state.StateUpdate.Apply(s, patternInput[0]));
           return [_state.StateUpdate.Combine(patternInput[0], patternInput_2[0]), null];
         });
-      }(patternInput_3[1]);
+      }();
 
       const patternInput_5 = patternInput_4.data(_state.StateUpdate.Apply(s_1, patternInput_3[0]));
       return [_state.StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), null];
     });
   }(_update.update);
 
-  const demo6 = __exports.demo6 = function (builder_) {
-    return new _update.UpdateMonad(0, s_4 => {
-      const patternInput_12 = demo5.data(s_4);
+  const insert = __exports.insert = function (builder_) {
+    return new _update.UpdateMonad(0, s_2 => {
+      const patternInput_6 = new _update.UpdateMonad(0, _arg1_2 => [_state.StateUpdate.Unit, null]).data(s_2);
 
-      const patternInput_13 = function () {
-        return new _update.UpdateMonad(0, s_3 => {
-          const patternInput_9 = insert.data(s_3);
+      const patternInput_7 = function () {
+        return new _update.UpdateMonad(0, s_1 => {
+          const patternInput_3 = (0, _state.get)().data(s_1);
 
-          const patternInput_10 = function () {
-            return new _update.UpdateMonad(0, s_2 => {
-              const patternInput_6 = insert.data(s_2);
+          const patternInput_4 = function (_arg1) {
+            return new _update.UpdateMonad(0, s => {
+              const patternInput = (0, _state.set)(new _List2.default(10, _arg1)).data(s);
 
-              const patternInput_7 = function () {
-                return new _update.UpdateMonad(0, s_1 => {
-                  const patternInput_3 = insert.data(s_1);
-
-                  const patternInput_4 = function () {
-                    return new _update.UpdateMonad(0, s => {
-                      const patternInput = (0, _state.get)().data(s);
-
-                      const patternInput_1 = function (_arg5) {
-                        return new _update.UpdateMonad(0, _arg1_1 => [_state.StateUpdate.Unit, (0, _String.toText)((0, _String.printf)("%A"))(_arg5)]);
-                      }(patternInput[1]);
-
-                      const patternInput_2 = patternInput_1.data(_state.StateUpdate.Apply(s, patternInput[0]));
-                      return [_state.StateUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
-                    });
-                  }();
-
-                  const patternInput_5 = patternInput_4.data(_state.StateUpdate.Apply(s_1, patternInput_3[0]));
-                  return [_state.StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
-                });
+              const patternInput_1 = function () {
+                return new _update.UpdateMonad(0, _arg1_1 => [_state.StateUpdate.Unit, null]);
               }();
 
-              const patternInput_8 = patternInput_7.data(_state.StateUpdate.Apply(s_2, patternInput_6[0]));
-              return [_state.StateUpdate.Combine(patternInput_6[0], patternInput_8[0]), patternInput_8[1]];
+              const patternInput_2 = patternInput_1.data(_state.StateUpdate.Apply(s, patternInput[0]));
+              return [_state.StateUpdate.Combine(patternInput[0], patternInput_2[0]), null];
             });
-          }();
+          }(patternInput_3[1]);
 
-          const patternInput_11 = patternInput_10.data(_state.StateUpdate.Apply(s_3, patternInput_9[0]));
-          return [_state.StateUpdate.Combine(patternInput_9[0], patternInput_11[0]), patternInput_11[1]];
+          const patternInput_5 = patternInput_4.data(_state.StateUpdate.Apply(s_1, patternInput_3[0]));
+          return [_state.StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), null];
         });
       }();
 
-      const patternInput_14 = patternInput_13.data(_state.StateUpdate.Apply(s_4, patternInput_12[0]));
-      return [_state.StateUpdate.Combine(patternInput_12[0], patternInput_14[0]), patternInput_14[1]];
+      const patternInput_8 = patternInput_7.data(_state.StateUpdate.Apply(s_2, patternInput_6[0]));
+      return [_state.StateUpdate.Combine(patternInput_6[0], patternInput_8[0]), null];
+    });
+  }(_update.update);
+
+  const demo6 = __exports.demo6 = function (builder_) {
+    return new _update.UpdateMonad(0, s_5 => {
+      const patternInput_15 = new _update.UpdateMonad(0, _arg1_2 => [_state.StateUpdate.Unit, null]).data(s_5);
+
+      const patternInput_16 = function () {
+        return new _update.UpdateMonad(0, s_4 => {
+          const patternInput_12 = demo5.data(s_4);
+
+          const patternInput_13 = function () {
+            return new _update.UpdateMonad(0, s_3 => {
+              const patternInput_9 = insert.data(s_3);
+
+              const patternInput_10 = function () {
+                return new _update.UpdateMonad(0, s_2 => {
+                  const patternInput_6 = insert.data(s_2);
+
+                  const patternInput_7 = function () {
+                    return new _update.UpdateMonad(0, s_1 => {
+                      const patternInput_3 = insert.data(s_1);
+
+                      const patternInput_4 = function () {
+                        return new _update.UpdateMonad(0, s => {
+                          const patternInput = (0, _state.get)().data(s);
+
+                          const patternInput_1 = function (_arg5) {
+                            return new _update.UpdateMonad(0, _arg1_1 => [_state.StateUpdate.Unit, (0, _String.toText)((0, _String.printf)("%A"))(_arg5)]);
+                          }(patternInput[1]);
+
+                          const patternInput_2 = patternInput_1.data(_state.StateUpdate.Apply(s, patternInput[0]));
+                          return [_state.StateUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+                        });
+                      }();
+
+                      const patternInput_5 = patternInput_4.data(_state.StateUpdate.Apply(s_1, patternInput_3[0]));
+                      return [_state.StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
+                    });
+                  }();
+
+                  const patternInput_8 = patternInput_7.data(_state.StateUpdate.Apply(s_2, patternInput_6[0]));
+                  return [_state.StateUpdate.Combine(patternInput_6[0], patternInput_8[0]), patternInput_8[1]];
+                });
+              }();
+
+              const patternInput_11 = patternInput_10.data(_state.StateUpdate.Apply(s_3, patternInput_9[0]));
+              return [_state.StateUpdate.Combine(patternInput_9[0], patternInput_11[0]), patternInput_11[1]];
+            });
+          }();
+
+          const patternInput_14 = patternInput_13.data(_state.StateUpdate.Apply(s_4, patternInput_12[0]));
+          return [_state.StateUpdate.Combine(patternInput_12[0], patternInput_14[0]), patternInput_14[1]];
+        });
+      }();
+
+      const patternInput_17 = patternInput_16.data(_state.StateUpdate.Apply(s_5, patternInput_15[0]));
+      return [_state.StateUpdate.Combine(patternInput_15[0], patternInput_17[0]), patternInput_17[1]];
     });
   }(_update.update);
 
