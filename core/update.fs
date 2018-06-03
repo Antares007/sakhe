@@ -2,7 +2,7 @@ module Update
 
 /// Represents an update monad - given a state, produce
 /// value and an update that can be applied to the state
-type UpdateMonad<'TState, 'TUpdate, 'T> =  UM of ('TState -> 'TUpdate * 'T)
+type UpdateMonad<'s, 'u, 'a> =  UM of ('s -> 'u * 'a)
 
 /// Returns the value of 'Unit' property on the ^S type
 let inline unit< ^S when ^S : (static member Unit : ^S)> () : ^S =
@@ -19,16 +19,12 @@ let inline apply< ^S, ^U when ^U : (static member Apply : ^S * ^U -> ^S )> s u :
 let inline ret (a:'a): UpdateMonad<'s, 'u, 'a> =
     UM (fun (_:'s) -> (unit(), a))
 
-let inline chain f (UM u1): UpdateMonad<'s,'u,'b> =
+let inline chain f (UM m1): UpdateMonad<'s,'u,'b> =
     UM <| fun s ->
-        // Run the first computation to get first update
-        // 'u1', then run 'f' to get second computation
-        let (u1, x) = u1 s
-        let (UM u2) = f x
-        // Apply 'u1' to original state & run second computation
-        // then return result with combined state updates
-        let (u2, y) = u2 (apply s u1)
-        (combine u1 u2, y)
+        let (u1, a) = m1 s
+        let (UM m2) = f a
+        let (u2, b) = m2 (apply s u1)
+        (combine u1 u2, b)
 
 open Sakhe
 

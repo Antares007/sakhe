@@ -33,7 +33,7 @@ class UpdateMonad {
     return {
       type: "Update.UpdateMonad",
       interfaces: ["FSharpUnion"],
-      cases: [["UM", (0, _Util.Function)([(0, _Util.GenericParam)("TState"), (0, _Util.Tuple)([(0, _Util.GenericParam)("TUpdate"), (0, _Util.GenericParam)("T")])])]]
+      cases: [["UM", (0, _Util.Function)([(0, _Util.GenericParam)("s"), (0, _Util.Tuple)([(0, _Util.GenericParam)("u"), (0, _Util.GenericParam)("a")])])]]
     };
   }
 
