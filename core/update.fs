@@ -9,24 +9,26 @@ let inline unit< ^S when ^S : (static member Unit : ^S)> () : ^S =
   (^S : (static member Unit : ^S) ())
 
 /// Invokes Combine operation on a pair of ^S values
-let inline combine< ^S when ^S: (static member Combine : ^S * ^S -> ^S )> a b : ^S =
-  (^S : (static member Combine : ^S * ^S -> ^S) (a, b))
+let inline combine< ^S when ^S: (static member Combine : ^S * ^S -> ^S )> l r : ^S =
+  (^S : (static member Combine : ^S * ^S -> ^S) (l, r))
 
 /// Invokes Apply operation on state and update ^S * ^U
-let inline apply< ^S, ^U when ^U : (static member Apply : ^S * ^U -> ^S )> s a : ^S =
-  (^U : (static member Apply : ^S * ^U -> ^S) (s, a))
+let inline apply< ^S, ^U when ^U : (static member Apply : ^S * ^U -> ^S )> s u : ^S =
+  (^U : (static member Apply : ^S * ^U -> ^S) (s, u))
 
-let inline ret v: UpdateMonad<'S, 'U, 'T> = UM (fun _ -> (unit(), v))
+let inline ret (a:'a): UpdateMonad<'s, 'u, 'a> =
+    UM (fun (_:'s) -> (unit(), a))
 
-let inline chain f (UM u1) = UM <| fun s ->
-    // Run the first computation to get first update
-    // 'u1', then run 'f' to get second computation
-    let (u1, x) = u1 s
-    let (UM u2) = f x
-    // Apply 'u1' to original state & run second computation
-    // then return result with combined state updates
-    let (u2, y) = u2 (apply s u1)
-    (combine u1 u2, y)
+let inline chain f (UM u1): UpdateMonad<'s,'u,'b> =
+    UM <| fun s ->
+        // Run the first computation to get first update
+        // 'u1', then run 'f' to get second computation
+        let (u1, x) = u1 s
+        let (UM u2) = f x
+        // Apply 'u1' to original state & run second computation
+        // then return result with combined state updates
+        let (u2, y) = u2 (apply s u1)
+        (combine u1 u2, y)
 
 type UpdateBuilder() =
     /// Returns the specified value, together
@@ -35,7 +37,8 @@ type UpdateBuilder() =
         UM (fun _ -> (unit(), v))
 
     /// Compose two update monad computations
-    member inline __.Bind(m, f) = chain f m
+    member inline __.Bind(m, f) =
+        chain f m
 
 //     /// Represents monadic computation that returns unit
 //     /// (e.g. we can now omit 'else' branch in 'if' computation)

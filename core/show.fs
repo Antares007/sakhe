@@ -96,10 +96,11 @@ module State =
     /// Get the current state
     let get = UM (fun (State s) -> (SetNop, s))
     /// Run a computation using a specified initial state
-    let setRun s (UM f) = f (State s) |> snd
+    let setRun s (UM f) = f (State s)
 
     module Demo =
-        let tree<'s, 'r> pith: UpdateMonad<StateState<'s>, StateUpdate<'s>, 'r> S = failwith ""
+        let tree<'s, 'r> pith: UpdateMonad<StateState<'s>, StateUpdate<'s>, 'r> S =
+            failwith ""
 
         // Increments the state by one
         let demo5 = update {

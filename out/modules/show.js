@@ -309,7 +309,7 @@ const State = exports.State = function (__exports) {
   };
 
   const setRun = __exports.setRun = function (s, _arg1) {
-    return _arg1.data(new StateState(0, s))[1];
+    return _arg1.data(new StateState(0, s));
   };
 
   const Demo = __exports.Demo = function (__exports) {
@@ -383,7 +383,12 @@ const State = exports.State = function (__exports) {
       });
     }(_update.update);
 
-    (0, _String.toConsole)((0, _String.printf)("%A"))(setRun(new _List2.default(), demo6));
+    (() => {
+      const clo1 = (0, _String.toConsole)((0, _String.printf)("%A"));
+      return function (tupledArg) {
+        clo1([tupledArg[0], tupledArg[1]]);
+      };
+    })()(setRun(new _List2.default(), demo6));
     return __exports;
   }({});
 
