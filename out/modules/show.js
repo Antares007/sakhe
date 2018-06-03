@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Stream = exports.State = exports.Reader = exports.Writer = undefined;
+exports.Disposable = exports.Stream = exports.State = exports.Reader = exports.Writer = undefined;
 
 var _Symbol2 = require("./fable-core/Symbol");
 
@@ -437,5 +437,28 @@ const Stream = exports.Stream = function (__exports) {
   }(_s.S.stream);
 
   _s.S.drain(_s.S.tap(console.log.bind(console), _s.S.take(22, s))), void 0;
+  return __exports;
+}({});
+
+const Disposable = exports.Disposable = function (__exports) {
+  const create = __exports.create = function (f) {
+    let disposed = false;
+    return {
+      Dispose() {
+        if (!disposed) {
+          disposed = true;
+          f();
+        }
+      },
+
+      [_Symbol3.default.reflection]() {
+        return {
+          interfaces: ["System.IDisposable"]
+        };
+      }
+
+    };
+  };
+
   return __exports;
 }({});

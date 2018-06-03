@@ -1,5 +1,6 @@
 module Sakhe.Show
 open UpdateMonad
+open System
 
 module Writer =
     type WriterState = NoState
@@ -140,3 +141,12 @@ module Stream =
             do! at (ms 2000.) ()
     }
     s |> take 22 |> tap console.log |> drain |> ignore
+
+module Disposable =
+    let create f =
+        let mutable disposed = false
+        {new IDisposable with
+            member __.Dispose () =
+                if not disposed then
+                    disposed <- true
+                    f()}
