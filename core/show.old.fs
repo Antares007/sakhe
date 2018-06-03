@@ -16,6 +16,15 @@ module State =
     let Number k s = RNumber (k, s)
     let Object k s = RObject (k, s)
     let Array k s = RArray (k, s)
+    open S
+    let see = treeObj <| stream { yield Pith <| fun o ->
+            o << Object "achiko" << treeObj <| stream { yield Pith <| fun o ->
+                    o << Number "age" <<  S.at (ms 3000.) << R.update <| function
+                        | Some v -> v + 1.
+                        | None -> 0.
+                    ()
+            }
+    }
 
     let rez =
         treeObj << S.at (ms 0.) << Pith <| fun o ->
