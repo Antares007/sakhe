@@ -72,23 +72,31 @@ module Reader =
 module State =
     open Sakhe.Update.State
     open Sakhe
+    open Fable.Import.Browser
 
-    (tree (fun a _ -> a)  (S.now <| update {
-                                        do! set ([]: int list)
-                                        return "2" })) << S.now << Pith <| fun o ->
+    (tree (fun a b -> update {
+                            let! s1 = b
+                            let! s2 = a
+                            return s1 + s2
+                        })  (S.now <| update {
+                                do! set ([]: int list)
+                                return "" })) << S.now << Pith <| fun o ->
         S.stream { yield update {
             let! state = get
             do! set (1 :: state)
-            return "1"
+            let! state = get
+            return "B" + string state
         }} |> o
 
         S.stream { yield update {
             let! state = get
             do! set (2 :: state)
-            return "2"
+            let! state = get
+            return "C" + string state
         }} |> o
 
-    |> (fun see -> see |> ignore)
+    |> S.map (fun m -> m |> setRun [] |> snd)
+    |> S.tap console.log |> S.drain |> ignore
 
     // let tree<'s, 'r> pith: UpdateMonad<StateState<'s>, StateUpdate<'s>, 'r> S =
     //     failwith ""
@@ -111,7 +119,7 @@ module State =
         do! insert
         do! insert
         let! s = get
-        return sprintf "%A" s }
+        return sprintf "A: %A" s }
 
     // Run the sample with initial state 0
     printfn "%A" (demo6 |> setRun [])
