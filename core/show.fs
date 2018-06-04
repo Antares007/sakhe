@@ -1,5 +1,5 @@
 module Sakhe.Show
-open Update
+open Sakhe.Update
 open System
 
 module Writer =
@@ -70,7 +70,25 @@ module Reader =
         // printfn "%A" (readRun 40 demo2)
 
 module State =
-    open Update.State
+    open Sakhe.Update.State
+    open Sakhe
+
+    (tree (fun a _ -> a)  (S.now <| update {
+                                        do! set ([]: int list)
+                                        return "2" })) << S.now << Pith <| fun o ->
+        S.stream { yield update {
+            let! state = get
+            do! set (1 :: state)
+            return "1"
+        }} |> o
+
+        S.stream { yield update {
+            let! state = get
+            do! set (2 :: state)
+            return "2"
+        }} |> o
+
+    |> (fun see -> see |> ignore)
 
     // let tree<'s, 'r> pith: UpdateMonad<StateState<'s>, StateUpdate<'s>, 'r> S =
     //     failwith ""

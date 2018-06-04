@@ -26,7 +26,7 @@ class StateState {
 
   [_Symbol3.default.reflection]() {
     return {
-      type: "Update.State.StateState",
+      type: "Sakhe.Update.State.StateState",
       interfaces: ["FSharpUnion", "System.IEquatable", "System.IComparable"],
       cases: [["State", (0, _Util.GenericParam)("T")]]
     };
@@ -43,7 +43,7 @@ class StateState {
 }
 
 exports.StateState = StateState;
-(0, _Symbol2.setType)("Update.State.StateState", StateState);
+(0, _Symbol2.setType)("Sakhe.Update.State.StateState", StateState);
 
 class StateUpdate {
   constructor(tag, data) {
@@ -53,7 +53,7 @@ class StateUpdate {
 
   [_Symbol3.default.reflection]() {
     return {
-      type: "Update.State.StateUpdate",
+      type: "Sakhe.Update.State.StateUpdate",
       interfaces: ["FSharpUnion", "System.IEquatable", "System.IComparable"],
       cases: [["Set", (0, _Util.GenericParam)("T")], ["SetNop"]]
     };
@@ -96,7 +96,7 @@ class StateUpdate {
 }
 
 exports.StateUpdate = StateUpdate;
-(0, _Symbol2.setType)("Update.State.StateUpdate", StateUpdate);
+(0, _Symbol2.setType)("Sakhe.Update.State.StateUpdate", StateUpdate);
 
 function set(s) {
   return new _update.UpdateMonad(0, function (_arg1) {

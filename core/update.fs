@@ -1,4 +1,4 @@
-module Update
+module Sakhe.Update
 
 /// Represents an update monad - given a state, produce
 /// value and an update that can be applied to the state
@@ -25,6 +25,9 @@ let inline chain f (UM m1): UpdateMonad<'s,'u,'b> =
         let (UM m2) = f a
         let (u2, b) = m2 (apply s u1)
         (combine u1 u2, b)
+
+let tree<'s, 'u, 'a, 'b> f (i: S<UpdateMonad<'s, 'u, 'a>>) (p: S<Pith<S<UpdateMonad<'s,'u,'b>>>>) =
+    S.treeCombine f i p
 
 type UpdateBuilder() =
     /// Returns the specified value, together
@@ -76,18 +79,3 @@ type UpdateBuilder() =
 /// Instance of the computation builder
 /// that defines the update { .. } block
 let update = UpdateBuilder()
-
-open Sakhe
-
-let inline tree<
-                ^S, ^U, 'a, 'b when ^U : (static member Unit : ^U) and
-                                    ^U : (static member Combine : ^U * ^U -> ^U) and
-                                    ^U : (static member Apply : ^S * ^U -> ^S )>
-                        (a: 'a)
-                        (pith: Pith<UpdateMonad< ^S, ^U, 'b>>) =
-    let uUnit = (^U : (static member Unit : ^U) ())
-    let zero = UM (fun (s: ^S) -> (uUnit, a))
-    let dc (xs: UpdateMonad< ^S, ^U, 'b> list) = UM <| fun (s: ^S) ->
-
-        (uUnit, a)
-    A.tree dc pith

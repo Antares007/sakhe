@@ -1,4 +1,4 @@
-module Update.State
+module Sakhe.Update.State
 /// Wraps a state of type 'T
 type StateState<'T> = State of 'T
 
