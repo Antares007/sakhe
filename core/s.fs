@@ -127,7 +127,7 @@ module S =
             disposable.disposeWith (dispose, ())
 
     let tree f s mpith =
-        mpith |> map (A.tree f s) |> switchLatest
+        mpith |> map (A.tree (List.fold f s)) |> switchLatest
 
     let treeCombine f s pith =
         tree (combine f) s pith

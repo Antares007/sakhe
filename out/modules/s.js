@@ -309,9 +309,12 @@ const S = exports.S = function (__exports) {
   };
 
   const tree = __exports.tree = function (f, s, mpith) {
-    return switchLatest(map(function (arg20_) {
-      return _a.A.tree(f, s, arg20_);
-    }, mpith));
+    var deltaC;
+    return switchLatest(map((deltaC = function (list) {
+      return (0, _Seq.fold)(f, s, list);
+    }, function (arg10_) {
+      return _a.A.tree(deltaC, arg10_);
+    }), mpith));
   };
 
   const treeCombine = __exports.treeCombine = function (f, s, pith) {

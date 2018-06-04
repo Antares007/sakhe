@@ -76,3 +76,18 @@ type UpdateBuilder() =
 /// Instance of the computation builder
 /// that defines the update { .. } block
 let update = UpdateBuilder()
+
+open Sakhe
+
+let inline tree<
+                ^S, ^U, 'a, 'b when ^U : (static member Unit : ^U) and
+                                    ^U : (static member Combine : ^U * ^U -> ^U) and
+                                    ^U : (static member Apply : ^S * ^U -> ^S )>
+                        (a: 'a)
+                        (pith: Pith<UpdateMonad< ^S, ^U, 'b>>) =
+    let uUnit = (^U : (static member Unit : ^U) ())
+    let zero = UM (fun (s: ^S) -> (uUnit, a))
+    let dc (xs: UpdateMonad< ^S, ^U, 'b> list) = UM <| fun (s: ^S) ->
+
+        (uUnit, a)
+    A.tree dc pith
