@@ -126,16 +126,22 @@ module S =
                 d2.dispose ()
             disposable.disposeWith (dispose, ())
 
+    let foldTree f s pith =
+        A.tree (List.fold f s) pith
+
+    let treeCombine f s p =
+        switchLatest (map (foldTree (combine f) s) p )
+
+    let stree deltacS pithS = ap (map A.tree deltacS) pithS
+
     let tree f s mpith =
         mpith |> map (A.tree (List.fold f s)) |> switchLatest
-
-    let treeCombine f s pith =
-        tree (combine f) s pith
 
     let treeMerge s pith =
         tree (fun a b -> merge b a) s pith
 
     let private defScheduler = scheduler.newDefaultScheduler ()
+
     let drain (S s) = core.runEffects (s, defScheduler)
 
     open Fable.Import.Browser

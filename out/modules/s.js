@@ -308,6 +308,25 @@ const S = exports.S = function (__exports) {
     });
   };
 
+  const foldTree = __exports.foldTree = function (f, s, pith) {
+    return _a.A.tree(function (list) {
+      return (0, _Seq.fold)(f, s, list);
+    }, pith);
+  };
+
+  const treeCombine = __exports.treeCombine = function (f, s, p) {
+    var f_1;
+    return switchLatest(map((f_1 = function (arg10_, arg20_) {
+      return combine(f, arg10_, arg20_);
+    }, function (pith) {
+      return foldTree(f_1, s, pith);
+    }), p));
+  };
+
+  const stree = __exports.stree = function (deltacS, pithS) {
+    return ap(map($var5 => $var6 => _a.A.tree.bind(_a.A)($var5, $var6), deltacS), pithS);
+  };
+
   const tree = __exports.tree = function (f, s, mpith) {
     var deltaC;
     return switchLatest(map((deltaC = function (list) {
@@ -315,12 +334,6 @@ const S = exports.S = function (__exports) {
     }, function (arg10_) {
       return _a.A.tree(deltaC, arg10_);
     }), mpith));
-  };
-
-  const treeCombine = __exports.treeCombine = function (f, s, pith) {
-    return tree(function (arg10_, arg20_) {
-      return combine(f, arg10_, arg20_);
-    }, s, pith);
   };
 
   const treeMerge = __exports.treeMerge = function (s, pith) {
