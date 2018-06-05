@@ -127,13 +127,13 @@ module S =
             disposable.disposeWith (dispose, ())
 
     let treeCombine f s p =
-        let foldTree = A.tree (List.fold (combine f) s)
+        let foldTree = Pith.tree (List.fold (combine f) s)
         switchLatest (map foldTree p)
 
-    let stree deltacS pithS = ap (map A.tree deltacS) pithS
+    let stree deltacS pithS = ap (map Pith.tree deltacS) pithS
 
     let tree f s mpith =
-        mpith |> map (A.tree (List.fold f s)) |> switchLatest
+        mpith |> map (Pith.tree (List.fold f s)) |> switchLatest
 
     let treeMerge s pith =
         tree (fun a b -> merge b a) s pith

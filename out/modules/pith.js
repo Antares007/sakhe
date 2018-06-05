@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.A = undefined;
+exports.Pith = undefined;
 
 var _List = require("./fable-core/List");
 
@@ -11,7 +11,13 @@ var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const A = exports.A = function (__exports) {
+const Pith = exports.Pith = function (__exports) {
+  const map = __exports.map = function (f, _arg1) {
+    return function (o) {
+      _arg1($var1 => o(f($var1)));
+    };
+  };
+
   const tree = __exports.tree = function (deltaC, _arg1) {
     let list = new _List2.default();
 

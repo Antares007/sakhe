@@ -29,7 +29,7 @@ var _Seq = require("./fable-core/Seq");
 
 var _Observable = require("./fable-core/Observable");
 
-var _a = require("./a");
+var _pith = require("./pith");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -321,14 +321,14 @@ const S = exports.S = function (__exports) {
     };
 
     foldTree = function (arg10__1) {
-      return _a.A.tree(deltaC, arg10__1);
+      return _pith.Pith.tree(deltaC, arg10__1);
     };
 
     return switchLatest(map(foldTree, p));
   };
 
   const stree = __exports.stree = function (deltacS, pithS) {
-    return ap(map($var5 => $var6 => _a.A.tree.bind(_a.A)($var5, $var6), deltacS), pithS);
+    return ap(map($var5 => $var6 => _pith.Pith.tree.bind(_pith.Pith)($var5, $var6), deltacS), pithS);
   };
 
   const tree = __exports.tree = function (f, s, mpith) {
@@ -336,7 +336,7 @@ const S = exports.S = function (__exports) {
     return switchLatest(map((deltaC = function (list) {
       return (0, _Seq.fold)(f, s, list);
     }, function (arg10_) {
-      return _a.A.tree(deltaC, arg10_);
+      return _pith.Pith.tree(deltaC, arg10_);
     }), mpith));
   };
 
