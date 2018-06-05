@@ -81,12 +81,14 @@ const S = exports.S = function (__exports) {
     return core.map(f, _arg1);
   };
 
+  const valueOf = __exports.valueOf = function (_arg1) {
+    return _arg1;
+  };
+
   const switchLatest = __exports.switchLatest = function (_arg1) {
     return ($var2 => function (arg0) {
       return arg0;
-    }(core.switchLatest.bind(core)($var2)))(core.map(function (_arg1_1) {
-      return _arg1_1;
-    }, _arg1));
+    }(core.switchLatest.bind(core)($var2)))(core.map(valueOf, _arg1));
   };
 
   const combine = __exports.combine = function (f, _arg2, _arg1) {
@@ -114,17 +116,11 @@ const S = exports.S = function (__exports) {
   };
 
   const continueWith = __exports.continueWith = function (f, _arg1) {
-    return core.continueWith(function () {
-      const patternInput = f();
-      return patternInput;
-    }, _arg1);
+    return core.continueWith($var3 => valueOf(f($var3)), _arg1);
   };
 
   const recoverWith = __exports.recoverWith = function (f, _arg1) {
-    return core.recoverWith(function (err) {
-      const patternInput = f(err);
-      return patternInput;
-    }, _arg1);
+    return core.recoverWith($var4 => valueOf(f($var4)), _arg1);
   };
 
   const scan = __exports.scan = function (f, state, _arg1) {
@@ -164,12 +160,7 @@ const S = exports.S = function (__exports) {
   };
 
   const chain = __exports.chain = function (f, _arg1) {
-    const chain_1 = function (a) {
-      const patternInput = f(a);
-      return patternInput;
-    };
-
-    return core.chain(chain_1, _arg1);
+    return core.chain($var5 => valueOf(f($var5)), _arg1);
   };
 
   const loop = __exports.loop = function (f, a, _arg1) {
@@ -199,9 +190,9 @@ const S = exports.S = function (__exports) {
   };
 
   const disposeWith = __exports.disposeWith = function (d, _arg1) {
-    return ($var3 => function (arg0) {
+    return ($var6 => function (arg0) {
       return arg0;
-    }(core.newStream.bind(core)($var3)))(function (sink, scheduler_1) {
+    }(core.newStream.bind(core)($var6)))(function (sink, scheduler_1) {
       const ds = _arg1.run(sink, scheduler_1);
 
       const dispose = function (_arg2) {
@@ -289,9 +280,9 @@ const S = exports.S = function (__exports) {
 
   const toStream = __exports.toStream = function (e) {
     const ms_1 = new core.MulticastSource(core.never());
-    return ($var4 => function (arg0) {
+    return ($var7 => function (arg0) {
       return arg0;
-    }(core.newStream.bind(core)($var4)))(function (sink, scheduler_1) {
+    }(core.newStream.bind(core)($var7)))(function (sink, scheduler_1) {
       const onNext = function (v) {
         ms_1.event(scheduler_1.currentTime(), v);
       };
@@ -328,7 +319,7 @@ const S = exports.S = function (__exports) {
   };
 
   const stree = __exports.stree = function (deltacS, pithS) {
-    return ap(map($var5 => $var6 => _pith.Pith.tree.bind(_pith.Pith)($var5, $var6), deltacS), pithS);
+    return ap(map($var8 => $var9 => _pith.Pith.tree.bind(_pith.Pith)($var8, $var9), deltacS), pithS);
   };
 
   const tree = __exports.tree = function (f, s, mpith) {
