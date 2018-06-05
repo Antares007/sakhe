@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.state = exports.StateBuilder = exports.M = exports.StateUpdate = exports.StateState = undefined;
+exports.state = exports.StateBuilder = exports.State = exports.StateUpdate = exports.StateState = undefined;
 exports.valueOf = valueOf;
 exports.Of = Of;
 exports.set = set;
@@ -100,7 +100,7 @@ class StateUpdate {
 exports.StateUpdate = StateUpdate;
 (0, _Symbol2.setType)("Sakhe.State.StateUpdate", StateUpdate);
 
-class M {
+class State {
   constructor(tag, data) {
     this.tag = tag | 0;
     this.data = data;
@@ -108,41 +108,41 @@ class M {
 
   [_Symbol3.default.reflection]() {
     return {
-      type: "Sakhe.State.M",
+      type: "Sakhe.State.State",
       interfaces: ["FSharpUnion"],
       cases: [["M", (0, _Util.makeGeneric)(_update.UpdateMonad, {
-        s: (0, _Util.makeGeneric)(StateState, {
+        state: (0, _Util.makeGeneric)(StateState, {
           T: (0, _Util.GenericParam)("s")
         }),
-        u: (0, _Util.makeGeneric)(StateUpdate, {
+        update: (0, _Util.makeGeneric)(StateUpdate, {
           T: (0, _Util.GenericParam)("s")
         }),
-        a: (0, _Util.GenericParam)("a")
+        value: (0, _Util.GenericParam)("a")
       })]]
     };
   }
 
 }
 
-exports.M = M;
-(0, _Symbol2.setType)("Sakhe.State.M", M);
+exports.State = State;
+(0, _Symbol2.setType)("Sakhe.State.State", State);
 
 function valueOf(_arg1) {
   return _arg1.data;
 }
 
 function Of(a) {
-  return new M(0, a);
+  return new State(0, a);
 }
 
 function set(s) {
-  return new M(0, new _update.UpdateMonad(0, function (_arg1) {
+  return new State(0, new _update.UpdateMonad(0, function (_arg1) {
     return [new StateUpdate(0, s), null];
   }));
 }
 
 function get() {
-  return new M(0, new _update.UpdateMonad(0, function (_arg1) {
+  return new State(0, new _update.UpdateMonad(0, function (_arg1) {
     return [new StateUpdate(1), _arg1.data];
   }));
 }

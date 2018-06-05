@@ -1,5 +1,49 @@
 module Sakhe.Show
+module State =
+    open S
+    open Update
+    open State
+    let u l = state {
+        let! state = get
+        match state with
+        | [] -> do! set ([1])
+        | h::_ -> do! set ((h + 1) :: state)
+        return l + sprintf "%A" state
+    }
+    ///[{"tag":0,"data":[4,3,2,1]},"I[3; 2; 1]/O[2; 1]/B[1]/A[]"]
+    tree (fun a b -> a + "/" + b) (stream {yield u "I"}) <| S.stream {
+        yield Pith <| fun o ->
+            o (stream {
+                yield u "A"
+            })
+            o (stream {
+                yield u "B"
+            })
+            o (stream {
+                yield u "C"
+            })
+    }
+    |> S.scan (fun s m ->
+        let (u, a) = setRun s m
+        printfn "a: %A" a
+        let (State s) = apply (State s) u
+        s) []
+    |> S.tap (printfn "s: %A") |> S.drain |> ignore
 
+(* module Stream =
+    open Fable.Import.Browser
+    open Sakhe.S
+    let s = stream {
+        while true do
+            yield ""
+            yield "<"
+            for i = 1 to 3 do
+                do! at (ms 100.) ()
+                yield string i
+            yield ">"
+            do! at (ms 2000.) ()
+    }
+    s |> take 22 |> tap console.log |> drain |> ignore
 module Writer =
     open Update
     type WriterState = NoState
@@ -37,7 +81,6 @@ module Writer =
 
         /// Returns: [[20,10],"Hello world"]
         // printfn "%A" (demo4 |> writeRun)
-
 module Reader =
     open Update
     type ReaderState = int
@@ -68,58 +111,6 @@ module Reader =
 
         /// Returns: 42
         // printfn "%A" (readRun 40 demo2)
-
-module State =
-    open S
-    open Update
-    open State
-
-    let u l = state {
-        let! state = get
-        match state with
-        | [] -> do! set ([1])
-        | h::_ -> do! set ((h + 1) :: state)
-        return l + sprintf "%A" state
-    }
-
-    ///[{"tag":0,"data":[4,3,2,1]},"I[3; 2; 1]/O[2; 1]/B[1]/A[]"]
-    tree (fun a b -> a + "/" + b) (stream {yield u "I"}) <| S.stream {
-        yield Pith <| fun o ->
-            o (stream {
-                yield u "A"
-            })
-            o (stream {
-                yield u "B"
-            })
-            o (stream {
-                yield u "C"
-            })
-    }
-    |> S.scan (fun s m ->
-        let (u, a) = setRun s m
-        printfn "a: %A" a
-        let (State s) = apply (State s) u
-        s) []
-    |> S.tap (printfn "s: %A")
-    |> S.drain
-    |> ignore
-
-module Stream =
-    open Fable.Import.Browser
-    open Sakhe.S
-
-    let s = stream {
-        while true do
-            yield ""
-            yield "<"
-            for i = 1 to 3 do
-                do! at (ms 100.) ()
-                yield string i
-            yield ">"
-            do! at (ms 2000.) ()
-    }
-    s |> take 22 |> tap console.log |> drain |> ignore
-
 module Disposable =
     open System
     let create f =
@@ -129,3 +120,4 @@ module Disposable =
                 if not disposed then
                     disposed <- true
                     f()}
+ *)
