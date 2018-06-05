@@ -88,6 +88,10 @@ module State =
 
             o (stream {
                 yield u "A"
+                yield! stream {
+                    yield u "A_"
+                }
+                yield u "A2"
             })
 
             o <| stream {
@@ -98,9 +102,12 @@ module State =
                 yield u "O"
             } |> o
     }
-
-    |> S.map (fun m -> m |> setRun [])
-    |> S.tap (printfn "%A")
+    |> S.scan (fun s m ->
+        let (u, a) = setRun s m
+        printfn "a: %A" a
+        let (State s) = apply (State s) u
+        s) []
+    |> S.tap (printfn "s: %A")
     |> S.drain
     |> ignore
 

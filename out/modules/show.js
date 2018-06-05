@@ -317,44 +317,44 @@ const State = exports.State = function (__exports) {
     }(_update.update);
   };
 
-  _s.S.drain(_s.S.tap((() => {
-    const clo1 = (0, _String.toConsole)((0, _String.printf)("%A"));
-    return function (tupledArg) {
-      clo1([tupledArg[0], tupledArg[1]]);
-    };
-  })(), _s.S.map(function (m) {
-    return (0, _state.setRun)(new _List2.default(), m);
-  }, (0, _update.tree)(function (a_1, b_1) {
-    return function (builder__5) {
-      return new _update.UpdateMonad(0, s_2 => {
-        const patternInput_6 = new _update.UpdateMonad(0, _arg1_2 => [_state.StateUpdate.Unit, null]).data(s_2);
+  _s.S.drain(_s.S.tap((0, _String.toConsole)((0, _String.printf)("s: %A")), _s.S.scan(function (s, m) {
+    const patternInput = (0, _state.setRun)(s, m);
+    (0, _String.toConsole)((0, _String.printf)("a: %A"))(patternInput[1]);
 
-        const patternInput_7 = function () {
-          return new _update.UpdateMonad(0, s_1 => {
-            const patternInput_3 = b_1.data(s_1);
+    const patternInput_1 = _state.StateUpdate.Apply(new _state.StateState(0, s), patternInput[0]);
 
-            const patternInput_4 = function (_arg1) {
-              return new _update.UpdateMonad(0, s => {
-                const patternInput = a_1.data(s);
+    return patternInput_1.data;
+  }, new _List2.default(), (0, _update.tree)(function (a_1, b_1) {
+    return function (builder__6) {
+      return new _update.UpdateMonad(0, s_3 => {
+        const patternInput_8 = new _update.UpdateMonad(0, _arg1_2 => [_state.StateUpdate.Unit, null]).data(s_3);
 
-                const patternInput_1 = function (_arg2) {
+        const patternInput_9 = function () {
+          return new _update.UpdateMonad(0, s_2 => {
+            const patternInput_5 = b_1.data(s_2);
+
+            const patternInput_6 = function (_arg1) {
+              return new _update.UpdateMonad(0, s_1 => {
+                const patternInput_2 = a_1.data(s_1);
+
+                const patternInput_3 = function (_arg2) {
                   return new _update.UpdateMonad(0, _arg1_1 => [_state.StateUpdate.Unit, function (a, b) {
                     return a + "/" + b;
                   }(_arg2, _arg1)]);
-                }(patternInput[1]);
+                }(patternInput_2[1]);
 
-                const patternInput_2 = patternInput_1.data(_state.StateUpdate.Apply(s, patternInput[0]));
-                return [_state.StateUpdate.Combine(patternInput[0], patternInput_2[0]), patternInput_2[1]];
+                const patternInput_4 = patternInput_3.data(_state.StateUpdate.Apply(s_1, patternInput_2[0]));
+                return [_state.StateUpdate.Combine(patternInput_2[0], patternInput_4[0]), patternInput_4[1]];
               });
-            }(patternInput_3[1]);
+            }(patternInput_5[1]);
 
-            const patternInput_5 = patternInput_4.data(_state.StateUpdate.Apply(s_1, patternInput_3[0]));
-            return [_state.StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), patternInput_5[1]];
+            const patternInput_7 = patternInput_6.data(_state.StateUpdate.Apply(s_2, patternInput_5[0]));
+            return [_state.StateUpdate.Combine(patternInput_5[0], patternInput_7[0]), patternInput_7[1]];
           });
         }();
 
-        const patternInput_8 = patternInput_7.data(_state.StateUpdate.Apply(s_2, patternInput_6[0]));
-        return [_state.StateUpdate.Combine(patternInput_6[0], patternInput_8[0]), patternInput_8[1]];
+        const patternInput_10 = patternInput_9.data(_state.StateUpdate.Apply(s_3, patternInput_8[0]));
+        return [_state.StateUpdate.Combine(patternInput_8[0], patternInput_10[0]), patternInput_10[1]];
       });
     }(_update.update);
   }, function (builder_) {
@@ -366,17 +366,25 @@ const State = exports.State = function (__exports) {
       return builder__1.Yield(function (o) {
         o(function (builder__2) {
           return builder__2.Delay(function () {
-            return builder__2.Yield(u("A"));
-          });
-        }(_s.S.stream));
-        o(function (builder__3) {
-          return builder__3.Delay(function () {
-            return builder__3.Yield(u("B"));
+            return builder__2.Combine(builder__2.Yield(u("A")), builder__2.Delay(function () {
+              return builder__2.Combine(builder__2.YieldFrom(function (builder__3) {
+                return builder__3.Delay(function () {
+                  return builder__3.Yield(u("A_"));
+                });
+              }(_s.S.stream)), builder__2.Delay(function () {
+                return builder__2.Yield(u("A2"));
+              }));
+            }));
           });
         }(_s.S.stream));
         o(function (builder__4) {
           return builder__4.Delay(function () {
-            return builder__4.Yield(u("O"));
+            return builder__4.Yield(u("B"));
+          });
+        }(_s.S.stream));
+        o(function (builder__5) {
+          return builder__5.Delay(function () {
+            return builder__5.Yield(u("O"));
           });
         }(_s.S.stream));
       });
@@ -386,20 +394,20 @@ const State = exports.State = function (__exports) {
 }({});
 
 const Stream = exports.Stream = function (__exports) {
-  const s_3 = __exports.s = function (builder__6) {
-    return builder__6.Delay(function () {
-      return builder__6.While(function () {
+  const s_4 = __exports.s = function (builder__7) {
+    return builder__7.Delay(function () {
+      return builder__7.While(function () {
         return true;
-      }, builder__6.Delay(function () {
-        return builder__6.Combine(builder__6.Yield(""), builder__6.Delay(function () {
-          return builder__6.Combine(builder__6.Yield("<"), builder__6.Delay(function () {
-            return builder__6.Combine(builder__6.For((0, _Seq.range)(1, 3), function (_arg1_3) {
-              return builder__6.Bind(_s.S.at(_s.TimeModule.ms(100), null), function () {
-                return builder__6.Yield(_arg1_3.toString());
+      }, builder__7.Delay(function () {
+        return builder__7.Combine(builder__7.Yield(""), builder__7.Delay(function () {
+          return builder__7.Combine(builder__7.Yield("<"), builder__7.Delay(function () {
+            return builder__7.Combine(builder__7.For((0, _Seq.range)(1, 3), function (_arg1_3) {
+              return builder__7.Bind(_s.S.at(_s.TimeModule.ms(100), null), function () {
+                return builder__7.Yield(_arg1_3.toString());
               });
-            }), builder__6.Delay(function () {
-              return builder__6.Combine(builder__6.Yield(">"), builder__6.Delay(function () {
-                return builder__6.Bind(_s.S.at(_s.TimeModule.ms(2000), null), builder__6.Zero.bind(builder__6));
+            }), builder__7.Delay(function () {
+              return builder__7.Combine(builder__7.Yield(">"), builder__7.Delay(function () {
+                return builder__7.Bind(_s.S.at(_s.TimeModule.ms(2000), null), builder__7.Zero.bind(builder__7));
               }));
             }));
           }));
@@ -408,7 +416,7 @@ const Stream = exports.Stream = function (__exports) {
     });
   }(_s.S.stream);
 
-  _s.S.drain(_s.S.tap(console.log.bind(console), _s.S.take(22, s_3))), void 0;
+  _s.S.drain(_s.S.tap(console.log.bind(console), _s.S.take(22, s_4))), void 0;
   return __exports;
 }({});
 
