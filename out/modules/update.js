@@ -26,7 +26,7 @@ class UpdateMonad {
     return {
       type: "Sakhe.Update.UpdateMonad",
       interfaces: ["FSharpUnion"],
-      cases: [["UM", (0, _Util.Function)([(0, _Util.GenericParam)("s"), (0, _Util.Tuple)([(0, _Util.GenericParam)("u"), (0, _Util.GenericParam)("a")])])]]
+      cases: [["UM", (0, _Util.Function)([(0, _Util.GenericParam)("state"), (0, _Util.Tuple)([(0, _Util.GenericParam)("update"), (0, _Util.GenericParam)("value")])])]]
     };
   }
 

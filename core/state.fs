@@ -1,36 +1,28 @@
 module Sakhe.State
 open Update
-/// Wraps a state of type 'T
+
 type StateState<'T> = State of 'T
 
-/// Represents updates on state of type 'T
 type StateUpdate<'T> =
     | Set of 'T
     | SetNop
 
-    /// Empty update - do not change the state
-    static member Unit:StateUpdate<'T> = SetNop
-    /// Combine updates - return the latest (rightmost) 'Set' update
+    static member Unit: StateUpdate<'T> = SetNop
     static member Combine(a, b) =
         match a, b with
         | SetNop, v -> v
         | v, SetNop -> v
         | Set _, Set b -> Set b
-    /// Apply update to a state - the 'Set' update changes the state
     static member Apply(s, p) =
         match p with
         | SetNop -> s
         | Set s -> State s
 
 type M<'s, 'a> = M of UpdateMonad<StateState<'s>,StateUpdate<'s>,'a>
-
 let valueOf (M a) = a
 let Of a = M a
-/// Set the state to the specified value
 let set (s:'s) = M (UM (fun _ -> (Set s,())))
-/// Get the current state
 let get = M (UM (fun (State s) -> (SetNop, s)))
-/// Run a computation using a specified initial state
 let setRun (s:'s) (M (UM f)): StateUpdate<'s> * 'a = f (State s)
 
 type StateBuilder() =
