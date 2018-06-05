@@ -3,7 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.StateUpdate = exports.StateState = undefined;
+exports.state = exports.StateBuilder = exports.M = exports.StateUpdate = exports.StateState = undefined;
+exports.valueOf = valueOf;
+exports.Of = Of;
 exports.set = set;
 exports.get = get;
 exports.setRun = setRun;
@@ -98,18 +100,72 @@ class StateUpdate {
 exports.StateUpdate = StateUpdate;
 (0, _Symbol2.setType)("Sakhe.State.StateUpdate", StateUpdate);
 
+class M {
+  constructor(tag, data) {
+    this.tag = tag | 0;
+    this.data = data;
+  }
+
+  [_Symbol3.default.reflection]() {
+    return {
+      type: "Sakhe.State.M",
+      interfaces: ["FSharpUnion"],
+      cases: [["M", (0, _Util.makeGeneric)(_update.UpdateMonad, {
+        s: (0, _Util.makeGeneric)(StateState, {
+          T: (0, _Util.GenericParam)("s")
+        }),
+        u: (0, _Util.makeGeneric)(StateUpdate, {
+          T: (0, _Util.GenericParam)("s")
+        }),
+        a: (0, _Util.GenericParam)("a")
+      })]]
+    };
+  }
+
+}
+
+exports.M = M;
+(0, _Symbol2.setType)("Sakhe.State.M", M);
+
+function valueOf(_arg1) {
+  return _arg1.data;
+}
+
+function Of(a) {
+  return new M(0, a);
+}
+
 function set(s) {
-  return new _update.UpdateMonad(0, function (_arg1) {
+  return new M(0, new _update.UpdateMonad(0, function (_arg1) {
     return [new StateUpdate(0, s), null];
-  });
+  }));
 }
 
 function get() {
-  return new _update.UpdateMonad(0, function (_arg1) {
+  return new M(0, new _update.UpdateMonad(0, function (_arg1) {
     return [new StateUpdate(1), _arg1.data];
-  });
+  }));
 }
 
 function setRun(s, _arg1) {
-  return _arg1.data(new StateState(0, s));
+  const f = _arg1.data.data;
+  return f(new StateState(0, s));
 }
+
+class StateBuilder {
+  [_Symbol3.default.reflection]() {
+    return {
+      type: "Sakhe.State.StateBuilder",
+      properties: {}
+    };
+  }
+
+  constructor() {
+    this.ub = new _update.UpdateBuilder();
+  }
+
+}
+
+exports.StateBuilder = StateBuilder;
+(0, _Symbol2.setType)("Sakhe.State.StateBuilder", StateBuilder);
+const state = exports.state = new StateBuilder();

@@ -23,6 +23,8 @@ var _String = require("./fable-core/String");
 
 var _s = require("./s");
 
+var _pith = require("./pith");
+
 var _Seq = require("./fable-core/Seq");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -261,60 +263,80 @@ const Reader = exports.Reader = function (__exports) {
 const State = exports.State = function (__exports) {
   const u = __exports.u = function (l) {
     return function (builder_) {
-      return new _update.UpdateMonad(0, s_5 => {
-        const patternInput_15 = new _update.UpdateMonad(0, _arg1_5 => [_state.StateUpdate.Unit, null]).data(s_5);
+      return new _state.M(0, new _update.UpdateMonad(0, s_5 => {
+        const patternInput_20 = new _update.UpdateMonad(0, _arg1_5 => [_state.StateUpdate.Unit, null]).data(s_5);
 
-        const patternInput_16 = function () {
-          return new _update.UpdateMonad(0, s_4 => {
-            const patternInput_12 = (0, _state.get)().data(s_4);
+        const patternInput_21 = (() => {
+          const patternInput_19 = function () {
+            return new _state.M(0, new _update.UpdateMonad(0, s_4 => {
+              const patternInput_16 = (0, _state.get)().data.data(s_4);
 
-            const patternInput_13 = function (_arg1) {
-              return new _update.UpdateMonad(0, s_3 => {
-                const patternInput_9 = (_arg1.tail != null ? new _update.UpdateMonad(0, s => {
-                  const patternInput = (0, _state.set)(new _List2.default(_arg1.head + 1, _arg1)).data(s);
+              const patternInput_17 = (a_3 => {
+                const patternInput_15 = function (_arg1) {
+                  return new _state.M(0, new _update.UpdateMonad(0, s_3 => {
+                    const patternInput_12 = (_arg1.tail != null ? new _state.M(0, new _update.UpdateMonad(0, s => {
+                      const patternInput_1 = (0, _state.set)(new _List2.default(_arg1.head + 1, _arg1)).data.data(s);
 
-                  const patternInput_1 = function () {
-                    return new _update.UpdateMonad(0, _arg1_1 => [_state.StateUpdate.Unit, null]);
-                  }();
+                      const patternInput_2 = (a => {
+                        const patternInput = function () {
+                          return new _state.M(0, new _update.UpdateMonad(0, _arg1_1 => [_state.StateUpdate.Unit, null]));
+                        }(a);
 
-                  const patternInput_2 = patternInput_1.data(_state.StateUpdate.Apply(s, patternInput[0]));
-                  return [_state.StateUpdate.Combine(patternInput[0], patternInput_2[0]), null];
-                }) : new _update.UpdateMonad(0, s_1 => {
-                  const patternInput_3 = (0, _state.set)((0, _List.ofArray)([1])).data(s_1);
+                        return patternInput.data;
+                      })(patternInput_1[1]);
 
-                  const patternInput_4 = function () {
-                    return new _update.UpdateMonad(0, _arg1_2 => [_state.StateUpdate.Unit, null]);
-                  }();
+                      const patternInput_3 = patternInput_2.data(_state.StateUpdate.Apply(s, patternInput_1[0]));
+                      return [_state.StateUpdate.Combine(patternInput_1[0], patternInput_3[0]), patternInput_3[1]];
+                    })) : new _state.M(0, new _update.UpdateMonad(0, s_1 => {
+                      const patternInput_5 = (0, _state.set)((0, _List.ofArray)([1])).data.data(s_1);
 
-                  const patternInput_5 = patternInput_4.data(_state.StateUpdate.Apply(s_1, patternInput_3[0]));
-                  return [_state.StateUpdate.Combine(patternInput_3[0], patternInput_5[0]), null];
-                })).data(s_3);
+                      const patternInput_6 = (a_1 => {
+                        const patternInput_4 = function () {
+                          return new _state.M(0, new _update.UpdateMonad(0, _arg1_2 => [_state.StateUpdate.Unit, null]));
+                        }(a_1);
 
-                const patternInput_10 = (() => new _update.UpdateMonad(0, s_2 => {
-                  const patternInput_6 = new _update.UpdateMonad(0, _arg1_4 => [_state.StateUpdate.Unit, null]).data(s_2);
+                        return patternInput_4.data;
+                      })(patternInput_5[1]);
 
-                  const patternInput_7 = function () {
-                    return new _update.UpdateMonad(0, _arg1_3 => [_state.StateUpdate.Unit, l + (0, _String.toText)((0, _String.printf)("%A"))(_arg1)]);
-                  }();
+                      const patternInput_7 = patternInput_6.data(_state.StateUpdate.Apply(s_1, patternInput_5[0]));
+                      return [_state.StateUpdate.Combine(patternInput_5[0], patternInput_7[0]), patternInput_7[1]];
+                    }))).data.data(s_3);
 
-                  const patternInput_8 = patternInput_7.data(_state.StateUpdate.Apply(s_2, patternInput_6[0]));
-                  return [_state.StateUpdate.Combine(patternInput_6[0], patternInput_8[0]), patternInput_8[1]];
-                }))();
+                    const patternInput_13 = (() => new _state.M(0, new _update.UpdateMonad(0, s_2 => {
+                      const patternInput_9 = new _update.UpdateMonad(0, _arg1_4 => [_state.StateUpdate.Unit, null]).data(s_2);
 
-                const patternInput_11 = patternInput_10.data(_state.StateUpdate.Apply(s_3, patternInput_9[0]));
-                return [_state.StateUpdate.Combine(patternInput_9[0], patternInput_11[0]), patternInput_11[1]];
-              });
-            }(patternInput_12[1]);
+                      const patternInput_10 = (() => {
+                        const patternInput_8 = function () {
+                          return new _state.M(0, new _update.UpdateMonad(0, _arg1_3 => [_state.StateUpdate.Unit, l + (0, _String.toText)((0, _String.printf)("%A"))(_arg1)]));
+                        }();
 
-            const patternInput_14 = patternInput_13.data(_state.StateUpdate.Apply(s_4, patternInput_12[0]));
-            return [_state.StateUpdate.Combine(patternInput_12[0], patternInput_14[0]), patternInput_14[1]];
-          });
-        }();
+                        return patternInput_8.data;
+                      })();
 
-        const patternInput_17 = patternInput_16.data(_state.StateUpdate.Apply(s_5, patternInput_15[0]));
-        return [_state.StateUpdate.Combine(patternInput_15[0], patternInput_17[0]), patternInput_17[1]];
-      });
-    }(_update.update);
+                      const patternInput_11 = patternInput_10.data(_state.StateUpdate.Apply(s_2, patternInput_9[0]));
+                      return [_state.StateUpdate.Combine(patternInput_9[0], patternInput_11[0]), patternInput_11[1]];
+                    })).data)();
+
+                    const patternInput_14 = patternInput_13.data(_state.StateUpdate.Apply(s_3, patternInput_12[0]));
+                    return [_state.StateUpdate.Combine(patternInput_12[0], patternInput_14[0]), patternInput_14[1]];
+                  }));
+                }(a_3);
+
+                return patternInput_15.data;
+              })(patternInput_16[1]);
+
+              const patternInput_18 = patternInput_17.data(_state.StateUpdate.Apply(s_4, patternInput_16[0]));
+              return [_state.StateUpdate.Combine(patternInput_16[0], patternInput_18[0]), patternInput_18[1]];
+            }));
+          }();
+
+          return patternInput_19.data;
+        })();
+
+        const patternInput_22 = patternInput_21.data(_state.StateUpdate.Apply(s_5, patternInput_20[0]));
+        return [_state.StateUpdate.Combine(patternInput_20[0], patternInput_22[0]), patternInput_22[1]];
+      }));
+    }(_state.state);
   };
 
   _s.S.drain(_s.S.tap((0, _String.toConsole)((0, _String.printf)("s: %A")), _s.S.scan(function (s, m) {
@@ -324,90 +346,100 @@ const State = exports.State = function (__exports) {
     const patternInput_1 = _state.StateUpdate.Apply(new _state.StateState(0, s), patternInput[0]);
 
     return patternInput_1.data;
-  }, new _List2.default(), (0, _update.tree)(function (a_1, b_1) {
-    return function (builder__6) {
-      return new _update.UpdateMonad(0, s_3 => {
-        const patternInput_8 = new _update.UpdateMonad(0, _arg1_2 => [_state.StateUpdate.Unit, null]).data(s_3);
+  }, new _List2.default(), (() => {
+    var f;
 
-        const patternInput_9 = function () {
-          return new _update.UpdateMonad(0, s_2 => {
-            const patternInput_5 = b_1.data(s_2);
-
-            const patternInput_6 = function (_arg1) {
-              return new _update.UpdateMonad(0, s_1 => {
-                const patternInput_2 = a_1.data(s_1);
-
-                const patternInput_3 = function (_arg2) {
-                  return new _update.UpdateMonad(0, _arg1_1 => [_state.StateUpdate.Unit, function (a, b) {
-                    return a + "/" + b;
-                  }(_arg2, _arg1)]);
-                }(patternInput_2[1]);
-
-                const patternInput_4 = patternInput_3.data(_state.StateUpdate.Apply(s_1, patternInput_2[0]));
-                return [_state.StateUpdate.Combine(patternInput_2[0], patternInput_4[0]), patternInput_4[1]];
-              });
-            }(patternInput_5[1]);
-
-            const patternInput_7 = patternInput_6.data(_state.StateUpdate.Apply(s_2, patternInput_5[0]));
-            return [_state.StateUpdate.Combine(patternInput_5[0], patternInput_7[0]), patternInput_7[1]];
-          });
-        }();
-
-        const patternInput_10 = patternInput_9.data(_state.StateUpdate.Apply(s_3, patternInput_8[0]));
-        return [_state.StateUpdate.Combine(patternInput_8[0], patternInput_10[0]), patternInput_10[1]];
+    const i = _s.S.map(function (_arg1) {
+      return _arg1.data;
+    }, function (builder_) {
+      return builder_.Delay(function () {
+        return builder_.Yield(u("I"));
       });
-    }(_update.update);
-  }, function (builder_) {
-    return builder_.Delay(function () {
-      return builder_.Yield(u("I"));
-    });
-  }(_s.S.stream), function (builder__1) {
-    return builder__1.Delay(function () {
-      return builder__1.Yield(function (o) {
-        o(function (builder__2) {
-          return builder__2.Delay(function () {
-            return builder__2.Combine(builder__2.Yield(u("A")), builder__2.Delay(function () {
-              return builder__2.Combine(builder__2.YieldFrom(function (builder__3) {
-                return builder__3.Delay(function () {
-                  return builder__3.Yield(u("A_"));
+    }(_s.S.stream));
+
+    const p = _s.S.map((f = function (o_1) {
+      return _s.S.map(function (_arg2) {
+        return _arg2.data;
+      }, o_1);
+    }, function (arg10_) {
+      return _pith.Pith.map(f, arg10_);
+    }), function (builder__1) {
+      return builder__1.Delay(function () {
+        return builder__1.Yield(function (o) {
+          o(function (builder__2) {
+            return builder__2.Delay(function () {
+              return builder__2.Yield(u("A"));
+            });
+          }(_s.S.stream));
+          o(function (builder__3) {
+            return builder__3.Delay(function () {
+              return builder__3.Yield(u("B"));
+            });
+          }(_s.S.stream));
+          o(function (builder__4) {
+            return builder__4.Delay(function () {
+              return builder__4.Yield(u("C"));
+            });
+          }(_s.S.stream));
+        });
+      });
+    }(_s.S.stream));
+
+    return _s.S.map(function (arg0) {
+      return new _state.M(0, arg0);
+    }, (0, _update.tree)(function (a_1, b_1) {
+      return function (builder__5) {
+        return new _update.UpdateMonad(0, s_3 => {
+          const patternInput_8 = new _update.UpdateMonad(0, _arg1_3 => [_state.StateUpdate.Unit, null]).data(s_3);
+
+          const patternInput_9 = function () {
+            return new _update.UpdateMonad(0, s_2 => {
+              const patternInput_5 = b_1.data(s_2);
+
+              const patternInput_6 = function (_arg1_1) {
+                return new _update.UpdateMonad(0, s_1 => {
+                  const patternInput_2 = a_1.data(s_1);
+
+                  const patternInput_3 = function (_arg2_1) {
+                    return new _update.UpdateMonad(0, _arg1_2 => [_state.StateUpdate.Unit, function (a, b) {
+                      return a + "/" + b;
+                    }(_arg2_1, _arg1_1)]);
+                  }(patternInput_2[1]);
+
+                  const patternInput_4 = patternInput_3.data(_state.StateUpdate.Apply(s_1, patternInput_2[0]));
+                  return [_state.StateUpdate.Combine(patternInput_2[0], patternInput_4[0]), patternInput_4[1]];
                 });
-              }(_s.S.stream)), builder__2.Delay(function () {
-                return builder__2.Yield(u("A2"));
-              }));
-            }));
-          });
-        }(_s.S.stream));
-        o(function (builder__4) {
-          return builder__4.Delay(function () {
-            return builder__4.Yield(u("B"));
-          });
-        }(_s.S.stream));
-        o(function (builder__5) {
-          return builder__5.Delay(function () {
-            return builder__5.Yield(u("O"));
-          });
-        }(_s.S.stream));
-      });
-    });
-  }(_s.S.stream))))), void 0;
+              }(patternInput_5[1]);
+
+              const patternInput_7 = patternInput_6.data(_state.StateUpdate.Apply(s_2, patternInput_5[0]));
+              return [_state.StateUpdate.Combine(patternInput_5[0], patternInput_7[0]), patternInput_7[1]];
+            });
+          }();
+
+          const patternInput_10 = patternInput_9.data(_state.StateUpdate.Apply(s_3, patternInput_8[0]));
+          return [_state.StateUpdate.Combine(patternInput_8[0], patternInput_10[0]), patternInput_10[1]];
+        });
+      }(_update.update);
+    }, i, p));
+  })()))), void 0;
   return __exports;
 }({});
 
 const Stream = exports.Stream = function (__exports) {
-  const s_4 = __exports.s = function (builder__7) {
-    return builder__7.Delay(function () {
-      return builder__7.While(function () {
+  const s_4 = __exports.s = function (builder__6) {
+    return builder__6.Delay(function () {
+      return builder__6.While(function () {
         return true;
-      }, builder__7.Delay(function () {
-        return builder__7.Combine(builder__7.Yield(""), builder__7.Delay(function () {
-          return builder__7.Combine(builder__7.Yield("<"), builder__7.Delay(function () {
-            return builder__7.Combine(builder__7.For((0, _Seq.range)(1, 3), function (_arg1_3) {
-              return builder__7.Bind(_s.S.at(_s.TimeModule.ms(100), null), function () {
-                return builder__7.Yield(_arg1_3.toString());
+      }, builder__6.Delay(function () {
+        return builder__6.Combine(builder__6.Yield(""), builder__6.Delay(function () {
+          return builder__6.Combine(builder__6.Yield("<"), builder__6.Delay(function () {
+            return builder__6.Combine(builder__6.For((0, _Seq.range)(1, 3), function (_arg1_4) {
+              return builder__6.Bind(_s.S.at(_s.TimeModule.ms(100), null), function () {
+                return builder__6.Yield(_arg1_4.toString());
               });
-            }), builder__7.Delay(function () {
-              return builder__7.Combine(builder__7.Yield(">"), builder__7.Delay(function () {
-                return builder__7.Bind(_s.S.at(_s.TimeModule.ms(2000), null), builder__7.Zero.bind(builder__7));
+            }), builder__6.Delay(function () {
+              return builder__6.Combine(builder__6.Yield(">"), builder__6.Delay(function () {
+                return builder__6.Bind(_s.S.at(_s.TimeModule.ms(2000), null), builder__6.Zero.bind(builder__6));
               }));
             }));
           }));
@@ -421,13 +453,13 @@ const Stream = exports.Stream = function (__exports) {
 }({});
 
 const Disposable = exports.Disposable = function (__exports) {
-  const create = __exports.create = function (f) {
+  const create = __exports.create = function (f_1) {
     let disposed = false;
     return {
       Dispose() {
         if (!disposed) {
           disposed = true;
-          f();
+          f_1();
         }
       },
 

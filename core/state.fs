@@ -22,19 +22,32 @@ type StateUpdate<'T> =
         | SetNop -> s
         | Set s -> State s
 
-/// Set the state to the specified value
-let set s = UM (fun _ -> (Set s,()))
-/// Get the current state
-let get = UM (fun (State s) -> (SetNop, s))
-/// Run a computation using a specified initial state
-let setRun (s:'s) (UM f):StateUpdate<'s> * 'a = f (State s)
+type M<'s, 'a> = M of UpdateMonad<StateState<'s>,StateUpdate<'s>,'a>
 
-let inline tree<'s,'u,'a, 'b>
-        (f: 'a -> 'b -> 'a)
-        (i: S<UpdateMonad<StateState<'s>,StateUpdate<'s>,'a>>)
-        (p : S<Pith<S<UpdateMonad<StateState<'s>,StateUpdate<'s>,'b>>>>) =
-    tree (fun a b -> update {
-                            let! b = b
-                            let! a = a
-                            return f a b
-                        }) i p
+let valueOf (M a) = a
+let Of a = M a
+/// Set the state to the specified value
+let set (s:'s) = M (UM (fun _ -> (Set s,())))
+/// Get the current state
+let get = M (UM (fun (State s) -> (SetNop, s)))
+/// Run a computation using a specified initial state
+let setRun (s:'s) (M (UM f)): StateUpdate<'s> * 'a = f (State s)
+
+type StateBuilder() =
+    let ub = UpdateBuilder()
+    member inline __.Return(a) = Of (ub.Return a)
+    member inline __.Bind(M m, f) = Of (ub.Bind (m, valueOf << f))
+    member inline __.Delay(f) = Of (ub.Delay (valueOf << f))
+    member inline __.Combine(M c1, M c2) = Of (ub.Combine (c1, c2))
+let state =  StateBuilder()
+let inline tree f i p =
+    let combine a b = update {
+        let! b = b
+        let! a = a
+        return f a b
+    }
+    tree
+        combine
+        (i |> S.map valueOf)
+        (p |> S.map (Pith.map (fun o -> o |> S.map valueOf)))
+    |> S.map Of

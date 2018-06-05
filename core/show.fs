@@ -74,7 +74,7 @@ module State =
     open Update
     open State
 
-    let u l = update {
+    let u l = state {
         let! state = get
         match state with
         | [] -> do! set ([1])
@@ -85,22 +85,15 @@ module State =
     ///[{"tag":0,"data":[4,3,2,1]},"I[3; 2; 1]/O[2; 1]/B[1]/A[]"]
     tree (fun a b -> a + "/" + b) (stream {yield u "I"}) <| S.stream {
         yield Pith <| fun o ->
-
             o (stream {
                 yield u "A"
-                yield! stream {
-                    yield u "A_"
-                }
-                yield u "A2"
             })
-
-            o <| stream {
+            o (stream {
                 yield u "B"
-            }
-
-            stream {
-                yield u "O"
-            } |> o
+            })
+            o (stream {
+                yield u "C"
+            })
     }
     |> S.scan (fun s m ->
         let (u, a) = setRun s m
