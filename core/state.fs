@@ -27,7 +27,7 @@ let set s = UM (fun _ -> (Set s,()))
 /// Get the current state
 let get = UM (fun (State s) -> (SetNop, s))
 /// Run a computation using a specified initial state
-let setRun s (UM f) = f (State s)
+let setRun (s:'s) (UM f):StateUpdate<'s> * 'a = f (State s)
 
 let inline tree<'s,'u,'a, 'b>
         (f: 'a -> 'b -> 'a)
