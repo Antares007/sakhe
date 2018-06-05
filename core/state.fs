@@ -1,4 +1,5 @@
-module Sakhe.Update.State
+module Sakhe.State
+open Update
 /// Wraps a state of type 'T
 type StateState<'T> = State of 'T
 
@@ -27,3 +28,13 @@ let set s = UM (fun _ -> (Set s,()))
 let get = UM (fun (State s) -> (SetNop, s))
 /// Run a computation using a specified initial state
 let setRun s (UM f) = f (State s)
+
+let inline tree<'s,'u,'a, 'b>
+        (f: 'a -> 'b -> 'a)
+        (i: S<UpdateMonad<StateState<'s>,StateUpdate<'s>,'a>>)
+        (p : S<Pith<S<UpdateMonad<StateState<'s>,StateUpdate<'s>,'b>>>>) =
+    tree (fun a b -> update {
+                            let! b = b
+                            let! a = a
+                            return f a b
+                        }) i p

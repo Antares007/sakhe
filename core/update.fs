@@ -43,14 +43,15 @@ type UpdateBuilder() =
     // member inline __.Zero(): UpdateMonad<'s, 'u, 'b> =
     //     ret (unit())
 
-    // /// Delays a computation with (uncontrolled) side effects
-    // member inline __.Delay(f: unit -> UpdateMonad<'s, 'u, 'a>): UpdateMonad<'s, 'u, 'a> =
-    //     chain f (ret ())
+    /// Delays a computation with (uncontrolled) side effects
+    member inline __.Delay(f: unit -> UpdateMonad<'s, 'u, 'a>): UpdateMonad<'s, 'u, 'a> =
+        chain f (ret ())
 
-    // /// Sequential composition of two computations where the
-    // /// first one has no result (returns a unit value)
-    // member inline __.Combine(c1:UpdateMonad<'s, 'u, unit>, c2:UpdateMonad<'s, 'u, 'a>): UpdateMonad<'s, 'u, 'a> =
-    //     chain (fun () -> c2) c1
+    ///Combine
+    ///`M<'T> * M<'T> -> M<'T>` or `M<unit> * M<'T> -> M<'T>`
+    ///Called for sequencing in computation expressions.
+    member inline __.Combine(c1:UpdateMonad<'s, 'u, unit>, c2:UpdateMonad<'s, 'u, 'a>): UpdateMonad<'s, 'u, 'a> =
+        chain (fun () -> c2) c1
 
     // /// Enable the 'return!' keyword to return another computation
     // member inline __.ReturnFrom(m: UpdateMonad<'s, 'u, 'a>): UpdateMonad<'s, 'u, 'a> = m

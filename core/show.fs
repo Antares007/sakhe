@@ -1,8 +1,7 @@
 module Sakhe.Show
-open Sakhe.Update
-open System
 
 module Writer =
+    open Update
     type WriterState = NoState
 
     type WriterUpdate<'TLog> =
@@ -40,6 +39,7 @@ module Writer =
         // printfn "%A" (demo4 |> writeRun)
 
 module Reader =
+    open Update
     type ReaderState = int
 
     type ReaderUpdate =
@@ -70,59 +70,39 @@ module Reader =
         // printfn "%A" (readRun 40 demo2)
 
 module State =
-    open Sakhe.Update.State
-    open Sakhe
-    open Fable.Import.Browser
+    open S
+    open Update
+    open State
 
-    (tree (fun a b -> update {
-                            let! s1 = b
-                            let! s2 = a
-                            return s1 + s2
-                        })  (S.now <| update {
-                                do! set ([]: int list)
-                                return "" })) << S.now << Pith <| fun o ->
-        S.stream { yield update {
-            let! state = get
-            do! set (1 :: state)
-            let! state = get
-            return "B" + string state
-        }} |> o
-
-        S.stream { yield update {
-            let! state = get
-            do! set (2 :: state)
-            let! state = get
-            return "C" + string state
-        }} |> o
-
-    |> S.map (fun m -> m |> setRun [] |> snd)
-    |> S.tap console.log |> S.drain |> ignore
-
-    // let tree<'s, 'r> pith: UpdateMonad<StateState<'s>, StateUpdate<'s>, 'r> S =
-    //     failwith ""
-
-    // Increments the state by one
-    let demo5 = update {
-        do! set ([20])
+    let u l = update {
+        let! state = get
+        match state with
+        | [] -> do! set ([1])
+        | h::_ -> do! set ((h + 1) :: state)
+        return l + sprintf "%A" state
     }
 
-    // Call 'demo5' repeatedly in a loop
-    // and then return the final state
-    let insert = update {
-        let! s = get
-        do! set (10 :: s)
+    ///[{"tag":0,"data":[4,3,2,1]},"I[3; 2; 1]/O[2; 1]/B[1]/A[]"]
+    tree (fun a b -> a + "/" + b) (stream {yield u "I"}) <| S.stream {
+        yield Pith <| fun o ->
+
+            o (stream {
+                yield u "A"
+            })
+
+            o <| stream {
+                yield u "B"
+            }
+
+            stream {
+                yield u "O"
+            } |> o
     }
 
-    let demo6 = update {
-        do! demo5
-        do! insert
-        do! insert
-        do! insert
-        let! s = get
-        return sprintf "A: %A" s }
-
-    // Run the sample with initial state 0
-    printfn "%A" (demo6 |> setRun [])
+    |> S.map (fun m -> m |> setRun [])
+    |> S.tap (printfn "%A")
+    |> S.drain
+    |> ignore
 
 module Stream =
     open Fable.Import.Browser
@@ -141,6 +121,7 @@ module Stream =
     s |> take 22 |> tap console.log |> drain |> ignore
 
 module Disposable =
+    open System
     let create f =
         let mutable disposed = false
         {new IDisposable with

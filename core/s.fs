@@ -126,11 +126,9 @@ module S =
                 d2.dispose ()
             disposable.disposeWith (dispose, ())
 
-    let foldTree f s pith =
-        A.tree (List.fold f s) pith
-
     let treeCombine f s p =
-        switchLatest (map (foldTree (combine f) s) p )
+        let foldTree = A.tree (List.fold (combine f) s)
+        switchLatest (map foldTree p)
 
     let stree deltacS pithS = ap (map A.tree deltacS) pithS
 
