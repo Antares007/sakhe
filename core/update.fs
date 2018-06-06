@@ -1,15 +1,11 @@
 module Sakhe.Update
 
-/// Represents an update monad - given a `'state`, produce
-/// `'value` and an `'update` that can be applied to the `'state`
 type UpdateMonad<'s, 'u, 'a> =  UM of ('s -> 'u * 'a)
 
 let inline unit< ^u when ^u : (static member Unit : ^u)> () : ^u =
   (^u : (static member Unit : ^u) ())
-
 let inline combine< ^u when ^u: (static member Combine : ^u * ^u -> ^u )> l r =
   (^u : (static member Combine : ^u * ^u -> ^u) (l, r))
-
 let inline apply< ^s, ^u when ^u : (static member Apply : ^s * ^u -> ^s )> s u =
   (^u : (static member Apply : ^s * ^u -> ^s) (s, u))
 
