@@ -3,9 +3,7 @@ open Fable.Core
 open Fable.Import.Most
 open System
 
-[<Erase>] type S<'a> =
-            private S of Stream<'a>
-
+[<Erase>] type S<'a> = private S of Stream<'a>
 [<Erase>] type Time = private Time of float
 
 [<AutoOpen>]
