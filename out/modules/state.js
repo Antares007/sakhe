@@ -111,13 +111,13 @@ class State {
       type: "Sakhe.State.State",
       interfaces: ["FSharpUnion"],
       cases: [["M", (0, _Util.makeGeneric)(_update.UpdateMonad, {
-        state: (0, _Util.makeGeneric)(StateState, {
+        s: (0, _Util.makeGeneric)(StateState, {
           T: (0, _Util.GenericParam)("s")
         }),
-        update: (0, _Util.makeGeneric)(StateUpdate, {
+        u: (0, _Util.makeGeneric)(StateUpdate, {
           T: (0, _Util.GenericParam)("s")
         }),
-        value: (0, _Util.GenericParam)("a")
+        a: (0, _Util.GenericParam)("a")
       })]]
     };
   }

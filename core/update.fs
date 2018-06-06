@@ -2,19 +2,19 @@ module Sakhe.Update
 
 /// Represents an update monad - given a `'state`, produce
 /// `'value` and an `'update` that can be applied to the `'state`
-type UpdateMonad<'state, 'update, 'value> =  UM of ('state -> 'update * 'value)
+type UpdateMonad<'s, 'u, 'a> =  UM of ('s -> 'u * 'a)
 
-let inline unit< ^update when ^update : (static member Unit : ^update)> () : ^update =
-  (^update : (static member Unit : ^update) ())
+let inline unit< ^u when ^u : (static member Unit : ^u)> () : ^u =
+  (^u : (static member Unit : ^u) ())
 
-let inline combine< ^update when ^update: (static member Combine : ^update * ^update -> ^update )> l r : ^update =
-  (^update : (static member Combine : ^update * ^update -> ^update) (l, r))
+let inline combine< ^u when ^u: (static member Combine : ^u * ^u -> ^u )> l r =
+  (^u : (static member Combine : ^u * ^u -> ^u) (l, r))
 
-let inline apply< ^state, ^update when ^update : (static member Apply : ^state * ^update -> ^state )> s u : ^state =
-  (^update : (static member Apply : ^state * ^update -> ^state) (s, u))
+let inline apply< ^s, ^u when ^u : (static member Apply : ^s * ^u -> ^s )> s u =
+  (^u : (static member Apply : ^s * ^u -> ^s) (s, u))
 
-let inline ret (a:'a): UpdateMonad<'s, 'u, 'a> =
-    UM (fun (_:'s) -> (unit(), a))
+let inline ret (a): UpdateMonad<'s,'u,'a> =
+    UM (fun (_) -> (unit(), a))
 
 let inline chain f (UM m1): UpdateMonad<'s,'u,'b> =
     UM <| fun s ->
