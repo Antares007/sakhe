@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.state = exports.StateBuilder = exports.State = exports.StateUpdate = exports.StateState = undefined;
-exports.valueOf = valueOf;
-exports.Of = Of;
+exports.unlift = unlift;
+exports.lift = lift;
 exports.set = set;
 exports.get = get;
 exports.setRun = setRun;
@@ -127,11 +127,11 @@ class State {
 exports.State = State;
 (0, _Symbol2.setType)("Sakhe.State.State", State);
 
-function valueOf(_arg1) {
+function unlift(_arg1) {
   return _arg1.data;
 }
 
-function Of(a) {
+function lift(a) {
   return new State(0, a);
 }
 

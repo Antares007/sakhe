@@ -15,6 +15,13 @@ module State =
         yield Pith <| fun o ->
             o (stream {
                 yield u "A"
+                yield  state {
+                    let! state = get
+                    match state with
+                    | [] -> do! set ([1])
+                    | h::_ -> do! set ((h + 1) :: state)
+                    return "l" + sprintf "%A" state
+                }
             })
             o (stream {
                 yield u "B"
