@@ -1,4 +1,5 @@
 module Sakhe.Show
+open Fable
 module State =
     open S
     open Update
@@ -10,6 +11,8 @@ module State =
         | h::_ -> do! set ((h + 1) :: state)
         return l + sprintf "%A" state
     }
+    type M = list
+
     ///[{"tag":0,"data":[4,3,2,1]},"I[3; 2; 1]/O[2; 1]/B[1]/A[]"]
     tree (fun a b -> a + "/" + b) (stream {yield u "I"}) <| S.stream {
         yield Pith <| fun o ->
