@@ -29,6 +29,11 @@ module Pith =
         pith (fun a -> list <- a :: list)
         deltaC list
 
+    type PithBuilder() =
+        member inline __.Return(a) = return' a
+        member inline __.Bind(m, f) = bind f m
+    let p =  PithBuilder()
+
     let see =
         return' <| fun o ->
             o 0
@@ -44,4 +49,20 @@ module Pith =
         )
         |> tree (List.fold (+) "")
 
+    let p0 = p { return fun o ->
+        o 0
+        o 1
+        o 2
+    }
+
+    let p1 = p {
+        let! a = p0
+        let str = string (a + 1)
+        return fun o ->
+            o <| "A" + str
+            o <| "B" + str
+            o <| "O" + str
+    }
+
     printfn "rez: %A" see
+    p1 |> tree (List.fold (+) "") |> printfn "rez: %A"
