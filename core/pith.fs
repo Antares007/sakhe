@@ -13,16 +13,16 @@ module Pith =
 
     let bind f (Pith pa) =
         Pith <| fun ob ->
-            pa <| fun oa ->
-                let (Pith pb) = f oa
+            pa <| fun a ->
+                let (Pith pb) = f a
                 pb ob
 
     let fish f g a =
         Pith <| fun oc ->
-            let (Pith pithB) = f a
-            pithB <| fun b ->
-                let (Pith pithC) = g b
-                pithC oc
+            let (Pith bp) = f a
+            bp <| fun b ->
+                let (Pith pc) = g b
+                pc oc
 
     let tree deltaC (Pith pith) =
         let mutable list = []

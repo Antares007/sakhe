@@ -36,8 +36,8 @@ const Pith = exports.Pith = function (__exports) {
 
   const bind = __exports.bind = function (f, _arg1) {
     return function (ob) {
-      _arg1(function (oa) {
-        const patternInput = f(oa);
+      _arg1(function (a) {
+        const patternInput = f(a);
         patternInput(ob);
       });
     };
