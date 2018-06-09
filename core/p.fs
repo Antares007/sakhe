@@ -4,17 +4,17 @@ open Fable.Core
 [<Erase>] type P<'a> = private P of ('a -> unit)
 
 module P =
-    open System.Collections.Generic
+    let memoize fn =
+        let cache = System.Collections.Generic.Dictionary<_,_>()
+        fun a ->
+            match cache.TryGetValue a with
+            | true, b -> b
+            | false, _ ->
+                let b = fn (a)
+                cache.Add(a, b)
+                b
 
-    let once patch =
-        let cache = new Dictionary<_, _>()
-        P <| fun a ->
-            let succ, _ = cache.TryGetValue(a)
-            if succ then
-                ()
-            else
-                cache.Add(a, ())
-                patch a
+    let once patch = P <| memoize patch
 
     let empty<'a when 'a :equality> = once ignore<'a>
 
