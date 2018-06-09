@@ -13,13 +13,13 @@ var _Symbol2 = require("./fable-core/Symbol");
 
 var _Symbol3 = _interopRequireDefault(_Symbol2);
 
+var _String = require("./fable-core/String");
+
 var _Seq = require("./fable-core/Seq");
 
 var _CurriedLambda = require("./fable-core/CurriedLambda");
 
 var _CurriedLambda2 = _interopRequireDefault(_CurriedLambda);
-
-var _String = require("./fable-core/String");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -76,7 +76,7 @@ const Pith = exports.Pith = function (__exports) {
   };
   (0, _Symbol2.setType)("Sakhe.Pith.PithBuilder", PithBuilder);
   const p = __exports.p = new PithBuilder();
-  const see = __exports.see = tree((() => {
+  (0, _String.toConsole)((0, _String.printf)("rez: %A"))(tree((() => {
     const folder = function (x, y) {
       return x + y;
     };
@@ -96,37 +96,29 @@ const Pith = exports.Pith = function (__exports) {
     o_1(0);
     o_1(1);
     o_1(2);
-  }))));
+  })))));
 
   const p0 = __exports.p0 = function (builder_) {
-    return return_(function (o) {
-      o(0);
-      o(1);
-      o(2);
+    return return_(function (o_2) {
+      o_2(0);
+      o_2(1);
+      o_2(2);
     });
   }(p);
 
-  const p1 = __exports.p1 = function (builder_) {
+  const patternInput_58 = function (builder_) {
     return bind(function (_arg1) {
       const str = (_arg1 + 1).toString();
 
-      return return_(function (o) {
-        o("A" + str);
-        o("B" + str);
-        o("O" + str);
+      return return_(function (o_2) {
+        o_2("A" + str);
+        o_2("B" + str);
+        o_2("O" + str);
       });
     }, p0);
   }(p);
 
-  (0, _String.toConsole)((0, _String.printf)("rez: %A"))(see);
-  (0, _String.toConsole)((0, _String.printf)("rez: %A"))(tree((() => {
-    const folder = function (x, y) {
-      return x + y;
-    };
-
-    return function (list) {
-      return (0, _Seq.fold)(folder, "", list);
-    };
-  })(), p1));
+  const p1 = __exports.p1 = (0, _CurriedLambda2.default)(patternInput_58);
+  p1((0, _String.toConsole)((0, _String.printf)("%A")));
   return __exports;
 }({});

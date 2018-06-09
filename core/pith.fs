@@ -34,20 +34,20 @@ module Pith =
         member inline __.Bind(m, f) = bind f m
     let p =  PithBuilder()
 
-    let see =
-        return' <| fun o ->
-            o 0
-            o 1
-            o 2
-        |> map ((+) 1)
-        |> (
-            bind <| fun a ->
-                return' <| fun o ->
-                    o <| "A" + string a
-                    o <| "B" + string a
-                    o <| "O" + string a
-        )
-        |> tree (List.fold (+) "")
+    return' <| fun o ->
+        o 0
+        o 1
+        o 2
+    |> map ((+) 1)
+    |> (
+        bind <| fun a ->
+            return' <| fun o ->
+                o <| "A" + string a
+                o <| "B" + string a
+                o <| "O" + string a
+    )
+    |> tree (List.fold (+) "")
+    |> printfn "rez: %A"
 
     let p0 = p { return fun o ->
         o 0
@@ -55,7 +55,7 @@ module Pith =
         o 2
     }
 
-    let p1 = p {
+    let (Pith p1) = p {
         let! a = p0
         let str = string (a + 1)
         return fun o ->
@@ -64,5 +64,4 @@ module Pith =
             o <| "O" + str
     }
 
-    printfn "rez: %A" see
-    p1 |> tree (List.fold (+) "") |> printfn "rez: %A"
+    p1 <| printfn "%A"
