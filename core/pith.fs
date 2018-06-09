@@ -17,24 +17,24 @@ module Pith =
                 let (Pith pb) = f a
                 pb ob
 
-    let fish f g a =
-        Pith <| fun oc ->
-            let (Pith bp) = f a
-            bp <| fun b ->
-                let (Pith pc) = g b
-                pc oc
+    let fish f g a = bind g (f a)
 
-    let tree deltaC (Pith pith) =
+    let toList (Pith pith) =
         let mutable list = []
-        pith (fun a -> list <- a :: list)
-        deltaC list
+        pith <| fun a -> list <- a :: list
+        list
+
+    let tree deltaC pith =
+        pith |> toList |> deltaC
 
     type PithBuilder() =
-        member inline __.Return(a) = return' a
-        member inline __.Bind(m, f) = bind f m
+        member __.Return(a) = return' a
+        member __.ReturnFrom(a): Pith<'a> = a
+        member __.Bind(m, f) = bind f m
     let p =  PithBuilder()
 
-    return' <| fun o ->
+(*
+     return' <| fun o ->
         o 0
         o 1
         o 2
@@ -65,3 +65,4 @@ module Pith =
     }
 
     p1 <| printfn "%A"
+*)
