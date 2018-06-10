@@ -12,6 +12,11 @@ let inline apply< ^s, ^u when ^u : (static member Apply : ^s * ^u -> ^s )> s u =
 let inline return' (a): UpdateMonad<'s,'u,'a> =
     UM (fun (_) -> (unit(), a))
 
+let inline map f (UM m1) =
+    UM <| fun s ->
+        let (u1, a) = m1 s
+        (u1, f a)
+
 let inline bind f (UM m1): UpdateMonad<'s,'u,'b> =
     UM <| fun s ->
         let (u1, a) = m1 s
