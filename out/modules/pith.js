@@ -26,19 +26,6 @@ const Pith = exports.Pith = function (__exports) {
     };
   };
 
-  const bind = __exports.bind = function (f, _arg1) {
-    return function (ob) {
-      _arg1(function (a) {
-        const patternInput = f(a);
-        patternInput(ob);
-      });
-    };
-  };
-
-  const fish = __exports.fish = function (f, g, a) {
-    return bind(g, f(a));
-  };
-
   const toList = __exports.toList = function (_arg1) {
     let list = new _List2.default();
 
@@ -69,10 +56,6 @@ const Pith = exports.Pith = function (__exports) {
 
     ReturnFrom(a) {
       return a;
-    }
-
-    Bind(m, f) {
-      return bind(f, m);
     }
 
   };

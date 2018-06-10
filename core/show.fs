@@ -1,5 +1,31 @@
 module Sakhe.Show
-open Fable
+
+module Play =
+    open Fable.Import.Browser
+    console.log "hello"
+    module U = State
+
+    type ElementState = int
+    type TextState = int
+
+    type DomState<'a> =
+        | Element of tag: string * S<U.State<ElementState, 'a>>
+        | Text of S<U.State<TextState, 'a>>
+        | Comment of S<U.State<string, 'a>>
+
+    type DomUpdate =
+        | SetNop
+
+        static member Unit: DomUpdate = SetNop
+        static member Combine(a, b) = failwith "ni"
+        static member Apply(s, p) = failwith "ni"
+
+    type Tree<'a> =
+        | Node of 'a
+        | Leaf of 'a
+    let see x = Pith.map << Update.map <| x
+
+(*
 module State =
     open S
     open Update
@@ -38,8 +64,7 @@ module State =
         let (State s) = apply (State s) u
         s) []
     |> S.tap (printfn "s: %A") |> S.drain |> ignore
-
-(* module Stream =
+module Stream =
     open Fable.Import.Browser
     open Sakhe.S
     let s = stream {
@@ -129,4 +154,4 @@ module Disposable =
                 if not disposed then
                     disposed <- true
                     f()}
- *)
+*)
