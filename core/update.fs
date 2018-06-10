@@ -9,10 +9,10 @@ let inline combine< ^u when ^u: (static member Combine : ^u * ^u -> ^u )> l r =
 let inline apply< ^s, ^u when ^u : (static member Apply : ^s * ^u -> ^s )> s u =
   (^u : (static member Apply : ^s * ^u -> ^s) (s, u))
 
-let inline ret (a): UpdateMonad<'s,'u,'a> =
+let inline return' (a): UpdateMonad<'s,'u,'a> =
     UM (fun (_) -> (unit(), a))
 
-let inline chain f (UM m1): UpdateMonad<'s,'u,'b> =
+let inline bind f (UM m1): UpdateMonad<'s,'u,'b> =
     UM <| fun s ->
         let (u1, a) = m1 s
         let (UM m2) = f a
@@ -23,13 +23,13 @@ let tree<'s, 'u, 'a, 'b> f (i: S<UpdateMonad<'s, 'u, 'a>>) (p: S<Pith<S<UpdateMo
     S.treeCombine f i p
 
 type UpdateBuilder() =
-    member inline __.Return(v: 'a) : UpdateMonad<'s, 'u, 'a> = ret v
+    member inline __.Return(v: 'a) : UpdateMonad<'s, 'u, 'a> = return' v
     member inline __.Bind(m: UpdateMonad<'s, 'u, 'a>, f: 'a -> UpdateMonad<'s, 'u, 'b>): UpdateMonad<'s, 'u, 'b> =
-        chain f m
+        bind f m
     member inline __.Delay(f: unit -> UpdateMonad<'s, 'u, 'a>): UpdateMonad<'s, 'u, 'a> =
-        chain f (ret ())
+        bind f (return' ())
     member inline __.Combine(c1:UpdateMonad<'s, 'u, unit>, c2:UpdateMonad<'s, 'u, 'a>): UpdateMonad<'s, 'u, 'a> =
-        chain (fun () -> c2) c1
+        bind (fun () -> c2) c1
     // member inline __.Zero(): UpdateMonad<'s, 'u, 'b> =
     //     ret (unit())
     // member inline __.ReturnFrom(m: UpdateMonad<'s, 'u, 'a>): UpdateMonad<'s, 'u, 'a> = m

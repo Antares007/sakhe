@@ -311,8 +311,8 @@ const S = exports.S = function (__exports) {
       return (0, _Seq.fold)(folder, s, list);
     };
 
-    foldTree = function (arg10__1) {
-      return _pith.Pith.tree(deltaC, arg10__1);
+    foldTree = function (pith) {
+      return _pith.Pith.tree(deltaC, pith);
     };
 
     return switchLatest(map(foldTree, p));
@@ -326,8 +326,8 @@ const S = exports.S = function (__exports) {
     var deltaC;
     return switchLatest(map((deltaC = function (list) {
       return (0, _Seq.fold)(f, s, list);
-    }, function (arg10_) {
-      return _pith.Pith.tree(deltaC, arg10_);
+    }, function (pith) {
+      return _pith.Pith.tree(deltaC, pith);
     }), mpith));
   };
 
