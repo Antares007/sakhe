@@ -7,7 +7,7 @@ module Pith =
     let inline unit< ^a when ^a : (static member Unit : ^a)> () : ^a =
       (^a : (static member Unit : ^a) ())
     let inline combine< ^a when ^a: (static member Combine : ^a * ^a -> ^a )> l r =
-      (^a : (static member Combine : ^a * ^a -> ^a) (r, l))
+      (^a : (static member Combine : ^a * ^a -> ^a) (l, r))
 
     let return' p =
         Pith p
@@ -21,6 +21,15 @@ module Pith =
         list
 
     let inline run p = toList p |> List.fold combine (unit ())
+    let inline run2 (Pith pith) =
+        let mutable a = unit ()
+        pith <| fun a' -> a <- combine a a'
+        a
+
+    let inline run3 combine unit (Pith pith) =
+        let mutable a = unit
+        pith <| fun b -> a <- combine a b
+        a
 
     let inline bind f pa =
         Pith <| fun ob ->
@@ -66,5 +75,5 @@ module Pith =
             o << S  <| "S" + (string v)
     }
 
-    printfn "%A" <| run p1
+    printfn "%A" <| run2 p1
  *)
