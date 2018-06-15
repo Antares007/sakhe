@@ -1,16 +1,14 @@
 module Sakhe.Dom
+open Fable.Core
 
-type VTree =
-    | VElement of VElement
-    | VText of VText
-and VText = {
+type VText = {
     data: string
     node: Fable.Import.Browser.Text
     }
-and VElement = {
+type VElement = {
     tag: string
     data: obj
-    children: VTree []
+    children: U2<VElement, VText> []
     node: Fable.Import.Browser.Element
     }
 
@@ -42,11 +40,23 @@ module AText =
             | Noop -> s
             | Set s -> S s
 
-type Um<'s,'u,'a> = Update.M<'s,'u,'a>
-
 type ATree =
-    | Element of tag: string * key: string option * update: S<Um<AElement.S, AElement.U, unit>>
-    | Text of update: S<Um<AText.S, AText.U, unit>>
+    | Element of tag: string * key: string option * update: S<Update.M<AElement.S, AElement.U, unit>>
+    | Text of update: S<Update.M<AText.S, AText.U, unit>>
 
-let tree f s (p: S<Pith<S<ATree>>>) =
-    S.treeCombine f s p
+let private update = Update.update
+
+let tree f s (p: S<Pith<ATree>>): S<Update.M<AElement.S, AElement.U, unit>> =
+    let ring (Pith pith) =
+        Pith <| fun o ->
+            pith <| function
+                | Element (tag, key, su) ->
+                    su |> S.map (fun x -> update {
+                        let! y = x
+                        return 0
+                    }) |> o
+
+                | Text _ -> ()
+
+
+    S.treeCombine f s (S.map ring p)
