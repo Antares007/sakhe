@@ -3,27 +3,7 @@ module Sakhe.Show
 module Play =
     open Fable.Import.Browser
     console.log "hello"
-    module U = State
-
-    type ElementState = int
-    type TextState = int
-
-    type DomState<'a> =
-        | Element of tag: string * S<U.State<ElementState, 'a>>
-        | Text of S<U.State<TextState, 'a>>
-        | Comment of S<U.State<string, 'a>>
-
-    type DomUpdate =
-        | SetNop
-
-        static member Unit: DomUpdate = SetNop
-        static member Combine(a, b) = failwith "ni"
-        static member Apply(s, p) = failwith "ni"
-
-    type Tree<'a> =
-        | Node of 'a
-        | Leaf of 'a
-    let see x = Pith.map << Update.map <| x
+    Show.Old.Dom.run ()
 
 (*
 module State =

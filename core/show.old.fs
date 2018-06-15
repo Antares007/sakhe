@@ -41,8 +41,10 @@ module State =
             (R.apply)
             (Some Fable.Core.JsInterop.createEmpty<obj>)
         |> S.tap console.log
-    // S.drain (update rez)
-    // |> ignore
+
+    let run _ =
+        S.drain (update rez)
+        |> ignore
 
 module Dom =
     module H =
@@ -121,9 +123,10 @@ module Dom =
     let rez =
         PNode.tree (S.now P.empty) <| piths
 
-    (render (document.getElementById "root-node") rez)
-    |> S.drain
-    |> ignore
+    let run _ =
+        (render (document.getElementById "root-node") rez)
+        |> S.drain
+        |> ignore
 
 module Test2 =
     open State
@@ -143,9 +146,9 @@ module Test2 =
         o << g "hmmm" << tree << S.now << Pith <| fun o ->
             o << G.A << Number "aa" << S.now << R.set <| 2.
             o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
-
-    S.merge
-        (render (document.getElementById "root-node") (snd rez) |> S.map ignore)
-        (State.update (fst rez) |> S.map ignore)
-    // |> S.drain
-    |> ignore
+    let run _ =
+        S.merge
+            (render (document.getElementById "root-node") (snd rez) |> S.map ignore)
+            (State.update (fst rez) |> S.map ignore)
+        |> S.drain
+        |> ignore
