@@ -15,10 +15,10 @@ and VElement = {
     }
 
 module AElement =
-    type State = State of VElement
-    type Update =
+    type S = S of VElement
+    type U =
         | Noop
-        static member Unit: Update = Noop
+        static member Unit: U = Noop
         static member Combine(a, b) =
             match a, b with
             | Noop, u -> u
@@ -27,11 +27,11 @@ module AElement =
             | Noop -> s
 
 module AText =
-    type State = State of string
-    type Update =
+    type S = S of string
+    type U =
         | Set of string
         | Noop
-        static member Unit: Update = Noop
+        static member Unit: U = Noop
         static member Combine(a, b) =
             match a, b with
             | Noop, u -> u
@@ -40,11 +40,13 @@ module AText =
         static member Apply(s, p) =
             match p with
             | Noop -> s
-            | Set s -> State s
+            | Set s -> S s
+
+type Um<'s,'u,'a> = Update.M<'s,'u,'a>
 
 type ATree =
-    | Element of tag: string * key: string option * update: S<Update.M<AElement.State, AElement.Update, unit>>
-    | Text of update: S<Update.M<AText.State, AText.Update, unit>>
+    | Element of tag: string * key: string option * update: S<Um<AElement.S, AElement.U, unit>>
+    | Text of update: S<Um<AText.S, AText.U, unit>>
 
-let tree f s p =
+let tree f s (p: S<Pith<S<ATree>>>) =
     S.treeCombine f s p
