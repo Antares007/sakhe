@@ -43,5 +43,8 @@ module AText =
             | Set s -> State s
 
 type ATree =
-    | Element of tag: string * key: string option * update: S<Update.UpdateMonad<AElement.State, AElement.Update, unit>>
-    | Text of update: S<Update.UpdateMonad<AText.State, AText.Update, unit>>
+    | Element of tag: string * key: string option * update: S<Update.M<AElement.State, AElement.Update, unit>>
+    | Text of update: S<Update.M<AText.State, AText.Update, unit>>
+
+let tree f s p =
+    S.treeCombine f s p

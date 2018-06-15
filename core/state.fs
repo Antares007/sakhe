@@ -15,7 +15,7 @@ type StateUpdate<'T> =
         match p with
         | SetNop -> s
         | Set s -> State s
-type State<'s, 'a> = M of UpdateMonad<StateState<'s>,StateUpdate<'s>,'a>
+type State<'s, 'a> = M of M<StateState<'s>,StateUpdate<'s>,'a>
 
 let unlift (M a) = a
 let lift a = M a
