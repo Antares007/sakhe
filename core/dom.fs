@@ -25,7 +25,7 @@ module AElement =
             | Noop -> s
 
 module AText =
-    type S = S of string
+    type S = S of VText
     type U =
         | Set of string
         | Noop
@@ -35,10 +35,17 @@ module AText =
             | Noop, u -> u
             | u, Noop -> u
             | Set _, Set b -> Set b
-        static member Apply(s, p) =
+        static member Apply(s: S, p: U) =
             match p with
             | Noop -> s
-            | Set s -> S s
+            | Set text ->
+                let (S vtext) = s
+                vtext.node.textContent <- text
+                S <| { vtext with data = text}
+
+    let setRun vtext (Update.UM f): U * unit = f (S vtext)
+
+
 
 type ATree =
     | Element of tag: string * key: string option * update: S<Update.M<AElement.S, AElement.U, unit>>
@@ -62,6 +69,7 @@ let tree f s (p: S<Pith<ATree>>): S<Update.M<AElement.S, AElement.U, unit>> =
         | Text su ->
             su |> S.map (fun x -> update {
                 // let! y = x
+                let rez = AText.setRun {data = ""; node = Fable.Import.Browser.document.createTextNode ""}
                 return "0"
             })
     S.treeCombine f s (ring p)
