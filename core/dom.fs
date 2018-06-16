@@ -23,6 +23,7 @@ module AElement =
         static member Apply(s, p) =
             match p with
             | Noop -> s
+    let get = Update.UM (fun (S s) -> (Noop, s))
 
 module AText =
     type S = S of VText
@@ -63,6 +64,10 @@ let tree f s (p: S<Pith<ATree>>): S<Update.M<AElement.S, AElement.U, unit>> =
     let ring = S.map << Pith.map << addIndex <| fun index -> function
         | Element (tag, key, su) ->
             su |> S.map (fun x -> update {
+                let! p = AElement.get
+                let z = match p.children.[index] with
+                        | U2.Case1 (x) -> 1
+                        | U2.Case2 (x) -> 2
                 let! y = x
                 return "0"
             })
