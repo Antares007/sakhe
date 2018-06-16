@@ -50,16 +50,16 @@ let private addIndex f =
     fun a ->
         let index = i
         i <- i + 1
-        f (a, index)
+        f index a
 
 let tree f s (p: S<Pith<ATree>>): S<Update.M<AElement.S, AElement.U, unit>> =
-    let ring = S.map << Pith.map << addIndex <| function
-        | Element (tag, key, su), i ->
+    let ring = S.map << Pith.map << addIndex <| fun index -> function
+        | Element (tag, key, su) ->
             su |> S.map (fun x -> update {
                 let! y = x
                 return "0"
             })
-        | Text su, i ->
+        | Text su ->
             su |> S.map (fun x -> update {
                 // let! y = x
                 return "0"
