@@ -7,6 +7,7 @@ module Play =
     console.log (Some "1" = Some "1")
     console.log (Some "1" = Some "2")
     console.log (Some "1" = None)
+    console.log ((None = None))
 
 (*
 module State =

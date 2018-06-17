@@ -46,7 +46,24 @@ module AText =
 
     let setRun vtext (Update.UM f): U * unit = f (S vtext)
 
+module State =
+    type M<'s, 'a> = private M of ('s -> ('s * 'a))
+    let return' a = M (fun _ -> ((), a))
+    let get = M (fun s -> (s, s))
+    let set s = M (fun _ -> (s, ()))
+    let setRun s (M m) = m s
 
+    let bind f (M m) =
+        M <| fun s ->
+            let (s', a) = m s
+            let (M m') = f a
+            m' s'
+
+    type StateBuilder() =
+        member inline __.Return(a) = return' a
+        member inline __.Bind(m, f) = bind f m
+
+let state =  State.StateBuilder()
 
 type ATree =
     | Element of tag: string * key: string option * update: S<Update.M<AElement.S, AElement.U, unit>>
@@ -66,8 +83,8 @@ let tree f s (p: S<Pith<ATree>>): S<Update.M<AElement.S, AElement.U, unit>> =
             su |> S.map (fun x -> update {
                 let! p = AElement.get
                 let z = match p.children.[index] with
-                        | U2.Case1 (x) -> 1
-                        | U2.Case2 (x) -> 2
+                    | U2.Case1 (x) -> 1
+                    | U2.Case2 (x) -> 2
                 let! y = x
                 return "0"
             })
