@@ -12,64 +12,11 @@ type VElement = {
     node: Fable.Import.Browser.Element
     }
 
-module AElement =
-    type S = S of VElement
-    type U =
-        | Noop
-        static member Unit: U = Noop
-        static member Combine(a, b) =
-            match a, b with
-            | Noop, u -> u
-        static member Apply(s, p) =
-            match p with
-            | Noop -> s
-    let get = Update.UM (fun (S s) -> (Noop, s))
-
-module AText =
-    type S = S of VText
-    type U =
-        | Set of string
-        | Noop
-        static member Unit: U = Noop
-        static member Combine(a, b) =
-            match a, b with
-            | Noop, u -> u
-            | u, Noop -> u
-            | Set _, Set b -> Set b
-        static member Apply(s: S, p: U) =
-            match p with
-            | Noop -> s
-            | Set text ->
-                let (S vtext) = s
-                vtext.node.textContent <- text
-                S <| { vtext with data = text}
-
-    let setRun vtext (Update.UM f): U * unit = f (S vtext)
-
-module State =
-    type M<'s, 'a> = private M of ('s -> ('s * 'a))
-    let return' a = M (fun _ -> ((), a))
-    let get = M (fun s -> (s, s))
-    let set s = M (fun _ -> (s, ()))
-    let setRun s (M m) = m s
-
-    let bind f (M m) =
-        M <| fun s ->
-            let (s', a) = m s
-            let (M m') = f a
-            m' s'
-
-    type StateBuilder() =
-        member inline __.Return(a) = return' a
-        member inline __.Bind(m, f) = bind f m
-
-let state =  State.StateBuilder()
-
 type ATree =
-    | Element of tag: string * key: string option * update: S<Update.M<AElement.S, AElement.U, unit>>
-    | Text of update: S<Update.M<AText.S, AText.U, unit>>
+    | Element of tag: string * key: string option * update: S<State.M<VElement, unit>>
+    | Text of update: S<State.M<VText, unit>>
 
-let private update = Update.update
+let private state = State.state
 let private addIndex f =
     let mutable i = 0
     fun a ->
@@ -77,21 +24,27 @@ let private addIndex f =
         i <- i + 1
         f index a
 
-let tree f s (p: S<Pith<ATree>>): S<Update.M<AElement.S, AElement.U, unit>> =
+let tree s (p: S<Pith<ATree>>): S<State.M<VElement, unit>> =
     let ring = S.map << Pith.map << addIndex <| fun index -> function
         | Element (tag, key, su) ->
-            su |> S.map (fun x -> update {
-                let! p = AElement.get
-                let z = match p.children.[index] with
-                    | U2.Case1 (x) -> 1
-                    | U2.Case2 (x) -> 2
-                let! y = x
-                return "0"
+            su |> S.map (fun x -> state {
+                let! p = State.get
+                do! (State.set p)
+                // let z = match p.children.[index] with
+                //     | U2.Case1 (x) -> 1
+                //     | U2.Case2 (x) -> 2
+                // let! y = x
+                return ()
             })
         | Text su ->
-            su |> S.map (fun x -> update {
+            su |> S.map (fun x -> state {
+                let! p = State.get
                 // let! y = x
-                let rez = AText.setRun {data = ""; node = Fable.Import.Browser.document.createTextNode ""}
-                return "0"
+                // let rez = AText.setRun {data = ""; node = Fable.Import.Browser.document.createTextNode ""}
+                return ()
             })
-    S.treeCombine f s (ring p)
+    S.treeCombine (fun s1 s2 -> state {
+        let! a = s1
+        let! b = s2
+        return ()
+    }) s (ring p)
