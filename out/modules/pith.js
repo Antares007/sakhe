@@ -26,6 +26,14 @@ const Pith = exports.Pith = function (__exports) {
     };
   };
 
+  const append = __exports.append = function (_arg2, _arg1) {
+    return function (o) {
+      _arg2(o);
+
+      _arg1(o);
+    };
+  };
+
   const toList = __exports.toList = function (_arg1) {
     let list = new _List2.default();
 

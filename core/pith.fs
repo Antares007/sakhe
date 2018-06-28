@@ -3,12 +3,16 @@ open Fable.Core
 
 [<Erase>] type Pith<'a> = Pith of (('a -> unit) -> unit)
 
+[<RequireQualifiedAccess>]
 module Pith =
     let return' p =
         Pith p
 
     let map f (Pith p) =
         Pith <| fun o -> p (o << f)
+
+    let append (Pith f) (Pith s) =
+        Pith <| fun o -> f o; s o
 
     let toList (Pith pith) =
         let mutable list = []
