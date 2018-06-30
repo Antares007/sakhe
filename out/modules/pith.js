@@ -32,6 +32,15 @@ const Pith = exports.Pith = function (__exports) {
     };
   };
 
+  const mapi = __exports.mapi = function (f, p) {
+    let c = 0;
+    return map(function (a) {
+      const index = c | 0;
+      c = c + 1 | 0;
+      return f(index, a);
+    }, p);
+  };
+
   const append = __exports.append = function (_arg2, _arg1) {
     return function (o) {
       _arg2(o);

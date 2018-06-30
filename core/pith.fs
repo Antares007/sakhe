@@ -14,6 +14,13 @@ module Pith =
     let map f (Pith p) =
         Pith <| fun o -> p (o << f)
 
+    let mapi f p =
+        let mutable c = 0
+        map (fun a ->
+            let index = c
+            c <- c + 1
+            f index a) p
+
     let append (Pith f) (Pith s) =
         Pith <| fun o -> f o; s o
 
