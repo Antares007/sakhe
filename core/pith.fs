@@ -8,11 +8,24 @@ module Pith =
     let return' p =
         Pith p
 
+    let empty =
+        Pith ignore
+
     let map f (Pith p) =
         Pith <| fun o -> p (o << f)
 
     let append (Pith f) (Pith s) =
         Pith <| fun o -> f o; s o
+
+    let concat (Pith p) =
+        let mutable pith = empty
+        p (fun p -> pith <- append pith p)
+        pith
+
+    let fold f s (Pith pith) =
+        let mutable state = s
+        pith <| fun a -> state <- f state a
+        state
 
     let toList (Pith pith) =
         let mutable list = []
