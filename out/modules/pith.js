@@ -20,6 +20,12 @@ const Pith = exports.Pith = function (__exports) {
     return p;
   };
 
+  const empty = __exports.empty = function () {
+    return function (value) {
+      value, void 0;
+    };
+  };
+
   const map = __exports.map = function (f, _arg1) {
     return function (o) {
       _arg1($var1 => o(f($var1)));
@@ -32,6 +38,26 @@ const Pith = exports.Pith = function (__exports) {
 
       _arg1(o);
     };
+  };
+
+  const concat = __exports.concat = function (_arg1) {
+    let pith = empty();
+
+    _arg1(function (p) {
+      pith = append(pith, p);
+    });
+
+    return pith;
+  };
+
+  const fold = __exports.fold = function (f, s, _arg1) {
+    let state = s;
+
+    _arg1(function (a) {
+      state = f(state, a);
+    });
+
+    return state;
   };
 
   const toList = __exports.toList = function (_arg1) {
