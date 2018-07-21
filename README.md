@@ -13,6 +13,6 @@ This project is in development process. If you want to follow:
 4.	Open any example from [examples](https://github.com/Antares007/sakhe/tree/master/examples) folder
 5.	Press f5
 
-[Counter app](https://jsfiddle.net/Antares007/6p6x9v87/10/)
+[Counter app](https://jsfiddle.net/6p6x9v87/13/)
 
 [Counter app with state](https://jsfiddle.net/Antares007/jqjjyyda/10/)
