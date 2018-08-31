@@ -59,6 +59,10 @@ module S =
                 d ()
             disposable.disposeWith (dispose, ())
 
+    let newStream f =S (core.newStream (fun sink scheduler ->
+        let d = f sink scheduler
+        disposable.disposeWith (d, ())))
+
     type StreamBuilder() =
         member __.Bind(s: S<'a>, f: 'a -> S<'b>): S<'b> = chain f s
         member __.Delay(f: unit -> S<'a>): S<'a> = defer f

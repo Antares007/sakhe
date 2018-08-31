@@ -107,7 +107,8 @@ type [<AllowNullLiteral>] IExports =
 
     abstract ``withLocalTime``: origin: Time * s: Stream<'A> -> Stream<'A>
 
-    abstract ``zip``: fn: ('A -> 'B -> 'R) * a: Stream<'A> * b: Stream<'B> -> Stream<'R>
+    // abstract ``zip``: fn: ('A -> 'B -> 'R) * a: Stream<'A> * b: Stream<'B> -> Stream<'R>
+    abstract ``zip``: ('A -> 'B -> 'R) -> (Stream<'A>) -> (Stream<'B>) -> Stream<'R>
 
     [<Emit("$0.combineArray((...array) => $1(array), $2)")>]
     abstract ``zipArray``: fn: ('A [] -> 'B) * streams: Stream<'A> [] -> Stream<'B>
