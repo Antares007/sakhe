@@ -17,6 +17,7 @@
     <Compile Include="r.fs" />
     <Compile Include="pnode.fs" />
     <Compile Include="dom.fs" />
+    <Compile Include="new.fs" />
     <Compile Include="show.old.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
