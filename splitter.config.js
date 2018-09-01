@@ -1,5 +1,5 @@
 const path = require("path");
-const fableUtils = require("fable-utils");
+const fableUtils = require("C:/code/Fable/src/js/fable-utils");
 
 function resolve(relativePath) {
     return path.join(__dirname, relativePath);

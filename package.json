@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "fable-splitter --config splitter.config.js",
+    "build": "node /code/Fable/src/js/fable-splitter/dist/cli.js --config splitter.config.js",
     "postinstall": "dotnet restore",
     "daemon": "cd tools && dotnet fable start",
     "start": "cd tools && dotnet fable npm-build",
