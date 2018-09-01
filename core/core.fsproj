@@ -6,10 +6,11 @@
   <ItemGroup>
     <Compile Include="most/types.fs" />
     <Compile Include="most/core.fs" />
+    <Compile Include="most/s.fs" />
     <Compile Include="most/scheduler.fs" />
     <Compile Include="most/disposable.fs" />
     <Compile Include="pith.fs" />
-    <Compile Include="s.fs" />
+    <Compile Include="so.fs" />
     <Compile Include="update.fs" />
     <Compile Include="state.fs" />
     <Compile Include="p.fs" />

@@ -1,6 +1,7 @@
 module Sakhe.Show
 open System.Xml.Xsl
 open System
+open Fable.Core
 
 // [<System.Runtime.CompilerServices.Extension>]
 // type IEnumerableExtensions() =
@@ -13,29 +14,20 @@ open System
 //             member __.OnNext e = sink.``event`` (scheduler.currentTime(), e)
 //         }
 //         fun () -> d.Dispose())
-
 // let e = Event<int>()
-
 // let pe = e.Publish.ToStream()
 
+
 module Play =
-    open Fable.Import.Browser
-    console.log "hello"
-    console.log ("end!")
-
-    console.log ("aaaaaaa")
-    open Fable.Core
-
     open Fable.Import.Most
-    let private core = JsInterop.importAll<Core.IExports> "@most/core"
-    let private dispose = JsInterop.importAll<Disposable.IExports> "@most/disposable"
-    let as_ = core.now "a"
-    let is_ = core.now 3
 
-    core.zip (fun a b -> (a, b)) as_ is_ |> ignore
-    // core.newStream (fun sink scheduler ->
+    let s2 = S.newStream (fun sink scheduler ->
+        sink.event (scheduler.currentTime(), 1)
+        JsDisposable.create (fun () -> ()))
 
-    //     dispose.disposeWith (fun a -> ()) 1)
+    let ``as_`` = S.now "a" |> S.slice 0 1
+    let ``as2_`` = S.now "a" |> S.map (fun a -> a + "") |> S.skip 1 |> S.take 1
+
 
     // let rs<'a> eventName (target: EventTarget) useCapture = S.newStream (fun sink scheduler ->
     //     let listner: ('a -> unit) = fun e -> sink.event (scheduler.currentTime(), e)
@@ -44,17 +36,3 @@ module Play =
     //     dispose)
 
     // let z: S<PopStateEvent> = rs "popstate" window false
-
-    // let z2 a b c = a + b + c
-    // console.log (z2 1 2 3)
-(*
-module Disposable =
-    open System
-    let create f =
-        let mutable disposed = false
-        {new IDisposable with
-            member __.Dispose () =
-                if not disposed then
-                    disposed <- true
-                    f()}
-*)

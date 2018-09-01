@@ -16,24 +16,19 @@ type [<AllowNullLiteral>] ``MulticastSource``<'A> =
     abstract ``source``: Stream<'A> with get, set
     abstract ``sinks``: Array<Sink<'A>> with get, set
     abstract ``disposable``: Disposable with get, set
-    abstract ``run``: sink: Sink<'A> * scheduler: Scheduler -> Disposable
-    abstract ``event``: time: Time * value: 'A -> unit
-    abstract ``error``: time: Time * error: Error -> unit
-    abstract ``end``: time: Time -> unit
-    abstract ``add``: sink: Sink<'A> -> float
-    abstract ``remove``: sink: Sink<'A> -> float
-    abstract ``dispose``: unit -> unit
+    abstract ``add``: Sink<'A> -> float
+    abstract ``remove``: Sink<'A> -> float
 
 type [<AllowNullLiteral>] ``MulticastSourceStatic`` =
     [<Emit "new $0($1...)">] abstract Create: source: Stream<'A> -> MulticastSource<'A>
 
-type [<Pojo>] SeedValue<'S, 'V> = { seed: 'S; value: 'V }
+type SeedValue<'S, 'V> = { seed: 'S; value: 'V }
 
 type [<AllowNullLiteral>] IExports =
-    abstract ``runEffects``: stream: Stream<'T> * Scheduler -> Promise<unit>
-    abstract ``run``: sink: Sink<'A> * Scheduler * Stream<'A> -> Disposable
+    abstract ``runEffects``: Stream<'T> * Scheduler -> Promise<unit>
+    abstract ``run``: Sink<'A> * Scheduler * Stream<'A> -> Disposable
 
-    abstract ``propagateTask``: run: (float -> 'A -> Sink<'A> -> unit) * 'A * Sink<'A> -> PropagateTask<'A>
+    abstract ``propagateTask``: run: (Time -> 'A -> Sink<'A> -> unit) * 'A * Sink<'A> -> PropagateTask<'A>
     abstract ``propagateEventTask``: value: 'T * Sink<'T> -> PropagateTask<'T>
     abstract ``propagateEndTask``: sink: Sink<'T> -> PropagateTask<unit>
     abstract ``propagateErrorTask``: error: Error * Sink<'T> -> PropagateTask<unit>
@@ -70,7 +65,8 @@ type [<AllowNullLiteral>] IExports =
 
     abstract ``mergeArray``: streams: Stream<'A> [] -> Stream<'A>
 
-    abstract ``mergeConcurrently``: concurrency: float * Stream<Stream<'A>> -> Stream<'A>
+    abstract ``mergeConcurrently``: float * Stream<Stream<'A>> -> Stream<'A>
+    abstract ``mergeMapConcurrently``: float * ('A -> Stream<'B>) * Stream<'A> -> Stream<'B>
 
     abstract ``multicast``: s: Stream<'A> -> Stream<'A>
 
@@ -107,8 +103,7 @@ type [<AllowNullLiteral>] IExports =
 
     abstract ``withLocalTime``: origin: Time * s: Stream<'A> -> Stream<'A>
 
-    // abstract ``zip``: fn: ('A -> 'B -> 'R) * a: Stream<'A> * b: Stream<'B> -> Stream<'R>
-    abstract ``zip``: ('A -> 'B -> 'R) -> (Stream<'A>) -> (Stream<'B>) -> Stream<'R>
+    abstract ``zip``: fn: ('A -> 'B -> 'R) * a: Stream<'A> * b: Stream<'B> -> Stream<'R>
 
     [<Emit("$0.combineArray((...array) => $1(array), $2)")>]
     abstract ``zipArray``: fn: ('A [] -> 'B) * streams: Stream<'A> [] -> Stream<'B>

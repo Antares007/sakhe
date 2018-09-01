@@ -50,8 +50,8 @@ and VElement = {
     }
 
 type ATree =
-    | Element of tag: string * key: string option * update: S<State.M<VElement, unit>>
-    | Text of update: S<State.M<VText, unit>>
+    | Element of tag: string * key: string option * update: So<State.M<VElement, unit>>
+    | Text of update: So<State.M<VText, unit>>
 
 let private state = State.state
 let rec private tryFind prove (i: int) (children: VTree []) =
@@ -82,15 +82,15 @@ let inline private matchChildren
             | None -> notFound ()
 
 
-let tree f s (p: S<Pith<ATree>>) =
-    let ring (Pith pith): Pith<S<State.M<VElement, unit>>> =
+let tree f s (p: So<Pith<ATree>>) =
+    let ring (Pith pith): Pith<So<State.M<VElement, unit>>> =
         Pith <| fun o ->
             let mutable i = 0
             pith <| function
                 | Element (tag, key, su) ->
                     let index = i
                     i <- i + 1
-                    o << S.map (fun x -> state {
+                    o << So.map (fun x -> state {
                         let! p = State.get
                         matchChildren
                             (
@@ -111,15 +111,15 @@ let tree f s (p: S<Pith<ATree>>) =
                 | Text su ->
                     let index = i
                     i <- i + 1
-                    o << S.map (fun x -> state {
+                    o << So.map (fun x -> state {
                         let! p = State.get
                         // let! y = x
                         // let rez = AText.setRun {data = ""; node = Fable.Import.Browser.document.createTextNode ""}
                         return ()
                     }) <| su
 
-    S.treeCombine (fun s1 s2 -> state {
+    So.treeCombine (fun s1 s2 -> state {
         let! a = s1
         let! b = s2
         return f a b
-    }) s (S.map ring p)
+    }) s (So.map ring p)

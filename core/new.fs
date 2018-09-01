@@ -7,9 +7,9 @@ type Attributes =
     | Height of string
 
 type T =
-    | Node  of kind: string * key: string option * ray: S<Patch>
-    | Leaf  of kind: string * ray: S<string>
-    | Attrs of attrs: S<Attributes list>
+    | Node  of kind: string * key: string option * ray: So<Patch>
+    | Leaf  of kind: string * ray: So<string>
+    | Attrs of attrs: So<Attributes list>
     | Ons   of string
 
 // Free monad-interpreter in F# (based on: http://programmers.stackexchange.com/a/242803/145941)

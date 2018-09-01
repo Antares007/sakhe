@@ -1,5 +1,28 @@
 module Fable.Import.Most.Scheduler
+open Fable.Core
 open Fable.Import.Most
+
+type Handle = obj option
+
+type [<AllowNullLiteral>] ``Clock`` =
+    abstract ``now``: unit -> Time
+
+type [<AllowNullLiteral>] ``Timer`` =
+    abstract ``now``: unit -> Time
+    abstract ``setTimer``: (unit -> obj option) * Delay -> Handle
+    abstract ``clearTimer``: Handle -> unit
+
+type [<AllowNullLiteral>] ``TaskRunner`` =
+    [<Emit "$0($1...)">] abstract Invoke: st: ScheduledTask -> obj option
+
+type [<AllowNullLiteral>] ``Timeline`` =
+    abstract ``add``: ScheduledTask -> unit
+    abstract ``remove``: ScheduledTask -> bool
+    [<System.Obsolete>]
+    abstract ``removeAll``: (ScheduledTask -> bool) -> unit
+    abstract ``isEmpty``: unit -> bool
+    abstract ``nextArrival``: unit -> Time
+    abstract ``runTasks``: Time * TaskRunner -> unit
 
 type [<AllowNullLiteral>] IExports =
     abstract ``newScheduler``: timer: Timer * timeline: Timeline -> Scheduler

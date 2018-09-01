@@ -3,7 +3,7 @@ open Sakhe
 open Fable.Import.Browser
 
 module AnimationFrame =
-    let a = S.now 1
+    let a = So.now 1
 
 module State =
     open Sakhe.R
@@ -16,10 +16,10 @@ module State =
     let Number k s = RNumber (k, s)
     let Object k s = RObject (k, s)
     let Array k s = RArray (k, s)
-    open S
+    open So
     let see = treeObj <| stream { yield Pith <| fun o ->
             o << Object "achiko" << treeObj <| stream { yield Pith <| fun o ->
-                    o << Number "age" <<  S.at (ms 3000.) << R.update <| function
+                    o << Number "age" <<  So.at (ms 3000.) << R.update <| function
                         | Some v -> v + 1.
                         | None -> 0.
                     ()
@@ -27,9 +27,9 @@ module State =
     }
 
     let rez =
-        treeObj << S.at (ms 0.) << Pith <| fun o ->
-            o << Object "achiko" << treeObj << S.at (ms 3000.) << Pith <| fun o ->
-                o << Number "age" <<  S.at (ms 3000.) << R.update <| function
+        treeObj << So.at (ms 0.) << Pith <| fun o ->
+            o << Object "achiko" << treeObj << So.at (ms 3000.) << Pith <| fun o ->
+                o << Number "age" <<  So.at (ms 3000.) << R.update <| function
                     | Some v -> v + 1.
                     | None -> 0.
                 ()
@@ -37,13 +37,13 @@ module State =
 
     let update s =
         s
-        |> S.scan
+        |> So.scan
             (R.apply)
             (Some Fable.Core.JsInterop.createEmpty<obj>)
-        |> S.tap console.log
+        |> So.tap console.log
 
     let run _ =
-        S.drain (update rez)
+        So.drain (update rez)
         |> ignore
 
 module Dom =
@@ -67,15 +67,15 @@ module Dom =
                 <| fun () -> document.createTextNode ""
                 <| fun (n: Node) -> n.nodeName = "#text"
 
-        let intS = S.periodic (ms 10.) |> S.scan (fun c _ -> c + 1) 0 |> S.skip 1 |> S.multicast
+        let intS = So.periodic (ms 10.) |> So.scan (fun c _ -> c + 1) 0 |> So.skip 1 |> So.multicast
 
-        let statTree t p = t << tree (S.now P.empty) << S.now << Pith <| p
+        let statTree t p = t << tree (So.now P.empty) << So.now << Pith <| p
         let div p = statTree Div p
         let btn p = statTree Button p
         let span p = statTree Span p
         let h3 p = statTree H3 p
 
-        let text s = Text << S.at (ms 0.) << P.once <| fun text -> text.textContent <- s
+        let text s = Text << So.at (ms 0.) << P.once <| fun text -> text.textContent <- s
 
     type DomEvents<'a> =
         | Click of (MouseEvent -> 'a)
@@ -91,48 +91,48 @@ module Dom =
         H.div <| fun o ->
             let acts = new Event<_>()
             let sum =
-                S.toStream acts
-                |> S.scan
+                So.toStream acts
+                |> So.scan
                     (fun m -> function
                         |Plus  -> m + 1
                         |Minus -> m - 1)
                     0
 
-            o << H.Button << PNode.tree (S.now (P.once (fun _ ->
+            o << H.Button << PNode.tree (So.now (P.once (fun _ ->
                             console.log "patch"
-                            ))) << S.now << Pith <| fun o ->
+                            ))) << So.now << Pith <| fun o ->
                 o << H.span <| fun o ->
                     o << H.text <| "+"
                 if d > 0 then o <| counter (d - 1)
 
-            o << H.Button << PNode.tree (S.now P.empty) << S.now << Pith <| fun o ->
+            o << H.Button << PNode.tree (So.now P.empty) << So.now << Pith <| fun o ->
                 o << H.span <| fun o ->
                     o << H.text <| "-"
                 if d > 0 then o <| counter (d - 1)
 
             o << H.h3 <| fun o ->
-                o << H.Text << S.map (fun i -> P.once (fun text -> text.textContent <- string i)) <| sum
+                o << H.Text << So.map (fun i -> P.once (fun text -> text.textContent <- string i)) <| sum
 
     let render elm s =
         s
-        |> S.sample S.animationFrame
-        |> S.scan P.apply elm
+        |> So.sample So.animationFrame
+        |> So.scan P.apply elm
 
-    let piths = S.periodic (ms 1000.) |> S.konst (Pith (fun o ->
+    let piths = So.periodic (ms 1000.) |> So.konst (Pith (fun o ->
             o << counter <| 0))
     let rez =
-        PNode.tree (S.now P.empty) <| piths
+        PNode.tree (So.now P.empty) <| piths
 
     let run _ =
         (render (document.getElementById "root-node") rez)
-        |> S.drain
+        |> So.drain
         |> ignore
 
 module Test2 =
     open State
     open Dom
     let tree pith =
-        G.tree R.treeObj (PNode.tree (S.now P.empty)) pith
+        G.tree R.treeObj (PNode.tree (So.now P.empty)) pith
 
     let g key p =
         G.AB (
@@ -140,15 +140,15 @@ module Test2 =
             (H.Div << snd <| p)
         )
 
-    let rez = tree << S.now << Pith <| fun o ->
-        o << G.A << Number "a" << S.now << R.set <| 1.
-        o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
-        o << g "hmmm" << tree << S.now << Pith <| fun o ->
-            o << G.A << Number "aa" << S.now << R.set <| 2.
-            o << G.B << H.Div << S.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
+    let rez = tree << So.now << Pith <| fun o ->
+        o << G.A << Number "a" << So.now << R.set <| 1.
+        o << G.B << H.Div << So.now << P <| fun elm -> elm.innerHTML <- "<h1>hello world!</h1>"
+        o << g "hmmm" << tree << So.now << Pith <| fun o ->
+            o << G.A << Number "aa" << So.now << R.set <| 2.
+            o << G.B << H.Div << So.now << P <| fun elm -> elm.innerHTML <- "<h2>hello world!</h2>"
     let run _ =
-        S.merge
-            (render (document.getElementById "root-node") (snd rez) |> S.map ignore)
-            (State.update (fst rez) |> S.map ignore)
-        |> S.drain
+        So.merge
+            (render (document.getElementById "root-node") (snd rez) |> So.map ignore)
+            (State.update (fst rez) |> So.map ignore)
+        |> So.drain
         |> ignore

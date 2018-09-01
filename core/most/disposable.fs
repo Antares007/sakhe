@@ -4,7 +4,7 @@ open Fable.Import.Most
 type [<AllowNullLiteral>] IExports =
     abstract ``disposeNone``: unit -> Disposable
     // abstract ``disposeWith``: dispose: ('R -> unit) * resource: 'R -> Disposable
-    abstract ``disposeWith``: dispose: ('R -> unit) -> 'R -> Disposable
+    abstract ``disposeWith``: dispose: ('R -> unit) * 'R -> Disposable
     abstract ``disposeOnce``: d: Disposable -> Disposable
     abstract ``disposeBoth``: d1: Disposable * d2: Disposable -> Disposable
     abstract ``disposeBoth``: d1: Disposable -> (Disposable -> Disposable)

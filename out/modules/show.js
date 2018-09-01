@@ -3,25 +3,17 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.is_ = exports.as_ = undefined;
+exports.as2_ = exports.as_ = exports.s2 = undefined;
 
-var _core = require("@most/core");
+var _s = require("./most/s");
 
-var core$$1 = _interopRequireWildcard(_core);
+const s2 = exports.s2 = _s.S$$$core.newStream(function run(sink, scheduler) {
+  sink.event(scheduler.currentTime(), 1);
+  return (0, _s.JsDisposable$$$create)(function () {});
+});
 
-var _disposable = require("@most/disposable");
+const as_ = exports.as_ = _s.S$$$core.slice(0, 1, _s.S$$$core.now("a"));
 
-var disposable = _interopRequireWildcard(_disposable);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-console.log("hello");
-console.log("end!");
-console.log("aaaaaaa");
-const core = core$$1;
-const dispose = disposable;
-const as_ = exports.as_ = core.now("a");
-const is_ = exports.is_ = core.now(3);
-core.zip(function (a, b) {
-  return [a, b];
-}, as_, is_);
+const as2_ = exports.as2_ = _s.S$$$core.take(1, _s.S$$$core.skip(1, _s.S$$$core.map(function f(a$$2) {
+  return a$$2 + "";
+}, _s.S$$$core.now("a"))));

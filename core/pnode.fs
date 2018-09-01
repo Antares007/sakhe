@@ -2,9 +2,9 @@ module Sakhe.PNode
 open Fable.Import.Browser
 open Sakhe
 
-type PNode = private PNode of (unit -> Node) * (Node -> bool) * S<P<Node>>
+type PNode = private PNode of (unit -> Node) * (Node -> bool) * So<P<Node>>
 
-let pnode<'a when 'a :> Node> (a: unit -> 'a) p (s: 'a P S) =
+let pnode<'a when 'a :> Node> (a: unit -> 'a) p (s: 'a P So) =
     PNode (unbox a, p, unbox s)
 
 [<AutoOpen>]
@@ -64,11 +64,11 @@ let ring (Pith pith) = Pith <| fun o ->
     | PNode (absurd, prove, p) ->
         let index = c
         c <- c + 1
-        o << S.map (chain absurd prove index) <| p
+        o << So.map (chain absurd prove index) <| p
 
-    o << S.now << P.once <| fun elm ->
+    o << So.now << P.once <| fun elm ->
         for i = unbox elm.childNodes.length - 1 downto c do
             elm.removeChild elm.childNodes.[i] |> ignore
 
-let tree s pith: S<P<#Element>> =
-    P.tree s (S.map ring pith)
+let tree s pith: So<P<#Element>> =
+    P.tree s (So.map ring pith)

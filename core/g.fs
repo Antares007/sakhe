@@ -21,7 +21,7 @@ let ring (Pith pith) =
     (Pith aPith, Pith bPith)
 
 let tree aTree bTree pith =
-    let abPS = S.map ring pith |> S.multicast
-    let aPS = S.map fst abPS
-    let bPS = S.map snd abPS
+    let abPS = So.map ring pith |> So.multicast
+    let aPS = So.map fst abPS
+    let bPS = So.map snd abPS
     (aTree aPS, bTree bPS)

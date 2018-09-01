@@ -5,11 +5,11 @@ open Sakhe
 [<Erase>] type R<'a> = private R of ('a option -> 'a)
 
 type RValue<'key> =
-    | RString of  'key * S<string R>
-    | RNumber of  'key * S<float R>
-    | RBool   of  'key * S<bool R>
-    | RObject of  'key * S<obj R>
-    | RArray  of  'key * S<obj [] R>
+    | RString of  'key * So<string R>
+    | RNumber of  'key * So<float R>
+    | RBool   of  'key * So<bool R>
+    | RObject of  'key * So<obj R>
+    | RArray  of  'key * So<obj [] R>
 
 let set a = R <| fun _ -> a
 let update f = R f
@@ -73,15 +73,15 @@ module private Impl =
 
     let makeRing absurdObj (Pith pith) = Pith <| fun o ->
         pith <| function
-        | RString (key, r) -> o (S.map (chain absurdObj key asString) r)
-        | RNumber (key, r) -> o (S.map (chain absurdObj key asNumber) r)
-        | RBool (key, r) -> o (S.map (chain absurdObj key asBool) r)
-        | RObject (key, r) -> o (S.map (chain absurdObj key asObject)  r)
-        | RArray (key, r) -> o (S.map (chain absurdObj key asArray) r)
+        | RString (key, r) -> o (So.map (chain absurdObj key asString) r)
+        | RNumber (key, r) -> o (So.map (chain absurdObj key asNumber) r)
+        | RBool (key, r) -> o (So.map (chain absurdObj key asBool) r)
+        | RObject (key, r) -> o (So.map (chain absurdObj key asObject)  r)
+        | RArray (key, r) -> o (So.map (chain absurdObj key asArray) r)
         ()
 
 let private tree a pith =
-    S.treeMerge (S.empty ()) (S.map (makeRing a) pith)
+    So.treeMerge (So.empty ()) (So.map (makeRing a) pith)
 
 let treeObj pith =
     tree absurdObj  pith

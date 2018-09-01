@@ -24,8 +24,8 @@ let inline bind f (UM m1): M<'s,'u,'b> =
         let (u2, b) = m2 (apply s u1)
         (combine u1 u2, b)
 
-let tree<'s, 'u, 'a, 'b> f (i: S<M<'s, 'u, 'a>>) (p: S<Pith<S<M<'s,'u,'b>>>>) =
-    S.treeCombine f i p
+let tree<'s, 'u, 'a, 'b> f (i: So<M<'s, 'u, 'a>>) (p: So<Pith<So<M<'s,'u,'b>>>>) =
+    So.treeCombine f i p
 
 type UpdateBuilder() =
     member inline __.Return(v: 'a) : M<'s, 'u, 'a> = return' v
