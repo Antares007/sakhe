@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Play$$$S = undefined;
-exports.IExportsCurried$002Edrain$$Z57BFC98E = IExportsCurried$002Edrain$$Z57BFC98E;
+exports.IExports$002Edrain$$Z57BFC98E = IExports$002Edrain$$Z57BFC98E;
 
 var _scheduler = require("@most/scheduler");
 
@@ -19,12 +19,12 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 const Exts$$$scheduler = scheduler;
 const Exts$$$defaultScheduler = Exts$$$scheduler.newDefaultScheduler();
 
-function IExportsCurried$002Edrain$$Z57BFC98E(xs, s) {
+function IExports$002Edrain$$Z57BFC98E(xs, s) {
   return xs.runEffects(s, Exts$$$defaultScheduler);
 }
 
 const Play$$$S = exports.Play$$$S = core;
-IExportsCurried$002Edrain$$Z57BFC98E(Play$$$S, Play$$$S.takeWhile(function (y$$2) {
+IExports$002Edrain$$Z57BFC98E(Play$$$S, Play$$$S.takeWhile(function (y$$2) {
   return 0 < y$$2;
 }, Play$$$S.tap(function (arg00$$5) {
   console.log(arg00$$5);

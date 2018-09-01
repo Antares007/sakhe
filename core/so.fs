@@ -19,33 +19,33 @@ module So =
     let defer (f: unit -> So<'a>): So<'a> =
         S << core.newStream <| fun sink scheduler ->
             let (S s) = f()
-            core.run (sink, scheduler, s)
+            core.run sink scheduler s
     let empty () = S <| core.empty ()
     let never () = S <| core.never ()
     let now a = S <| core.now a
-    let at (Time t) a = S <| core.at (t, a)
-    let map f (S s) = S <| core.map (f, s)
+    let at (Time t) a = S <| core.at t a
+    let map f (S s) = S <| core.map f s
     let valueOf (S s) = s
-    let switchLatest (S hs) = S << core.switchLatest <| core.map (valueOf, hs)
-    let combine f (S a) (S b) = S <| core.combine (f, a, b)
-    let merge (S a) (S b) = S <| core.merge (a, b)
-    let konst a (S s) = S <| core.constant (a, s)
+    let switchLatest (S hs) = S << core.switchLatest <| core.map valueOf hs
+    let combine f (S a) (S b) = S <| core.combine f a b
+    let merge (S a) (S b) = S <| core.merge a b
+    let konst a (S s) = S <| core.constant a s
     let constant = konst
-    let take (n: int) (S s) = S <| core.take (unbox n, s)
-    let takeWhile p (S s) = S <| core.takeWhile (p, s)
-    let continueWith (f) (S s) = S <| core.continueWith (valueOf << f, s)
-    let recoverWith f (S s) = S <| core.recoverWith (valueOf << f, s)
-    let scan f state (S s) = S <| core.scan (f, state, s)
-    let tap f (S s) = S <| core.tap (f, s)
+    let take (n: int) (S s) = S <| core.take n s
+    let takeWhile p (S s) = S <| core.takeWhile p s
+    let continueWith (f) (S s) = S <| core.continueWith (valueOf << f) s
+    let recoverWith f (S s) = S <| core.recoverWith (valueOf << f) s
+    let scan f state (S s) = S <| core.scan f state s
+    let tap f (S s) = S <| core.tap f s
     let periodic (Time t) = S <| core.periodic t
-    let skip (n: int) (S s) = S <| core.skip (unbox n, s)
+    let skip (n: int) (S s) = S <| core.skip n s
     let multicast (S s) = S <| core.multicast s
-    let startWith a (S s) = S <| core.startWith (a, s)
-    let sample (S a) (S b) = S <| core.sample (b, a)
-    let delay (Time t) (S s) = S <| core.delay (t, s)
-    let ap (S fs) (S s) = S <| core.ap (fs, s)
-    let chain f (S a) = S <| core.chain (valueOf << f, a)
-    let loop f a (S b) = S <| core.loop ((fun a b -> let (s, v) = f a b in {seed = s; value = v}), a, b)
+    let startWith a (S s) = S <| core.startWith a s
+    let sample (S a) (S b) = S <| core.sample b a
+    let delay (Time t) (S s) = S <| core.delay t s
+    let ap (S fs) (S s) = S <| core.ap fs s
+    let chain f (S a) = S <| core.chain (valueOf << f) a
+    let loop f a (S b) = S <| core.loop (fun a b -> let (s, v) = f a b in {seed = s; value = v}) a b
     let pairwise initial s = loop (fun prev curr -> (curr, (prev, curr))) initial s
     let using<'a, 'b when 'a :> IDisposable> (res: 'a) (f: 'a -> So<'b>): So<'b> =
         (f res)
@@ -105,7 +105,7 @@ module So =
     let tree f s mpith = mpith |> map (Pith.tree (List.fold f s)) |> switchLatest
     let treeMerge s pith = tree (fun a b -> merge b a) s pith
     let private defScheduler = scheduler.newDefaultScheduler ()
-    let drain (S s) = core.runEffects (s, defScheduler)
+    let drain (S s) = core.runEffects s defScheduler
 
     open Fable.Import.Browser
     [<Emit("console.timeStamp($0)")>]
