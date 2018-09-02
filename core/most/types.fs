@@ -10,10 +10,10 @@ type Period = float
 
 type Offset = float
 
-type [<AllowNullLiteral>] ``Sink``<'A> =
-    abstract ``event``: Time * 'A -> unit
+type [<AllowNullLiteral>] ``Sink``<'a> =
+    abstract ``event``: Time -> 'a -> unit
     abstract ``end``: Time -> unit
-    abstract ``error``: Time * Error -> unit
+    abstract ``error``: Time -> Error -> unit
 
 type [<AllowNullLiteral>] ``Disposable`` =
     abstract ``dispose``: unit -> unit
@@ -21,7 +21,7 @@ type [<AllowNullLiteral>] ``Disposable`` =
 type [<AllowNullLiteral>] ``Task`` =
     inherit Disposable
     abstract ``run``: Time -> unit
-    abstract ``error``: Time * Error -> unit
+    abstract ``error``: Time -> Error -> unit
 
 type [<AllowNullLiteral>] ``ScheduledTask`` =
     inherit Disposable
@@ -31,11 +31,11 @@ type [<AllowNullLiteral>] ``ScheduledTask`` =
 
 type [<AllowNullLiteral>] ``Scheduler`` =
     abstract ``currentTime``: unit -> Time
-    abstract ``scheduleTask``: Offset * Delay * Period * Task -> ScheduledTask
+    abstract ``scheduleTask``: Offset -> Delay -> Period -> Task -> ScheduledTask
     abstract ``relative``: Offset -> Scheduler
     abstract ``cancel``: ScheduledTask -> unit
     [<System.Obsolete>]
     abstract ``cancelAll``: (ScheduledTask -> bool) -> unit
 
-type [<AllowNullLiteral>] ``Stream``<'A> =
-    abstract ``run``: Sink<'A> * Scheduler -> Disposable
+type [<AllowNullLiteral>] ``Stream``<'a> =
+    abstract ``run``: Sink<'a> -> Scheduler -> Disposable

@@ -44,10 +44,10 @@ module Extensions =
             S.newStream <| fun sink scheduler ->
                 (o.Subscribe { new System.IObserver<'T> with
                     member __.OnNext e =
-                        sink.``event`` (scheduler.currentTime(), e)
+                        sink.``event`` (scheduler.currentTime()) e
                     member __.OnCompleted () =
                         sink.``end`` (scheduler.currentTime())
                     member __.OnError error =
                         let error = Fable.Import.JS.Error.Create error.Message
-                        sink.``error`` (scheduler.currentTime(), error)
+                        sink.``error`` (scheduler.currentTime()) error
                 }).JsDisposable

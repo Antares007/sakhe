@@ -9,11 +9,8 @@ type [<AllowNullLiteral>] ``Clock`` =
 
 type [<AllowNullLiteral>] ``Timer`` =
     abstract ``now``: unit -> Time
-    abstract ``setTimer``: (unit -> obj option) * Delay -> Handle
+    abstract ``setTimer``: (unit -> obj option) -> Delay -> Handle
     abstract ``clearTimer``: Handle -> unit
-
-type [<AllowNullLiteral>] ``TaskRunner`` =
-    [<Emit "$0($1...)">] abstract Invoke: st: ScheduledTask -> obj option
 
 type [<AllowNullLiteral>] ``Timeline`` =
     abstract ``add``: ScheduledTask -> unit
@@ -22,7 +19,7 @@ type [<AllowNullLiteral>] ``Timeline`` =
     abstract ``removeAll``: (ScheduledTask -> bool) -> unit
     abstract ``isEmpty``: unit -> bool
     abstract ``nextArrival``: unit -> Time
-    abstract ``runTasks``: Time * TaskRunner -> unit
+    abstract ``runTasks``: Time -> (ScheduledTask -> unit) -> unit
 
 type [<AllowNullLiteral>] IExports =
     abstract ``newScheduler``: Timer -> Timeline -> Scheduler

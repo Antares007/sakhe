@@ -3,26 +3,26 @@ open Fable.Import.Most
 open Fable.Core
 open Fable.Import.JS
 
-type [<AllowNullLiteral>] ``PropagateTask``<'A> =
+type [<AllowNullLiteral>] ``PropagateTask``<'a> =
     inherit Task
-    abstract ``value``: 'A with get, set
-    abstract ``sink``: Sink<'A> with get, set
+    abstract ``value``: 'a with get, set
+    abstract ``sink``: Sink<'a> with get, set
     abstract ``active``: bool with get, set
 
-type [<AllowNullLiteral>] ``MulticastSource``<'A> =
-    inherit Stream<'A>
-    inherit Sink<'A>
+type [<AllowNullLiteral>] ``MulticastSource``<'a> =
+    inherit Stream<'a>
+    inherit Sink<'a>
     inherit Disposable
-    abstract ``source``: Stream<'A> with get, set
-    abstract ``sinks``: Array<Sink<'A>> with get, set
+    abstract ``source``: Stream<'a> with get, set
+    abstract ``sinks``: Array<Sink<'a>> with get, set
     abstract ``disposable``: Disposable with get, set
-    abstract ``add``: Sink<'A> -> float
-    abstract ``remove``: Sink<'A> -> float
+    abstract ``add``: Sink<'a> -> float
+    abstract ``remove``: Sink<'a> -> float
 
 type [<AllowNullLiteral>] ``MulticastSourceStatic`` =
-    [<Emit "new $0($1...)">] abstract Create: source: Stream<'A> -> MulticastSource<'A>
+    [<Emit "new $0($1...)">] abstract Create: source: Stream<'a> -> MulticastSource<'a>
 
-type SeedValue<'S, 'V> = { seed: 'S; value: 'V }
+type SeedValue<'s, 'v> = { seed: 's; value: 'v }
 
 type [<AllowNullLiteral>] IExports =
     (*
@@ -49,7 +49,7 @@ type [<AllowNullLiteral>] IExports =
     /// ```
     /// now(x): x|
     /// ```
-    abstract ``now``: a: 'a -> Stream<'a>
+    abstract ``now``: 'a -> Stream<'a>
     /// Create a Stream containing a single event at a specific time.
     /// ```
     /// at(3, x): --x|
@@ -321,21 +321,21 @@ type [<AllowNullLiteral>] IExports =
     /// stream:               -1-2-3-4->
     /// filter(even, stream): ---2---4->
     /// ```
-    abstract ``filter``: p: ('A -> bool) * Stream<'A> -> Stream<'A>
+    abstract ``filter``: ('a -> bool) -> Stream<'a> -> Stream<'a>
     /// Remove adjacent repeated events.
     /// ```
     /// stream:              -1-2-2-3-4-4-5->
     /// skipRepeats(stream): -1-2---3-4---5->
     /// ```
     /// Note that === is used to identify repeated items. To use a different comparison, use skipRepeatsWith.
-    abstract ``skipRepeats``: s: Stream<'A> -> Stream<'A>
+    abstract ``skipRepeats``: Stream<'a> -> Stream<'a>
     /// Remove adjacent repeated events, using the provided equality function to compare adjacent events.
     /// ```
     /// stream:                              -a-b-B-c-D-d-e->
     /// skipRepeatsWith(ignoreCase, stream): -a-b---c-D---e->
     /// ```
     /// The equals function should return true if the two values are equal, or false if they are not equal.
-    abstract ``skipRepeatsWith``: eq: ('A -> 'A -> bool) * Stream<'A> -> Stream<'A>
+    abstract ``skipRepeatsWith``: ('a -> 'a -> bool) -> Stream<'a> -> Stream<'a>
     (*
         Slicing
     *)
@@ -537,7 +537,7 @@ type [<AllowNullLiteral>] IExports =
     /// stream:                -p---q---r->
     /// awaitPromises(stream): ---1------->
     /// ```
-    abstract ``awaitPromises``: Stream<Promise<'A>> -> Stream<'A>
+    abstract ``awaitPromises``: Stream<Promise<'a>> -> Stream<'a>
     (*
         Handling Errors
     *)

@@ -53,15 +53,15 @@ module So =
         |> recoverWith  (fun err -> res.Dispose(); throwError err)
     let disposeWith d (S s) =
         S << core.newStream <| fun sink scheduler ->
-            let ds = s.run (sink, scheduler)
+            let ds = s.run sink scheduler
             let dispose _ =
                 ds.dispose ()
                 d ()
-            disposable.disposeWith (dispose, ())
+            disposable.disposeWith dispose ()
 
     let newStream f =S (core.newStream (fun sink scheduler ->
         let d = f sink scheduler
-        disposable.disposeWith (d, ())))
+        disposable.disposeWith d ()))
 
     type StreamBuilder() =
         member __.Bind(s: So<'a>, f: 'a -> So<'b>): So<'b> = chain f s
@@ -91,13 +91,13 @@ module So =
     let toStream (e: Event<_>) =
         let ms = core.MulticastSource.Create (core.never ())
         S << core.newStream <| fun sink scheduler ->
-            let onNext v = ms.event (scheduler.currentTime (), v)
+            let onNext v = ms.event (scheduler.currentTime ()) v
             let d1 = Observable.subscribe onNext e.Publish
-            let d2 = ms.run (sink, scheduler)
+            let d2 = ms.run sink scheduler
             let dispose _ =
                 d1.Dispose ()
                 d2.dispose ()
-            disposable.disposeWith (dispose, ())
+            disposable.disposeWith dispose ()
     let treeCombine f s p =
         let foldTree = Pith.tree (List.fold (combine f) s)
         switchLatest (map foldTree p)
@@ -115,9 +115,9 @@ module So =
         let mutable handle = 0.
         let rec step t =
             timeStamp "step"
-            sink.event (scheduler.currentTime (), t)
+            sink.event (scheduler.currentTime ()) t
             handle <- window.requestAnimationFrame step
         handle <- window.requestAnimationFrame step
         let dispose _ =
             window.cancelAnimationFrame handle
-        disposable.disposeWith (dispose, ()))
+        disposable.disposeWith dispose ())
