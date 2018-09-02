@@ -1,6 +1,10 @@
 import * as scheduler$$1 from "@most/scheduler";
 import * as core from "@most/core";
-export function JsDisposable$$$create(f) {
+export const Disposable$$$empty = {
+  dispose() {}
+
+};
+export function Disposable$$$return$0027(f) {
   let disposed = false;
   return {
     dispose() {
@@ -12,50 +16,44 @@ export function JsDisposable$$$create(f) {
 
   };
 }
-export function SystemDisposable$$$create(f$$1) {
-  let disposed$$1 = false;
-  return {
-    Dispose() {
-      if (!disposed$$1) {
-        disposed$$1 = true;
-        f$$1();
-      }
-    }
-
-  };
-}
-export function Disposable$002Eget_SystemDisposable(jsDisposable) {
-  return SystemDisposable$$$create(function () {
-    jsDisposable.dispose();
-  });
-}
-export function IDisposable$002Eget_JsDisposable(systemDisposable) {
-  return JsDisposable$$$create(function () {
-    systemDisposable.Dispose();
+export function Disposable$$$append(l, r) {
+  return Disposable$$$return$0027(function () {
+    l.dispose();
+    r.dispose();
   });
 }
 const Extensions$$$scheduler = scheduler$$1;
-const Extensions$$$defaultScheduler = Extensions$$$scheduler.newDefaultScheduler();
+export const Extensions$$$defaultScheduler = Extensions$$$scheduler.newDefaultScheduler();
 export const Extensions$$$S = core;
-export function IExports$002Edrain$$Z57BFC98E(__$$2, s) {
-  return Extensions$$$S.runEffects(s, Extensions$$$defaultScheduler);
+export function IExports$002Edrain$$Z57BFC98E(S, s) {
+  return S.runEffects(s, Extensions$$$defaultScheduler);
 }
 export function IObservable$00601$002Eget_toStream(o) {
   return Extensions$$$S.newStream(function (sink, scheduler) {
-    return IDisposable$002Eget_JsDisposable(o.Subscribe({
+    let lastTasks = Disposable$$$empty;
+
+    const asap = function asap(task) {
+      lastTasks = Disposable$$$append(lastTasks, scheduler.scheduleTask(0, 0, -1, task));
+    };
+
+    const subscription = o.Subscribe({
       OnNext(e) {
-        sink.event(scheduler.currentTime(), e);
+        asap(Extensions$$$S.propagateEventTask(e, sink));
       },
 
       OnCompleted() {
-        sink.end(scheduler.currentTime());
+        asap(Extensions$$$S.propagateEndTask(sink));
       },
 
       OnError(error) {
         const error$$1 = new Error(error.message);
-        sink.error(scheduler.currentTime(), error$$1);
+        asap(Extensions$$$S.propagateErrorTask(error$$1, sink));
       }
 
-    }));
+    });
+    return Disposable$$$return$0027(function () {
+      subscription.Dispose();
+      lastTasks.dispose();
+    });
   });
 }

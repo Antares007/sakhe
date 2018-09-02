@@ -556,7 +556,7 @@ type [<AllowNullLiteral>] IExports =
     /// Create a **Task** to propagate a **value** to a **Sink**. When the **Task** executes, the provided **function** will receive the current **time**
     /// (from the Scheduler with which it was scheduled) and the provided **value** and **Sink**. The **Task** can use the **Sink** to propagate the **value** in whatever way it chooses.
     /// For example as an event or an error, or it could choose not to propagate the event based on some condition, etc.
-    abstract ``propagateTask``: (Time -> 'a -> Sink<'a> -> unit) -> 'a -> Sink<'a> -> PropagateTask<'a>
+    abstract ``propagateTask``: (Time -> 'v -> Sink<'a> -> unit) -> 'v -> Sink<'a> -> PropagateTask<'a>
     /// Create a **Task** that can be scheduled to propagate an event **value** to a **Sink**.
     /// When the task executes, it will call the Sink’s **event** method with the current time (from the Scheduler with which it was scheduled) and the value.
     abstract ``propagateEventTask``: 'a -> Sink<'a> -> PropagateTask<'a>
