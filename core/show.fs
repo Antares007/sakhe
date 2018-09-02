@@ -13,20 +13,10 @@ module Sakhe.Show
 //         fun () -> d.Dispose())
 // let e = Event<int>()
 // let pe = e.Publish.ToStream()
-[<AutoOpen>]
-module Exts =
-    open Fable.Import.Most
-    let private scheduler = Fable.Core.JsInterop.importAll<Scheduler.IExports> "@most/scheduler"
-    let private defaultScheduler = scheduler.newDefaultScheduler ()
-
-    type Core.IExports with
-        /// Drain source stream
-        member xs.``drain`` s = xs.runEffects s defaultScheduler
 
 module Play =
     open Fable.Import.Most
     open Fable.Import.Browser
-    let S = Fable.Core.JsInterop.importAll<Core.IExports> "@most/core"
     // let s2 = S.newStream (fun sink scheduler ->
     //     scheduler.scheduleTask (0., 0., 0., (S.propagateEventTask 1 sink)) :> Disposable)
 
