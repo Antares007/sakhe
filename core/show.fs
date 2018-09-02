@@ -13,7 +13,6 @@ module Sakhe.Show
 //         fun () -> d.Dispose())
 // let e = Event<int>()
 // let pe = e.Publish.ToStream()
-
 [<AutoOpen>]
 module Exts =
     open Fable.Import.Most
@@ -36,6 +35,7 @@ module Play =
         |> S.scan (+) 0
         |> S.map ((-) 10)
         |> S.tap console.log
+        |> S.tap (printfn "%d")
         |> S.takeWhile ((<) 0)
         |> S.drain
         |> ignore

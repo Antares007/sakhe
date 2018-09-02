@@ -1,15 +1,16 @@
 import path from "path"
-import fableUtils from "fable-utils"
-import fable from "rollup-plugin-fable"
+import fable from "C:/code/Fable/src/js/rollup-plugin-fable"
 import nodeResolve from "rollup-plugin-node-resolve"
 
 function resolve(relativePath) {
   return path.join(__dirname, relativePath)
 }
 
-var babelOptions = fableUtils.resolveBabelOptions({
-  presets: [["env", { modules: false, targets: { node: "7.9" } }]]
-})
+var babelOptions = {
+  presets: [
+    ["babel-preset-env", { modules: false, targets: { node: "8.9.3" } }]
+  ]
+}
 
 export default {
   input: resolve("./core/core.fsproj"),
@@ -25,7 +26,7 @@ export default {
   ],
   output: [
     {
-      file: resolve("./out/bundle.js"),
+      file: resolve("./out/modules/show.js"),
       format: "cjs"
     }
   ]

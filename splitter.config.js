@@ -1,21 +1,26 @@
-const path = require("path");
-const fableUtils = require("C:/code/Fable/src/js/fable-utils");
+const path = require("path")
 
 function resolve(relativePath) {
-    return path.join(__dirname, relativePath);
+  return path.join(__dirname, relativePath)
+}
+
+const babel = {
+  // presets: [
+  //   [
+  //     "babel-preset-env",
+  //     {
+  //       modules: false,
+  //       targets: { node: "8.9.3" }
+  //     }
+  //   ]
+  // ],
+  sourceMaps: false
 }
 
 module.exports = {
   entry: resolve("core/core.fsproj"),
   outDir: resolve("out/modules"),
   port: 61225, // Fable daemon port (61225 by default)
-  babel: fableUtils.resolveBabelOptions({
-    presets: [
-      ["env", { modules: "commonjs", targets: { node: "8.9" } }]
-    ],
-    sourceMaps: false,
-  }),
-  fable: {
-    define: ["DEBUG"]
-  }
+  babel,
+  fable: { define: ["DEBUG"] }
 }
