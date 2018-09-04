@@ -1,5 +1,6 @@
 module Sakhe.Scheduler.Timeline
-let findAppendPosition (time: Time) (a: ResizeArray<'a * Time>) =
+
+let private findAppendPosition (time: Time) (a: ResizeArray<'a * Time>) =
     let rec go (l:int) (r:int) =
         if l < r then
             let m = (l + r) / 2
@@ -16,14 +17,14 @@ let inline private newSlot (t: 'a) stime ttime: (ResizeArray<'a * Time> * Time) 
     ts.Add ((t, ttime))
     (ts, stime)
 
-let insertByTime (ttime: Time) t (timeslots: ResizeArray<ResizeArray<'a * Time> * Time>) =
+let private insertByTime (ttime: Time) t (timeslots: ResizeArray<ResizeArray<'a * Time> * Time>) =
     let stime = System.Math.Floor ttime
     match findAppendPosition stime timeslots with
     | -1 -> timeslots.splice (0, 0, (newSlot t stime ttime)) |> ignore
     | i when snd timeslots.[i] <> stime -> timeslots.splice (i + 1, 0, newSlot t stime ttime) |> ignore
     | i -> let ts = fst timeslots.[i] in ts.splice (findAppendPosition ttime ts + 1, 0, (t, ttime)) |> ignore
 
-let removeByTime (ttime: Time) t (timeslots: ResizeArray<ResizeArray<'a * Time> * Time>) =
+let private removeByTime (ttime: Time) t (timeslots: ResizeArray<ResizeArray<'a * Time> * Time>) =
     let stime = System.Math.Floor ttime
     let i = findAppendPosition stime timeslots
     if i < 0 then false
@@ -42,7 +43,7 @@ let removeByTime (ttime: Time) t (timeslots: ResizeArray<ResizeArray<'a * Time> 
     | Some i -> ts.splice (i, 1) |> ignore; true
     | None -> false
 
-let runReadyTasks (runTask: ('a -> unit)) (tasks: ResizeArray<'a * Time>) (timeslots: ResizeArray<ResizeArray<'a * Time> * Time>) =
+let private runReadyTasks (runTask: ('a -> unit)) (tasks: ResizeArray<'a * Time>) (timeslots: ResizeArray<ResizeArray<'a * Time> * Time>) =
     failwith "na"
 
 type Timeline() =

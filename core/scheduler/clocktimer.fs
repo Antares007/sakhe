@@ -1,4 +1,7 @@
 module Sakhe.Scheduler.ClockTimer
+open Task
+open Fable.Import.JS
+
 type private Asap(f) =
     let mutable active = true
 
@@ -16,7 +19,7 @@ type private Asap(f) =
 
 let private runAsap f =
     let task = Asap f
-    Task.defer task |> ignore
+    defer task |> ignore
     task
 
 
@@ -28,9 +31,9 @@ type ClockTimer(clock: IClock) =
             if dt <= 0. then
                 TimerToken.Asap (runAsap f)
             else
-                Timer (Fable.Import.JS.setTimeout f (unbox dt))
+                Timer (setTimeout f (unbox dt))
 
         member __.``clearTimer`` token =
             match token with
             | Asap asap -> (unbox asap: Asap).cancel ()
-            | Timer token -> Fable.Import.JS.clearTimeout token
+            | Timer token -> clearTimeout token

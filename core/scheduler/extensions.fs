@@ -1,6 +1,7 @@
 [<AutoOpen>]
 module Sakhe.Scheduler.GenericListExtensions
 open Fable.Core
+
 type System.Collections.Generic.List<'a> with
     [<Emit("$0.length")>]
     member __.``length``: int = jsNative

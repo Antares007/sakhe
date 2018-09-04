@@ -5,7 +5,7 @@ import { TimerToken } from "./types";
 const Asap = declare(function Asap(f) {
   const $this$$1 = this;
   $this$$1.f = f;
-  $this$$1["active@3"] = true;
+  $this$$1["active@6"] = true;
 });
 
 function Asap$$$$002Ector$$3A5B6456(f) {
@@ -17,11 +17,11 @@ function Asap$$$Sakhe$002EScheduler$002EIScheduledTask($this$$3) {
     [THIS_REF]: $this$$3,
 
     get active() {
-      return $this$$3["active@3"];
+      return $this$$3["active@6"];
     },
 
     set active(v) {
-      $this$$3["active@3"] = v;
+      $this$$3["active@6"] = v;
     },
 
     get time() {
@@ -29,7 +29,7 @@ function Asap$$$Sakhe$002EScheduler$002EIScheduledTask($this$$3) {
     },
 
     run() {
-      if ($this$$3["active@3"]) {
+      if ($this$$3["active@6"]) {
         $this$$3.f();
       }
     },
@@ -42,7 +42,7 @@ function Asap$$$Sakhe$002EScheduler$002EIScheduledTask($this$$3) {
 }
 
 function Asap$$cancel(__) {
-  __["active@3"] = false;
+  __["active@6"] = false;
 }
 
 function runAsap(f$$1) {

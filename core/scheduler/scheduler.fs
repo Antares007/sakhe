@@ -50,7 +50,6 @@ type Scheduler(timer: ITimer, timeline: ITimeline) =
         _nextArrival <- nextArrival
         let delay = System.Math.Max(0., _nextArrival - (this.currentTime()))
         _timer <- Some (timer.setTimer (this._runReadyTasks, delay))
-        failwith "na"
 
     member this.``_runReadyTasks`` () =
         _timer <- None

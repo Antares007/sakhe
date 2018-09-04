@@ -1,6 +1,7 @@
 import { equals } from "../fable-core.2.0.0-beta-003/Util";
 import { declare } from "../fable-core.2.0.0-beta-003/Types";
-export function findAppendPosition(time, a) {
+
+function findAppendPosition(time, a) {
   const go = function go(l, r) {
     go: while (true) {
       if (l < r) {
@@ -23,7 +24,8 @@ export function findAppendPosition(time, a) {
 
   return go(0, a.length) | 0;
 }
-export function insertByTime(ttime, t, timeslots) {
+
+function insertByTime(ttime, t, timeslots) {
   var ts, i, ts$$1;
   const stime = Math.floor(ttime);
   const matchValue = findAppendPosition(stime, timeslots) | 0;
@@ -39,7 +41,8 @@ export function insertByTime(ttime, t, timeslots) {
     ts$$2.splice(findAppendPosition(ttime, ts$$2) + 1, 0, [t, ttime]);
   }
 }
-export function removeByTime(ttime$$3, t$$3, timeslots$$1) {
+
+function removeByTime(ttime$$3, t$$3, timeslots$$1) {
   const stime$$3 = Math.floor(ttime$$3);
   const i$$3 = findAppendPosition(stime$$3, timeslots$$1) | 0;
 
@@ -82,9 +85,11 @@ export function removeByTime(ttime$$3, t$$3, timeslots$$1) {
     }
   }
 }
-export function runReadyTasks(runTask, tasks, timeslots$$2) {
+
+function runReadyTasks(runTask, tasks, timeslots$$2) {
   throw new Error("na");
 }
+
 export const Timeline = declare(function Timeline() {
   const $this$$1 = this;
   $this$$1.timeSlots = [];

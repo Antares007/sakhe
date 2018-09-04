@@ -26,20 +26,6 @@ open Fable.Import
 
 let ClockTimer = ClockTimer
 
-let timeSortedArray (array:float []) =
-    array
-    |> Array.sort
-    |> Array.map (fun i -> (string i, i))
-
-let s array i =
-    let rez = findAppendPosition i array
-    printfn "rez: %A" rez
-
-open Fable.Core.JsInterop
-Browser.window?timeSortedArray <- timeSortedArray
-Browser.window?s <- s
-Browser.window?insertByTime <- insertByTime
-Browser.window?removeByTime <- removeByTime
 
 // S.periodic 1000.
 //     |> S.constant 1

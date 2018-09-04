@@ -1,4 +1,6 @@
 module Sakhe.Scheduler.Task
+open Fable.Import.JS
+
 let runTask (task: IScheduledTask) =
     try
         task.run ()
@@ -6,4 +8,4 @@ let runTask (task: IScheduledTask) =
     | err -> task.error err
 
 let defer (task: IScheduledTask) =
-    Fable.Import.JS.Promise.resolve(task).``then``(runTask)
+    Promise.resolve(task).``then``(runTask)
