@@ -1,7 +1,6 @@
 import { defaultArg, value as value$$9, some } from "./Option";
 import { compare, addToSet, tryGetValue, comparerFromEqualityComparer, max as max$$1, comparePrimitives, count as count$$12 } from "./Util";
 import { iterate as iterate$$1 } from "./Seq";
-import { ofSeq as ofSeq$$1 } from "./Array";
 import { createMutable } from "./Map";
 import { createMutable as createMutable$$1 } from "./Set";
 import { length as length$$2 } from "./List";
@@ -205,7 +204,7 @@ export function truncate(count$$1, array$$8) {
   return array$$8.slice(0, count$$2);
 }
 export function concat(arrays$$2, cons$$10) {
-  return concatImpl(cons$$10, ofSeq$$1(arrays$$2, Array));
+  return concatImpl(cons$$10, arrays$$2);
 }
 export function collect(mapping$$2, array$$10, cons$$11) {
   return concatImpl(cons$$11, map(mapping$$2, array$$10, Array));
@@ -448,26 +447,26 @@ export function removeInPlace(item$$3, array$$37) {
     return false;
   }
 }
-export function copyTo(source$$4, sourceIndex, target$$4, targetIndex$$1, count$$11) {
+export function copyTo(source$$3, sourceIndex, target$$4, targetIndex$$1, count$$11) {
   const diff = targetIndex$$1 - sourceIndex | 0;
 
   for (let i$$23 = sourceIndex; i$$23 <= sourceIndex + count$$11 - 1; i$$23++) {
-    target$$4[i$$23 + diff] = source$$4[i$$23];
+    target$$4[i$$23 + diff] = source$$3[i$$23];
   }
 }
-export function partition(f$$6, source$$5, cons$$29) {
-  const len$$9 = source$$5.length | 0;
+export function partition(f$$6, source$$4, cons$$29) {
+  const len$$9 = source$$4.length | 0;
   const res1 = new cons$$29(len$$9);
   const res2 = new cons$$29(len$$9);
   let iTrue = 0;
   let iFalse = 0;
 
   for (let i$$24 = 0; i$$24 <= len$$9 - 1; i$$24++) {
-    if (f$$6(source$$5[i$$24])) {
-      res1[iTrue] = source$$5[i$$24];
+    if (f$$6(source$$4[i$$24])) {
+      res1[iTrue] = source$$4[i$$24];
       iTrue = iTrue + 1;
     } else {
-      res2[iFalse] = source$$5[i$$24];
+      res2[iFalse] = source$$4[i$$24];
       iFalse = iFalse + 1;
     }
   }
@@ -615,12 +614,12 @@ export function tryFindIndexBack(predicate$$20, array$$53) {
 
   return loop$$6(array$$53.length - 1);
 }
-export function choose(f$$7, source$$6, cons$$30) {
+export function choose(f$$7, source$$5, cons$$30) {
   const res$$9 = new cons$$30(0);
   let j$$2 = 0;
 
-  for (let i$$31 = 0; i$$31 <= source$$6.length - 1; i$$31++) {
-    const matchValue$$9 = f$$7(source$$6[i$$31]);
+  for (let i$$31 = 0; i$$31 <= source$$5.length - 1; i$$31++) {
+    const matchValue$$9 = f$$7(source$$5[i$$31]);
 
     if (matchValue$$9 == null) {} else {
       const y = value$$9(matchValue$$9);
@@ -715,16 +714,16 @@ export function permute(f$$8, array$$60) {
 
   return res$$10;
 }
-export function setSlice(target$$5, lower, upper, source$$7) {
+export function setSlice(target$$5, lower, upper, source$$6) {
   const lower$$1 = defaultArg(lower, 0) | 0;
   const upper$$1 = defaultArg(upper, 0) | 0;
   const length$$1 = (upper$$1 > 0 ? upper$$1 : target$$5.length - 1) - lower$$1 | 0;
 
-  if (ArrayBuffer.isView(target$$5) ? source$$7.length <= length$$1 : false) {
-    return target$$5.set(source$$7, lower$$1);
+  if (ArrayBuffer.isView(target$$5) ? source$$6.length <= length$$1 : false) {
+    return target$$5.set(source$$6, lower$$1);
   } else {
     for (let i$$40 = 0; i$$40 <= length$$1; i$$40++) {
-      target$$5[i$$40 + lower$$1] = source$$7[i$$40];
+      target$$5[i$$40 + lower$$1] = source$$6[i$$40];
     }
   }
 }
@@ -1128,25 +1127,25 @@ export function averageBy(projection$$9, array$$87) {
   const total$$1 = sumBy(projection$$9, array$$87);
   return total$$1 / array$$87.length;
 }
-export function ofSeq(source$$9, cons$$31) {
-  return cons$$31.from(source$$9);
+export function ofSeq(source$$8, cons$$31) {
+  return cons$$31.from(source$$8);
 }
-export function ofList(source$$10, cons$$32) {
-  const len$$20 = length$$2(source$$10) | 0;
+export function ofList(source$$9, cons$$32) {
+  const len$$20 = length$$2(source$$9) | 0;
   const target$$7 = new cons$$32(len$$20);
   let i$$54 = 0;
   iterate$$1(function (x$$21) {
     target$$7[i$$54] = x$$21;
     i$$54 = i$$54 + 1;
-  }, source$$10);
+  }, source$$9);
   return target$$7;
 }
-export function toList(source$$11) {
-  const len$$21 = source$$11.length | 0;
+export function toList(source$$10) {
+  const len$$21 = source$$10.length | 0;
   let target$$8 = L();
 
   for (let i$$55 = len$$21 - 1; i$$55 >= 0; i$$55--) {
-    target$$8 = L(source$$11[i$$55], target$$8);
+    target$$8 = L(source$$10[i$$55], target$$8);
   }
 
   return target$$8;

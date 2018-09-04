@@ -315,7 +315,7 @@ export function SetTreeModule$$$spliceOutSuccessor(t$$3) {
 
     default:
       {
-        throw new Error("internal error: Map.spliceOutSuccessor");
+        throw new Error("internal error: Set.spliceOutSuccessor");
       }
   }
 }
