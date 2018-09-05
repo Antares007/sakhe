@@ -7,11 +7,11 @@ export const T$00601 = declare(function T$00601(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
 export function return$0027(f) {
-  return new T$00601(0, "T", f);
+  return new T$00601(0, "Task", f);
 }
 export function map(f$$1, _arg1) {
   const g = _arg1.fields[0];
-  return new T$00601(0, "T", function (_arg2) {
+  return new T$00601(0, "Task", function (_arg2) {
     if (_arg2.tag === 1) {
       const err = _arg2.fields[1];
       const a$$1 = _arg2.fields[0];
@@ -31,15 +31,20 @@ export function run(_arg1$$1) {
     return g$$1(new On$00601(1, "Exn", null, err$$1));
   }
 }
-export function append(l, r) {
-  return new T$00601(0, "T", function (_arg1$$2) {
-    var r$$1, l$$1, d, d$$1;
+export function append(l, r$$1) {
+  return new T$00601(0, "Task", function (_arg1$$2) {
+    var r$$2, l$$1, d, d$$1;
 
     if (_arg1$$2.tag === 1) {
       return null;
     } else {
-      const matchValue = [run(l), run(r)];
-      return matchValue[0] != null ? matchValue[1] != null ? (r$$1 = matchValue[1], l$$1 = matchValue[0], append$$1(l$$1, r$$1)) : (d = matchValue[0], d) : matchValue[1] != null ? (d$$1 = matchValue[1], d$$1) : null;
+      const a$$2 = _arg1$$2.fields[0];
+      const matchValue = [run(map(function () {
+        return a$$2;
+      }, l)), run(map(function () {
+        return a$$2;
+      }, r$$1))];
+      return matchValue[0] != null ? matchValue[1] != null ? (r$$2 = matchValue[1], l$$1 = matchValue[0], append$$1(l$$1, r$$2)) : (d = matchValue[0], d) : matchValue[1] != null ? (d$$1 = matchValue[1], d$$1) : null;
     }
   });
 }
