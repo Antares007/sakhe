@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="scheduler/new.fs" />
     <Compile Include="most/types.fs" />
     <Compile Include="most/core.fs" />
     <Compile Include="most/scheduler.fs" />
@@ -18,12 +19,14 @@
     <Compile Include="r.fs" />
     <Compile Include="pnode.fs" />
     <Compile Include="dom.fs" />
-    <Compile Include="new.fs" />
+    <Compile Include="scheduler/new.fs" />
     <Compile Include="show.old.fs" />
     <Compile Include="s.fs" />
     <Compile Include="scheduler/types.fs" />
     <Compile Include="scheduler/disposable.fs" />
     <Compile Include="scheduler/task.fs" />
+    <Compile Include="scheduler/sink.fs" />
+    <Compile Include="scheduler/stream.fs" />
     <Compile Include="scheduler/clocktimer.fs" />
     <Compile Include="scheduler/extensions.fs" />
     <Compile Include="scheduler/timeline.fs" />

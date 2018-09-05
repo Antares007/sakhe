@@ -1,5 +1,5 @@
 namespace Sakhe.Scheduler
-type Disposable =
+type ``Disposable`` =
     abstract ``dispose``: unit -> unit
 
 type Time = float
