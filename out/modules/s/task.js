@@ -39,11 +39,12 @@ export function append(l, r$$1) {
       return null;
     } else {
       const a$$2 = _arg1$$2.fields[0];
-      const matchValue = [run(map(function () {
+
+      const a$$3 = function a$$3() {
         return a$$2;
-      }, l)), run(map(function () {
-        return a$$2;
-      }, r$$1))];
+      };
+
+      const matchValue = [run(map(a$$3, l)), run(map(a$$3, r$$1))];
       return matchValue[0] != null ? matchValue[1] != null ? (r$$2 = matchValue[1], l$$1 = matchValue[0], append$$1(l$$1, r$$2)) : (d = matchValue[0], d) : matchValue[1] != null ? (d$$1 = matchValue[1], d$$1) : null;
     }
   });
