@@ -4,12 +4,17 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="scheduler/new.fs" />
+    <Compile Include="s/disposable.fs" />
+    <Compile Include="s/task.fs" />
+    <Compile Include="s/sink.fs" />
+    <Compile Include="s/stream.fs" />
+
     <Compile Include="most/types.fs" />
     <Compile Include="most/core.fs" />
     <Compile Include="most/scheduler.fs" />
     <Compile Include="most/disposable.fs" />
     <Compile Include="most.fs" />
+
     <Compile Include="pith.fs" />
     <Compile Include="so.fs" />
     <Compile Include="update.fs" />
@@ -22,6 +27,7 @@
     <Compile Include="scheduler/new.fs" />
     <Compile Include="show.old.fs" />
     <Compile Include="s.fs" />
+
     <Compile Include="scheduler/types.fs" />
     <Compile Include="scheduler/disposable.fs" />
     <Compile Include="scheduler/task.fs" />
@@ -32,6 +38,7 @@
     <Compile Include="scheduler/timeline.fs" />
     <Compile Include="scheduler/scheduledtask.fs" />
     <Compile Include="scheduler/scheduler.fs" />
+
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

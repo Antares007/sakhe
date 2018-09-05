@@ -1,12 +1,13 @@
-module Sakhe.Stream.Sink
-open Sakhe.Scheduler
+module Sakhe.S.Sink
 
-type Event<'a> =
+type Time = float
+
+type On<'a> =
     | Event of Time * 'a
     | End   of Time
     | Exn   of Time * exn
 
-type T<'a> = Sink of (Event<'a> -> unit)
+type T<'a> = Sink of (On<'a> -> unit)
 
 let return' f = Sink f
 

@@ -1,5 +1,5 @@
 module Sakhe.Show
-open Sakhe.Scheduler
+open Sakhe.S
 
 let cancelable task =
     let mutable active = true
@@ -10,12 +10,12 @@ let cancelable task =
         task |> Task.map (fun a -> (onAttach, a))
     )
 let z = Task.return' <| function
-    | Run (onCancel, b: float) ->
+    | Task.On.Run (onCancel, b: float) ->
         let mutable active = true
         onCancel (fun () -> printfn "canceled"; active <- false)
         printfn "running... %f %b" b active
         Some <| Disposable.return' (fun () -> printfn "disposed")
-    | Exn _ -> None
+    | Task.On.Exn _ -> None
 
 let hmm1 = cancelable z
 let hmm2 = cancelable z
@@ -26,9 +26,9 @@ let rez2 = snd hmm2 |> Task.map (fun () -> 2.)
 printfn "run"
 
 Task.run rez1 |> ignore
-(fst hmm1).dispose()
+Disposable.dispose (fst hmm1)
 
-(fst hmm2).dispose()
+Disposable.dispose  (fst hmm2)
 Task.run rez2 |> ignore
 
 // (Task.run (Task.append rez1 rez2)).Value.dispose()

@@ -1,5 +1,5 @@
-import { return$0027 as return$00240027 } from "./scheduler/disposable";
-import { Task$$$run as Task$0024$0024$0024run, Task$$$return$0027 as Task$0024$0024$0024return$00240027, Task$$$map as Task$0024$0024$0024map } from "./scheduler/task";
+import { dispose, return$0027 as return$00240027 } from "./s/disposable";
+import { run, return$0027 as return$00240027$$1, map } from "./s/task";
 import { toConsole, printf } from "./fable-core.2.0.0-beta-003/String";
 export function cancelable(task) {
   let active = true;
@@ -18,11 +18,11 @@ export function cancelable(task) {
 
   return [return$00240027(function () {
     onCancel();
-  }), Task$0024$0024$0024map(function f(a) {
+  }), map(function f(a) {
     return [onAttach, a];
   }, task)];
 }
-export const z = Task$0024$0024$0024return$00240027(function (_arg1) {
+export const z = return$00240027$$1(function (_arg1) {
   if (_arg1.tag === 1) {
     return null;
   } else {
@@ -41,14 +41,14 @@ export const z = Task$0024$0024$0024return$00240027(function (_arg1) {
 });
 export const hmm1 = cancelable(z);
 export const hmm2 = cancelable(z);
-export const rez1 = Task$0024$0024$0024map(function f$$2() {
+export const rez1 = map(function f$$2() {
   return 1;
 }, hmm1[1]);
-export const rez2 = Task$0024$0024$0024map(function f$$3() {
+export const rez2 = map(function f$$3() {
   return 2;
 }, hmm2[1]);
 toConsole(printf("run"));
-Task$0024$0024$0024run(rez1);
-hmm1[0].dispose();
-hmm2[0].dispose();
-Task$0024$0024$0024run(rez2);
+run(rez1);
+dispose(hmm1[0]);
+dispose(hmm2[0]);
+run(rez2);
