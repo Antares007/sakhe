@@ -4,12 +4,12 @@ open Sakhe.S
 exception CancelationException
 
 let cancelable task =
-    let mutable active = true
-    let cancel () = active <- false
-    let ifCanceledRaiseCancelationExn () = if not active then raise CancelationException
+    let mutable canceled = false
+    let cancel () = canceled <- true
+    let ifCanceledThenRaiseCancelationException () = if canceled then raise CancelationException
     (
         Disposable.return' cancel,
-        Task.map (fun a -> (ifCanceledRaiseCancelationExn, a)) task
+        Task.map (fun a -> (ifCanceledThenRaiseCancelationException, a)) task
     )
 
 let z = Task.return' <| function

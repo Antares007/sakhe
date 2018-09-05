@@ -5,20 +5,20 @@ import { instanceofExtended } from "./fable-core.2.0.0-beta-003/Util";
 import { toConsole, printf } from "./fable-core.2.0.0-beta-003/String";
 export const CancelationException = declare(function CancelationException() {}, FSharpException);
 export function cancelable(task) {
-  let active = true;
+  let canceled = false;
 
   const cancel = function cancel() {
-    active = false;
+    canceled = true;
   };
 
-  const ifCanceledRaiseCancelationExn = function ifCanceledRaiseCancelationExn() {
-    if (!active) {
+  const ifCanceledThenRaiseCancelationException = function ifCanceledThenRaiseCancelationException() {
+    if (canceled) {
       throw new CancelationException();
     }
   };
 
   return [return$00240027(cancel), map(function (a) {
-    return [ifCanceledRaiseCancelationExn, a];
+    return [ifCanceledThenRaiseCancelationException, a];
   }, task)];
 }
 export const z = return$00240027$$1(function (_arg1) {
