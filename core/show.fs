@@ -1,30 +1,40 @@
 module Sakhe.Show
+open Sakhe.Scheduler
 
-open Fable.Import.Most
-open Fable.Import.Node.Base.NodeJS
+let cancelable task =
+    let mutable active = true
+    let mutable onCancel = fun () -> active <- false
+    let onAttach cb = if not active then cb() else onCancel <- cb
+    (
+        Disposable.return' (fun () -> onCancel()),
+        task |> Task.map (fun a -> (onAttach, a))
+    )
+let z = Task.return' <| function
+    | Run (onCancel, b: float) ->
+        let mutable active = true
+        onCancel (fun () -> printfn "canceled"; active <- false)
+        printfn "running... %f %b" b active
+        Some <| Disposable.return' (fun () -> printfn "disposed")
+    | Exn _ -> None
 
-let e = Event<int>()
+let hmm1 = cancelable z
+let hmm2 = cancelable z
+
+let rez1 = snd hmm1 |> Task.map (fun () -> 1.)
+let rez2 = snd hmm2 |> Task.map (fun () -> 2.)
+
+printfn "run"
+
+Task.run rez1 |> ignore
+(fst hmm1).dispose()
+
+(fst hmm2).dispose()
+Task.run rez2 |> ignore
+
+// (Task.run (Task.append rez1 rez2)).Value.dispose()
 
 
-let drain sink s = S.run sink defaultScheduler s
 
-Fable.Import.Browser.console.log "trigger"
-let disposable =
-    e.Publish.toStream
-    |> S.tap (printfn "tap: %d")
-    |> drain { new Sink<_> with
-        member __.``event`` t e = printfn "event: %f %d" t e
-        member __.``end`` t = printfn "end: %f" t
-        member __.``error`` t error = printfn "end: %f %A" t error
-    }
-e.Trigger 42
-
-Fable.Import.Browser.console.log "triggered"
-open Scheduler.Timeline
-open Scheduler.ClockTimer
-open Fable.Import
-
-let ClockTimer = ClockTimer
 
 
 // S.periodic 1000.

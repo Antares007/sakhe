@@ -22,6 +22,7 @@
     <Compile Include="show.old.fs" />
     <Compile Include="s.fs" />
     <Compile Include="scheduler/types.fs" />
+    <Compile Include="scheduler/disposable.fs" />
     <Compile Include="scheduler/task.fs" />
     <Compile Include="scheduler/clocktimer.fs" />
     <Compile Include="scheduler/extensions.fs" />
