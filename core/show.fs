@@ -1,6 +1,14 @@
 module Sakhe.Show
 open Sakhe.S
 
+let setTask =
+    Timer.setTimer
+        (Task.return' (function
+            | Task.On.Run ((), s) -> None
+            | Task.On.Exn (_) -> None))
+        (PositiveInt.return' 5)
+        Default.timer
+
 let z = Task.return' <| function
     | Task.On.Run (b: float, source) ->
         Task.Cancelable.ifCanceledThenRaiseCancellationException source
@@ -18,7 +26,8 @@ let (ctask1, cancel1) = Task.Cancelable.wrap z
 
 let rez1 = ctask1 |> Task.map (fun () -> 1.)
 
-printfn "run"
+
+printfn "run at: %A" (Clock.now Default.clock)
 
 Task.run rez1 |> ignore
 Disposable.dispose cancel1

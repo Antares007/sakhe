@@ -1,6 +1,5 @@
 namespace Sakhe.S.Stream
 open Sakhe.S
-open System.Threading.Tasks
 
 [<AutoOpen>]
 module GenericListExtensions =
@@ -23,7 +22,7 @@ module GenericListExtensions =
 module Timeline =
 
     type Time = Sink.Time
-    type T = private Timeline of ResizeArray<Time * Task.T<unit>>
+    type [<Fable.Core.Erase>] T = private Timeline of ResizeArray<Time * Task.T<unit>>
 
     let private findAppendPosition (time: Time) (a: ResizeArray<Time * 'a>) =
         let rec go l r =
@@ -56,43 +55,6 @@ module Timeline =
             else Task.append (snd timeline.[i]) acc
         Some <| go (i - 1) (snd timeline.[i])
 
-module Clock =
-    type Time = private Time of float
-    type T = Clock of (unit -> Time)
-
-    let return' f = Clock <| fun () ->
-        let time: float = f ()
-        Time <| System.Math.Floor time
-
-    let now (Clock f) = f()
-
-module Timer =
-    open Fable.Import.JS
-    type Handle = private Timeout of SetTimeoutToken | Defer of Disposable.T
-    type Delay = float
-
-    type SetTimerF = (unit -> unit) -> Delay -> Handle
-    type ClearTimerF = Handle -> unit
-    type NowF = unit -> Sink.Time
-
-    type T = private Timer of NowF * SetTimerF * ClearTimerF
-
-    let setTimer f time =
-        if time > 0 then
-            Timeout <| setTimeout f time
-        else
-            let (task, cancelDisposable) = Task.Cancelable.wrap << Task.return' <| function
-                | Task.On.Run ((), source) ->
-                    f()
-                    Option.None
-                | Task.On.Exn (a, exn) -> Option.None
-            Task.deferRun task |> ignore
-            Defer cancelDisposable
-
-    let clearTimer = function
-        | Timeout token -> clearTimeout token
-        | Defer disposable -> Disposable.dispose disposable
-
 module Scheduler =
     type Offset = Sink.Time
     type Delay = Sink.Time
@@ -100,7 +62,7 @@ module Scheduler =
     type SchedulerState = {
 
         timeline: Timeline.T }
-    type T = private Scheduler of SchedulerState
+    type [<Fable.Core.Erase>] T = private Scheduler of SchedulerState
 
     let schedule (offset: Offset) (delay: Delay) (period: Period) (task: Task.T<Sink.Time>) (scheduler: T): Disposable.T =
         failwith ""
