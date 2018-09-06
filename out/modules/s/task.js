@@ -1,5 +1,5 @@
-import { declare, Union } from "../fable-core.2.0.0-beta-003/Types";
-import { append as append$$1 } from "./disposable";
+import { FSharpException, declare, Union } from "../fable-core.2.0.0-beta-003/Types";
+import { return$0027 as return$00240027, dispose, append as append$$1 } from "./disposable";
 export const On$00601 = declare(function On$00601(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
@@ -51,4 +51,40 @@ export function append(l, r$$1) {
 }
 export function deferRun(t) {
   return Promise.resolve(t).then(run);
+}
+export const CancellationException = declare(function CancellationException() {}, FSharpException);
+export const CancellationSource = declare(function CancellationSource(tag, name, ...fields) {
+  Union.call(this, tag, name, ...fields);
+}, Union);
+export function ifCanceledThenRaiseCancellationException(_arg1$$3) {
+  const f$$2 = _arg1$$3.fields[0];
+  f$$2();
+}
+export function cancelable(task) {
+  let canceled = false;
+  let taskDisposable = null;
+  const cancellationSource = new CancellationSource(0, "CancellationSource", function () {
+    if (canceled) {
+      throw new CancellationException();
+    }
+  });
+  const cancelDisposable = return$00240027(function () {
+    canceled = true;
+
+    if (taskDisposable != null) {
+      dispose(taskDisposable);
+    }
+  });
+  const task$$1 = return$0027(function (_arg1$$4) {
+    if (_arg1$$4.tag === 1) {
+      return null;
+    } else {
+      const a$$4 = _arg1$$4.fields[0];
+      taskDisposable = run(map(function f$$5() {
+        return [a$$4, cancellationSource];
+      }, task));
+      return cancelDisposable;
+    }
+  });
+  return [task$$1, cancelDisposable];
 }

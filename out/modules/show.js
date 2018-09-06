@@ -1,29 +1,10 @@
-import { declare, FSharpException } from "./fable-core.2.0.0-beta-003/Types";
-import { dispose, return$0027 as return$00240027 } from "./s/disposable";
-import { run, return$0027 as return$00240027$$1, map } from "./s/task";
+import { run, map, cancelable, return$0027 as return$00240027$$1, ifCanceledThenRaiseCancellationException, CancellationException } from "./s/task";
 import { instanceofExtended } from "./fable-core.2.0.0-beta-003/Util";
 import { toConsole, printf } from "./fable-core.2.0.0-beta-003/String";
-export const CancelationException = declare(function CancelationException() {}, FSharpException);
-export function cancelable(task) {
-  let canceled = false;
-
-  const cancel = function cancel() {
-    canceled = true;
-  };
-
-  const ifCanceledThenRaiseCancelationException = function ifCanceledThenRaiseCancelationException() {
-    if (canceled) {
-      throw new CancelationException();
-    }
-  };
-
-  return [return$00240027(cancel), map(function (a) {
-    return [ifCanceledThenRaiseCancelationException, a];
-  }, task)];
-}
+import { dispose, return$0027 as return$00240027 } from "./s/disposable";
 export const z = return$00240027$$1(function (_arg1) {
   if (_arg1.tag === 1) {
-    if (instanceofExtended(_arg1.fields[1], CancelationException)) {
+    if (instanceofExtended(_arg1.fields[1], CancellationException)) {
       toConsole(printf("cancel"));
       return null;
     } else {
@@ -31,19 +12,20 @@ export const z = return$00240027$$1(function (_arg1) {
       return null;
     }
   } else {
-    _arg1.fields[0][0]();
-
-    throw new Error("omg");
-    toConsole(printf("running... %f"))(_arg1.fields[0][1]);
+    ifCanceledThenRaiseCancellationException(_arg1.fields[0][1]);
+    toConsole(printf("running... %f"))(_arg1.fields[0][0]);
     return return$00240027(function () {
       toConsole(printf("disposed"));
     });
   }
 });
-export const hmm1 = cancelable(z);
+const patternInput$004017$002D3 = cancelable(z);
+export const ctask1 = patternInput$004017$002D3[0];
+export const cancel1 = patternInput$004017$002D3[1];
 export const rez1 = map(function f$$2() {
   return 1;
-}, hmm1[1]);
+}, ctask1);
 toConsole(printf("run"));
-dispose(hmm1[0]);
+run(rez1);
+dispose(cancel1);
 run(rez1);

@@ -1,40 +1,27 @@
 module Sakhe.Show
 open Sakhe.S
 
-exception CancelationException
-
-let cancelable task =
-    let mutable canceled = false
-    let cancel () = canceled <- true
-    let ifCanceledThenRaiseCancelationException () = if canceled then raise CancelationException
-    (
-        Disposable.return' cancel,
-        Task.map (fun a -> (ifCanceledThenRaiseCancelationException, a)) task
-    )
-
 let z = Task.return' <| function
-    | Task.On.Run (ifCanceledRaiseCancelationExn, b: float) ->
-        ifCanceledRaiseCancelationExn ()
-        failwith "omg"
+    | Task.On.Run (b: float, source) ->
+        Task.ifCanceledThenRaiseCancellationException source
         printfn "running... %f" b
         Some << Disposable.return' <| fun () ->
             printfn "disposed"
-    | Task.On.Exn (t, CancelationException) ->
+    | Task.On.Exn (t, Task.CancellationException) ->
         printfn "cancel"
         None
     | Task.On.Exn (t, exn) ->
         printfn "error"
         None
 
-let hmm1 = cancelable z
-// let hmm2 = cancelable z
+let (ctask1, cancel1) = Task.cancelable z
 
-let rez1 = snd hmm1 |> Task.map (fun () -> 1.)
-// let rez2 = snd hmm2 |> Task.map (fun () -> 2.)
+let rez1 = ctask1 |> Task.map (fun () -> 1.)
 
 printfn "run"
 
-Disposable.dispose (fst hmm1)
+Task.run rez1 |> ignore
+Disposable.dispose cancel1
 Task.run rez1 |> ignore
 
 // Disposable.dispose  (fst hmm2)
