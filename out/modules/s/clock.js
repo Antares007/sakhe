@@ -2,7 +2,7 @@ import { declare, Union } from "../fable-core.2.0.0-beta-003/Types";
 export const PositiveInt$002ET = declare(function PositiveInt$002ET(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
-export const FlooredFloat$002ET = declare(function FlooredFloat$002ET(tag, name, ...fields) {
+export const PositiveFlooredFloat$002ET = declare(function PositiveFlooredFloat$002ET(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
 export const Clock$002ET = declare(function Clock$002ET(tag, name, ...fields) {

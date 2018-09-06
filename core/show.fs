@@ -1,37 +1,59 @@
 module Sakhe.Show
 open Sakhe.S
 
-let setTask =
+let clock = Default.clock ()
+
+printfn "run at: %A" (Clock.now clock)
+
+let d =
     Timer.setTimer
         (Task.return' (function
-            | Task.On.Run ((), s) -> None
-            | Task.On.Exn (_) -> None))
-        (PositiveInt.return' 5)
+            | Task.On.Run ((), s) ->
+                printfn "running... at: %A" (Clock.now clock)
+                None
+            | Task.On.Exn (_) ->
+                printfn "disposed..."
+                None))
+        (PositiveInt.return' 0)
         Default.timer
 
-let z = Task.return' <| function
-    | Task.On.Run (b: float, source) ->
-        Task.Cancelable.ifCanceledThenRaiseCancellationException source
-        printfn "running... %f" b
-        Some << Disposable.return' <| fun () ->
-            printfn "disposed"
-    | Task.On.Exn (t, Task.Cancelable.Exception) ->
-        printfn "cancel"
-        None
-    | Task.On.Exn (t, exn) ->
-        printfn "error"
-        None
+let d2 =
+    Timer.setTimer
+        (Task.return' (function
+            | Task.On.Run ((), s) ->
+                printfn "running... at: %A" (Clock.now clock)
+                None
+            | Task.On.Exn (_) ->
+                printfn "disposed..."
+                None))
+        (PositiveInt.return' 1000)
+        Default.timer
 
-let (ctask1, cancel1) = Task.Cancelable.wrap z
+//Disposable.dispose d
 
-let rez1 = ctask1 |> Task.map (fun () -> 1.)
+// let z = Task.return' <| function
+//     | Task.On.Run (b: float, source) ->
+//         Task.Cancelable.ifCanceledThenRaiseCancellationException source
+//         printfn "running... %f" b
+//         Some << Disposable.return' <| fun () ->
+//             printfn "disposed"
+//     | Task.On.Exn (t, Task.Cancelable.Exception) ->
+//         printfn "cancel"
+//         None
+//     | Task.On.Exn (t, exn) ->
+//         printfn "error"
+//         None
+
+// let (ctask1, cancel1) = Task.Cancelable.wrap z
+
+// let rez1 = ctask1 |> Task.map (fun () -> 1.)
 
 
-printfn "run at: %A" (Clock.now Default.clock)
+// printfn "run at: %A" (Clock.now Default.clock)
 
-Task.run rez1 |> ignore
-Disposable.dispose cancel1
-Task.run rez1 |> ignore
+// Task.run rez1 |> ignore
+// Disposable.dispose cancel1
+// Task.run rez1 |> ignore
 
 // Disposable.dispose  (fst hmm2)
 // Task.run rez2 |> ignore

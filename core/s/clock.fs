@@ -7,11 +7,12 @@ module PositiveInt =
         PositiveInt i
     let inline valueOf (PositiveInt i) = i
 
-module FlooredFloat =
+module PositiveFlooredFloat =
     type T = private FlooredFloat of float
 
-    let inline return' (f: float) = FlooredFloat (System.Math.Floor(f))
-    let inline fromInt (i: int) = return' (unbox i)
+    let inline return' (f: float) =
+        assert (f >= 0.0)
+        FlooredFloat (System.Math.Floor(f))
     let inline valueOf (FlooredFloat f) = f
 
 //     type T = private Time of float
@@ -26,7 +27,7 @@ module FlooredFloat =
 //         Span duration
 
 module Clock =
-    type T = private Clock of (unit -> FlooredFloat.T)
+    type T = private Clock of (unit -> PositiveFlooredFloat.T)
 
     let return' f = Clock f
     let now (Clock f) = f()
