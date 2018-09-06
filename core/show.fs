@@ -3,18 +3,18 @@ open Sakhe.S
 
 let z = Task.return' <| function
     | Task.On.Run (b: float, source) ->
-        Task.ifCanceledThenRaiseCancellationException source
+        Task.Cancelable.ifCanceledThenRaiseCancellationException source
         printfn "running... %f" b
         Some << Disposable.return' <| fun () ->
             printfn "disposed"
-    | Task.On.Exn (t, Task.CancellationException) ->
+    | Task.On.Exn (t, Task.Cancelable.Exception) ->
         printfn "cancel"
         None
     | Task.On.Exn (t, exn) ->
         printfn "error"
         None
 
-let (ctask1, cancel1) = Task.cancelable z
+let (ctask1, cancel1) = Task.Cancelable.wrap z
 
 let rez1 = ctask1 |> Task.map (fun () -> 1.)
 

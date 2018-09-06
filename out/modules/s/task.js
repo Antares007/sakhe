@@ -52,20 +52,20 @@ export function append(l, r$$1) {
 export function deferRun(t) {
   return Promise.resolve(t).then(run);
 }
-export const CancellationException = declare(function CancellationException() {}, FSharpException);
-export const CancellationSource = declare(function CancellationSource(tag, name, ...fields) {
+export const Cancelable$002EException = declare(function Cancelable$002EException() {}, FSharpException);
+export const Cancelable$002ESource = declare(function Cancelable$002ESource(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
-export function ifCanceledThenRaiseCancellationException(_arg1$$3) {
+export function Cancelable$$$ifCanceledThenRaiseCancellationException(_arg1$$3) {
   const f$$2 = _arg1$$3.fields[0];
   f$$2();
 }
-export function cancelable(task) {
+export function Cancelable$$$wrap(task) {
   let canceled = false;
   let taskDisposable = null;
-  const cancellationSource = new CancellationSource(0, "CancellationSource", function () {
+  const cancellationSource = new Cancelable$002ESource(0, "Source", function () {
     if (canceled) {
-      throw new CancellationException();
+      throw new Cancelable$002EException();
     }
   });
   const cancelDisposable = return$00240027(function () {
@@ -80,10 +80,15 @@ export function cancelable(task) {
       return null;
     } else {
       const a$$4 = _arg1$$4.fields[0];
-      taskDisposable = run(map(function f$$5() {
-        return [a$$4, cancellationSource];
-      }, task));
-      return cancelDisposable;
+
+      if (canceled) {
+        return null;
+      } else {
+        taskDisposable = run(map(function f$$5() {
+          return [a$$4, cancellationSource];
+        }, task));
+        return taskDisposable;
+      }
     }
   });
   return [task$$1, cancelDisposable];

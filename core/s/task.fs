@@ -28,21 +28,24 @@ let append l r = Task <| function
 let deferRun t =
     Promise.resolve(t).``then``(run)
 
-exception CancellationException
-type CancellationSource = private CancellationSource of (unit -> unit)
+module Cancelable =
+    exception Exception
+    type Source = private Source of (unit -> unit)
 
-let ifCanceledThenRaiseCancellationException (CancellationSource f) = f ()
+    let ifCanceledThenRaiseCancellationException (Source f) = f ()
 
-let cancelable task =
-    let mutable canceled = false
-    let mutable taskDisposable = None
-    let cancellationSource = CancellationSource (fun () -> if canceled then raise CancellationException)
-    let cancelDisposable = Disposable.return' <| fun () ->
-        canceled <- true
-        if taskDisposable.IsSome then Disposable.dispose taskDisposable.Value
-    let task = return' <| function
-        | On.Run a ->
-            taskDisposable <- task |> map (fun () -> a, cancellationSource) |> run
-            Some cancelDisposable
-        | On.Exn _ -> None
-    task, cancelDisposable
+    let wrap task =
+        let mutable canceled = false
+        let mutable taskDisposable = None
+        let cancellationSource = Source (fun () -> if canceled then raise Exception)
+        let cancelDisposable = Disposable.return' <| fun () ->
+            canceled <- true
+            if taskDisposable.IsSome then Disposable.dispose taskDisposable.Value
+        let task = return' <| function
+            | On.Run a ->
+                if canceled then None
+                else
+                taskDisposable <- task |> map (fun () -> a, cancellationSource) |> run
+                taskDisposable
+            | On.Exn _ -> None
+        task, cancelDisposable
