@@ -20,9 +20,9 @@ module GenericListExtensions =
         member __.``splice`` ((_: int), (_: int), (_: 'a)): ResizeArray<'a> = jsNative
 
 module Timeline =
+    type Time = PositiveFlooredFloat.T
 
-    type Time = Sink.Time
-    type [<Fable.Core.Erase>] T = private Timeline of ResizeArray<Time * Task.T<unit>>
+    type T = private Timeline of ResizeArray<Time * Task.T<unit>>
 
     let private findAppendPosition (time: Time) (a: ResizeArray<Time * 'a>) =
         let rec go l r =
@@ -44,16 +44,17 @@ module Timeline =
         else timeline.splice (i + 1, 0, (time, task)) |> ignore
 
     let removeTasks time (Timeline timeline) =
-        let i = findAppendPosition time timeline
-        if i = -1 then None
+        let tasks = timeline.splice (0, findAppendPosition time timeline + 1)
+        let length = tasks.length
+        if length = 0 then None
         else
-        // TODO: ?????
-        if i = 0 then Some <| snd timeline.[i]
-        else
-        let rec go i acc =
-            if i < 0 then acc
-            else Task.append (snd timeline.[i]) acc
-        Some <| go (i - 1) (snd timeline.[i])
+            let (_, firstTask) = tasks.[0]
+            if length = 1 then Some firstTask
+            else
+            let rec go i acc =
+                if i >= length then acc
+                else go (i + 1) (Task.append acc (snd timeline.[i]))
+            Some <| go 1 firstTask
 
 module Scheduler =
     type Offset = Sink.Time
@@ -64,15 +65,10 @@ module Scheduler =
         timeline: Timeline.T }
     type [<Fable.Core.Erase>] T = private Scheduler of SchedulerState
 
-    let schedule (offset: Offset) (delay: Delay) (period: Period) (task: Task.T<Sink.Time>) (scheduler: T): Disposable.T =
+    let schedule (delay: PositiveInt.T option) (period: PositiveInt.T option) (task: Task.T<Sink.Time>) (scheduler: T): Disposable.T =
         failwith ""
 
 module Stream =
     type T<'a> = Stream of (Sink.T<'a> * Scheduler.T -> Disposable.T)
 
     let return' f = Stream f
-
-module Test =
-    let see = Stream.return' <| fun (sink, scheduler) ->
-        Sink.event' 1.0 "a" sink
-        Scheduler.schedule 0. 0. -1. (Task.return' (unbox 1)) scheduler
