@@ -19,9 +19,9 @@ export const z = return$00240027$$1(function (_arg1) {
     });
   }
 });
-const patternInput$004017$002D8 = Cancelable$0024$0024$0024wrap(z);
-export const ctask1 = patternInput$004017$002D8[0];
-export const cancel1 = patternInput$004017$002D8[1];
+const patternInput$004017$002D2 = Cancelable$0024$0024$0024wrap(z);
+export const ctask1 = patternInput$004017$002D2[0];
+export const cancel1 = patternInput$004017$002D2[1];
 export const rez1 = map(function f$$2() {
   return 1;
 }, ctask1);
