@@ -15,7 +15,7 @@ let d =
             | Task.On.Exn (_) ->
                 printfn "disposed..."
                 None))
-        (Delay.return' 0)
+        (Time.Delay.return' 0)
         Default.timer
 
 let d2 =
@@ -27,7 +27,7 @@ let d2 =
             | Task.On.Exn (_) ->
                 printfn "disposed..."
                 None))
-        (Delay.return' 1000)
+        (Time.Delay.return' 1000)
         Default.timer
 
 //Disposable.dispose d

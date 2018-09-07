@@ -1,5 +1,5 @@
 import { declare, Union } from "../fable-core.2.0.0-beta-003/Types";
-import { run, Cancelable$$$wrap as Cancelable$0024$0024$0024wrap } from "./task";
+import { run, Cancelable$$$extend as Cancelable$0024$0024$0024extend } from "./task";
 import { append, return$0027 as return$00240027 } from "./disposable";
 export const T = declare(function T(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
@@ -9,7 +9,7 @@ export function return$0027(set, clear) {
     let delay$$1;
     const i = delay;
     delay$$1 = i;
-    const patternInput = Cancelable$0024$0024$0024wrap(task);
+    const patternInput = Cancelable$0024$0024$0024extend(task);
 
     if (0 === delay$$1) {
       Promise.resolve(patternInput[0]).then(run);

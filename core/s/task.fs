@@ -34,7 +34,7 @@ module Cancelable =
 
     let ifCanceledThenRaiseCancellationException (Source f) = f ()
 
-    let wrap task =
+    let extend task =
         let mutable canceled = false
         let mutable taskDisposable = None
         let cancellationSource = Source (fun () -> if canceled then raise Exception)

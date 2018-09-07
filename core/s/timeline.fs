@@ -42,7 +42,7 @@ module Timeline =
         if i = -1 then timeline.splice (0, 0, (time, task)) |> ignore
         else
         let (iTime, iTask) = timeline.[i]
-        if iTime = time then timeline.[i] <- (time, Task.append iTask task)
+        if iTime < time then timeline.[i] <- (time, Task.append iTask task)
         else timeline.splice (i + 1, 0, (time, task)) |> ignore
 
     let removeTasks time (Timeline timeline) =

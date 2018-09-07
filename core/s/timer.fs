@@ -1,11 +1,11 @@
 module Sakhe.S.Timer
 open Fable.Import.JS
 
-type T = private Timer of (Task.T<unit * Task.Cancelable.Source> -> Delay.T -> Disposable.T)
+type T = private Timer of (Task.T<unit * Task.Cancelable.Source> -> Time.Delay -> Disposable.T)
 
 let return' set clear = Timer <| fun task delay ->
-    let delay = Delay.value delay
-    let (task, cancelDisposable) = Task.Cancelable.wrap task
+    let delay = Time.Delay.value delay
+    let (task, cancelDisposable) = Task.Cancelable.extend task
     if 0 = delay then
         Promise.resolve(task).``then``(Task.run) |> ignore
         cancelDisposable

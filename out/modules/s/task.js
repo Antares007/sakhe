@@ -60,7 +60,7 @@ export function Cancelable$$$ifCanceledThenRaiseCancellationException(_arg1$$3) 
   const f$$2 = _arg1$$3.fields[0];
   f$$2();
 }
-export function Cancelable$$$wrap(task) {
+export function Cancelable$$$extend(task) {
   let canceled = false;
   let taskDisposable = null;
   const cancellationSource = new Cancelable$002ESource(0, "Source", function () {

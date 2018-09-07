@@ -9,11 +9,10 @@
     <Compile Include="s/task.fs" />
     <Compile Include="s/timer.fs" />
     <Compile Include="s/timeline.fs" />
-    <Compile Include="s/scheduler.fs" />
     <Compile Include="s/sink.fs" />
+    <Compile Include="s/scheduler.fs" />
     <Compile Include="s/stream.fs" />
     <Compile Include="s/default.fs" />
-
     <Compile Include="most/types.fs" />
     <Compile Include="most/core.fs" />
     <Compile Include="most/scheduler.fs" />
@@ -30,8 +29,6 @@
     <Compile Include="dom.fs" />
     <Compile Include="show.old.fs" />
     <Compile Include="s.fs" />
-
-
     <Compile Include="scheduler/new.fs" />
     <Compile Include="scheduler/types_.fs" />
     <Compile Include="scheduler/disposable.fs" />

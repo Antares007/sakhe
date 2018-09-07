@@ -1,5 +1,5 @@
 import { declare, Union } from "../fable-core.2.0.0-beta-003/Types";
-import { equals, compare } from "../fable-core.2.0.0-beta-003/Util";
+import { compare } from "../fable-core.2.0.0-beta-003/Util";
 import { append } from "./task";
 export const Timeline$002ET = declare(function Timeline$002ET(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
@@ -56,7 +56,7 @@ export function Timeline$$$add(time$$1, task, _arg1$$1) {
   } else {
     const patternInput = timeline$$1[i];
 
-    if (equals(patternInput[0], time$$1)) {
+    if (compare(patternInput[0], time$$1) < 0) {
       timeline$$1[i] = [time$$1, append(patternInput[1], task)];
     } else {
       timeline$$1.splice(i + 1, 0, [time$$1, task]);
