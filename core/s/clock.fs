@@ -9,7 +9,7 @@ module Time =
         FlooredFloat (System.Math.Floor(f))
     let value (FlooredFloat f) = f
 
-    let delay now = function
+    let add now = function
         | None -> now
         | Some (PositiveInt delay) ->
             let (FlooredFloat now)  = now

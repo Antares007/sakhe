@@ -12,26 +12,28 @@ module Scheduler =
         (period: Time.Delay option)
         (task: Task.T<Time.T * Task.Cancelable.Source>)
         (Scheduler (Ref ref, timer, clock, timeline)): Disposable.T =
-            let now = Clock.now clock
-            let taskTime = Time.delay now delay
+            let taskTime = Time.add (Clock.now clock) delay
             let (task, cancel) = Task.Cancelable.extend task
-            let task = Task.map (fun () -> taskTime) task
 
-            let cancel = Timeline.add taskTime task timeline
+            let task = Task.map (fun () -> taskTime) task
+            let cancel = Disposable.append cancel (Timeline.add taskTime task timeline)
 
             let nextTaskTime = Timeline.nextArrival timeline
-            let delay = Time.Delay.fromTo (Clock.now clock) nextTaskTime
+
+            let setTaskRun () =
+                let delay = Time.Delay.fromTo (Clock.now clock) nextTaskTime
+                let task = Task.return' <| function
+                    | Task.On.Run ((), s) ->
+
+                        None
+                    | Task.On.Exn _ -> None
+                Timer.setTimer task delay timer
+
             match ref.Value with
             | None ->
-                let task = Task.return' <| function
-                    | Task.On.Run ((), s) -> None
-                    | Task.On.Exn _ -> None
-                ref.Value <- Some (nextTaskTime, Timer.setTimer task delay timer)
-            | Some (scheduledNextTaskTime, d) ->
+                ref.Value <- Some (nextTaskTime, setTaskRun ())
+            | Some (scheduledNextTaskTime, scheduledTaskRun) ->
                 if (nextTaskTime >= scheduledNextTaskTime) then
-                    Disposable.dispose d
-                    let task = Task.return' <| function
-                        | Task.On.Run ((), s) -> None
-                        | Task.On.Exn _ -> None
-                    ref.Value <- Some (nextTaskTime, Timer.setTimer task delay timer)
+                    Disposable.dispose scheduledTaskRun
+                    ref.Value <- Some (nextTaskTime, setTaskRun ())
             cancel

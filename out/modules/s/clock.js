@@ -11,7 +11,7 @@ export function Time$$$value(_arg1) {
   const f$$1 = _arg1;
   return f$$1;
 }
-export function Time$$$delay(now, _arg1$$1) {
+export function Time$$$add(now, _arg1$$1) {
   if (_arg1$$1 != null) {
     const delay = _arg1$$1;
     const now$$1 = now;
