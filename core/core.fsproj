@@ -8,6 +8,8 @@
     <Compile Include="s/clock.fs" />
     <Compile Include="s/task.fs" />
     <Compile Include="s/timer.fs" />
+    <Compile Include="s/timeline.fs" />
+    <Compile Include="s/scheduler.fs" />
     <Compile Include="s/sink.fs" />
     <Compile Include="s/stream.fs" />
     <Compile Include="s/default.fs" />
@@ -26,6 +28,10 @@
     <Compile Include="r.fs" />
     <Compile Include="pnode.fs" />
     <Compile Include="dom.fs" />
+    <Compile Include="show.old.fs" />
+    <Compile Include="s.fs" />
+
+
     <Compile Include="scheduler/new.fs" />
     <Compile Include="scheduler/types_.fs" />
     <Compile Include="scheduler/disposable.fs" />
@@ -34,11 +40,9 @@
     <Compile Include="scheduler/stream.fs" />
     <Compile Include="scheduler/clocktimer.fs" />
     <Compile Include="scheduler/extensions.fs" />
-    <Compile Include="scheduler/timeline.fs" />
+    <Compile Include="scheduler/timeline_.fs" />
     <Compile Include="scheduler/scheduledtask.fs" />
-    <Compile Include="scheduler/scheduler.fs" />
-    <Compile Include="show.old.fs" />
-    <Compile Include="s.fs" />
+    <Compile Include="scheduler/scheduler_.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

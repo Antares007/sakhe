@@ -2,6 +2,7 @@ module Sakhe.Show
 open Sakhe.S
 
 let clock = Default.clock ()
+let sch = Stream.Scheduler.schedule
 
 printfn "run at: %A" (Clock.now clock)
 
@@ -14,7 +15,7 @@ let d =
             | Task.On.Exn (_) ->
                 printfn "disposed..."
                 None))
-        (PositiveInt.return' 0)
+        (Delay.return' 0)
         Default.timer
 
 let d2 =
@@ -26,7 +27,7 @@ let d2 =
             | Task.On.Exn (_) ->
                 printfn "disposed..."
                 None))
-        (PositiveInt.return' 1000)
+        (Delay.return' 1000)
         Default.timer
 
 //Disposable.dispose d

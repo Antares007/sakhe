@@ -7,7 +7,7 @@ export const T = declare(function T(tag, name, ...fields) {
 export function return$0027(set, clear) {
   return new T(0, "Timer", function (task, delay) {
     let delay$$1;
-    const i = delay.fields[0] | 0;
+    const i = delay;
     delay$$1 = i;
     const patternInput = Cancelable$0024$0024$0024wrap(task);
 
