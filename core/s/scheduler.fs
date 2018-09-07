@@ -3,12 +3,20 @@ open Sakhe.S
 
 module Scheduler =
     type SchedulerState = {
-        mutable scheduledRun: Disposable.T option
+        mutable scheduledRun: (Time.T * Disposable.T) option
         timer: Timer.T
         clock: Clock.T
         timeline: Timeline.T }
 
     type [<Fable.Core.Erase>] T = private Scheduler of SchedulerState
+
+    let private scheduleNextRun (scheduler: SchedulerState) =
+        let nextArrival = Timeline.nextArrival scheduler.timeline
+        match scheduler.scheduledRun with
+        | Some (t, d) -> ()
+        | None -> ()
+
+        ()
 
     let schedule
         (delay: Delay.T option)
@@ -24,4 +32,5 @@ module Scheduler =
             let (task, cancel) = Task.Cancelable.wrap task
             let task = Task.map (fun () -> time) task
             Timeline.add time task scheduler.timeline
+            scheduleNextRun scheduler
             cancel

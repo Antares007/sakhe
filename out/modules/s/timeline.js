@@ -32,25 +32,40 @@ function Timeline$$$findAppendPosition(time, a) {
 export function Timeline$$$empty() {
   return new Timeline$002ET(0, "Timeline", []);
 }
-export function Timeline$$$add(time$$1, task, _arg1) {
+export function Timeline$$$nextArrival(_arg1) {
   const timeline = _arg1.fields[0];
-  const i = Timeline$$$findAppendPosition(time$$1, timeline) | 0;
+
+  if (timeline.length === 0) {
+    const f = Number.POSITIVE_INFINITY;
+
+    if (!(f >= 0)) {
+      debugger;
+    }
+
+    return Math.floor(f);
+  } else {
+    return timeline[0][0];
+  }
+}
+export function Timeline$$$add(time$$1, task, _arg1$$1) {
+  const timeline$$1 = _arg1$$1.fields[0];
+  const i = Timeline$$$findAppendPosition(time$$1, timeline$$1) | 0;
 
   if (i === -1) {
-    timeline.splice(0, 0, [time$$1, task]);
+    timeline$$1.splice(0, 0, [time$$1, task]);
   } else {
-    const patternInput = timeline[i];
+    const patternInput = timeline$$1[i];
 
     if (equals(patternInput[0], time$$1)) {
-      timeline[i] = [time$$1, append(patternInput[1], task)];
+      timeline$$1[i] = [time$$1, append(patternInput[1], task)];
     } else {
-      timeline.splice(i + 1, 0, [time$$1, task]);
+      timeline$$1.splice(i + 1, 0, [time$$1, task]);
     }
   }
 }
-export function Timeline$$$removeTasks(time$$2, _arg1$$1) {
-  const timeline$$1 = _arg1$$1.fields[0];
-  const tasks = timeline$$1.splice(0, Timeline$$$findAppendPosition(time$$2, timeline$$1) + 1);
+export function Timeline$$$removeTasks(time$$2, _arg1$$2) {
+  const timeline$$2 = _arg1$$2.fields[0];
+  const tasks = timeline$$2.splice(0, Timeline$$$findAppendPosition(time$$2, timeline$$2) + 1);
   const length = tasks.length | 0;
 
   if (length === 0) {
@@ -67,7 +82,7 @@ export function Timeline$$$removeTasks(time$$2, _arg1$$1) {
             return acc;
           } else {
             const $var$$1 = i$$1 + 1;
-            acc = append(acc, timeline$$1[i$$1][1]);
+            acc = append(acc, timeline$$2[i$$1][1]);
             i$$1 = $var$$1;
             continue go$$1;
           }

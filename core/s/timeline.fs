@@ -34,6 +34,9 @@ module Timeline =
 
     let empty () = Timeline <| ResizeArray()
 
+    let nextArrival (Timeline timeline) =
+        if timeline.length = 0 then Time.return' infinity else fst timeline.[0]
+
     let add time task (Timeline timeline) =
         let i = findAppendPosition time timeline
         if i = -1 then timeline.splice (0, 0, (time, task)) |> ignore
