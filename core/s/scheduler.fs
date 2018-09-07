@@ -22,11 +22,13 @@ module Scheduler =
 
             let setTaskRun () =
                 let delay = Time.Delay.fromTo (Clock.now clock) nextTaskTime
+
                 let task = Task.return' <| function
                     | Task.On.Run ((), s) ->
 
                         None
                     | Task.On.Exn _ -> None
+
                 Timer.setTimer task delay timer
 
             match ref.Value with

@@ -63,7 +63,7 @@ module Timeline =
             assert (i = arr.length - 1 || arr.[i + 1] > a)
             arr.splice (i + 1, 0, a) |> ignore
 
-        let length (SortedArray array ) = array.length
+        let length (SortedArray array) = array.length
 
 
     module Slot =
@@ -97,6 +97,8 @@ module Timeline =
 
     let empty () = Timeline <| (Slot.empty (), ref 0)
 
+    let isEmpty (Timeline (slot, _)) = Slot.length slot = 0
+
     let nextArrival (Timeline (slot, _)) =
         if Slot.length slot = 0 then Time.return' infinity else (fst (Slot.readIndex 0 slot))
 
@@ -104,12 +106,14 @@ module Timeline =
         let id = idref.Value
         idref.Value <- id + 1
 
-        let insertTask taskSlot =
+        let insertTask
+            taskSlot =
             Slot.append (id, task) taskSlot
             Disposable.return' <| fun () ->
                 Slot.splice (Slot.findAppendPosition id taskSlot) 1 taskSlot |> ignore
 
-        let insertTime i =
+        let insertTime
+            i =
             let taskSlot = Slot.empty()
             Slot.insertAfter i (time, (taskSlot)) timeSlot
             taskSlot
@@ -118,15 +122,15 @@ module Timeline =
         if i = -1 then
             insertTask (insertTime i)
         else
-        let (key, taskSlot) = Slot.readIndex i timeSlot
-        if key = time then
-            insertTask taskSlot
-        else
-            insertTask (insertTime i)
+            let (key, taskSlot) = Slot.readIndex i timeSlot
+            if key = time then
+                insertTask taskSlot
+            else
+                insertTask (insertTime i)
 
     let removeTasks time (Timeline (slot, _)) =
         Slot.splice 0 (Slot.findAppendPosition time slot + 1) slot
-        |> Array.fold
+        |> Seq.fold
             (fun task (time, Slot (SortedArray ids, map)) ->
                 Task.append
                     task

@@ -1,9 +1,9 @@
 import { FSharpRef, declare, Union } from "../fable-core.2.0.0-beta-003/Types";
 import { equals, compare } from "../fable-core.2.0.0-beta-003/Util";
 import { fold, map as map$$4 } from "../fable-core.2.0.0-beta-003/Seq";
-import { fold as fold$$1, ofSeq } from "../fable-core.2.0.0-beta-003/Array";
-import { Time$$$return$0027 as Time$0024$0024$0024return$00240027 } from "./clock";
-import { return$0027 as return$00240027 } from "./disposable";
+import { ofSeq } from "../fable-core.2.0.0-beta-003/Array";
+import { return$0027 as return$00240027 } from "./time";
+import { return$0027 as return$00240027$$1 } from "./disposable";
 import { empty, append } from "./task";
 export const Timeline$002ESlot$00602 = declare(function Timeline$002ESlot$00602(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
@@ -144,24 +144,28 @@ export function Timeline$$$empty() {
   const tupledArg$$1 = [Timeline$002ESlot$$$empty(), new FSharpRef(0)];
   return new Timeline$002ET(0, "Timeline", tupledArg$$1[0], tupledArg$$1[1]);
 }
-export function Timeline$$$nextArrival(_arg1$$12) {
+export function Timeline$$$isEmpty(_arg1$$12) {
   const slot = _arg1$$12.fields[0];
+  return Timeline$002ESlot$$$length(slot) === 0;
+}
+export function Timeline$$$nextArrival(_arg1$$13) {
+  const slot$$1 = _arg1$$13.fields[0];
 
-  if (Timeline$002ESlot$$$length(slot) === 0) {
-    return Time$0024$0024$0024return$00240027(Number.POSITIVE_INFINITY);
+  if (Timeline$002ESlot$$$length(slot$$1) === 0) {
+    return return$00240027(Number.POSITIVE_INFINITY);
   } else {
-    return Timeline$002ESlot$$$readIndex(0, slot)[0];
+    return Timeline$002ESlot$$$readIndex(0, slot$$1)[0];
   }
 }
-export function Timeline$$$add(time, task$$1, _arg1$$13) {
-  const timeSlot = _arg1$$13.fields[0];
-  const idref = _arg1$$13.fields[1];
+export function Timeline$$$add(time, task$$1, _arg1$$14) {
+  const timeSlot = _arg1$$14.fields[0];
+  const idref = _arg1$$14.fields[1];
   const id$$1 = idref.contents | 0;
   idref.contents = id$$1 + 1;
 
   const insertTask = function insertTask(taskSlot) {
     Timeline$002ESlot$$$append(id$$1, task$$1, taskSlot);
-    return return$00240027(function () {
+    return return$00240027$$1(function () {
       Timeline$002ESlot$$$splice(Timeline$002ESlot$$$findAppendPosition(id$$1, taskSlot), 1, taskSlot);
     });
   };
@@ -186,13 +190,13 @@ export function Timeline$$$add(time, task$$1, _arg1$$13) {
     }
   }
 }
-export function Timeline$$$removeTasks(time$$1, _arg1$$14) {
-  const slot$$1 = _arg1$$14.fields[0];
-  return fold$$1(function folder(task$$2, tupledArg$$2) {
+export function Timeline$$$removeTasks(time$$1, _arg1$$15) {
+  const slot$$2 = _arg1$$15.fields[0];
+  return fold(function folder(task$$2, tupledArg$$2) {
     const map$$3 = tupledArg$$2[1].fields[1];
     const ids$$1 = tupledArg$$2[1].fields[0];
     return append(task$$2, fold(function (task$$3, id$$2) {
       return append(task$$3, map$$3.get(id$$2));
     }, empty(), ids$$1));
-  }, empty(), Timeline$002ESlot$$$splice(0, Timeline$002ESlot$$$findAppendPosition(time$$1, slot$$1) + 1, slot$$1));
+  }, empty(), Timeline$002ESlot$$$splice(0, Timeline$002ESlot$$$findAppendPosition(time$$1, slot$$2) + 1, slot$$2));
 }

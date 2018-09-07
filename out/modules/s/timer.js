@@ -1,5 +1,5 @@
 import { declare, Union } from "../fable-core.2.0.0-beta-003/Types";
-import { Time$002EDelayModule$$$value as Time$0024002EDelayModule$0024$0024$0024value } from "./clock";
+import { DelayModule$$$value as DelayModule$0024$0024$0024value } from "./time";
 import { run, Cancelable$$$extend as Cancelable$0024$0024$0024extend } from "./task";
 import { append, return$0027 as return$00240027 } from "./disposable";
 export const T = declare(function T(tag, name, ...fields) {
@@ -7,7 +7,7 @@ export const T = declare(function T(tag, name, ...fields) {
 }, Union);
 export function return$0027(set, clear) {
   return new T(0, "Timer", function (task, delay) {
-    const delay$$1 = Time$0024002EDelayModule$0024$0024$0024value(delay) | 0;
+    const delay$$1 = DelayModule$0024$0024$0024value(delay) | 0;
     const patternInput = Cancelable$0024$0024$0024extend(task);
 
     if (0 === delay$$1) {
