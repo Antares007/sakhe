@@ -1,5 +1,5 @@
 import { Clock$$$now as Clock$0024$0024$0024now } from "./clock";
-import { return$0027 as return$00240027, map, Cancelable$$$extend as Cancelable$0024$0024$0024extend } from "./task";
+import { return$0027 as return$00240027, map } from "./task";
 import { Timeline$$$nextArrival as Timeline$0024$0024$0024nextArrival, Timeline$$$add as Timeline$0024$0024$0024add } from "./timeline";
 import { compare, max, comparePrimitives } from "../fable-core.2.0.0-beta-003/Util";
 import { dispose } from "./disposable";
@@ -16,11 +16,10 @@ export function schedule(delay, period, task, _arg1) {
     taskTime = now;
   }
 
-  const patternInput = Cancelable$0024$0024$0024extend(task);
-  const task$$2 = map(function () {
+  const task$$1 = map(function () {
     return taskTime;
-  }, patternInput[0]);
-  Timeline$0024$0024$0024add(taskTime, task$$2, _arg1[3]);
+  }, task);
+  const cancel = Timeline$0024$0024$0024add(taskTime, task$$1, _arg1[3]);
   const nextTaskTime = Timeline$0024$0024$0024nextArrival(_arg1[3]);
   let delay$$2;
   const from = Clock$0024$0024$0024now(_arg1[2]);
@@ -34,7 +33,7 @@ export function schedule(delay, period, task, _arg1) {
 
     if (compare(nextTaskTime, scheduledNextTaskTime) >= 0) {
       dispose(d);
-      const task$$4 = return$00240027(function (_arg3) {
+      const task$$3 = return$00240027(function (_arg3) {
         if (_arg3.tag === 1) {
           return null;
         } else {
@@ -42,10 +41,10 @@ export function schedule(delay, period, task, _arg1) {
           return null;
         }
       });
-      _arg1[0].contents = [nextTaskTime, setTimer(task$$4, delay$$2, _arg1[1])];
+      _arg1[0].contents = [nextTaskTime, setTimer(task$$3, delay$$2, _arg1[1])];
     }
   } else {
-    const task$$3 = return$00240027(function (_arg2$$1) {
+    const task$$2 = return$00240027(function (_arg2$$1) {
       if (_arg2$$1.tag === 1) {
         return null;
       } else {
@@ -53,8 +52,8 @@ export function schedule(delay, period, task, _arg1) {
         return null;
       }
     });
-    _arg1[0].contents = [nextTaskTime, setTimer(task$$3, delay$$2, _arg1[1])];
+    _arg1[0].contents = [nextTaskTime, setTimer(task$$2, delay$$2, _arg1[1])];
   }
 
-  return patternInput[1];
+  return cancel;
 }

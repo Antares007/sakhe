@@ -1,10 +1,9 @@
 namespace Sakhe.S
+open Fable.Core
 
 open System.Collections.Generic
 [<AutoOpen>]
 module GenericListExtensions =
-    open Fable.Core
-
     type System.Collections.Generic.List<'a> with
         [<Emit("$0.length")>]
         member __.``length``: int = jsNative
@@ -20,18 +19,17 @@ module GenericListExtensions =
         member __.``splice`` ((_: int), (_: int), (_: 'a)): ResizeArray<'a> = jsNative
 
 module Timeline =
+    type [<Erase>] IdRef = private Ref of int ref
 
-    type IdRef = private Ref of int ref
-
-    type SortedArray<'a> = private SortedArray of List<'a>
+    type [<Erase>] SortedArray<'a> = private SortedArray of List<'a>
     type Slot<'a, 'b> = private Slot of SortedArray<'a> * Dictionary<'a, 'b>
 
     type T = private Timeline of Slot<Time.T, Slot<int, Task.T<unit>>> * int ref
 
     module SortedArray =
-        let empty () = SortedArray <| ResizeArray()
+        let inline empty () = SortedArray <| ResizeArray()
 
-        let init a =
+        let inline init a =
             let arr = ResizeArray()
             arr.Add a
             SortedArray arr
@@ -87,26 +85,42 @@ module Timeline =
             taskMap.Remove(id) |> ignore
             SortedArray.splice index 1
 
+        let inline splice start ``end`` (Slot (array, map)) =
+            let keys = SortedArray.splice start ``end`` array
+            let length = keys.length
+            for i = 0 to keys.length - 1 do
+                let key = keys.[i]
+                map.Remove key |> ignore
+
     let empty () = Timeline <| (Slot.empty (), ref 0)
 
     let nextArrival (Timeline (slot, _)) =
         if Slot.length slot = 0 then Time.return' infinity else (fst (Slot.readIndex 0 slot))
 
-    let add (time: Time.T) task (Timeline (tslot, id)) =
-        let i = Slot.findAppendPosition time tslot
-        let insertAfter i =
-            let slot = Slot.empty ()
-            Slot.append (id.Value, task) slot
+    let add (time: Time.T) task (Timeline (tslot, idref)) =
+        let id = idref.Value
+        idref.Value <- id + 1
+
+        let insertTask i slot =
+            Slot.append (id, task) slot
+            Disposable.return' <| fun () ->
+                Slot.splice (Slot.findAppendPosition id slot) 1 slot
+
+        let insertTime i =
+            let slot = Slot.empty()
             Slot.insertAfter i (time, (slot)) tslot
+            slot
+
+        let i = Slot.findAppendPosition time tslot
         if i = -1 then
-            insertAfter i
+            insertTask i (insertTime i)
         else
-            let (itime, slot) = Slot.readIndex i tslot
-            if itime = time then
-                Slot.append (id.Value, task) slot
-            else
-                insertAfter i
-        id.Value <- id.Value + 1
+        let (itime, slot) = Slot.readIndex i tslot
+        if itime = time then
+            insertTask i slot
+        else
+            insertTask i (insertTime i)
+
 
     // let removeTasks time (Timeline timeline) =
     //     let tasks = timeline.splice (0, findAppendPosition time timeline + 1)
