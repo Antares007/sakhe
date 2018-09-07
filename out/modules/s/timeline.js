@@ -36,7 +36,7 @@ export function Timeline$$$add(time, task, _arg1$$4) {
   const id = idref.contents | 0;
   idref.contents = id + 1;
 
-  const insertTask = function insertTask(i$$2, slot$$1) {
+  const insertTask = function insertTask(slot$$1) {
     const taskMap = slot$$1.fields[1];
     const ids = slot$$1.fields[0];
     const arr$$2 = ids;
@@ -74,14 +74,14 @@ export function Timeline$$$add(time, task, _arg1$$4) {
       }, go(0, array$$2.length)))), 1);
       const length = keys.length | 0;
 
-      for (let i$$3 = 0; i$$3 <= keys.length - 1; i$$3++) {
-        const key = keys[i$$3] | 0;
+      for (let i$$2 = 0; i$$2 <= keys.length - 1; i$$2++) {
+        const key = keys[i$$2] | 0;
         map$$1.delete(key);
       }
     });
   };
 
-  const insertTime = function insertTime(i$$4) {
+  const insertTime = function insertTime(i$$3) {
     let slot$$2;
     const tupledArg$$2 = [[], new Map([])];
     slot$$2 = new Timeline$002ESlot$00602(0, "Slot", tupledArg$$2[0], tupledArg$$2[1]);
@@ -89,24 +89,24 @@ export function Timeline$$$add(time, task, _arg1$$4) {
     const array$$5 = tslot.fields[0];
     const arr$$3 = array$$5;
 
-    if (!(-1 <= i$$4 ? i$$4 < arr$$3.length : false)) {
+    if (!(-1 <= i$$3 ? i$$3 < arr$$3.length : false)) {
       debugger;
     }
 
-    if (!(i$$4 === -1 ? true : compare(arr$$3[i$$4], time) <= 0)) {
+    if (!(i$$3 === -1 ? true : compare(arr$$3[i$$3], time) <= 0)) {
       debugger;
     }
 
-    if (!(i$$4 === arr$$3.length - 1 ? true : compare(arr$$3[i$$4 + 1], time) > 0)) {
+    if (!(i$$3 === arr$$3.length - 1 ? true : compare(arr$$3[i$$3 + 1], time) > 0)) {
       debugger;
     }
 
-    arr$$3.splice(i$$4 + 1, 0, time);
+    arr$$3.splice(i$$3 + 1, 0, time);
     map$$2.set(time, slot$$2);
     return slot$$2;
   };
 
-  let i$$7;
+  let i$$6;
   const array$$6 = tslot.fields[0];
   const array$$7 = array$$6;
 
@@ -130,10 +130,10 @@ export function Timeline$$$add(time, task, _arg1$$4) {
     }
   };
 
-  i$$7 = go$$1(0, array$$7.length);
+  i$$6 = go$$1(0, array$$7.length);
 
-  if (i$$7 === -1) {
-    return insertTask(i$$7, insertTime(i$$7));
+  if (i$$6 === -1) {
+    return insertTask(insertTime(i$$6));
   } else {
     let patternInput;
     const map$$3 = tslot.fields[1];
@@ -141,17 +141,17 @@ export function Timeline$$$add(time, task, _arg1$$4) {
     let b$$2;
     const arr$$5 = arr$$4;
 
-    if (!(0 <= i$$7 ? i$$7 < arr$$5.length : false)) {
+    if (!(0 <= i$$6 ? i$$6 < arr$$5.length : false)) {
       debugger;
     }
 
-    b$$2 = arr$$5[i$$7];
+    b$$2 = arr$$5[i$$6];
     patternInput = [b$$2, null];
 
     if (equals(patternInput[0], time)) {
-      return insertTask(i$$7, patternInput[1]);
+      return insertTask(patternInput[1]);
     } else {
-      return insertTask(i$$7, insertTime(i$$7));
+      return insertTask(insertTime(i$$6));
     }
   }
 }

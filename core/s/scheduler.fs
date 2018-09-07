@@ -14,6 +14,7 @@ module Scheduler =
         (Scheduler (Ref ref, timer, clock, timeline)): Disposable.T =
             let now = Clock.now clock
             let taskTime = Time.delay now delay
+            let (task, cancel) = Task.Cancelable.extend task
             let task = Task.map (fun () -> taskTime) task
 
             let cancel = Timeline.add taskTime task timeline

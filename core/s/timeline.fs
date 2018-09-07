@@ -101,7 +101,7 @@ module Timeline =
         let id = idref.Value
         idref.Value <- id + 1
 
-        let insertTask i slot =
+        let insertTask slot =
             Slot.append (id, task) slot
             Disposable.return' <| fun () ->
                 Slot.splice (Slot.findAppendPosition id slot) 1 slot
@@ -113,13 +113,13 @@ module Timeline =
 
         let i = Slot.findAppendPosition time tslot
         if i = -1 then
-            insertTask i (insertTime i)
+            insertTask (insertTime i)
         else
         let (itime, slot) = Slot.readIndex i tslot
         if itime = time then
-            insertTask i slot
+            insertTask slot
         else
-            insertTask i (insertTime i)
+            insertTask (insertTime i)
 
 
     // let removeTasks time (Timeline timeline) =
