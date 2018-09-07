@@ -9,8 +9,13 @@ export const T$00601 = declare(function T$00601(tag, name, ...fields) {
 export function return$0027(f) {
   return new T$00601(0, "Task", f);
 }
-export function map(f$$1, _arg1) {
-  const g = _arg1.fields[0];
+export function empty() {
+  return new T$00601(0, "Task", function (_arg1) {
+    return null;
+  });
+}
+export function map(f$$1, _arg1$$1) {
+  const g = _arg1$$1.fields[0];
   return new T$00601(0, "Task", function (_arg2) {
     if (_arg2.tag === 1) {
       const err = _arg2.fields[1];
@@ -22,8 +27,8 @@ export function map(f$$1, _arg1) {
     }
   });
 }
-export function run(_arg1$$1) {
-  const g$$1 = _arg1$$1.fields[0];
+export function run(_arg1$$2) {
+  const g$$1 = _arg1$$2.fields[0];
 
   try {
     return g$$1(new On$00601(0, "Run", null));
@@ -32,13 +37,13 @@ export function run(_arg1$$1) {
   }
 }
 export function append(l, r$$1) {
-  return new T$00601(0, "Task", function (_arg1$$2) {
+  return new T$00601(0, "Task", function (_arg1$$3) {
     var r$$2, l$$1, d, d$$1;
 
-    if (_arg1$$2.tag === 1) {
+    if (_arg1$$3.tag === 1) {
       return null;
     } else {
-      const a$$2 = _arg1$$2.fields[0];
+      const a$$2 = _arg1$$3.fields[0];
 
       const a$$3 = function a$$3() {
         return a$$2;
@@ -56,8 +61,8 @@ export const Cancelable$002EException = declare(function Cancelable$002EExceptio
 export const Cancelable$002ESource = declare(function Cancelable$002ESource(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
-export function Cancelable$$$ifCanceledThenRaiseCancellationException(_arg1$$3) {
-  const f$$2 = _arg1$$3.fields[0];
+export function Cancelable$$$ifCanceledThenRaiseCancellationException(_arg1$$4) {
+  const f$$2 = _arg1$$4.fields[0];
   f$$2();
 }
 export function Cancelable$$$extend(task) {
@@ -75,11 +80,11 @@ export function Cancelable$$$extend(task) {
       dispose(taskDisposable);
     }
   });
-  const task$$1 = return$0027(function (_arg1$$4) {
-    if (_arg1$$4.tag === 1) {
+  const task$$1 = return$0027(function (_arg1$$5) {
+    if (_arg1$$5.tag === 1) {
       return null;
     } else {
-      const a$$4 = _arg1$$4.fields[0];
+      const a$$4 = _arg1$$5.fields[0];
 
       if (canceled) {
         return null;

@@ -7,6 +7,8 @@ type T<'a> = private Task of (On<'a> -> Disposable.T option)
 
 let return' f = Task f
 
+let empty<'a> = Task <| fun (_: On<'a>) -> None
+
 let map f (Task g) = Task <| function
     | Run (a)      -> g (Run (f a))
     | Exn (a, err) -> g (Exn (f a, err))

@@ -1,6 +1,9 @@
 import { FSharpRef, declare, Union } from "../fable-core.2.0.0-beta-003/Types";
+import { fold, map as map$$6 } from "../fable-core.2.0.0-beta-003/Seq";
+import { fold as fold$$1, ofSeq } from "../fable-core.2.0.0-beta-003/Array";
 import { return$0027 as return$00240027 } from "./disposable";
 import { equals, compare } from "../fable-core.2.0.0-beta-003/Util";
+import { empty, append } from "./task";
 export const Timeline$002ESlot$00602 = declare(function Timeline$002ESlot$00602(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
@@ -48,12 +51,8 @@ export function Timeline$$$add(time, task, _arg1$$4) {
     arr$$2.push(id);
     taskMap.set(id, task);
     return return$00240027(function () {
-      var array$$1, array$$2, go;
-      const map$$1 = slot$$1.fields[1];
-      const array$$3 = slot$$1.fields[0];
-      let keys;
-      const array$$4 = array$$3;
-      keys = array$$4.slice((array$$1 = slot$$1.fields[0], (array$$2 = array$$1, (go = function go(l, r) {
+      var map$$1, array$$3, keys, array$$4, array$$1, array$$2, go;
+      map$$1 = slot$$1.fields[1], (array$$3 = slot$$1.fields[0], (keys = (array$$4 = array$$3, array$$4.slice((array$$1 = slot$$1.fields[0], (array$$2 = array$$1, (go = function go(l, r) {
         go: while (true) {
           if (l < r) {
             const m = ~~((l + r) / 2) | 0;
@@ -71,17 +70,15 @@ export function Timeline$$$add(time, task, _arg1$$4) {
             return l - 1 | 0;
           }
         }
-      }, go(0, array$$2.length)))), 1);
-      const length = keys.length | 0;
-
-      for (let i$$2 = 0; i$$2 <= keys.length - 1; i$$2++) {
-        const key = keys[i$$2] | 0;
+      }, go(0, array$$2.length)))), 1)), ofSeq(map$$6(function mapping(key) {
+        const item = map$$1.get(key);
         map$$1.delete(key);
-      }
+        return [key, item];
+      }, keys), Array)));
     });
   };
 
-  const insertTime = function insertTime(i$$3) {
+  const insertTime = function insertTime(i$$2) {
     let slot$$2;
     const tupledArg$$2 = [[], new Map([])];
     slot$$2 = new Timeline$002ESlot$00602(0, "Slot", tupledArg$$2[0], tupledArg$$2[1]);
@@ -89,24 +86,24 @@ export function Timeline$$$add(time, task, _arg1$$4) {
     const array$$5 = tslot.fields[0];
     const arr$$3 = array$$5;
 
-    if (!(-1 <= i$$3 ? i$$3 < arr$$3.length : false)) {
+    if (!(-1 <= i$$2 ? i$$2 < arr$$3.length : false)) {
       debugger;
     }
 
-    if (!(i$$3 === -1 ? true : compare(arr$$3[i$$3], time) <= 0)) {
+    if (!(i$$2 === -1 ? true : compare(arr$$3[i$$2], time) <= 0)) {
       debugger;
     }
 
-    if (!(i$$3 === arr$$3.length - 1 ? true : compare(arr$$3[i$$3 + 1], time) > 0)) {
+    if (!(i$$2 === arr$$3.length - 1 ? true : compare(arr$$3[i$$2 + 1], time) > 0)) {
       debugger;
     }
 
-    arr$$3.splice(i$$3 + 1, 0, time);
+    arr$$3.splice(i$$2 + 1, 0, time);
     map$$2.set(time, slot$$2);
     return slot$$2;
   };
 
-  let i$$6;
+  let i$$5;
   const array$$6 = tslot.fields[0];
   const array$$7 = array$$6;
 
@@ -130,10 +127,10 @@ export function Timeline$$$add(time, task, _arg1$$4) {
     }
   };
 
-  i$$6 = go$$1(0, array$$7.length);
+  i$$5 = go$$1(0, array$$7.length);
 
-  if (i$$6 === -1) {
-    return insertTask(insertTime(i$$6));
+  if (i$$5 === -1) {
+    return insertTask(insertTime(i$$5));
   } else {
     let patternInput;
     const map$$3 = tslot.fields[1];
@@ -141,17 +138,50 @@ export function Timeline$$$add(time, task, _arg1$$4) {
     let b$$2;
     const arr$$5 = arr$$4;
 
-    if (!(0 <= i$$6 ? i$$6 < arr$$5.length : false)) {
+    if (!(0 <= i$$5 ? i$$5 < arr$$5.length : false)) {
       debugger;
     }
 
-    b$$2 = arr$$5[i$$6];
+    b$$2 = arr$$5[i$$5];
     patternInput = [b$$2, null];
 
     if (equals(patternInput[0], time)) {
       return insertTask(patternInput[1]);
     } else {
-      return insertTask(insertTime(i$$6));
+      return insertTask(insertTime(i$$5));
     }
   }
+}
+export function Timeline$$$removeTasks(time$$1, _arg1$$17) {
+  var map$$4, array$$10, keys$$1, array$$11, array$$8, array$$9, go$$2;
+  const slot$$4 = _arg1$$17.fields[0];
+  return fold$$1(function folder(task$$2, tupledArg$$3) {
+    const map$$5 = tupledArg$$3[1].fields[1];
+    const ids$$1 = tupledArg$$3[1].fields[0];
+    return append(task$$2, fold(function (task$$3, id$$2) {
+      return append(task$$3, map$$5.get(id$$2));
+    }, empty(), ids$$1));
+  }, empty(), (map$$4 = slot$$4.fields[1], (array$$10 = slot$$4.fields[0], (keys$$1 = (array$$11 = array$$10, array$$11.slice(0, (array$$8 = slot$$4.fields[0], (array$$9 = array$$8, (go$$2 = function go$$2(l$$2, r$$2) {
+    go$$2: while (true) {
+      if (l$$2 < r$$2) {
+        const m$$2 = ~~((l$$2 + r$$2) / 2) | 0;
+
+        if (compare(array$$9[m$$2], time$$1) > 0) {
+          l$$2 = l$$2;
+          r$$2 = m$$2;
+          continue go$$2;
+        } else {
+          l$$2 = m$$2 + 1;
+          r$$2 = r$$2;
+          continue go$$2;
+        }
+      } else {
+        return l$$2 - 1 | 0;
+      }
+    }
+  }, go$$2(0, array$$9.length)))) + 1)), ofSeq(map$$6(function mapping$$1(key$$1) {
+    const item$$1 = map$$4.get(key$$1);
+    map$$4.delete(key$$1);
+    return [key$$1, item$$1];
+  }, keys$$1), Array)))));
 }

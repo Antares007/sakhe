@@ -87,10 +87,13 @@ module Timeline =
 
         let inline splice start ``end`` (Slot (array, map)) =
             let keys = SortedArray.splice start ``end`` array
-            let length = keys.length
-            for i = 0 to keys.length - 1 do
-                let key = keys.[i]
-                map.Remove key |> ignore
+            keys
+            |> Seq.map (fun key ->
+                let item = map.Item key
+                map.Remove key|> ignore
+                (key, item))
+            |> Seq.toArray
+
 
     let empty () = Timeline <| (Slot.empty (), ref 0)
 
@@ -104,7 +107,7 @@ module Timeline =
         let insertTask slot =
             Slot.append (id, task) slot
             Disposable.return' <| fun () ->
-                Slot.splice (Slot.findAppendPosition id slot) 1 slot
+                Slot.splice (Slot.findAppendPosition id slot) 1 slot |> ignore
 
         let insertTime i =
             let slot = Slot.empty()
@@ -121,16 +124,11 @@ module Timeline =
         else
             insertTask (insertTime i)
 
-
-    // let removeTasks time (Timeline timeline) =
-    //     let tasks = timeline.splice (0, findAppendPosition time timeline + 1)
-    //     let length = tasks.length
-    //     if length = 0 then None
-    //     else
-    //         let (_, firstTask) = tasks.[0]
-    //         if length = 1 then Some firstTask
-    //         else
-    //         let rec go i acc =
-    //             if i >= length then acc
-    //             else go (i + 1) (Task.append acc (snd timeline.[i]))
-    //         Some <| go 1 firstTask
+    let removeTasks time (Timeline (slot, _)) =
+        Slot.splice 0 (Slot.findAppendPosition time slot + 1) slot
+        |> Array.fold
+            (fun task (time, Slot (SortedArray ids, map)) ->
+                Task.append
+                    task
+                    (Seq.fold (fun task id -> Task.append task (map.Item id)) Task.empty ids))
+            Task.empty
