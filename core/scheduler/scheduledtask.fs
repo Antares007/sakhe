@@ -1,4 +1,4 @@
-module Sakhe.Scheduler.ScheduledTask
+module Most.Scheduler.ScheduledTask
 type ScheduledTask(time, localOffset, period, task: ITask, scheduler: IScheduler) =
     let mutable active = true
     interface IScheduledTask with

@@ -1,4 +1,4 @@
-namespace Sakhe.Scheduler
+namespace Most.Scheduler
 module Task =
     open Fable.Import.JS
 

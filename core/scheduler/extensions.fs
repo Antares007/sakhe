@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module Sakhe.Scheduler.GenericListExtensions
+module Most.Scheduler.GenericListExtensions
 open Fable.Core
 
 type System.Collections.Generic.List<'a> with

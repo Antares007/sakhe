@@ -1,4 +1,4 @@
-namespace Sakhe.Scheduler
+namespace Most.Scheduler
 type ``Disposable`` =
     abstract ``dispose``: unit -> unit
 

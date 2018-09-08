@@ -1,4 +1,4 @@
-module Sakhe.Scheduler.Disposable
+module Most.Scheduler.Disposable
 
 let empty = { new Disposable with member __.``dispose`` () = () }
 let return' f =
