@@ -41,7 +41,7 @@ module SortedArray =
     let splice start ``end`` (SortedArray array) =
         assert (start <= ``end``)
         assert (0 <= start)
-        assert (``end`` <= array.length)
+        assert (``end`` <= array.length - start)
         array.splice (start, ``end``)
 
     let append a (SortedArray arr) =
