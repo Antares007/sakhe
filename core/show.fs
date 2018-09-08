@@ -13,24 +13,35 @@ printfn "run at: %A" (Clock.now clock)
 [<Emit("console.timeStamp($0)")>]
 let timeStamp (a: string): unit = Exceptions.jsNative
 
-let task = Task.return' <| function
+let task i = Task.return' <| function
     | Task.On.Run (t:Time.T, s: Task.Cancelable.Source) ->
-        printfn "task run at: %A" t
-        timeStamp("stamp " + string t)
+        printfn "task %d run at: %A" i t
         Some << Disposable.return' <| fun () ->
-            printfn "task disposed Run"
+            printfn "task %d disposed Run" i
     | Task.On.Exn ((t, _), err) ->
-        printfn "task exn at: %A with: %A" t err
+        printfn "task %d exn at: %A with: %A" i t err
         Some << Disposable.return' <| fun () ->
-            printfn "task disposed Exn"
+            printfn "task %d disposed Exn" i
 
-let delay1s = Time.Delay.return' <| 1000
+let delay1000 = Time.Delay.return' <| 1000
+let delay500 = Time.Delay.return' <| 500
 
-let d = Scheduler.schedule
+let d1 = Scheduler.schedule
             None
-            (Some delay1s)
-            task
+            (Some delay1000)
+            (task 1)
             scheduler
+let d2 = Scheduler.schedule
+            (Some delay500)
+            (Some delay1000)
+            (task 2)
+            scheduler
+
+open Fable.Import.Browser
+open Fable.Core.JsInterop
+
+window?d1 <- d1
+window?d2 <- d2
 
 // let makeTask i =
 //     Task.return' <| function
