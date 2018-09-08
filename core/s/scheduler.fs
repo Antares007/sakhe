@@ -10,46 +10,43 @@ type [<Erase>] T =
 let return' timer clock=
     Scheduler (Ref (ref None), timer, clock, Timeline.empty())
 
-let rec private scheduleNextRun (scheduler: T) =
-    let (Scheduler (ref, _, _, timeline)) = scheduler
+let rec private scheduleNextRun scheduler =
+    let (Scheduler (Ref ref, _, _, timeline)) = scheduler
     if Timeline.isEmpty timeline then ()
     else
     let nextArrival = Timeline.nextArrival timeline
-    let (Ref nextRunRef) = ref
-    match nextRunRef.Value with
-    | None -> nextRunRef.Value <- Some (nextArrival, setNextRun nextArrival scheduler)
-    | Some (scheduledNextArrival, nextRunD) ->
-        if (nextArrival >= scheduledNextArrival) then
-            Disposable.dispose nextRunD
-            nextRunRef.Value <- Some (nextArrival, setNextRun nextArrival scheduler)
-
-and private setNextRun nextArrival (scheduler: T) =
+    match ref.Value with
+    | Some (scheduledNextArrival, nextRun) when scheduledNextArrival < nextArrival ->
+        Disposable.dispose nextRun
+        ref.Value <- Some (nextArrival, setNextRun nextArrival scheduler)
+    | None ->
+        ref.Value <- Some (nextArrival, setNextRun nextArrival scheduler)
+    | Some _ ->
+        ()
+and private setNextRun nextArrival scheduler =
     let (Scheduler (_, timer, clock, timeline)) = scheduler
-    Timer.setTimer
-        (Task.return' <| function
-            | Task.On.Run ((), s) ->
-                let d = Task.run (Timeline.removeTasks (Clock.now clock) timeline)
-                d |> ignore
-                scheduleNextRun scheduler
-                None
-            | Task.On.Exn (_, err) ->
-                raise err)
-        (Time.Delay.fromTo (Clock.now clock) nextArrival)
-        timer
+    let task = Task.return' <| function
+        | Task.On.Run ((), s) ->
+            Task.run (Timeline.removeTasks (Clock.now clock) timeline) |> ignore
+            scheduleNextRun scheduler
+            None
+        | Task.On.Exn (_, err) ->
+            raise err
+    let delay = Time.Delay.fromTo (Clock.now clock) nextArrival
+    Timer.setTimer task delay timer
 
-let private reschedule (scheduler: T) =
-    let (Scheduler (nextRunRef, _, _, timeline)) = scheduler
+let private reschedule scheduler =
+    let (Scheduler (Ref ref, _, _, timeline)) = scheduler
     if Timeline.isEmpty timeline then
-        let (Ref nextRunRef) = nextRunRef
-        match nextRunRef.Value with
+        match ref.Value with
         | None -> ()
         | Some (_, d) ->
             Disposable.dispose d
-            nextRunRef.Value <- None
+            ref.Value <- None
     else
         scheduleNextRun scheduler
 
-let rec private add time period task (taskD: Disposable.T ref) (removeD: Disposable.T ref) (scheduler: T) =
+let rec private add time period task (taskD: Disposable.T ref) (removeD: Disposable.T ref) scheduler =
     let (Scheduler (_, _, _, timeline)) = scheduler
     let task =
         match period with
@@ -68,24 +65,19 @@ let rec private add time period task (taskD: Disposable.T ref) (removeD: Disposa
     taskD.Value <- d
     removeD.Value <- Disposable.append
         (Timeline.add time task timeline)
-        (Disposable.return' (fun () -> reschedule scheduler))
+        (Disposable.return' <| fun () -> reschedule scheduler)
 
-let schedule
-    (delay: Time.Delay option)
-    (period: Time.Delay option)
-    (task: Task.T<Time.T * Task.Cancelable.Source>)
-    (scheduler: T): Disposable.T =
+let schedule delay period task scheduler =
         let (Scheduler (_, _, clock, _)) = scheduler
         let now = Clock.now clock
-        let time = if delay.IsNone then now else Time.add now delay.Value
-
+        let time =
+            match delay with
+            | None -> now
+            | Some delay -> Time.add now delay
         let removeD = ref Disposable.empty
         let taskD = ref Disposable.empty
-
         add time period task taskD removeD scheduler
-
         scheduleNextRun scheduler
-
         Disposable.return' <| fun () ->
             Disposable.dispose taskD.Value
             Disposable.dispose removeD.Value
