@@ -4,31 +4,49 @@ open Sakhe.S
 let clock = Default.clock ()
 let sch = Stream.Scheduler.schedule
 
+let scheduler = Default.scheduler ()
+
 printfn "run at: %A" (Clock.now clock)
 
-let d =
-    Timer.setTimer
-        (Task.return' (function
-            | Task.On.Run ((), s) ->
-                printfn "running... at: %A" (Clock.now clock)
-                None
-            | Task.On.Exn (_) ->
-                printfn "disposed..."
-                None))
-        (Time.Delay.return' 0)
-        Default.timer
+let task = Task.return' <| function
+    | Task.On.Run (t:Time.T, s: Task.Cancelable.Source) ->
+        printfn "task run at: %A" t
+        Some << Disposable.return' <| fun () ->
+            printfn "task disposed Run"
+    | Task.On.Exn ((t, _), err) ->
+        printfn "task exn at: %A with: %A" t err
+        Some << Disposable.return' <| fun () ->
+            printfn "task disposed Exn"
+let d = Stream.Scheduler.schedule
+            (Some << Time.Delay.return' <| 1000)
+            (Some << Time.Delay.return' <| 1000)
+            task
+            scheduler
 
-let d2 =
-    Timer.setTimer
-        (Task.return' (function
-            | Task.On.Run ((), s) ->
-                printfn "running... at: %A" (Clock.now clock)
-                None
-            | Task.On.Exn (_) ->
-                printfn "disposed..."
-                None))
-        (Time.Delay.return' 1000)
-        Default.timer
+
+// let d =
+//     Timer.setTimer
+//         (Task.return' (function
+//             | Task.On.Run ((), s) ->
+//                 printfn "running... at: %A" (Clock.now clock)
+//                 None
+//             | Task.On.Exn (_) ->
+//                 printfn "disposed..."
+//                 None))
+//         (Time.Delay.return' 0)
+//         Default.timer
+
+// let d2 =
+//     Timer.setTimer
+//         (Task.return' (function
+//             | Task.On.Run ((), s) ->
+//                 printfn "running... at: %A" (Clock.now clock)
+//                 None
+//             | Task.On.Exn (_) ->
+//                 printfn "disposed..."
+//                 None))
+//         (Time.Delay.return' 1000)
+//         Default.timer
 
 //Disposable.dispose d
 

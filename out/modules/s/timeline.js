@@ -64,7 +64,7 @@ export function Timeline$002ESortedArray$$$splice(start, end, _arg1$$2) {
     debugger;
   }
 
-  if (!(end < array$$1.length)) {
+  if (!(end <= array$$1.length)) {
     debugger;
   }
 

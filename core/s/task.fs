@@ -45,3 +45,5 @@ module Cancelable =
                 taskDisposable
             | On.Exn _ -> None
         task, cancelDisposable
+
+    let return' t = extend << return' <| t

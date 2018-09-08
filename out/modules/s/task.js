@@ -95,3 +95,6 @@ export function Cancelable$$$extend(task) {
   });
   return [task$$1, cancelDisposable];
 }
+export function Cancelable$$$return$0027(t) {
+  return Cancelable$$$extend(return$0027(t));
+}

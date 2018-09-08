@@ -50,7 +50,7 @@ module Timeline =
         let splice start ``end`` (SortedArray array) =
             assert (start <= ``end``)
             assert (0 <= start)
-            assert (``end`` < array.length)
+            assert (``end`` <= array.length)
             array.slice (start, ``end``)
 
         let append a (SortedArray arr) =

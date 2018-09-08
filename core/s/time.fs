@@ -7,11 +7,7 @@ let return' f =
     assert (f >= 0.0)
     FlooredFloat (System.Math.Floor(f))
 
-let add now = function
-    | None -> now
-    | Some (PositiveInt delay) ->
-        let (FlooredFloat now)  = now
-        FlooredFloat (now + float delay)
+let add (FlooredFloat now) (PositiveInt delay) = FlooredFloat (now + float delay)
 
 module Delay =
 
