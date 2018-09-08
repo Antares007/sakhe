@@ -44,7 +44,11 @@ module Cancelable =
                 if canceled then None
                 else
                 taskDisposable <- task |> map (fun () -> a, cancellationSource) |> run
-                taskDisposable
+                if canceled && taskDisposable.IsSome then
+                    Disposable.dispose taskDisposable.Value
+                    None
+                else
+                    taskDisposable
             | On.Exn _ -> None
         task, cancelDisposable
 

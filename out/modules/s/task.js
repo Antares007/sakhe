@@ -86,7 +86,13 @@ export function Cancelable$$$extend(task) {
         taskDisposable = run(map(function f$$5() {
           return [a$$4, cancellationSource];
         }, task));
-        return taskDisposable;
+
+        if (canceled ? taskDisposable != null : false) {
+          dispose(taskDisposable);
+          return null;
+        } else {
+          return taskDisposable;
+        }
       }
     }
   });
