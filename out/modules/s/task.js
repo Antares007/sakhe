@@ -3,20 +3,17 @@ import { return$0027 as return$00240027, dispose, append as append$$1 } from "./
 export const On$00601 = declare(function On$00601(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
-export const T$00601 = declare(function T$00601(tag, name, ...fields) {
-  Union.call(this, tag, name, ...fields);
-}, Union);
 export function return$0027(f) {
-  return new T$00601(0, "Task", f);
+  return f;
 }
 export function empty() {
-  return new T$00601(0, "Task", function (_arg1) {
+  return function (_arg1) {
     return null;
-  });
+  };
 }
 export function map(f$$1, _arg1$$1) {
-  const g = _arg1$$1.fields[0];
-  return new T$00601(0, "Task", function (_arg2) {
+  const g = _arg1$$1;
+  return function (_arg2) {
     if (_arg2.tag === 1) {
       const err = _arg2.fields[1];
       const a$$1 = _arg2.fields[0];
@@ -25,10 +22,10 @@ export function map(f$$1, _arg1$$1) {
       const a = _arg2.fields[0];
       return g(new On$00601(0, "Run", f$$1(a)));
     }
-  });
+  };
 }
 export function run(_arg1$$2) {
-  const g$$1 = _arg1$$2.fields[0];
+  const g$$1 = _arg1$$2;
 
   try {
     return g$$1(new On$00601(0, "Run", null));
@@ -37,7 +34,7 @@ export function run(_arg1$$2) {
   }
 }
 export function append(l, r) {
-  return new T$00601(0, "Task", function (_arg1$$3) {
+  return function (_arg1$$3) {
     var r$$1, l$$1, d, d$$1;
 
     if (_arg1$$3.tag === 1) {
@@ -52,7 +49,7 @@ export function append(l, r) {
       const matchValue = [run(map(a$$3, l)), run(map(a$$3, r))];
       return matchValue[0] != null ? matchValue[1] != null ? (r$$1 = matchValue[1], l$$1 = matchValue[0], append$$1(l$$1, r$$1)) : (d = matchValue[0], d) : matchValue[1] != null ? (d$$1 = matchValue[1], d$$1) : null;
     }
-  });
+  };
 }
 export const Cancelable$002EException = declare(function Cancelable$002EException() {}, FSharpException);
 export const Cancelable$002ESource = declare(function Cancelable$002ESource(tag, name, ...fields) {

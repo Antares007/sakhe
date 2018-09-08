@@ -3,6 +3,7 @@ import { schedule } from "./s/scheduler";
 import { toConsole, printf } from "./fable-core.2.0.0-beta-003/String";
 import { now } from "./s/clock";
 import { return$0027 as return$00240027 } from "./s/disposable";
+import { toString } from "./fable-core.2.0.0-beta-003/Util";
 import { return$0027 as return$00240027$$1 } from "./s/task";
 import { DelayModule$$$return$0027 as DelayModule$0024$0024$0024return$00240027 } from "./s/time";
 export const clock = clock$$1();
@@ -29,9 +30,11 @@ export const task = return$00240027$$1(function (_arg1) {
     const t = _arg1.fields[0][0];
     const s = _arg1.fields[0][1];
     toConsole(printf("task run at: %A"))(t);
+    console.timeStamp("stamp " + toString(t));
     return return$00240027(function () {
       toConsole(printf("task disposed Run"));
     });
   }
 });
-export const d = schedule(DelayModule$0024$0024$0024return$00240027(1000), DelayModule$0024$0024$0024return$00240027(1000), task, scheduler);
+export const delay1s = DelayModule$0024$0024$0024return$00240027(1000);
+export const d = schedule(null, delay1s, task, scheduler);

@@ -1,7 +1,9 @@
 module Sakhe.S.Task
+open Fable.Core
 
 type On<'a> = Run of 'a | Exn of 'a * exn
-type T<'a> = private Task of (On<'a> -> Disposable.T option)
+
+type [<Erase>] T<'a> = private Task of (On<'a> -> Disposable.T option)
 
 let return' f = Task f
 

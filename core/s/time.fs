@@ -1,7 +1,8 @@
 module Sakhe.S.Time
+open Fable.Core
 
-type [<Fable.Core.Erase>] Delay = private PositiveInt of int
-type [<Fable.Core.Erase>] T = private FlooredFloat of float
+type [<Erase>] Delay = private PositiveInt of int
+type [<Erase>] T = private FlooredFloat of float
 
 let return' f =
     assert (f >= 0.0)

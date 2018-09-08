@@ -1,11 +1,12 @@
 namespace Sakhe.S.Stream
 open Sakhe.S
-open Sakhe.S
 
 module Scheduler =
-    type [<Fable.Core.Erase>] NextRunRef = private Ref of (Time.T * Disposable.T) option ref
+    open Fable.Core
 
-    type [<Fable.Core.Erase>] T =
+    type [<Erase>] NextRunRef = private Ref of (Time.T * Disposable.T) option ref
+
+    type [<Erase>] T =
         private
         | Scheduler of (NextRunRef * Timer.T * Clock.T * Timeline.T)
 

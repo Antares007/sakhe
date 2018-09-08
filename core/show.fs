@@ -1,5 +1,7 @@
 module Sakhe.Show
 open Sakhe.S
+open System.IO
+open Fable.Core
 
 let clock = Default.clock ()
 let sch = Stream.Scheduler.schedule
@@ -8,21 +10,52 @@ let scheduler = Default.scheduler ()
 
 printfn "run at: %A" (Clock.now clock)
 
+[<Emit("console.timeStamp($0)")>]
+let timeStamp (a: string): unit = Exceptions.jsNative
+
 let task = Task.return' <| function
     | Task.On.Run (t:Time.T, s: Task.Cancelable.Source) ->
         printfn "task run at: %A" t
+        timeStamp("stamp " + string t)
         Some << Disposable.return' <| fun () ->
             printfn "task disposed Run"
     | Task.On.Exn ((t, _), err) ->
         printfn "task exn at: %A with: %A" t err
         Some << Disposable.return' <| fun () ->
             printfn "task disposed Exn"
+
+let delay1s = Time.Delay.return' <| 1000
+
 let d = Stream.Scheduler.schedule
-            (Some << Time.Delay.return' <| 1000)
-            (Some << Time.Delay.return' <| 1000)
+            None
+            (Some delay1s)
             task
             scheduler
 
+// let makeTask i =
+//     Task.return' <| function
+//         | Task.On.Run () ->
+//             printfn "task %d run" i
+//             Some << Disposable.return' <| fun () ->
+//                 printfn "task %d disposed Run" i
+//         | Task.On.Exn ((), err) ->
+//             printfn "task %d exn with: %A" i err
+//             Some << Disposable.return' <| fun () ->
+//                 printfn "task %d disposed Exn" i
+
+// let timeline = Timeline.empty()
+// let taskRun = Task.run
+// let t a = Time.return' a
+
+// open Fable.Import.Browser
+// open Fable.Core.JsInterop
+
+// window?timeline <- timeline
+// window?makeTask <- makeTask
+// window?taskRun <- taskRun
+// window?t <- t
+// window?add <- Timeline.add
+// window?removeTasks <- Timeline.removeTasks
 
 // let d =
 //     Timer.setTimer

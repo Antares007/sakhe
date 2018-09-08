@@ -1,6 +1,7 @@
 module Sakhe.S.Disposable
+open Fable.Core
 
-type T = private Disposable of (unit -> unit)
+type [<Erase>] T = private Disposable of (unit -> unit)
 
 let empty = Disposable ignore
 

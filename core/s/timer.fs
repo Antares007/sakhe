@@ -1,7 +1,10 @@
 module Sakhe.S.Timer
+open Fable.Core
 open Fable.Import.JS
 
-type T = private Timer of (Task.T<unit * Task.Cancelable.Source> -> Time.Delay -> Disposable.T)
+type [<Erase>] T =
+    private
+    | Timer of (Task.T<unit * Task.Cancelable.Source> -> Time.Delay -> Disposable.T)
 
 let return' set clear = Timer <| fun task delay ->
     let delay = Time.Delay.value delay

@@ -1,6 +1,7 @@
 module Sakhe.S.Clock
+open Fable.Core
 
-type T = private Clock of (unit -> Time.T)
+type [<Erase>] T = private Clock of (unit -> Time.T)
 
 let return' f = Clock f
 
