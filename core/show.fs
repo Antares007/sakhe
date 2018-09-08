@@ -4,7 +4,7 @@ open System.IO
 open Fable.Core
 
 let clock = Default.clock ()
-let sch = Stream.Scheduler.schedule
+let sch = Scheduler.schedule
 
 let scheduler = Default.scheduler ()
 
@@ -26,7 +26,7 @@ let task = Task.return' <| function
 
 let delay1s = Time.Delay.return' <| 1000
 
-let d = Stream.Scheduler.schedule
+let d = Scheduler.schedule
             None
             (Some delay1s)
             task
