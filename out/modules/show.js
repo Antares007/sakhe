@@ -81,18 +81,18 @@ const see = (0, _stream.run)(scheduler, (0, _sink.return$0027)(function (_arg1$$
     default:
       {
         const t$$2 = _arg1$$1.fields[0];
-        const e = _arg1$$1.fields[1];
+        const e = _arg1$$1.fields[1] | 0;
         (0, _String.toConsole)((0, _String.printf)("Event %A at %A"))(e)(t$$2);
       }
   }
-}), (0, _stream.combineArray)([(0, _stream.map)(function f$$3() {
+}), (0, _stream.mergeArray)([(0, _stream.map)(function f$$3() {
+  return 10000;
+}, (0, _stream.periodic)(delay(10000))), (0, _stream.now)(42), (0, _stream.map)(function f$$4() {
   return 1000;
-}, (0, _stream.periodic)(delay(1000))), (0, _stream.map)(function f$$4() {
-  return 750;
-}, (0, _stream.periodic)(delay(750))), (0, _stream.map)(function f$$5() {
-  return 250;
-}, (0, _stream.periodic)(delay(250))), (0, _stream.map)(function f$$6() {
-  return 500;
-}, (0, _stream.periodic)(delay(500))), (0, _stream.now)(42)]));
+}, (0, _stream.periodic)(delay(1000))), (0, _stream.map)(function f$$5() {
+  return 2000;
+}, (0, _stream.periodic)(delay(2000))), (0, _stream.map)(function f$$6() {
+  return 3000;
+}, (0, _stream.periodic)(delay(3000)))]));
 exports.see = see;
 window.d = see;

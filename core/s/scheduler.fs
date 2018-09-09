@@ -13,22 +13,20 @@ let return' timer clock=
 let rec private scheduleNextRun scheduler =
     let (Scheduler (Ref ref, _, _, timeline)) = scheduler
     match (Timeline.nextArrival timeline, ref.Value) with
-    | None, None -> ()
-    | None, Some (_, nextRun) ->
-        assert false
-        Disposable.dispose nextRun
-        ref.Value <- None
     | Some nextArrival, None ->
         ref.Value <- Some (nextArrival, setNextRun nextArrival scheduler)
     | Some nextArrival, Some (scheduledNextArrival, nextRun) ->
-        if (scheduledNextArrival < nextArrival) then
-            Disposable.dispose nextRun
-            ref.Value <- Some (nextArrival, setNextRun nextArrival scheduler)
-
+        if nextArrival >= scheduledNextArrival then ()
+        else
+        Disposable.dispose nextRun
+        ref.Value <- Some (nextArrival, setNextRun nextArrival scheduler)
+    | None, None -> ()
+    | None, Some _ -> assert false; ()
 and private setNextRun nextArrival scheduler =
-    let (Scheduler (_, timer, clock, timeline)) = scheduler
+    let (Scheduler (Ref ref, timer, clock, timeline)) = scheduler
     let task = Task.return' <| function
         | Task.On.Run ((), s) ->
+            ref.Value <- None
             Task.run (Timeline.removeTasks (Clock.now clock) timeline) |> ignore
             scheduleNextRun scheduler
             None
@@ -42,17 +40,18 @@ let rec private add time period task (cancelRef: Disposable.T ref) scheduler =
     let (Scheduler (_, _, _, timeline)) = scheduler
     let task =
         match period with
-        | None -> task
         | Some period ->
-            let readd = Task.return' <| function
+            Task.append
+                task
+                (Task.return' <| function
                 | Task.On.Run (time: Time.T, _) ->
                     let time = Time.add time period
                     add time (Some period) task cancelRef scheduler
                     None
                 | Task.On.Exn _ ->
                     assert false
-                    None
-            Task.append task readd
+                    None)
+        | None -> task
     let (task, cancelD) = Task.Cancelable.extend task
     let task = task |> Task.map (fun () -> time)
     Disposable.dispose cancelRef.Value
