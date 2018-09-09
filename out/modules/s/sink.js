@@ -223,6 +223,7 @@ function safeSink(o) {
 
 function combineArray(qty, _arg1$$8) {
   const o$$1 = _arg1$$8;
+  let endsLeft = qty | 0;
   const values = (0, _Array.ofSeq)((0, _Seq.delay)(function () {
     return (0, _Seq.map)(function (i) {
       return null;
@@ -237,7 +238,12 @@ function combineArray(qty, _arg1$$8) {
         case 1:
           {
             const t$$16 = _arg2$$4.fields[0];
-            o$$2(new On$00601(1, "End", t$$16));
+            endsLeft = endsLeft - 1;
+
+            if (endsLeft === 0) {
+              o$$2(new On$00601(1, "End", t$$16));
+            }
+
             break;
           }
 
@@ -287,7 +293,7 @@ function combineArray(qty, _arg1$$8) {
 
 function mergeArray(qty$$1, _arg1$$9) {
   const o$$3 = _arg1$$9;
-  let endsLeft = qty$$1 | 0;
+  let endsLeft$$1 = qty$$1 | 0;
   const o$$4 = safeSink(o$$3);
 
   const sink$$1 = function (_arg2$$5) {
@@ -302,9 +308,9 @@ function mergeArray(qty$$1, _arg1$$9) {
       case 1:
         {
           const x$$5 = _arg2$$5;
-          endsLeft = endsLeft - 1;
+          endsLeft$$1 = endsLeft$$1 - 1;
 
-          if (endsLeft === 0) {
+          if (endsLeft$$1 === 0) {
             o$$4(x$$5);
           }
 

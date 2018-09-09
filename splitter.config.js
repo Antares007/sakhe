@@ -13,6 +13,6 @@ module.exports = {
   entry: resolve("core/core.fsproj"),
   outDir: resolve("out/modules"),
   port: 61225, // Fable daemon port (61225 by default)
-  babel
-  // fable: { define: ["DEBUG"] }
+  babel,
+  fable: { define: ["DEBUG"] }
 }

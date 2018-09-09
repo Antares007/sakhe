@@ -53,12 +53,15 @@ let private safeSink o =
         active <- false
 
 let combineArray qty (Sink o) =
+    let mutable endsLeft = qty
     let values = [| for i in 0 .. qty - 1 -> None |]
     let mutable ready = false
     let o = safeSink o
     let sink i = Sink <| function
         | Error (t, err) -> o << Error <| (t, err)
-        | End (t)        -> o << End <| t
+        | End (t)        ->
+            endsLeft <- endsLeft - 1
+            if endsLeft = 0 then o << End <| t
         | Event (t, a)   ->
             values.[i] <- Some a
             if ready then o << Event <| (t, values |> Array.map (fun v -> v.Value))

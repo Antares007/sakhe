@@ -34,23 +34,22 @@ let delay x = Time.Delay.return' x
 
 let see =
     Stream.combineArray [|
-        Stream.periodic (delay 1000)
-        Stream.periodic (delay 750)
-        Stream.periodic (delay 250)
-        Stream.periodic (delay 500)
-        |]
-    // Stream.now 42
+        Stream.periodic (delay 1000) |> Stream.map (fun () -> 1000)
+        Stream.periodic (delay 750) |> Stream.map (fun () -> 750)
+        Stream.periodic (delay 250) |> Stream.map (fun () -> 250)
+        Stream.periodic (delay 500) |> Stream.map (fun () -> 500)
+        Stream.now 42
+    |]
     |> Stream.run scheduler (Sink.return' <| function
         | Sink.On.Event (t, e) -> printfn "Event %A at %A" e t
         | Sink.On.End (t) -> printfn "End at %A" t
         | Sink.On.Error (t, err) -> printfn "Error %A at %A" err t)
 
 
-// open Fable.Import.Browser
-// open Fable.Core.JsInterop
+open Fable.Import.Browser
+open Fable.Core.JsInterop
 
-// window?d1 <- d1
-// window?d2 <- d2
+window?d <- see
 
 // let makeTask i =
 //     Task.return' <| function

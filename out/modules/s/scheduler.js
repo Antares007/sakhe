@@ -45,6 +45,10 @@ function scheduleNextRun(scheduler) {
       ref.contents = [nextArrival, setNextRun(nextArrival, scheduler)];
     }
   } else if (matchValue[1] != null) {
+    if (!false) {
+      debugger;
+    }
+
     const f = matchValue[1][1];
     f();
     ref.contents = null;
@@ -58,6 +62,11 @@ function setNextRun(nextArrival$$2, scheduler$$1) {
   const task = (0, _task.return$0027)(function (_arg1$$2) {
     if (_arg1$$2.tag === 1) {
       const err = _arg1$$2.fields[1];
+
+      if (!false) {
+        debugger;
+      }
+
       throw err;
     } else {
       const s = _arg1$$2.fields[0][1];
@@ -78,6 +87,10 @@ function add(time, period, task$$1, cancelRef, scheduler$$2) {
     const period$$1 = period;
     const readd = (0, _task.return$0027)(function (_arg1$$3) {
       if (_arg1$$3.tag === 1) {
+        if (!false) {
+          debugger;
+        }
+
         return null;
       } else {
         const time$$1 = _arg1$$3.fields[0][0];

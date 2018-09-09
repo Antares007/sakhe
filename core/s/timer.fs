@@ -15,7 +15,7 @@ let return' set clear = Timer <| fun task delay ->
     else
         let handle = set (fun () -> Task.run task |> ignore) delay
         Disposable.append
-            cancelDisposable
             (Disposable.return' (fun () -> clear handle))
+            cancelDisposable
 
 let setTimer task time (Timer set) = set task time

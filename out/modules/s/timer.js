@@ -25,9 +25,9 @@ function return$0027(set, clear) {
         const handle = set(function () {
           (0, _task.run)(patternInput[0]);
         }, delay$$1);
-        return (0, _disposable.append)(patternInput[1], (0, _disposable.return$0027)(function () {
+        return (0, _disposable.append)((0, _disposable.return$0027)(function () {
           clear(handle);
-        }));
+        }), patternInput[1]);
       }
     };
   };

@@ -12,6 +12,10 @@ exports.DelayModule$$$fromTo = DelayModule$$$fromTo;
 var _Util = require("../fable-core.2.0.0-beta-004/Util");
 
 function return$0027(f) {
+  if (!(f >= 0)) {
+    debugger;
+  }
+
   return Math.floor(f);
 }
 
@@ -22,6 +26,10 @@ function add(_arg2, _arg1) {
 }
 
 function DelayModule$$$return$0027(i) {
+  if (!(i >= 0)) {
+    debugger;
+  }
+
   return i;
 }
 
