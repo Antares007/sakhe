@@ -25,46 +25,7 @@ type [<AllowNullLiteral>] ``MulticastSourceStatic`` =
 type SeedValue<'s, 'v> = { seed: 's; value: 'v }
 
 type [<AllowNullLiteral>] IExports =
-    (*
-        Running
-    *)
-    /// Activate an event Stream and consume all its events.
-    abstract ``runEffects``: Stream<'a> -> Scheduler -> Promise<unit>
-    /// Run a Stream, sending all events to the provided Sink. The Stream’s Time values come from the provided Scheduler.
-    abstract ``run``: Sink<'a> -> Scheduler -> Stream<'a> -> Disposable
-    (*
-        Construction
-    *)
-    /// Create a Stream containing no events and ends immediately.
-    /// ```
-    /// empty(): |
-    /// ```
-    abstract ``empty``: unit -> Stream<'a>
-    /// Create a Stream containing no events and never ends.
-    /// ```
-    /// never(): ---->
-    /// ```
-    abstract ``never``: unit -> Stream<'a>
-    /// Create a Stream containing a single event at time 0.
-    /// ```
-    /// now(x): x|
-    /// ```
-    abstract ``now``: 'a -> Stream<'a>
-    /// Create a Stream containing a single event at a specific time.
-    /// ```
-    /// at(3, x): --x|
-    /// ```
-    abstract ``at``: Time -> 'a -> Stream<'a>
-    /// Create an infinite Stream containing events that occur at a specified Period. The first event occurs at time 0, and the event values are undefined.
-    /// ```
-    /// periodic(3): x--x--x--x-->
-    /// ```
-    abstract ``periodic``: Time -> Stream<unit>
-    /// Create a Stream that fails with the provided Error at time 0. This can be useful for functions that need to return a Stream and also need to propagate an error.
-    /// ```
-    /// throwError(X): X
-    /// ```
-    abstract ``throwError``: Error -> Stream<'a>
+
     (*
         Extending
     *)
@@ -572,3 +533,47 @@ type [<AllowNullLiteral>] IExports =
     abstract ``multicast``: Stream<'a> -> Stream<'a>
     abstract ``MulticastSource``: MulticastSourceStatic
     abstract ``newStream``: (Sink<'a> -> Scheduler -> Disposable) -> Stream<'a>
+
+
+    (*
+        Running
+    *)
+    /// Activate an event Stream and consume all its events.
+    abstract ``runEffects``: Stream<'a> -> Scheduler -> Promise<unit>
+    /// Run a Stream, sending all events to the provided Sink. The Stream’s Time values come from the provided Scheduler.
+    abstract ``run``: Sink<'a> -> Scheduler -> Stream<'a> -> Disposable
+
+
+    (*
+        Construction
+    *)
+    /// Create a Stream containing no events and ends immediately.
+    /// ```
+    /// empty(): |
+    /// ```
+    abstract ``empty``: unit -> Stream<'a>
+    /// Create a Stream containing no events and never ends.
+    /// ```
+    /// never(): ---->
+    /// ```
+    abstract ``never``: unit -> Stream<'a>
+    /// Create a Stream containing a single event at time 0.
+    /// ```
+    /// now(x): x|
+    /// ```
+    abstract ``now``: 'a -> Stream<'a>
+    /// Create a Stream containing a single event at a specific time.
+    /// ```
+    /// at(3, x): --x|
+    /// ```
+    abstract ``at``: Time -> 'a -> Stream<'a>
+    /// Create an infinite Stream containing events that occur at a specified Period. The first event occurs at time 0, and the event values are undefined.
+    /// ```
+    /// periodic(3): x--x--x--x-->
+    /// ```
+    abstract ``periodic``: Time -> Stream<unit>
+    /// Create a Stream that fails with the provided Error at time 0. This can be useful for functions that need to return a Stream and also need to propagate an error.
+    /// ```
+    /// throwError(X): X
+    /// ```
+    abstract ``throwError``: Error -> Stream<'a>

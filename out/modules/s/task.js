@@ -1,5 +1,5 @@
 import { FSharpException, declare, Union } from "../fable-core.2.0.0-beta-003/Types";
-import { return$0027 as return$00240027, dispose, append as append$$1 } from "./disposable";
+import { return$0027 as return$00240027, append as append$$1 } from "./disposable";
 export const On$00601 = declare(function On$00601(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
@@ -71,24 +71,26 @@ export function Cancelable$$$extend(task) {
     canceled = true;
 
     if (taskDisposable != null) {
-      dispose(taskDisposable);
+      const f$$4 = taskDisposable;
+      f$$4();
     }
   });
-  const task$$1 = return$0027(function (_arg1$$5) {
-    if (_arg1$$5.tag === 1) {
+  const task$$1 = return$0027(function (_arg1$$6) {
+    if (_arg1$$6.tag === 1) {
       return null;
     } else {
-      const a$$4 = _arg1$$5.fields[0];
+      const a$$4 = _arg1$$6.fields[0];
 
       if (canceled) {
         return null;
       } else {
-        taskDisposable = run(map(function f$$5() {
+        taskDisposable = run(map(function f$$6() {
           return [a$$4, cancellationSource];
         }, task));
 
         if (canceled ? taskDisposable != null : false) {
-          dispose(taskDisposable);
+          const f$$7 = taskDisposable;
+          f$$7();
           return null;
         } else {
           return taskDisposable;

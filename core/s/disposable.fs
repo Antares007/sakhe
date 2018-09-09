@@ -1,5 +1,6 @@
 module Sakhe.S.Disposable
 open Fable.Core
+open Sakhe.S
 
 type [<Erase>] T = private Disposable of (unit -> unit)
 
@@ -14,4 +15,8 @@ let return' f =
 
 let append (Disposable l) (Disposable r) = return' (fun () -> l(); r())
 
-let dispose (Disposable f) = f ()
+let inline dispose (Disposable f) = f ()
+
+let appendArray disposables = return' <| fun () ->
+    let to' = Array.length disposables - 1
+    for i = 0 to to' do dispose disposables.[i]

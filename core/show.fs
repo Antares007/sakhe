@@ -2,12 +2,9 @@ module Sakhe.Show
 open Fable.Core
 open Sakhe.S
 
-let clock = Default.clock ()
 let sch = Scheduler.schedule
 
 let scheduler = Default.scheduler ()
-
-printfn "run at: %A" (Clock.now clock)
 
 [<Emit("console.timeStamp($0)")>]
 let timeStamp (a: string): unit = Exceptions.jsNative
@@ -22,8 +19,7 @@ let task i = Task.return' <| function
         Some << Disposable.return' <| fun () ->
             printfn "task %d disposed Exn" i
 
-let delay1000 = Time.Delay.return' <| 1000
-let delay500 = Time.Delay.return' <| 500
+let delay x = Time.Delay.return' x
 
 // let d1 = Scheduler.schedule
 //             None
@@ -35,9 +31,14 @@ let delay500 = Time.Delay.return' <| 500
 //             (Some delay1000)
 //             (task 2)
 //             scheduler
+
 let see =
-    Stream.periodic delay1000
-    |> Stream.map (fun () -> 42)
+    Stream.mergeArray [|
+        Stream.periodic (delay 1000)
+        Stream.periodic (delay 750)
+        Stream.periodic (delay 250)
+        Stream.periodic (delay 500)
+        |]
     |> Stream.run scheduler (Sink.return' <| function
         | Sink.On.Event (t, e) -> printfn "Event %A at %A" e t
         | Sink.On.End (t) -> printfn "End at %A" t

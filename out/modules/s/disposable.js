@@ -16,7 +16,13 @@ export function append(_arg2, _arg1) {
     r();
   });
 }
-export function dispose(_arg1$$1) {
-  const f$$1 = _arg1$$1;
-  f$$1();
+export function appendArray(disposables) {
+  return return$0027(function () {
+    const to$0027 = disposables.length - 1 | 0;
+
+    for (let i = 0; i <= to$0027; i++) {
+      const f$$2 = disposables[i];
+      f$$2();
+    }
+  });
 }

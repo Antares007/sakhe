@@ -1,24 +1,21 @@
-import { scheduler as scheduler$$2, clock as clock$$1 } from "./s/default";
 import { schedule } from "./s/scheduler";
+import { scheduler as scheduler$$2 } from "./s/default";
 import { toConsole, printf } from "./fable-core.2.0.0-beta-003/String";
-import { now } from "./s/clock";
 import { return$0027 as return$00240027 } from "./s/disposable";
 import { return$0027 as return$00240027$$1 } from "./s/task";
 import { DelayModule$$$return$0027 as DelayModule$0024$0024$0024return$00240027 } from "./s/time";
 import { return$0027 as return$00240027$$2 } from "./s/sink";
-import { run, map, periodic } from "./s/stream";
-export const clock = clock$$1();
-export function sch(delay) {
+import { run, mergeArray, periodic } from "./s/stream";
+export function sch(delay$$1) {
   return function (period) {
     return function (task$$1) {
       return function (scheduler$$1) {
-        return schedule(delay, period, task$$1, scheduler$$1);
+        return schedule(delay$$1, period, task$$1, scheduler$$1);
       };
     };
   };
 }
 export const scheduler = scheduler$$2();
-toConsole(printf("run at: %A"))(now(clock));
 export function task(i) {
   return return$00240027$$1(function (_arg1) {
     if (_arg1.tag === 1) {
@@ -38,8 +35,9 @@ export function task(i) {
     }
   });
 }
-export const delay1000 = DelayModule$0024$0024$0024return$00240027(1000);
-export const delay500 = DelayModule$0024$0024$0024return$00240027(500);
+export function delay(x) {
+  return DelayModule$0024$0024$0024return$00240027(x);
+}
 export const see = run(scheduler, return$00240027$$2(function (_arg1$$1) {
   switch (_arg1$$1.tag) {
     case 1:
@@ -60,10 +58,8 @@ export const see = run(scheduler, return$00240027$$2(function (_arg1$$1) {
     default:
       {
         const t$$2 = _arg1$$1.fields[0];
-        const e = _arg1$$1.fields[1] | 0;
-        toConsole(printf("Event %A at %A"))(e)(t$$2);
+        const e = _arg1$$1.fields[1];
+        toConsole(printf("Event %A at %A"))(null)(t$$2);
       }
   }
-}), map(function f$$3() {
-  return 42;
-}, periodic(delay1000)));
+}), mergeArray([periodic(delay(1000)), periodic(delay(750)), periodic(delay(250)), periodic(delay(500))]));

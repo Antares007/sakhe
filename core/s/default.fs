@@ -4,10 +4,11 @@ open Fable.Import.JS
 open Fable.Import.Browser
 open Sakhe.S.Stream
 
-let clock () =
-    let runAt = performance.now()
+let private clock () =
+    let runAt = lazy ( System.Math.Floor (performance.now()) )
     Clock.return' <| fun () ->
-        Time.return' (performance.now() - runAt)
+        let prev = runAt.Value
+        Time.return' (System.Math.Floor (performance.now()) - prev)
 
 let timer = Timer.return' setTimeout clearTimeout
 
