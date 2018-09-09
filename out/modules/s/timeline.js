@@ -1,6 +1,6 @@
-import { equals, compare } from "../fable-core.2.0.0-beta-003/Util";
+import { equals, compare } from "../fable-core.2.0.0-beta-004/Util";
 import { empty as empty$$1, append } from "./task";
-import { fold } from "../fable-core.2.0.0-beta-003/Seq";
+import { fold } from "../fable-core.2.0.0-beta-004/Seq";
 
 function findAppendPosition(a, array) {
   const go = function go(l, r) {

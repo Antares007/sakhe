@@ -1,4 +1,4 @@
-import { Lazy } from "../fable-core.2.0.0-beta-003/Util";
+import { Lazy } from "../fable-core.2.0.0-beta-004/Util";
 import { return$0027 as return$00240027 } from "./time";
 import { return$0027 as return$00240027$$1 } from "./clock";
 import { return$0027 as return$00240027$$2 } from "./timer";

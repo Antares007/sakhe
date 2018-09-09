@@ -352,14 +352,14 @@ export function validateGuid(str, doNotThrow) {
   }
 
   throw new Error("Guid should contain 32 digits with 4 dashes: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
-}
-/* tslint:disable */
-// From https://gist.github.com/LeverOne/1308368
+} // From https://gist.github.com/LeverOne/1308368
 
 export function newGuid() {
   let b = "";
 
-  for (let a = 0; a++ < 36; b += a * 51 & 52 ? (a ^ 15 ? 8 ^ Math.random() * (a ^ 20 ? 16 : 4) : 4).toString(16) : "-");
+  for (let a = 0; a++ < 36;) {
+    b += a * 51 & 52 ? (a ^ 15 ? 8 ^ Math.random() * (a ^ 20 ? 16 : 4) : 4).toString(16) : "-";
+  }
 
   return b;
 } // Maps for number <-> hex string conversion
@@ -374,7 +374,7 @@ function initConvertMaps() {
   _byteToHex = new Array(256);
   _hexToByte = {};
 
-  for (var i = 0; i < 256; i++) {
+  for (let i = 0; i < 256; i++) {
     _byteToHex[i] = (i + 0x100).toString(16).substr(1);
     _hexToByte[_byteToHex[i]] = i;
   }
@@ -392,9 +392,9 @@ export function guidToArray(s) {
 
   let i = 0;
   const buf = new Uint8Array(16);
-  s.toLowerCase().replace(/[0-9a-f]{2}/g, function (oct) {
+  s.toLowerCase().replace(/[0-9a-f]{2}/g, oct => {
     switch (i) {
-      // .NET saves first three byte groups with differten endianness
+      // .NET saves first three byte groups with different endianness
       // See https://stackoverflow.com/a/16722909/3922220
       case 0:
       case 1:
@@ -445,7 +445,6 @@ export function arrayToGuid(buf) {
 
   return _byteToHex[buf[3]] + _byteToHex[buf[2]] + _byteToHex[buf[1]] + _byteToHex[buf[0]] + "-" + _byteToHex[buf[5]] + _byteToHex[buf[4]] + "-" + _byteToHex[buf[7]] + _byteToHex[buf[6]] + "-" + _byteToHex[buf[8]] + _byteToHex[buf[9]] + "-" + _byteToHex[buf[10]] + _byteToHex[buf[11]] + _byteToHex[buf[12]] + _byteToHex[buf[13]] + _byteToHex[buf[14]] + _byteToHex[buf[15]];
 }
-/* tslint:enable */
 
 function notSupported(name) {
   throw new Error("The environment doesn't support '" + name + "', please use a polyfill.");

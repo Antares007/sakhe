@@ -1,7 +1,7 @@
-import { declare, Union } from "../fable-core.2.0.0-beta-003/Types";
-import { some, value } from "../fable-core.2.0.0-beta-003/Option";
-import { delay, map as map$$1, range } from "../fable-core.2.0.0-beta-003/Seq";
-import { map as map$$2, ofSeq } from "../fable-core.2.0.0-beta-003/Array";
+import { declare, Union } from "../fable-core.2.0.0-beta-004/Types";
+import { some, value } from "../fable-core.2.0.0-beta-004/Option";
+import { delay, map as map$$1, rangeNumber } from "../fable-core.2.0.0-beta-004/Seq";
+import { map as map$$2, ofSeq } from "../fable-core.2.0.0-beta-004/Array";
 export const On$00601 = declare(function On$00601(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
@@ -196,7 +196,7 @@ export function combineArray(qty, _arg1$$8) {
   const values = ofSeq(delay(function () {
     return map$$1(function (i) {
       return null;
-    }, range(0, qty - 1));
+    }, rangeNumber(0, 1, qty - 1));
   }), Array);
   let ready = false;
   const o$$2 = safeSink(o$$1);
@@ -251,7 +251,7 @@ export function combineArray(qty, _arg1$$8) {
   return ofSeq(delay(function () {
     return map$$1(function (i$$3) {
       return sink(i$$3);
-    }, range(0, qty - 1));
+    }, rangeNumber(0, 1, qty - 1));
   }), Array);
 }
 export function mergeArray(qty$$1, _arg1$$9) {
@@ -291,6 +291,6 @@ export function mergeArray(qty$$1, _arg1$$9) {
   return ofSeq(delay(function () {
     return map$$1(function (i$$4) {
       return sink$$1;
-    }, range(0, qty$$1 - 1));
+    }, rangeNumber(0, 1, qty$$1 - 1));
   }), Array);
 }

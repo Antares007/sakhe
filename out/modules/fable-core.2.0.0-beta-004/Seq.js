@@ -1,3 +1,4 @@
+import { makeRangeStepFunction } from "./Long";
 import { some, value } from "./Option";
 import { compare, equals } from "./Util";
 export class Enumerator {
@@ -523,18 +524,19 @@ export function minBy(f, xs, comparer) {
 export function pairwise(xs) {
   return skip(2, scan((last, next) => [last[1], next], [0, 0], xs));
 }
-export function rangeStep(first, step, last) {
+export function rangeChar(first, last) {
+  return delay(() => unfold(x => x <= last ? [x, String.fromCharCode(x.charCodeAt(0) + 1)] : null, first));
+}
+export function rangeLong(first, step, last, unsigned) {
+  const stepFn = makeRangeStepFunction(step, last, unsigned);
+  return delay(() => unfold(stepFn, first));
+}
+export function rangeNumber(first, step, last) {
   if (step === 0) {
     throw new Error("Step cannot be 0");
   }
 
   return delay(() => unfold(x => step > 0 && x <= last || step < 0 && x >= last ? [x, x + step] : null, first));
-}
-export function rangeChar(first, last) {
-  return delay(() => unfold(x => x <= last ? [x, String.fromCharCode(x.charCodeAt(0) + 1)] : null, first));
-}
-export function range(first, last) {
-  return rangeStep(first, 1, last);
 }
 export function readOnly(xs) {
   return map(x => x, xs);

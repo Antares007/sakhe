@@ -1,4 +1,4 @@
-import { FSharpException, declare, Union } from "../fable-core.2.0.0-beta-003/Types";
+import { FSharpException, declare, Union } from "../fable-core.2.0.0-beta-004/Types";
 import { return$0027 as return$00240027, append as append$$1 } from "./disposable";
 export const On$00601 = declare(function On$00601(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);

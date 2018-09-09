@@ -213,10 +213,8 @@ export function parseRaw(str) {
 
   if (isNaN(date.getTime())) {
     // Try to check strings JS Date cannot parse (see #1045, #1422)
-
-    /* tslint:disable */
+    // tslint:disable-next-line:max-line-length
     const m = /^\s*(\d+[^\w\s:]\d+[^\w\s:]\d+)?\s*(\d+:\d+(?::\d+(?:\.\d+)?)?)?\s*([AaPp][Mm])?\s*([+-]\d+(?::\d+)?)?\s*$/.exec(str);
-    /* tslint:enable */
 
     if (m != null) {
       let baseDate = null;

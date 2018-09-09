@@ -1,6 +1,6 @@
-import { declare, Union } from "../fable-core.2.0.0-beta-003/Types";
+import { declare, Union } from "../fable-core.2.0.0-beta-004/Types";
 import { Send$$$event as Send$0024$0024$0024event, Send$$$end$0027 as Send$0024$0024$0024end$00240027, Send$$$error as Send$0024$0024$0024error, mergeArray as mergeArray$$1, combineArray as combineArray$$1, skipRepeats as skipRepeats$$1, filterMap as filterMap$$1, filter as filter$$1, map as map$$1 } from "./sink";
-import { mapIndexed } from "../fable-core.2.0.0-beta-003/Array";
+import { mapIndexed } from "../fable-core.2.0.0-beta-004/Array";
 import { empty as empty$$1, appendArray } from "./disposable";
 import { return$0027 as return$00240027 } from "./task";
 import { schedule } from "./scheduler";

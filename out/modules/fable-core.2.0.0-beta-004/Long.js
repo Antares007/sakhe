@@ -257,10 +257,14 @@ var pow_dbl = Math.pow; // Used 4 times (4*8 to 15+4)
  */
 
 export function fromString(str, unsigned, radix) {
-  if (isValid(str, radix) === null) {
+  const a = isValid(str, radix);
+
+  if (a === null) {
     throw new Error("Input string was not in a correct format.");
   }
 
+  str = a[0][3];
+  radix = a[1];
   if (str.length === 0) throw Error("empty string");
   if (str === "NaN" || str === "Infinity" || str === "+Infinity" || str === "-Infinity") return ZERO;
 
@@ -1090,4 +1094,8 @@ export function unixEpochMillisecondsToTicks(ms, offset) {
 }
 export function ticksToUnixEpochMilliseconds(ticks) {
   return toNumber(op_Subtraction(op_Division(ticks, 10000), 62135596800000));
+}
+export function makeRangeStepFunction(step, last, unsigned) {
+  const zero = unsigned ? UZERO : ZERO;
+  return x => greaterThan(step, zero) && lessThanOrEqual(x, last) || lessThan(step, zero) && greaterThanOrEqual(x, last) ? [x, op_Addition(x, step)] : null;
 }

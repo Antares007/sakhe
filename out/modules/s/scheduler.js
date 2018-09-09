@@ -1,6 +1,6 @@
-import { FSharpRef } from "../fable-core.2.0.0-beta-003/Types";
+import { FSharpRef } from "../fable-core.2.0.0-beta-004/Types";
 import { add as add$$2, removeTasks, nextArrival as nextArrival$$3, empty } from "./timeline";
-import { compare } from "../fable-core.2.0.0-beta-003/Util";
+import { compare } from "../fable-core.2.0.0-beta-004/Util";
 import { now as now$$1 } from "./clock";
 import { map, Cancelable$$$extend as Cancelable$0024$0024$0024extend, append, return$0027 as return$00240027, run } from "./task";
 import { add as add$$1, DelayModule$$$fromTo as DelayModule$0024$0024$0024fromTo } from "./time";

@@ -1,6 +1,6 @@
 import { schedule } from "./s/scheduler";
 import { scheduler as scheduler$$2 } from "./s/default";
-import { toConsole, printf } from "./fable-core.2.0.0-beta-003/String";
+import { toConsole, printf } from "./fable-core.2.0.0-beta-004/String";
 import { return$0027 as return$00240027 } from "./s/disposable";
 import { return$0027 as return$00240027$$1 } from "./s/task";
 import { DelayModule$$$return$0027 as DelayModule$0024$0024$0024return$00240027 } from "./s/time";
