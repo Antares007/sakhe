@@ -1,8 +1,17 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.isValid = isValid;
+exports.tryParse = tryParse;
+exports.parse = parse;
 const parseRadix = /^\s*([\+\-])?(0[xXoObB])?([0-9a-fA-F]+)\s*$/;
 const invalidRadix2 = /[^01]/;
 const invalidRadix8 = /[^0-7]/;
 const invalidRadix10 = /[^0-9]/;
-export function isValid(s, radix) {
+
+function isValid(s, radix) {
   const res = parseRadix.exec(s);
 
   if (res != null) {
@@ -50,7 +59,8 @@ export function isValid(s, radix) {
   return null;
 } // TODO does this perfectly match the .NET behavior ?
 
-export function tryParse(s, radix, initial) {
+
+function tryParse(s, radix, initial) {
   const a = isValid(s, radix);
 
   if (a !== null) {
@@ -64,7 +74,8 @@ export function tryParse(s, radix, initial) {
 
   return [false, initial];
 }
-export function parse(s, radix) {
+
+function parse(s, radix) {
   const a = tryParse(s, radix, 0);
 
   if (a[0]) {

@@ -1,29 +1,37 @@
-import { max, comparePrimitives } from "../fable-core.2.0.0-beta-004/Util";
-export function return$0027(f) {
-  if (!(f >= 0)) {
-    debugger;
-  }
+"use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.return$0027 = return$0027;
+exports.add = add;
+exports.DelayModule$$$return$0027 = DelayModule$$$return$0027;
+exports.DelayModule$$$value = DelayModule$$$value;
+exports.DelayModule$$$fromTo = DelayModule$$$fromTo;
+
+var _Util = require("../fable-core.2.0.0-beta-004/Util");
+
+function return$0027(f) {
   return Math.floor(f);
 }
-export function add(_arg2, _arg1) {
+
+function add(_arg2, _arg1) {
   const now = _arg2;
   const delay = _arg1;
   return now + delay;
 }
-export function DelayModule$$$return$0027(i) {
-  if (!(i >= 0)) {
-    debugger;
-  }
 
+function DelayModule$$$return$0027(i) {
   return i;
 }
-export function DelayModule$$$value(_arg1$$1) {
+
+function DelayModule$$$value(_arg1$$1) {
   const i$$1 = _arg1$$1;
   return i$$1 | 0;
 }
-export function DelayModule$$$fromTo(_arg2$$1, _arg1$$2) {
+
+function DelayModule$$$fromTo(_arg2$$1, _arg1$$2) {
   const from = _arg2$$1;
   const to$0027 = _arg1$$2;
-  return max(comparePrimitives, 0, to$0027 - from);
+  return (0, _Util.max)(_Util.comparePrimitives, 0, to$0027 - from);
 }

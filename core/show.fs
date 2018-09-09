@@ -33,12 +33,13 @@ let delay x = Time.Delay.return' x
 //             scheduler
 
 let see =
-    Stream.mergeArray [|
+    Stream.combineArray [|
         Stream.periodic (delay 1000)
         Stream.periodic (delay 750)
         Stream.periodic (delay 250)
         Stream.periodic (delay 500)
         |]
+    // Stream.now 42
     |> Stream.run scheduler (Sink.return' <| function
         | Sink.On.Event (t, e) -> printfn "Event %A at %A" e t
         | Sink.On.End (t) -> printfn "End at %A" t

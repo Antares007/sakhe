@@ -1,17 +1,38 @@
-import { FSharpException, declare, Union } from "../fable-core.2.0.0-beta-004/Types";
-import { return$0027 as return$00240027, append as append$$1 } from "./disposable";
-export const On$00601 = declare(function On$00601(tag, name, ...fields) {
-  Union.call(this, tag, name, ...fields);
-}, Union);
-export function return$0027(f) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.return$0027 = return$0027;
+exports.empty = empty;
+exports.map = map;
+exports.run = run;
+exports.append = append;
+exports.Cancelable$$$ifCanceledThenRaiseCancellationException = Cancelable$$$ifCanceledThenRaiseCancellationException;
+exports.Cancelable$$$extend = Cancelable$$$extend;
+exports.Cancelable$$$return$0027 = Cancelable$$$return$0027;
+exports.Cancelable$002ESource = exports.Cancelable$002EException = exports.On$00601 = void 0;
+
+var _Types = require("../fable-core.2.0.0-beta-004/Types");
+
+var _disposable = require("./disposable");
+
+const On$00601 = (0, _Types.declare)(function On$00601(tag, name, ...fields) {
+  _Types.Union.call(this, tag, name, ...fields);
+}, _Types.Union);
+exports.On$00601 = On$00601;
+
+function return$0027(f) {
   return f;
 }
-export function empty() {
+
+function empty() {
   return function (_arg1) {
     return null;
   };
 }
-export function map(f$$1, _arg1$$1) {
+
+function map(f$$1, _arg1$$1) {
   const g = _arg1$$1;
   return function (_arg2) {
     if (_arg2.tag === 1) {
@@ -24,7 +45,8 @@ export function map(f$$1, _arg1$$1) {
     }
   };
 }
-export function run(_arg1$$2) {
+
+function run(_arg1$$2) {
   const g$$1 = _arg1$$2;
 
   try {
@@ -33,7 +55,8 @@ export function run(_arg1$$2) {
     return g$$1(new On$00601(1, "Exn", null, err$$1));
   }
 }
-export function append(l, r) {
+
+function append(l, r) {
   return function (_arg1$$3) {
     var r$$1, l$$1, d, d$$1;
 
@@ -47,19 +70,24 @@ export function append(l, r) {
       };
 
       const matchValue = [run(map(a$$3, l)), run(map(a$$3, r))];
-      return matchValue[0] != null ? matchValue[1] != null ? (r$$1 = matchValue[1], l$$1 = matchValue[0], append$$1(l$$1, r$$1)) : (d = matchValue[0], d) : matchValue[1] != null ? (d$$1 = matchValue[1], d$$1) : null;
+      return matchValue[0] != null ? matchValue[1] != null ? (r$$1 = matchValue[1], l$$1 = matchValue[0], (0, _disposable.append)(l$$1, r$$1)) : (d = matchValue[0], d) : matchValue[1] != null ? (d$$1 = matchValue[1], d$$1) : null;
     }
   };
 }
-export const Cancelable$002EException = declare(function Cancelable$002EException() {}, FSharpException);
-export const Cancelable$002ESource = declare(function Cancelable$002ESource(tag, name, ...fields) {
-  Union.call(this, tag, name, ...fields);
-}, Union);
-export function Cancelable$$$ifCanceledThenRaiseCancellationException(_arg1$$4) {
+
+const Cancelable$002EException = (0, _Types.declare)(function Cancelable$002EException() {}, _Types.FSharpException);
+exports.Cancelable$002EException = Cancelable$002EException;
+const Cancelable$002ESource = (0, _Types.declare)(function Cancelable$002ESource(tag, name, ...fields) {
+  _Types.Union.call(this, tag, name, ...fields);
+}, _Types.Union);
+exports.Cancelable$002ESource = Cancelable$002ESource;
+
+function Cancelable$$$ifCanceledThenRaiseCancellationException(_arg1$$4) {
   const f$$2 = _arg1$$4.fields[0];
   f$$2();
 }
-export function Cancelable$$$extend(task) {
+
+function Cancelable$$$extend(task) {
   let canceled = false;
   let taskDisposable = null;
   const cancellationSource = new Cancelable$002ESource(0, "Source", function () {
@@ -67,7 +95,7 @@ export function Cancelable$$$extend(task) {
       throw new Cancelable$002EException();
     }
   });
-  const cancelDisposable = return$00240027(function () {
+  const cancelDisposable = (0, _disposable.return$0027)(function () {
     canceled = true;
 
     if (taskDisposable != null) {
@@ -100,6 +128,7 @@ export function Cancelable$$$extend(task) {
   });
   return [task$$1, cancelDisposable];
 }
-export function Cancelable$$$return$0027(t) {
+
+function Cancelable$$$return$0027(t) {
   return Cancelable$$$extend(return$0027(t));
 }

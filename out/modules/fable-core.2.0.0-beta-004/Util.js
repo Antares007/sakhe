@@ -1,8 +1,60 @@
-// tslint:disable:ban-types
-import { compare as compareDates, toString as dateToString } from "./Date"; // Object.assign flattens getters and setters
-// See https://stackoverflow.com/questions/37054596/js-es5-how-to-assign-objects-with-setters-and-getters
+"use strict";
 
-export function extend(target, ...sources) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.extend = extend;
+exports.isDisposable = isDisposable;
+exports.comparerFromEqualityComparer = comparerFromEqualityComparer;
+exports.containsValue = containsValue;
+exports.tryGetValue = tryGetValue;
+exports.addToSet = addToSet;
+exports.assertEqual = assertEqual;
+exports.assertNotEqual = assertNotEqual;
+exports.lazyFromValue = lazyFromValue;
+exports.int16ToString = int16ToString;
+exports.int32ToString = int32ToString;
+exports.toString = toString;
+exports.stringHash = stringHash;
+exports.numberHash = numberHash;
+exports.combineHashCodes = combineHashCodes;
+exports.identityHash = identityHash;
+exports.structuralHash = structuralHash;
+exports.isArray = isArray;
+exports.isIterable = isIterable;
+exports.isPlainObject = isPlainObject;
+exports.equalArraysWith = equalArraysWith;
+exports.equalArrays = equalArrays;
+exports.equals = equals;
+exports.comparePrimitives = comparePrimitives;
+exports.compareArraysWith = compareArraysWith;
+exports.compareArrays = compareArrays;
+exports.compareObjects = compareObjects;
+exports.compare = compare;
+exports.min = min;
+exports.max = max;
+exports.createAtom = createAtom;
+exports.createObj = createObj;
+exports.jsOptions = jsOptions;
+exports.round = round;
+exports.sign = sign;
+exports.randomNext = randomNext;
+exports.unescapeDataString = unescapeDataString;
+exports.escapeDataString = escapeDataString;
+exports.escapeUriString = escapeUriString;
+exports.count = count;
+exports.clear = clear;
+exports.uncurry = uncurry;
+exports.curry = curry;
+exports.partialApply = partialApply;
+exports.ObjectRef = exports.Lazy = exports.Comparer = void 0;
+
+var _Date = require("./Date");
+
+// tslint:disable:ban-types
+// Object.assign flattens getters and setters
+// See https://stackoverflow.com/questions/37054596/js-es5-how-to-assign-objects-with-setters-and-getters
+function extend(target, ...sources) {
   for (const source of sources) {
     for (const key of Object.keys(source)) {
       Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
@@ -11,16 +63,21 @@ export function extend(target, ...sources) {
 
   return target;
 }
-export function isDisposable(x) {
+
+function isDisposable(x) {
   return x != null && typeof x.Dispose === "function";
 }
-export class Comparer {
+
+class Comparer {
   constructor(f) {
     this.Compare = f || compare;
   }
 
 }
-export function comparerFromEqualityComparer(comparer) {
+
+exports.Comparer = Comparer;
+
+function comparerFromEqualityComparer(comparer) {
   // Sometimes IEqualityComparer also implements IComparer
   if (typeof comparer.Compare === "function") {
     return new Comparer(comparer.Compare);
@@ -38,7 +95,8 @@ export function comparerFromEqualityComparer(comparer) {
   }
 } // TODO: Move these three methods to Map and Set modules
 
-export function containsValue(v, map) {
+
+function containsValue(v, map) {
   for (const kv of map) {
     if (equals(v, kv[1])) {
       return true;
@@ -47,10 +105,12 @@ export function containsValue(v, map) {
 
   return false;
 }
-export function tryGetValue(map, key, defaultValue) {
+
+function tryGetValue(map, key, defaultValue) {
   return map.has(key) ? [true, map.get(key)] : [false, defaultValue];
 }
-export function addToSet(v, set) {
+
+function addToSet(v, set) {
   if (set.has(v)) {
     return false;
   }
@@ -58,7 +118,8 @@ export function addToSet(v, set) {
   set.add(v);
   return true;
 }
-export function assertEqual(actual, expected, msg) {
+
+function assertEqual(actual, expected, msg) {
   if (!equals(actual, expected)) {
     throw Object.assign(new Error(msg || `Expected: ${expected} - Actual: ${actual}`), {
       actual,
@@ -66,7 +127,8 @@ export function assertEqual(actual, expected, msg) {
     });
   }
 }
-export function assertNotEqual(actual, expected, msg) {
+
+function assertNotEqual(actual, expected, msg) {
   if (equals(actual, expected)) {
     throw Object.assign(new Error(msg || `Expected: ${expected} - Actual: ${actual}`), {
       actual,
@@ -74,7 +136,8 @@ export function assertNotEqual(actual, expected, msg) {
     });
   }
 }
-export class Lazy {
+
+class Lazy {
   constructor(factory) {
     this.factory = factory;
     this.isValueCreated = false;
@@ -94,18 +157,24 @@ export class Lazy {
   }
 
 }
-export function lazyFromValue(v) {
+
+exports.Lazy = Lazy;
+
+function lazyFromValue(v) {
   return new Lazy(() => v);
 }
-export function int16ToString(i, radix) {
+
+function int16ToString(i, radix) {
   i = i < 0 && radix != null && radix !== 10 ? 0xFFFF + i + 1 : i;
   return i.toString(radix);
 }
-export function int32ToString(i, radix) {
+
+function int32ToString(i, radix) {
   i = i < 0 && radix != null && radix !== 10 ? 0xFFFFFFFF + i + 1 : i;
   return i.toString(radix);
 }
-export function toString(obj, quoteStrings = false) {
+
+function toString(obj, quoteStrings = false) {
   if (obj == null) {
     return String(obj);
   }
@@ -133,7 +202,7 @@ export function toString(obj, quoteStrings = false) {
           return JSON.stringify(obj, (k, v) => {
             if (v != null) {
               if (v instanceof Date) {
-                return dateToString(v);
+                return (0, _Date.toString)(v);
               } else if (isIterable(v) && !Array.isArray(v) && typeof v !== "string") {
                 return Array.from(v);
               }
@@ -146,12 +215,13 @@ export function toString(obj, quoteStrings = false) {
           return "{" + Object.keys(obj).map(k => k + ": " + String(obj[k])).join(", ") + "}";
         }
       } else {
-        return obj instanceof Date ? dateToString(obj) : String(obj);
+        return obj instanceof Date ? (0, _Date.toString)(obj) : String(obj);
       }
 
   }
 }
-export class ObjectRef {
+
+class ObjectRef {
   static id(o) {
     if (!ObjectRef.idMap.has(o)) {
       ObjectRef.idMap.set(o, ++ObjectRef.count);
@@ -161,9 +231,12 @@ export class ObjectRef {
   }
 
 }
+
+exports.ObjectRef = ObjectRef;
 ObjectRef.idMap = new WeakMap();
 ObjectRef.count = 0;
-export function stringHash(s) {
+
+function stringHash(s) {
   let i = 0;
   let h = 5381;
   const len = s.length;
@@ -174,11 +247,13 @@ export function stringHash(s) {
 
   return h;
 }
-export function numberHash(x) {
+
+function numberHash(x) {
   return x * 2654435761 | 0;
 } // From https://stackoverflow.com/a/37449594
 
-export function combineHashCodes(hashes) {
+
+function combineHashCodes(hashes) {
   if (hashes.length === 0) {
     return 0;
   }
@@ -187,7 +262,8 @@ export function combineHashCodes(hashes) {
     return (h1 << 5) + h1 ^ h2;
   });
 }
-export function identityHash(x) {
+
+function identityHash(x) {
   if (x == null) {
     return 0;
   }
@@ -206,7 +282,8 @@ export function identityHash(x) {
       return numberHash(ObjectRef.id(x));
   }
 }
-export function structuralHash(x) {
+
+function structuralHash(x) {
   if (x == null) {
     return 0;
   }
@@ -241,16 +318,20 @@ export function structuralHash(x) {
       }
   }
 }
-export function isArray(x) {
+
+function isArray(x) {
   return Array.isArray(x) || ArrayBuffer.isView(x);
 }
-export function isIterable(x) {
+
+function isIterable(x) {
   return x != null && typeof x[Symbol.iterator] === "function";
 }
-export function isPlainObject(x) {
+
+function isPlainObject(x) {
   return x != null && Object.getPrototypeOf(x).constructor === Object;
 }
-export function equalArraysWith(x, y, eq) {
+
+function equalArraysWith(x, y, eq) {
   if (x == null) {
     return y == null;
   }
@@ -271,7 +352,8 @@ export function equalArraysWith(x, y, eq) {
 
   return true;
 }
-export function equalArrays(x, y) {
+
+function equalArrays(x, y) {
   return equalArraysWith(x, y, equals);
 } // export function equalObjects(x: { [k: string]: any }, y: { [k: string]: any }): boolean {
 //   if (x == null) { return y == null; }
@@ -291,7 +373,8 @@ export function equalArrays(x, y) {
 //   return true;
 // }
 
-export function equals(x, y) {
+
+function equals(x, y) {
   if (x === y) {
     return true;
   } else if (x == null) {
@@ -303,15 +386,17 @@ export function equals(x, y) {
   } else if (isArray(x)) {
     return isArray(y) && equalArrays(x, y);
   } else if (x instanceof Date) {
-    return y instanceof Date && compareDates(x, y) === 0;
+    return y instanceof Date && (0, _Date.compare)(x, y) === 0;
   } else {
     return false;
   }
 }
-export function comparePrimitives(x, y) {
+
+function comparePrimitives(x, y) {
   return x === y ? 0 : x < y ? -1 : 1;
 }
-export function compareArraysWith(x, y, comp) {
+
+function compareArraysWith(x, y, comp) {
   if (x == null) {
     return y == null ? 0 : 1;
   }
@@ -334,10 +419,12 @@ export function compareArraysWith(x, y, comp) {
 
   return 0;
 }
-export function compareArrays(x, y) {
+
+function compareArrays(x, y) {
   return compareArraysWith(x, y, compare);
 }
-export function compareObjects(x, y) {
+
+function compareObjects(x, y) {
   if (x == null) {
     return y == null ? 0 : 1;
   }
@@ -372,7 +459,8 @@ export function compareObjects(x, y) {
 
   return 0;
 }
-export function compare(x, y) {
+
+function compare(x, y) {
   if (x === y) {
     return 0;
   } else if (x == null) {
@@ -384,18 +472,21 @@ export function compare(x, y) {
   } else if (isArray(x)) {
     return isArray(y) && compareArrays(x, y);
   } else if (x instanceof Date) {
-    return y instanceof Date && compareDates(x, y);
+    return y instanceof Date && (0, _Date.compare)(x, y);
   } else {
     return 1;
   }
 }
-export function min(comparer, x, y) {
+
+function min(comparer, x, y) {
   return comparer(x, y) < 0 ? x : y;
 }
-export function max(comparer, x, y) {
+
+function max(comparer, x, y) {
   return comparer(x, y) > 0 ? x : y;
 }
-export function createAtom(value) {
+
+function createAtom(value) {
   let atom = value;
   return value => {
     if (value === void 0) {
@@ -406,6 +497,7 @@ export function createAtom(value) {
     }
   };
 }
+
 const CaseRules = {
   None: 0,
   LowerFirst: 1
@@ -422,7 +514,7 @@ function changeCase(str, caseRule) {
   }
 }
 
-export function createObj(fields, caseRule = CaseRules.None) {
+function createObj(fields, caseRule = CaseRules.None) {
   function fail(kvPair) {
     throw new Error("Cannot infer key and value of " + toString(kvPair));
   }
@@ -466,12 +558,14 @@ export function createObj(fields, caseRule = CaseRules.None) {
 
   return o;
 }
-export function jsOptions(mutator) {
+
+function jsOptions(mutator) {
   const opts = {};
   mutator(opts);
   return opts;
 }
-export function round(value, digits = 0) {
+
+function round(value, digits = 0) {
   const m = Math.pow(10, digits);
   const n = +(digits ? value * m : value).toFixed(8);
   const i = Math.floor(n);
@@ -480,35 +574,43 @@ export function round(value, digits = 0) {
   const r = f > 0.5 - e && f < 0.5 + e ? i % 2 === 0 ? i : i + 1 : Math.round(n);
   return digits ? r / m : r;
 }
-export function sign(x) {
+
+function sign(x) {
   return x > 0 ? 1 : x < 0 ? -1 : 0;
 }
-export function randomNext(min, max) {
+
+function randomNext(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
-export function unescapeDataString(s) {
+
+function unescapeDataString(s) {
   // https://stackoverflow.com/a/4458580/524236
   return decodeURIComponent(s.replace(/\+/g, "%20"));
 }
-export function escapeDataString(s) {
+
+function escapeDataString(s) {
   return encodeURIComponent(s).replace(/!/g, "%21").replace(/'/g, "%27").replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/\*/g, "%2A");
 }
-export function escapeUriString(s) {
+
+function escapeUriString(s) {
   return encodeURI(s);
 } // ICollection.Clear and Count members can be called on Arrays
 // or Dictionaries so we need a runtime check (see #1120)
 
-export function count(col) {
+
+function count(col) {
   return isArray(col) ? col.length : col.size;
 }
-export function clear(col) {
+
+function clear(col) {
   if (isArray(col)) {
     col.splice(0);
   } else {
     col.clear();
   }
 }
-export function uncurry(arity, f) {
+
+function uncurry(arity, f) {
   // f may be a function option with None value
   if (f == null) {
     return null;
@@ -551,7 +653,8 @@ export function uncurry(arity, f) {
       throw new Error("Uncurrying to more than 8-arity is not supported: " + arity);
   }
 }
-export function curry(arity, f) {
+
+function curry(arity, f) {
   if (f == null) {
     return null;
   }
@@ -582,7 +685,8 @@ export function curry(arity, f) {
       throw new Error("Currying to more than 8-arity is not supported: " + arity);
   }
 }
-export function partialApply(arity, f, args) {
+
+function partialApply(arity, f, args) {
   if (f == null) {
     return null;
   } else {

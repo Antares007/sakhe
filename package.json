@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "node /code/Fable/src/js/fable-splitter/dist/cli.js --config splitter.config.js",
+    "fable": "dotnet run -c Release -p ../fable/src/dotnet/Fable.Compiler",
+    "build2": "node /code/Fable/src/js/fable-splitter/dist/cli.js --config splitter.config.js",
+    "build": "yarn fable fable-splitter --args \"-c splitter.config.js\"",
+    "watch": "yarn fable fable-splitter --args \"-c splitter.config.js -w\"",
     "postinstall": "dotnet restore",
     "daemon": "fable-next.cmd start --port 61225",
     "rollup": "rollup -c rollup-config.js"
@@ -12,15 +15,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@most/core": "^1.3.2",
-    "@most/disposable": "^1.2.1",
-    "@most/scheduler": "^1.2.1",
-    "@most/types": "^1.0.1",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "babel-preset-env": "^1.7.0",
-    "rollup": "^0.65.0",
-    "rollup-plugin-node-resolve": "^3.3.0"
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "fable-loader": "2.0.0-beta-001",
+    "fable-splitter": "2.0.0-beta-002"
   },
   "dependencies": {},
   "prettier": {

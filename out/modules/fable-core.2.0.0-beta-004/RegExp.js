@@ -1,4 +1,19 @@
-export function create(pattern, options) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.create = create;
+exports.escape = escape;
+exports.unescape = unescape;
+exports.isMatch = isMatch;
+exports.match = match;
+exports.matches = matches;
+exports.options = options;
+exports.replace = replace;
+exports.split = split;
+
+function create(pattern, options) {
   // Supported RegexOptions
   // * IgnoreCase:  0x0001
   // * Multiline:   0x0002
@@ -14,23 +29,28 @@ export function create(pattern, options) {
   return new RegExp(pattern, flags);
 } // From http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
 
-export function escape(str) {
+
+function escape(str) {
   return str.replace(/[\-\[\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }
-export function unescape(str) {
+
+function unescape(str) {
   return str.replace(/\\([\-\[\/\{\}\(\)\*\+\?\.\\\^\$\|])/g, "$1");
 }
-export function isMatch(str, pattern, options = 0) {
+
+function isMatch(str, pattern, options = 0) {
   let reg;
   reg = str instanceof RegExp ? (reg = str, str = pattern, reg.lastIndex = options, reg) : reg = create(pattern, options);
   return reg.test(str);
 }
-export function match(str, pattern, options = 0) {
+
+function match(str, pattern, options = 0) {
   let reg;
   reg = str instanceof RegExp ? (reg = str, str = pattern, reg.lastIndex = options, reg) : reg = create(pattern, options);
   return reg.exec(str);
 }
-export function matches(str, pattern, options = 0) {
+
+function matches(str, pattern, options = 0) {
   let reg;
   reg = str instanceof RegExp ? (reg = str, str = pattern, reg.lastIndex = options, reg) : reg = create(pattern, options);
 
@@ -48,14 +68,16 @@ export function matches(str, pattern, options = 0) {
 
   return matches;
 }
-export function options(reg) {
+
+function options(reg) {
   let options = 256; // ECMAScript
 
   options |= reg.ignoreCase ? 1 : 0;
   options |= reg.multiline ? 2 : 0;
   return options;
 }
-export function replace(reg, input, replacement, limit, offset = 0) {
+
+function replace(reg, input, replacement, limit, offset = 0) {
   function replacer() {
     let res = arguments[0];
 
@@ -103,7 +125,8 @@ export function replace(reg, input, replacement, limit, offset = 0) {
     }
   }
 }
-export function split(reg, input, limit, offset = 0) {
+
+function split(reg, input, limit, offset = 0) {
   if (typeof reg === "string") {
     const tmp = reg;
     reg = create(input, limit);

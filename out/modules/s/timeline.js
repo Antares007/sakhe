@@ -1,6 +1,18 @@
-import { equals, compare } from "../fable-core.2.0.0-beta-004/Util";
-import { empty as empty$$1, append } from "./task";
-import { fold } from "../fable-core.2.0.0-beta-004/Seq";
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.empty = empty;
+exports.nextArrival = nextArrival;
+exports.add = add;
+exports.removeTasks = removeTasks;
+
+var _Util = require("../fable-core.2.0.0-beta-004/Util");
+
+var _task = require("./task");
+
+var _Seq = require("../fable-core.2.0.0-beta-004/Seq");
 
 function findAppendPosition(a, array) {
   const go = function go(l, r) {
@@ -8,7 +20,7 @@ function findAppendPosition(a, array) {
       if (l < r) {
         const m = ~~((l + r) / 2) | 0;
 
-        if (compare(array[m][0], a) > 0) {
+        if ((0, _Util.compare)(array[m][0], a) > 0) {
           l = l;
           r = m;
           continue go;
@@ -26,10 +38,11 @@ function findAppendPosition(a, array) {
   return go(0, array.length) | 0;
 }
 
-export function empty() {
+function empty() {
   return [];
 }
-export function nextArrival(_arg1) {
+
+function nextArrival(_arg1) {
   const array$$1 = _arg1;
 
   if (array$$1.length === 0) {
@@ -38,7 +51,8 @@ export function nextArrival(_arg1) {
     return array$$1[0][0];
   }
 }
-export function add(time, task, _arg1$$1) {
+
+function add(time, task, _arg1$$1) {
   const array$$2 = _arg1$$1;
   const i = findAppendPosition(time, array$$2) | 0;
 
@@ -47,16 +61,17 @@ export function add(time, task, _arg1$$1) {
   } else {
     const patternInput = array$$2[i];
 
-    if (equals(patternInput[0], time)) {
-      array$$2[i] = [patternInput[0], append(patternInput[1], task)];
+    if ((0, _Util.equals)(patternInput[0], time)) {
+      array$$2[i] = [patternInput[0], (0, _task.append)(patternInput[1], task)];
     } else {
       array$$2.splice(i + 1, 0, [time, task]);
     }
   }
 }
-export function removeTasks(time$$1, _arg1$$2) {
+
+function removeTasks(time$$1, _arg1$$2) {
   const array$$3 = _arg1$$2;
-  return fold(function folder(acc, tupledArg) {
-    return append(acc, tupledArg[1]);
-  }, empty$$1(), array$$3.splice(0, findAppendPosition(time$$1, array$$3) + 1));
+  return (0, _Seq.fold)(function folder(acc, tupledArg) {
+    return (0, _task.append)(acc, tupledArg[1]);
+  }, (0, _task.empty)(), array$$3.splice(0, findAppendPosition(time$$1, array$$3) + 1));
 }

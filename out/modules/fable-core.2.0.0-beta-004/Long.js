@@ -1,13 +1,77 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Long;
+exports.fromInt = fromInt;
+exports.fromNumber = fromNumber;
+exports.fromInteger = fromInteger;
+exports.fromBits = fromBits;
+exports.fromString = fromString;
+exports.parse = parse;
+exports.tryParse = tryParse;
+exports.fromValue = fromValue;
+exports.toInt = toInt;
+exports.toNumber = toNumber;
+exports.toIntNumber = toIntNumber;
+exports.toString = toString;
+exports.getHighBits = getHighBits;
+exports.getHighBitsUnsigned = getHighBitsUnsigned;
+exports.getLowBits = getLowBits;
+exports.getLowBitsUnsigned = getLowBitsUnsigned;
+exports.getNumBitsAbs = getNumBitsAbs;
+exports.isZero = isZero;
+exports.isNegative = isNegative;
+exports.isPositive = isPositive;
+exports.isOdd = isOdd;
+exports.isEven = isEven;
+exports.equals = equals;
+exports.notEquals = notEquals;
+exports.lessThan = lessThan;
+exports.lessThanOrEqual = lessThanOrEqual;
+exports.greaterThan = greaterThan;
+exports.greaterThanOrEqual = greaterThanOrEqual;
+exports.compare = compare;
+exports.abs = abs;
+exports.op_UnaryNegation = op_UnaryNegation;
+exports.op_Addition = op_Addition;
+exports.op_Subtraction = op_Subtraction;
+exports.op_Multiply = op_Multiply;
+exports.op_Division = op_Division;
+exports.op_Modulus = op_Modulus;
+exports.op_LogicalNot = op_LogicalNot;
+exports.op_BitwiseAnd = op_BitwiseAnd;
+exports.op_BitwiseOr = op_BitwiseOr;
+exports.op_ExclusiveOr = op_ExclusiveOr;
+exports.op_LeftShift = op_LeftShift;
+exports.op_RightShift = op_RightShift;
+exports.op_RightShiftUnsigned = op_RightShiftUnsigned;
+exports.toSigned = toSigned;
+exports.toUnsigned = toUnsigned;
+exports.toBytes = toBytes;
+exports.toBytesLE = toBytesLE;
+exports.toBytesBE = toBytesBE;
+exports.fromBytes = fromBytes;
+exports.fromBytesLE = fromBytesLE;
+exports.fromBytesBE = fromBytesBE;
+exports.unixEpochMillisecondsToTicks = unixEpochMillisecondsToTicks;
+exports.ticksToUnixEpochMilliseconds = ticksToUnixEpochMilliseconds;
+exports.makeRangeStepFunction = makeRangeStepFunction;
+exports.MIN_VALUE = exports.MAX_UNSIGNED_VALUE = exports.MAX_VALUE = exports.NEG_ONE = exports.UONE = exports.ONE = exports.UZERO = exports.ZERO = exports.xor = exports.or = exports.and = exports.shr = exports.shl = exports.mod = exports.div = exports.mul = exports.sub = exports.add = exports.not = exports.neg = void 0;
+
+var _Int = require("./Int32");
+
+var _Util = require("./Util");
+
 // Adapted from: https://github.com/dcodeIO/long.js/blob/f572e3a17d313730cf11eb838f6d2a5e31626f8a/src/long.js
 // Apache License 2.0: https://github.com/dcodeIO/long.js/blob/master/LICENSE
 
 /* tslint:disable */
-import { isValid } from "./Int32";
-import { combineHashCodes } from "./Util";
+
 /**
  * wasm optimizations, to do native i64 multiplication and divide
  */
-
 var wasm = null;
 
 try {
@@ -26,7 +90,7 @@ try {
  */
 
 
-export default function Long(low, high, unsigned) {
+function Long(low, high, unsigned) {
   /**
    * The low 32 bits as a signed value.
    * @type {number}
@@ -47,7 +111,7 @@ export default function Long(low, high, unsigned) {
 }
 
 Long.prototype.GetHashCode = function () {
-  return combineHashCodes([this.unsigned ? 1 : 0, this.high, this.low]);
+  return (0, _Util.combineHashCodes)([this.unsigned ? 1 : 0, this.high, this.low]);
 };
 
 Long.prototype.Equals = function (x) {
@@ -66,18 +130,29 @@ Long.prototype.toJSON = function () {
   return toString(this);
 };
 
-export const neg = op_UnaryNegation;
-export const not = op_LogicalNot;
-export const add = op_Addition;
-export const sub = op_Subtraction;
-export const mul = op_Multiply;
-export const div = op_Division;
-export const mod = op_Modulus;
-export const shl = op_LeftShift;
-export const shr = op_RightShift;
-export const and = op_BitwiseAnd;
-export const or = op_BitwiseOr;
-export const xor = op_ExclusiveOr; // The internal representation of a long is the two given signed, 32-bit values.
+const neg = op_UnaryNegation;
+exports.neg = neg;
+const not = op_LogicalNot;
+exports.not = not;
+const add = op_Addition;
+exports.add = add;
+const sub = op_Subtraction;
+exports.sub = sub;
+const mul = op_Multiply;
+exports.mul = mul;
+const div = op_Division;
+exports.div = div;
+const mod = op_Modulus;
+exports.mod = mod;
+const shl = op_LeftShift;
+exports.shl = shl;
+const shr = op_RightShift;
+exports.shr = shr;
+const and = op_BitwiseAnd;
+exports.and = and;
+const or = op_BitwiseOr;
+exports.or = or;
+const xor = op_ExclusiveOr; // The internal representation of a long is the two given signed, 32-bit values.
 // We use 32-bit pieces because these are the size of integers on which
 // Javascript performs bit-operations.  For operations like addition and
 // multiplication, we split each number into 16 bit pieces, which can easily be
@@ -101,6 +176,7 @@ export const xor = op_ExclusiveOr; // The internal representation of a long is t
  * @private
  */
 
+exports.xor = xor;
 Long.prototype.__isLong__;
 Object.defineProperty(Long.prototype, "__isLong__", {
   value: true
@@ -137,7 +213,7 @@ var UINT_CACHE = {};
  * @inner
  */
 
-export function fromInt(value, unsigned) {
+function fromInt(value, unsigned) {
   var obj, cachedObj, cache;
 
   if (unsigned) {
@@ -171,7 +247,8 @@ export function fromInt(value, unsigned) {
  * @inner
  */
 
-export function fromNumber(value, unsigned) {
+
+function fromNumber(value, unsigned) {
   if (isNaN(value)) return unsigned ? UZERO : ZERO;
 
   if (unsigned) {
@@ -193,7 +270,8 @@ export function fromNumber(value, unsigned) {
  * @inner
  */
 
-export function fromInteger(value, unsigned, kind) {
+
+function fromInteger(value, unsigned, kind) {
   var x;
   var xh = 0;
 
@@ -235,7 +313,8 @@ export function fromInteger(value, unsigned, kind) {
  * @inner
  */
 
-export function fromBits(lowBits, highBits, unsigned) {
+
+function fromBits(lowBits, highBits, unsigned) {
   return new Long(lowBits, highBits, unsigned);
 }
 /**
@@ -245,6 +324,7 @@ export function fromBits(lowBits, highBits, unsigned) {
  * @returns {number}
  * @inner
  */
+
 
 var pow_dbl = Math.pow; // Used 4 times (4*8 to 15+4)
 
@@ -256,8 +336,8 @@ var pow_dbl = Math.pow; // Used 4 times (4*8 to 15+4)
  * @inner
  */
 
-export function fromString(str, unsigned, radix) {
-  const a = isValid(str, radix);
+function fromString(str, unsigned, radix) {
+  const a = (0, _Int.isValid)(str, radix);
 
   if (a === null) {
     throw new Error("Input string was not in a correct format.");
@@ -303,10 +383,12 @@ export function fromString(str, unsigned, radix) {
   return result;
 } // For compatibility with Int32 module
 
-export function parse(str, radix) {
+
+function parse(str, radix) {
   return fromString(str, false, radix);
 }
-export function tryParse(str, radix, defaultValue) {
+
+function tryParse(str, radix, defaultValue) {
   try {
     return [true, fromString(str, false, radix)];
   } catch (_a) {
@@ -321,7 +403,8 @@ export function tryParse(str, radix, defaultValue) {
  * @inner
  */
 
-export function fromValue(val, unsigned) {
+
+function fromValue(val, unsigned) {
   if (typeof val === "number") return fromNumber(val, unsigned);
   if (typeof val === "string") return fromString(val, unsigned); // Throws for non-objects, converts non-instanceof Long:
 
@@ -334,6 +417,7 @@ export function fromValue(val, unsigned) {
  * @const
  * @inner
  */
+
 
 var TWO_PWR_16_DBL = 1 << 16;
 /**
@@ -376,76 +460,88 @@ var TWO_PWR_24 = fromInt(TWO_PWR_24_DBL);
  * @inner
  */
 
-export var ZERO = fromInt(0);
+var ZERO = fromInt(0);
 /**
  * @type {!Long}
  * @inner
  */
 
-export var UZERO = fromInt(0, true);
+exports.ZERO = ZERO;
+var UZERO = fromInt(0, true);
 /**
  * @type {!Long}
  * @inner
  */
 
-export var ONE = fromInt(1);
+exports.UZERO = UZERO;
+var ONE = fromInt(1);
 /**
  * @type {!Long}
  * @inner
  */
 
-export var UONE = fromInt(1, true);
+exports.ONE = ONE;
+var UONE = fromInt(1, true);
 /**
  * @type {!Long}
  * @inner
  */
 
-export var NEG_ONE = fromInt(-1);
+exports.UONE = UONE;
+var NEG_ONE = fromInt(-1);
 /**
  * @type {!Long}
  * @inner
  */
 
-export var MAX_VALUE = fromBits(0xFFFFFFFF | 0, 0x7FFFFFFF | 0, false);
+exports.NEG_ONE = NEG_ONE;
+var MAX_VALUE = fromBits(0xFFFFFFFF | 0, 0x7FFFFFFF | 0, false);
 /**
  * @type {!Long}
  * @inner
  */
 
-export var MAX_UNSIGNED_VALUE = fromBits(0xFFFFFFFF | 0, 0xFFFFFFFF | 0, true);
+exports.MAX_VALUE = MAX_VALUE;
+var MAX_UNSIGNED_VALUE = fromBits(0xFFFFFFFF | 0, 0xFFFFFFFF | 0, true);
 /**
  * @type {!Long}
  * @inner
  */
 
-export var MIN_VALUE = fromBits(0, 0x80000000 | 0, false);
+exports.MAX_UNSIGNED_VALUE = MAX_UNSIGNED_VALUE;
+var MIN_VALUE = fromBits(0, 0x80000000 | 0, false);
 /**
  * Converts the Long to a 32 bit integer, assuming it is a 32 bit integer.
  * @returns {number}
  */
 
-export function toInt($this) {
+exports.MIN_VALUE = MIN_VALUE;
+
+function toInt($this) {
   return $this.unsigned ? $this.low >>> 0 : $this.low;
 }
+
 ;
 /**
  * Converts the Long to a the nearest floating-point representation of this value (double, 53 bit mantissa).
  * @returns {number}
  */
 
-export function toNumber($this) {
+function toNumber($this) {
   if ($this.unsigned) return ($this.high >>> 0) * TWO_PWR_32_DBL + ($this.low >>> 0);
   return $this.high * TWO_PWR_32_DBL + ($this.low >>> 0);
 }
+
 ;
 /**
  * Converts the Long to a 32 bit integer.
  * @returns {number}
  */
 
-export function toIntNumber($this) {
+function toIntNumber($this) {
   return $this.low >>> 0;
 }
+
 ;
 /**
  * Converts the Long to a string written in the specified radix.
@@ -455,7 +551,7 @@ export function toIntNumber($this) {
  * @throws {RangeError} If `radix` is out of range
  */
 
-export function toString($this, radix) {
+function toString($this, radix) {
   radix = radix || 10;
   if (radix < 2 || 36 < radix) throw RangeError("radix");
   if (isZero($this)) return "0";
@@ -490,49 +586,54 @@ export function toString($this, radix) {
     }
   }
 }
+
 ;
 /**
  * Gets the high 32 bits as a signed integer.
  * @returns {number} Signed high bits
  */
 
-export function getHighBits($this) {
+function getHighBits($this) {
   return $this.high;
 }
+
 ;
 /**
  * Gets the high 32 bits as an unsigned integer.
  * @returns {number} Unsigned high bits
  */
 
-export function getHighBitsUnsigned($this) {
+function getHighBitsUnsigned($this) {
   return $this.high >>> 0;
 }
+
 ;
 /**
  * Gets the low 32 bits as a signed integer.
  * @returns {number} Signed low bits
  */
 
-export function getLowBits($this) {
+function getLowBits($this) {
   return $this.low;
 }
+
 ;
 /**
  * Gets the low 32 bits as an unsigned integer.
  * @returns {number} Unsigned low bits
  */
 
-export function getLowBitsUnsigned($this) {
+function getLowBitsUnsigned($this) {
   return $this.low >>> 0;
 }
+
 ;
 /**
  * Gets the number of bits needed to represent the absolute value of this Long.
  * @returns {number}
  */
 
-export function getNumBitsAbs($this) {
+function getNumBitsAbs($this) {
   if (isNegative($this)) // Unsigned Longs are never negative
     return equals($this, MIN_VALUE) ? 64 : getNumBitsAbs(op_UnaryNegation($this));
   var val = $this.high != 0 ? $this.high : $this.low;
@@ -541,51 +642,57 @@ export function getNumBitsAbs($this) {
 
   return $this.high != 0 ? bit + 33 : bit + 1;
 }
+
 ;
 /**
  * Tests if this Long's value equals zero.
  * @returns {boolean}
  */
 
-export function isZero($this) {
+function isZero($this) {
   return $this.high === 0 && $this.low === 0;
 }
+
 ;
 /**
  * Tests if this Long's value is negative.
  * @returns {boolean}
  */
 
-export function isNegative($this) {
+function isNegative($this) {
   return !$this.unsigned && $this.high < 0;
 }
+
 ;
 /**
  * Tests if this Long's value is positive.
  * @returns {boolean}
  */
 
-export function isPositive($this) {
+function isPositive($this) {
   return $this.unsigned || $this.high >= 0;
 }
+
 ;
 /**
  * Tests if this Long's value is odd.
  * @returns {boolean}
  */
 
-export function isOdd($this) {
+function isOdd($this) {
   return ($this.low & 1) === 1;
 }
+
 ;
 /**
  * Tests if this Long's value is even.
  * @returns {boolean}
  */
 
-export function isEven($this) {
+function isEven($this) {
   return ($this.low & 1) === 0;
 }
+
 ;
 /**
  * Tests if this Long's value equals the specified's.
@@ -593,11 +700,12 @@ export function isEven($this) {
  * @returns {boolean}
  */
 
-export function equals($this, other) {
+function equals($this, other) {
   if (!isLong(other)) other = fromValue(other);
   if ($this.unsigned !== other.unsigned && $this.high >>> 31 === 1 && other.high >>> 31 === 1) return false;
   return $this.high === other.high && $this.low === other.low;
 }
+
 ;
 /**
  * Tests if this Long's value differs from the specified's.
@@ -605,11 +713,12 @@ export function equals($this, other) {
  * @returns {boolean}
  */
 
-export function notEquals($this, other) {
+function notEquals($this, other) {
   return !equals($this,
   /* validates */
   other);
 }
+
 ;
 /**
  * Tests if this Long's value is less than the specified's.
@@ -617,11 +726,12 @@ export function notEquals($this, other) {
  * @returns {boolean}
  */
 
-export function lessThan($this, other) {
+function lessThan($this, other) {
   return compare($this,
   /* validates */
   other) < 0;
 }
+
 ;
 /**
  * Tests if this Long's value is less than or equal the specified's.
@@ -629,11 +739,12 @@ export function lessThan($this, other) {
  * @returns {boolean}
  */
 
-export function lessThanOrEqual($this, other) {
+function lessThanOrEqual($this, other) {
   return compare($this,
   /* validates */
   other) <= 0;
 }
+
 ;
 /**
  * Tests if this Long's value is greater than the specified's.
@@ -641,11 +752,12 @@ export function lessThanOrEqual($this, other) {
  * @returns {boolean}
  */
 
-export function greaterThan($this, other) {
+function greaterThan($this, other) {
   return compare($this,
   /* validates */
   other) > 0;
 }
+
 ;
 /**
  * Tests if this Long's value is greater than or equal the specified's.
@@ -653,11 +765,12 @@ export function greaterThan($this, other) {
  * @returns {boolean}
  */
 
-export function greaterThanOrEqual($this, other) {
+function greaterThanOrEqual($this, other) {
   return compare($this,
   /* validates */
   other) >= 0;
 }
+
 ;
 /**
  * Compares this Long's value with the specified's.
@@ -666,7 +779,7 @@ export function greaterThanOrEqual($this, other) {
  *  if the given one is greater
  */
 
-export function compare($this, other) {
+function compare($this, other) {
   if (!isLong(other)) other = fromValue(other);
   if (equals($this, other)) return 0;
   var thisNeg = isNegative($this),
@@ -678,12 +791,13 @@ export function compare($this, other) {
 
   return other.high >>> 0 > $this.high >>> 0 || other.high === $this.high && other.low >>> 0 > $this.low >>> 0 ? -1 : 1;
 }
+
 ;
 /**
  * Absolute value of the given number.
  */
 
-export function abs($this) {
+function abs($this) {
   if (!$this.unsigned && isNegative($this)) return op_UnaryNegation($this);else return $this;
 }
 /**
@@ -691,10 +805,12 @@ export function abs($this) {
  * @returns {!Long} Negated Long
  */
 
-export function op_UnaryNegation($this) {
+
+function op_UnaryNegation($this) {
   if (!$this.unsigned && equals($this, MIN_VALUE)) return MIN_VALUE;
   return op_Addition(op_LogicalNot($this), ONE);
 }
+
 ;
 /**
  * Returns the sum of this and the specified Long.
@@ -702,7 +818,7 @@ export function op_UnaryNegation($this) {
  * @returns {!Long} Sum
  */
 
-export function op_Addition($this, addend) {
+function op_Addition($this, addend) {
   if (!isLong(addend)) addend = fromValue(addend); // Divide each number into 4 chunks of 16 bits, and then sum the chunks.
 
   var a48 = $this.high >>> 16;
@@ -730,6 +846,7 @@ export function op_Addition($this, addend) {
   c48 &= 0xFFFF;
   return fromBits(c16 << 16 | c00, c48 << 16 | c32, $this.unsigned);
 }
+
 ;
 /**
  * Returns the difference of this and the specified Long.
@@ -737,10 +854,11 @@ export function op_Addition($this, addend) {
  * @returns {!Long} Difference
  */
 
-export function op_Subtraction($this, subtrahend) {
+function op_Subtraction($this, subtrahend) {
   if (!isLong(subtrahend)) subtrahend = fromValue(subtrahend);
   return op_Addition($this, op_UnaryNegation(subtrahend));
 }
+
 ;
 /**
  * Returns the product of this and the specified Long.
@@ -748,7 +866,7 @@ export function op_Subtraction($this, subtrahend) {
  * @returns {!Long} Product
  */
 
-export function op_Multiply($this, multiplier) {
+function op_Multiply($this, multiplier) {
   if (isZero($this)) return $this.unsigned ? UZERO : ZERO;
   if (!isLong(multiplier)) multiplier = fromValue(multiplier); // use wasm support if present
 
@@ -803,6 +921,7 @@ export function op_Multiply($this, multiplier) {
   c48 &= 0xFFFF;
   return fromBits(c16 << 16 | c00, c48 << 16 | c32, $this.unsigned);
 }
+
 ;
 /**
  * Returns this Long divided by the specified. The result is signed if this Long is signed or
@@ -811,7 +930,7 @@ export function op_Multiply($this, multiplier) {
  * @returns {!Long} Quotient
  */
 
-export function op_Division($this, divisor) {
+function op_Division($this, divisor) {
   if (!isLong(divisor)) divisor = fromValue(divisor);
   if (isZero(divisor)) throw Error("division by zero"); // use wasm support if present
 
@@ -902,6 +1021,7 @@ export function op_Division($this, divisor) {
 
   return res;
 }
+
 ;
 /**
  * Returns this Long modulo the specified.
@@ -909,7 +1029,7 @@ export function op_Division($this, divisor) {
  * @returns {!Long} Remainder
  */
 
-export function op_Modulus($this, divisor) {
+function op_Modulus($this, divisor) {
   if (!isLong(divisor)) divisor = fromValue(divisor); // use wasm support if present
 
   if (wasm) {
@@ -919,15 +1039,17 @@ export function op_Modulus($this, divisor) {
 
   return op_Subtraction($this, op_Multiply(op_Division($this, divisor), divisor));
 }
+
 ;
 /**
  * Returns the bitwise NOT of this Long.
  * @returns {!Long}
  */
 
-export function op_LogicalNot($this) {
+function op_LogicalNot($this) {
   return fromBits(~$this.low, ~$this.high, $this.unsigned);
 }
+
 ;
 /**
  * Returns the bitwise AND of this Long and the specified.
@@ -935,10 +1057,11 @@ export function op_LogicalNot($this) {
  * @returns {!Long}
  */
 
-export function op_BitwiseAnd($this, other) {
+function op_BitwiseAnd($this, other) {
   if (!isLong(other)) other = fromValue(other);
   return fromBits($this.low & other.low, $this.high & other.high, $this.unsigned);
 }
+
 ;
 /**
  * Returns the bitwise OR of this Long and the specified.
@@ -946,10 +1069,11 @@ export function op_BitwiseAnd($this, other) {
  * @returns {!Long}
  */
 
-export function op_BitwiseOr($this, other) {
+function op_BitwiseOr($this, other) {
   if (!isLong(other)) other = fromValue(other);
   return fromBits($this.low | other.low, $this.high | other.high, $this.unsigned);
 }
+
 ;
 /**
  * Returns the bitwise XOR of this Long and the given one.
@@ -957,10 +1081,11 @@ export function op_BitwiseOr($this, other) {
  * @returns {!Long}
  */
 
-export function op_ExclusiveOr($this, other) {
+function op_ExclusiveOr($this, other) {
   if (!isLong(other)) other = fromValue(other);
   return fromBits($this.low ^ other.low, $this.high ^ other.high, $this.unsigned);
 }
+
 ;
 /**
  * Returns this Long with bits shifted to the left by the given amount.
@@ -968,10 +1093,11 @@ export function op_ExclusiveOr($this, other) {
  * @returns {!Long} Shifted Long
  */
 
-export function op_LeftShift($this, numBits) {
+function op_LeftShift($this, numBits) {
   if (isLong(numBits)) numBits = toInt(numBits);
   if ((numBits &= 63) === 0) return $this;else if (numBits < 32) return fromBits($this.low << numBits, $this.high << numBits | $this.low >>> 32 - numBits, $this.unsigned);else return fromBits(0, $this.low << numBits - 32, $this.unsigned);
 }
+
 ;
 /**
  * Returns this Long with bits arithmetically shifted to the right by the given amount.
@@ -979,10 +1105,11 @@ export function op_LeftShift($this, numBits) {
  * @returns {!Long} Shifted Long
  */
 
-export function op_RightShift($this, numBits) {
+function op_RightShift($this, numBits) {
   if (isLong(numBits)) numBits = toInt(numBits);
   if ((numBits &= 63) === 0) return $this;else if (numBits < 32) return fromBits($this.low >>> numBits | $this.high << 32 - numBits, $this.high >> numBits, $this.unsigned);else return fromBits($this.high >> numBits - 32, $this.high >= 0 ? 0 : -1, $this.unsigned);
 }
+
 ;
 /**
  * Returns this Long with bits logically shifted to the right by the given amount.
@@ -990,7 +1117,7 @@ export function op_RightShift($this, numBits) {
  * @returns {!Long} Shifted Long
  */
 
-export function op_RightShiftUnsigned($this, numBits) {
+function op_RightShiftUnsigned($this, numBits) {
   if (isLong(numBits)) numBits = toInt(numBits);
   numBits &= 63;
   if (numBits === 0) return $this;else {
@@ -1002,26 +1129,29 @@ export function op_RightShiftUnsigned($this, numBits) {
     } else if (numBits === 32) return fromBits(high, 0, $this.unsigned);else return fromBits(high >>> numBits - 32, 0, $this.unsigned);
   }
 }
+
 ;
 /**
  * Converts this Long to signed.
  * @returns {!Long} Signed long
  */
 
-export function toSigned($this) {
+function toSigned($this) {
   if (!$this.unsigned) return $this;
   return fromBits($this.low, $this.high, false);
 }
+
 ;
 /**
  * Converts this Long to unsigned.
  * @returns {!Long} Unsigned long
  */
 
-export function toUnsigned($this) {
+function toUnsigned($this) {
   if ($this.unsigned) return $this;
   return fromBits($this.low, $this.high, true);
 }
+
 ;
 /**
  * Converts this Long to its byte representation.
@@ -1029,31 +1159,34 @@ export function toUnsigned($this) {
  * @returns {!Array.<number>} Byte representation
  */
 
-export function toBytes($this, le) {
+function toBytes($this, le) {
   return le ? toBytesLE($this) : toBytesBE($this);
 }
+
 ;
 /**
  * Converts this Long to its little endian byte representation.
  * @returns {!Array.<number>} Little endian byte representation
  */
 
-export function toBytesLE($this) {
+function toBytesLE($this) {
   var hi = $this.high,
       lo = $this.low;
   return [lo & 0xff, lo >>> 8 & 0xff, lo >>> 16 & 0xff, lo >>> 24, hi & 0xff, hi >>> 8 & 0xff, hi >>> 16 & 0xff, hi >>> 24];
 }
+
 ;
 /**
  * Converts this Long to its big endian byte representation.
  * @returns {!Array.<number>} Big endian byte representation
  */
 
-export function toBytesBE($this) {
+function toBytesBE($this) {
   var hi = $this.high,
       lo = $this.low;
   return [hi >>> 24, hi >>> 16 & 0xff, hi >>> 8 & 0xff, hi & 0xff, lo >>> 24, lo >>> 16 & 0xff, lo >>> 8 & 0xff, lo & 0xff];
 }
+
 ;
 /**
  * Creates a Long from its byte representation.
@@ -1063,9 +1196,10 @@ export function toBytesBE($this) {
  * @returns {Long} The corresponding Long value
  */
 
-export function fromBytes(bytes, unsigned, le) {
+function fromBytes(bytes, unsigned, le) {
   return le ? fromBytesLE(bytes, unsigned) : fromBytesBE(bytes, unsigned);
 }
+
 ;
 /**
  * Creates a Long from its little endian byte representation.
@@ -1074,9 +1208,10 @@ export function fromBytes(bytes, unsigned, le) {
  * @returns {Long} The corresponding Long value
  */
 
-export function fromBytesLE(bytes, unsigned) {
+function fromBytesLE(bytes, unsigned) {
   return new Long(bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24, bytes[4] | bytes[5] << 8 | bytes[6] << 16 | bytes[7] << 24, unsigned);
 }
+
 ;
 /**
  * Creates a Long from its big endian byte representation.
@@ -1085,17 +1220,21 @@ export function fromBytesLE(bytes, unsigned) {
  * @returns {Long} The corresponding Long value
  */
 
-export function fromBytesBE(bytes, unsigned) {
+function fromBytesBE(bytes, unsigned) {
   return new Long(bytes[4] << 24 | bytes[5] << 16 | bytes[6] << 8 | bytes[7], bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3], unsigned);
 }
+
 ;
-export function unixEpochMillisecondsToTicks(ms, offset) {
+
+function unixEpochMillisecondsToTicks(ms, offset) {
   return op_Multiply(op_Addition(op_Addition(fromNumber(ms), 62135596800000), offset), 10000);
 }
-export function ticksToUnixEpochMilliseconds(ticks) {
+
+function ticksToUnixEpochMilliseconds(ticks) {
   return toNumber(op_Subtraction(op_Division(ticks, 10000), 62135596800000));
 }
-export function makeRangeStepFunction(step, last, unsigned) {
+
+function makeRangeStepFunction(step, last, unsigned) {
   const zero = unsigned ? UZERO : ZERO;
   return x => greaterThan(step, zero) && lessThanOrEqual(x, last) || lessThan(step, zero) && greaterThanOrEqual(x, last) ? [x, op_Addition(x, step)] : null;
 }

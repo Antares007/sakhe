@@ -1,7 +1,105 @@
-import { makeRangeStepFunction } from "./Long";
-import { some, value } from "./Option";
-import { compare, equals } from "./Util";
-export class Enumerator {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getEnumerator = getEnumerator;
+exports.toIterator = toIterator;
+exports.ofArray = ofArray;
+exports.append = append;
+exports.average = average;
+exports.averageBy = averageBy;
+exports.concat = concat;
+exports.collect = collect;
+exports.choose = choose;
+exports.compareWith = compareWith;
+exports.delay = delay;
+exports.empty = empty;
+exports.enumerateWhile = enumerateWhile;
+exports.enumerateThenFinally = enumerateThenFinally;
+exports.enumerateUsing = enumerateUsing;
+exports.exactlyOne = exactlyOne;
+exports.except = except;
+exports.exists = exists;
+exports.exists2 = exists2;
+exports.contains = contains;
+exports.filter = filter;
+exports.where = where;
+exports.fold = fold;
+exports.foldBack = foldBack;
+exports.fold2 = fold2;
+exports.foldBack2 = foldBack2;
+exports.forAll = forAll;
+exports.forAll2 = forAll2;
+exports.tryHead = tryHead;
+exports.head = head;
+exports.initialize = initialize;
+exports.initializeInfinite = initializeInfinite;
+exports.tryItem = tryItem;
+exports.item = item;
+exports.iterate = iterate;
+exports.iterate2 = iterate2;
+exports.iterateIndexed = iterateIndexed;
+exports.iterateIndexed2 = iterateIndexed2;
+exports.isEmpty = isEmpty;
+exports.tryLast = tryLast;
+exports.last = last;
+exports.length = length;
+exports.map = map;
+exports.mapIndexed = mapIndexed;
+exports.indexed = indexed;
+exports.map2 = map2;
+exports.mapIndexed2 = mapIndexed2;
+exports.map3 = map3;
+exports.mapFold = mapFold;
+exports.mapFoldBack = mapFoldBack;
+exports.max = max;
+exports.maxBy = maxBy;
+exports.min = min;
+exports.minBy = minBy;
+exports.pairwise = pairwise;
+exports.rangeChar = rangeChar;
+exports.rangeLong = rangeLong;
+exports.rangeNumber = rangeNumber;
+exports.readOnly = readOnly;
+exports.reduce = reduce;
+exports.reduceBack = reduceBack;
+exports.replicate = replicate;
+exports.reverse = reverse;
+exports.scan = scan;
+exports.scanBack = scanBack;
+exports.singleton = singleton;
+exports.skip = skip;
+exports.skipWhile = skipWhile;
+exports.sortWith = sortWith;
+exports.sum = sum;
+exports.sumBy = sumBy;
+exports.tail = tail;
+exports.take = take;
+exports.truncate = truncate;
+exports.takeWhile = takeWhile;
+exports.tryFind = tryFind;
+exports.find = find;
+exports.tryFindBack = tryFindBack;
+exports.findBack = findBack;
+exports.tryFindIndex = tryFindIndex;
+exports.findIndex = findIndex;
+exports.tryFindIndexBack = tryFindIndexBack;
+exports.findIndexBack = findIndexBack;
+exports.tryPick = tryPick;
+exports.pick = pick;
+exports.unfold = unfold;
+exports.zip = zip;
+exports.zip3 = zip3;
+exports.Enumerator = void 0;
+
+var _Long = require("./Long");
+
+var _Option = require("./Option");
+
+var _Util = require("./Util");
+
+class Enumerator {
   constructor(iter) {
     this.iter = iter;
   }
@@ -25,10 +123,14 @@ export class Enumerator {
   }
 
 }
-export function getEnumerator(o) {
+
+exports.Enumerator = Enumerator;
+
+function getEnumerator(o) {
   return new Enumerator(o[Symbol.iterator]());
 }
-export function toIterator(en) {
+
+function toIterator(en) {
   return {
     next() {
       return en.MoveNext() ? {
@@ -49,18 +151,20 @@ export function toIterator(en) {
 //   };
 // }
 
+
 function __failIfNone(res) {
   if (res == null) {
     throw new Error("Seq did not contain any matching element");
   }
 
-  return value(res);
+  return (0, _Option.value)(res);
 }
 
-export function ofArray(xs) {
+function ofArray(xs) {
   return delay(() => unfold(i => i < xs.length ? [xs[i], i + 1] : null, 0));
 }
-export function append(xs, ys) {
+
+function append(xs, ys) {
   return delay(() => {
     let firstDone = false;
     const i = xs[Symbol.iterator]();
@@ -84,7 +188,8 @@ export function append(xs, ys) {
     }, iters);
   });
 }
-export function average(xs) {
+
+function average(xs) {
   let count = 1;
   const sum = reduce((acc, x) => {
     count++;
@@ -92,7 +197,8 @@ export function average(xs) {
   }, xs);
   return sum / count;
 }
-export function averageBy(f, xs) {
+
+function averageBy(f, xs) {
   let count = 1;
   const sum = reduce((acc, x) => {
     count++;
@@ -100,7 +206,8 @@ export function averageBy(f, xs) {
   }, xs);
   return sum / count;
 }
-export function concat(xs) {
+
+function concat(xs) {
   return delay(() => {
     const iter = xs[Symbol.iterator]();
     let output = {
@@ -136,10 +243,12 @@ export function concat(xs) {
     }, null);
   });
 }
-export function collect(f, xs) {
+
+function collect(f, xs) {
   return concat(map(f, xs));
 }
-export function choose(f, xs) {
+
+function choose(f, xs) {
   return delay(() => unfold(iter => {
     let cur = iter.next();
 
@@ -147,7 +256,7 @@ export function choose(f, xs) {
       const y = f(cur.value);
 
       if (y != null) {
-        return [value(y), iter];
+        return [(0, _Option.value)(y), iter];
       }
 
       cur = iter.next();
@@ -156,22 +265,27 @@ export function choose(f, xs) {
     return null;
   }, xs[Symbol.iterator]()));
 }
-export function compareWith(f, xs, ys) {
+
+function compareWith(f, xs, ys) {
   const nonZero = tryFind(i => i !== 0, map2((x, y) => f(x, y), xs, ys));
-  return nonZero != null ? value(nonZero) : length(xs) - length(ys);
+  return nonZero != null ? (0, _Option.value)(nonZero) : length(xs) - length(ys);
 }
-export function delay(f) {
+
+function delay(f) {
   return {
     [Symbol.iterator]: () => f()[Symbol.iterator]()
   };
 }
-export function empty() {
+
+function empty() {
   return unfold(() => void 0);
 }
-export function enumerateWhile(cond, xs) {
+
+function enumerateWhile(cond, xs) {
   return concat(unfold(() => cond() ? [xs, true] : null));
 }
-export function enumerateThenFinally(xs, finalFn) {
+
+function enumerateThenFinally(xs, finalFn) {
   return delay(() => {
     let iter;
 
@@ -195,7 +309,8 @@ export function enumerateThenFinally(xs, finalFn) {
     }, iter);
   });
 }
-export function enumerateUsing(disp, work) {
+
+function enumerateUsing(disp, work) {
   let isDisposed = false;
 
   const disposeOnce = () => {
@@ -213,7 +328,8 @@ export function enumerateUsing(disp, work) {
     disposeOnce();
   }
 }
-export function exactlyOne(xs) {
+
+function exactlyOne(xs) {
   const iter = xs[Symbol.iterator]();
   const fst = iter.next();
 
@@ -229,14 +345,16 @@ export function exactlyOne(xs) {
 
   return fst.value;
 }
-export function except(itemsToExclude, source) {
+
+function except(itemsToExclude, source) {
   const exclusionItems = Array.from(itemsToExclude);
 
-  const testIsNotInExclusionItems = element => !exclusionItems.some(excludedItem => equals(excludedItem, element));
+  const testIsNotInExclusionItems = element => !exclusionItems.some(excludedItem => (0, _Util.equals)(excludedItem, element));
 
   return filter(testIsNotInExclusionItems, source);
 }
-export function exists(f, xs) {
+
+function exists(f, xs) {
   let cur;
 
   for (const iter = xs[Symbol.iterator]();;) {
@@ -253,7 +371,8 @@ export function exists(f, xs) {
 
   return false;
 }
-export function exists2(f, xs, ys) {
+
+function exists2(f, xs, ys) {
   let cur1;
   let cur2;
 
@@ -272,10 +391,12 @@ export function exists2(f, xs, ys) {
 
   return false;
 }
-export function contains(i, xs) {
-  return exists(x => equals(x, i), xs);
+
+function contains(i, xs) {
+  return exists(x => (0, _Util.equals)(x, i), xs);
 }
-export function filter(f, xs) {
+
+function filter(f, xs) {
   return delay(() => unfold(iter => {
     let cur = iter.next();
 
@@ -290,10 +411,12 @@ export function filter(f, xs) {
     return null;
   }, xs[Symbol.iterator]()));
 }
-export function where(f, xs) {
+
+function where(f, xs) {
   return filter(f, xs);
 }
-export function fold(f, acc, xs) {
+
+function fold(f, acc, xs) {
   if (Array.isArray(xs) || ArrayBuffer.isView(xs)) {
     return xs.reduce(f, acc);
   } else {
@@ -312,7 +435,8 @@ export function fold(f, acc, xs) {
     return acc;
   }
 }
-export function foldBack(f, xs, acc) {
+
+function foldBack(f, xs, acc) {
   const arr = Array.isArray(xs) || ArrayBuffer.isView(xs) ? xs : Array.from(xs);
 
   for (let i = arr.length - 1; i >= 0; i--) {
@@ -321,7 +445,8 @@ export function foldBack(f, xs, acc) {
 
   return acc;
 }
-export function fold2(f, acc, xs, ys) {
+
+function fold2(f, acc, xs, ys) {
   const iter1 = xs[Symbol.iterator]();
   const iter2 = ys[Symbol.iterator]();
   let cur1;
@@ -340,7 +465,8 @@ export function fold2(f, acc, xs, ys) {
 
   return acc;
 }
-export function foldBack2(f, xs, ys, acc) {
+
+function foldBack2(f, xs, ys, acc) {
   const ar1 = Array.isArray(xs) || ArrayBuffer.isView(xs) ? xs : Array.from(xs);
   const ar2 = Array.isArray(ys) || ArrayBuffer.isView(ys) ? ys : Array.from(ys);
 
@@ -350,33 +476,40 @@ export function foldBack2(f, xs, ys, acc) {
 
   return acc;
 }
-export function forAll(f, xs) {
+
+function forAll(f, xs) {
   return fold((acc, x) => acc && f(x), true, xs);
 }
-export function forAll2(f, xs, ys) {
+
+function forAll2(f, xs, ys) {
   return fold2((acc, x, y) => acc && f(x, y), true, xs, ys);
 }
-export function tryHead(xs) {
+
+function tryHead(xs) {
   const iter = xs[Symbol.iterator]();
   const cur = iter.next();
-  return cur.done ? null : some(cur.value);
+  return cur.done ? null : (0, _Option.some)(cur.value);
 }
-export function head(xs) {
+
+function head(xs) {
   return __failIfNone(tryHead(xs));
 }
-export function initialize(n, f) {
+
+function initialize(n, f) {
   return delay(() => unfold(i => i < n ? [f(i), i + 1] : null, 0));
 }
-export function initializeInfinite(f) {
+
+function initializeInfinite(f) {
   return delay(() => unfold(i => [f(i), i + 1], 0));
 }
-export function tryItem(i, xs) {
+
+function tryItem(i, xs) {
   if (i < 0) {
     return null;
   }
 
   if (Array.isArray(xs) || ArrayBuffer.isView(xs)) {
-    return i < xs.length ? some(xs[i]) : null;
+    return i < xs.length ? (0, _Option.some)(xs[i]) : null;
   }
 
   for (let j = 0, iter = xs[Symbol.iterator]();; j++) {
@@ -387,47 +520,58 @@ export function tryItem(i, xs) {
     }
 
     if (j === i) {
-      return some(cur.value);
+      return (0, _Option.some)(cur.value);
     }
   }
 
   return null;
 }
-export function item(i, xs) {
+
+function item(i, xs) {
   return __failIfNone(tryItem(i, xs));
 }
-export function iterate(f, xs) {
+
+function iterate(f, xs) {
   fold((_, x) => f(x), null, xs);
 }
-export function iterate2(f, xs, ys) {
+
+function iterate2(f, xs, ys) {
   fold2((_, x, y) => f(x, y), null, xs, ys);
 }
-export function iterateIndexed(f, xs) {
+
+function iterateIndexed(f, xs) {
   fold((_, x, i) => f(i, x), null, xs);
 }
-export function iterateIndexed2(f, xs, ys) {
+
+function iterateIndexed2(f, xs, ys) {
   fold2((_, x, y, i) => f(i, x, y), null, xs, ys);
 }
-export function isEmpty(xs) {
+
+function isEmpty(xs) {
   const i = xs[Symbol.iterator]();
   return i.next().done;
 }
-export function tryLast(xs) {
-  return isEmpty(xs) ? null : some(reduce((_, x) => x, xs));
+
+function tryLast(xs) {
+  return isEmpty(xs) ? null : (0, _Option.some)(reduce((_, x) => x, xs));
 }
-export function last(xs) {
+
+function last(xs) {
   return __failIfNone(tryLast(xs));
 }
-export function length(xs) {
+
+function length(xs) {
   return Array.isArray(xs) || ArrayBuffer.isView(xs) ? xs.length : fold((acc, x) => acc + 1, 0, xs);
 }
-export function map(f, xs) {
+
+function map(f, xs) {
   return delay(() => unfold(iter => {
     const cur = iter.next();
     return !cur.done ? [f(cur.value), iter] : null;
   }, xs[Symbol.iterator]()));
 }
-export function mapIndexed(f, xs) {
+
+function mapIndexed(f, xs) {
   return delay(() => {
     let i = 0;
     return unfold(iter => {
@@ -436,10 +580,12 @@ export function mapIndexed(f, xs) {
     }, xs[Symbol.iterator]());
   });
 }
-export function indexed(xs) {
+
+function indexed(xs) {
   return mapIndexed((i, x) => [i, x], xs);
 }
-export function map2(f, xs, ys) {
+
+function map2(f, xs, ys) {
   return delay(() => {
     const iter1 = xs[Symbol.iterator]();
     const iter2 = ys[Symbol.iterator]();
@@ -450,7 +596,8 @@ export function map2(f, xs, ys) {
     });
   });
 }
-export function mapIndexed2(f, xs, ys) {
+
+function mapIndexed2(f, xs, ys) {
   return delay(() => {
     let i = 0;
     const iter1 = xs[Symbol.iterator]();
@@ -462,7 +609,8 @@ export function mapIndexed2(f, xs, ys) {
     });
   });
 }
-export function map3(f, xs, ys, zs) {
+
+function map3(f, xs, ys, zs) {
   return delay(() => {
     const iter1 = xs[Symbol.iterator]();
     const iter2 = ys[Symbol.iterator]();
@@ -475,7 +623,8 @@ export function map3(f, xs, ys, zs) {
     });
   });
 }
-export function mapFold(f, acc, xs, transform) {
+
+function mapFold(f, acc, xs, transform) {
   const result = [];
   let r;
   let cur;
@@ -493,7 +642,8 @@ export function mapFold(f, acc, xs, transform) {
 
   return transform !== void 0 ? [transform(result), acc] : [result, acc];
 }
-export function mapFoldBack(f, xs, acc, transform) {
+
+function mapFoldBack(f, xs, acc, transform) {
   const arr = Array.isArray(xs) || ArrayBuffer.isView(xs) ? xs : Array.from(xs);
   const result = [];
   let r;
@@ -505,43 +655,53 @@ export function mapFoldBack(f, xs, acc, transform) {
 
   return transform !== void 0 ? [transform(result), acc] : [result, acc];
 }
-export function max(xs, comparer) {
-  const compareFn = comparer != null ? comparer.Compare : compare;
+
+function max(xs, comparer) {
+  const compareFn = comparer != null ? comparer.Compare : _Util.compare;
   return reduce((acc, x) => compareFn(acc, x) === 1 ? acc : x, xs);
 }
-export function maxBy(f, xs, comparer) {
-  const compareFn = comparer != null ? comparer.Compare : compare;
+
+function maxBy(f, xs, comparer) {
+  const compareFn = comparer != null ? comparer.Compare : _Util.compare;
   return reduce((acc, x) => compareFn(f(acc), f(x)) === 1 ? acc : x, xs);
 }
-export function min(xs, comparer) {
-  const compareFn = comparer != null ? comparer.Compare : compare;
+
+function min(xs, comparer) {
+  const compareFn = comparer != null ? comparer.Compare : _Util.compare;
   return reduce((acc, x) => compareFn(acc, x) === -1 ? acc : x, xs);
 }
-export function minBy(f, xs, comparer) {
-  const compareFn = comparer != null ? comparer.Compare : compare;
+
+function minBy(f, xs, comparer) {
+  const compareFn = comparer != null ? comparer.Compare : _Util.compare;
   return reduce((acc, x) => compareFn(f(acc), f(x)) === -1 ? acc : x, xs);
 }
-export function pairwise(xs) {
+
+function pairwise(xs) {
   return skip(2, scan((last, next) => [last[1], next], [0, 0], xs));
 }
-export function rangeChar(first, last) {
+
+function rangeChar(first, last) {
   return delay(() => unfold(x => x <= last ? [x, String.fromCharCode(x.charCodeAt(0) + 1)] : null, first));
 }
-export function rangeLong(first, step, last, unsigned) {
-  const stepFn = makeRangeStepFunction(step, last, unsigned);
+
+function rangeLong(first, step, last, unsigned) {
+  const stepFn = (0, _Long.makeRangeStepFunction)(step, last, unsigned);
   return delay(() => unfold(stepFn, first));
 }
-export function rangeNumber(first, step, last) {
+
+function rangeNumber(first, step, last) {
   if (step === 0) {
     throw new Error("Step cannot be 0");
   }
 
   return delay(() => unfold(x => step > 0 && x <= last || step < 0 && x >= last ? [x, x + step] : null, first));
 }
-export function readOnly(xs) {
+
+function readOnly(xs) {
   return map(x => x, xs);
 }
-export function reduce(f, xs) {
+
+function reduce(f, xs) {
   if (Array.isArray(xs) || ArrayBuffer.isView(xs)) {
     return xs.reduce(f);
   }
@@ -567,7 +727,8 @@ export function reduce(f, xs) {
 
   return acc;
 }
-export function reduceBack(f, xs) {
+
+function reduceBack(f, xs) {
   const ar = Array.isArray(xs) || ArrayBuffer.isView(xs) ? xs : Array.from(xs);
 
   if (ar.length === 0) {
@@ -582,14 +743,17 @@ export function reduceBack(f, xs) {
 
   return acc;
 }
-export function replicate(n, x) {
+
+function replicate(n, x) {
   return initialize(n, () => x);
 }
-export function reverse(xs) {
+
+function reverse(xs) {
   const ar = Array.isArray(xs) || ArrayBuffer.isView(xs) ? xs.slice(0) : Array.from(xs);
   return ofArray(ar.reverse());
 }
-export function scan(f, seed, xs) {
+
+function scan(f, seed, xs) {
   return delay(() => {
     const iter = xs[Symbol.iterator]();
     return unfold(acc => {
@@ -608,13 +772,16 @@ export function scan(f, seed, xs) {
     }, null);
   });
 }
-export function scanBack(f, xs, seed) {
+
+function scanBack(f, xs, seed) {
   return reverse(scan((acc, x) => f(x, acc), seed, reverse(xs)));
 }
-export function singleton(y) {
+
+function singleton(y) {
   return [y];
 }
-export function skip(n, xs) {
+
+function skip(n, xs) {
   return {
     [Symbol.iterator]: () => {
       const iter = xs[Symbol.iterator]();
@@ -629,23 +796,28 @@ export function skip(n, xs) {
     }
   };
 }
-export function skipWhile(f, xs) {
+
+function skipWhile(f, xs) {
   return delay(() => {
     let hasPassed = false;
     return filter(x => hasPassed || (hasPassed = !f(x)), xs);
   });
 }
-export function sortWith(f, xs) {
+
+function sortWith(f, xs) {
   const ys = Array.from(xs);
   return ofArray(ys.sort(f));
 }
-export function sum(xs) {
+
+function sum(xs) {
   return fold((acc, x) => acc + x, 0, xs);
 }
-export function sumBy(f, xs) {
+
+function sumBy(f, xs) {
   return fold((acc, x) => acc + f(x), 0, xs);
 }
-export function tail(xs) {
+
+function tail(xs) {
   const iter = xs[Symbol.iterator]();
   const cur = iter.next();
 
@@ -657,7 +829,8 @@ export function tail(xs) {
     [Symbol.iterator]: () => iter
   };
 }
-export function take(n, xs, truncate = false) {
+
+function take(n, xs, truncate = false) {
   return delay(() => {
     const iter = xs[Symbol.iterator]();
     return unfold(i => {
@@ -677,10 +850,12 @@ export function take(n, xs, truncate = false) {
     }, 0);
   });
 }
-export function truncate(n, xs) {
+
+function truncate(n, xs) {
   return take(n, xs, true);
 }
-export function takeWhile(f, xs) {
+
+function takeWhile(f, xs) {
   return delay(() => {
     const iter = xs[Symbol.iterator]();
     return unfold(i => {
@@ -694,7 +869,8 @@ export function takeWhile(f, xs) {
     }, 0);
   });
 }
-export function tryFind(f, xs, defaultValue) {
+
+function tryFind(f, xs, defaultValue) {
   for (let i = 0, iter = xs[Symbol.iterator]();; i++) {
     const cur = iter.next();
 
@@ -703,23 +879,27 @@ export function tryFind(f, xs, defaultValue) {
     }
 
     if (f(cur.value, i)) {
-      return some(cur.value);
+      return (0, _Option.some)(cur.value);
     }
   }
 
-  return defaultValue === void 0 ? null : some(defaultValue);
+  return defaultValue === void 0 ? null : (0, _Option.some)(defaultValue);
 }
-export function find(f, xs) {
+
+function find(f, xs) {
   return __failIfNone(tryFind(f, xs));
 }
-export function tryFindBack(f, xs, defaultValue) {
+
+function tryFindBack(f, xs, defaultValue) {
   const arr = Array.isArray(xs) || ArrayBuffer.isView(xs) ? xs.slice(0) : Array.from(xs);
   return tryFind(f, arr.reverse(), defaultValue);
 }
-export function findBack(f, xs) {
+
+function findBack(f, xs) {
   return __failIfNone(tryFindBack(f, xs));
 }
-export function tryFindIndex(f, xs) {
+
+function tryFindIndex(f, xs) {
   for (let i = 0, iter = xs[Symbol.iterator]();; i++) {
     const cur = iter.next();
 
@@ -734,10 +914,12 @@ export function tryFindIndex(f, xs) {
 
   return null;
 }
-export function findIndex(f, xs) {
+
+function findIndex(f, xs) {
   return __failIfNone(tryFindIndex(f, xs));
 }
-export function tryFindIndexBack(f, xs) {
+
+function tryFindIndexBack(f, xs) {
   const arr = Array.isArray(xs) || ArrayBuffer.isView(xs) ? xs.slice(0) : Array.from(xs);
 
   for (let i = arr.length - 1; i >= 0; i--) {
@@ -748,10 +930,12 @@ export function tryFindIndexBack(f, xs) {
 
   return null;
 }
-export function findIndexBack(f, xs) {
+
+function findIndexBack(f, xs) {
   return __failIfNone(tryFindIndexBack(f, xs));
 }
-export function tryPick(f, xs) {
+
+function tryPick(f, xs) {
   for (let i = 0, iter = xs[Symbol.iterator]();; i++) {
     const cur = iter.next();
 
@@ -768,10 +952,12 @@ export function tryPick(f, xs) {
 
   return null;
 }
-export function pick(f, xs) {
+
+function pick(f, xs) {
   return __failIfNone(tryPick(f, xs));
 }
-export function unfold(f, fst) {
+
+function unfold(f, fst) {
   return {
     [Symbol.iterator]: () => {
       // Capture a copy of the first value in the closure
@@ -797,9 +983,11 @@ export function unfold(f, fst) {
     }
   };
 }
-export function zip(xs, ys) {
+
+function zip(xs, ys) {
   return map2((x, y) => [x, y], xs, ys);
 }
-export function zip3(xs, ys, zs) {
+
+function zip3(xs, ys, zs) {
   return map3((x, y, z) => [x, y, z], xs, ys, zs);
 }

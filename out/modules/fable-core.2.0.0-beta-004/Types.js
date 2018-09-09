@@ -1,6 +1,22 @@
-import { createMutable as createMutableMap } from "./Map";
-import { createMutable as createMutableSet } from "./Set";
-import { combineHashCodes, compare, compareArrays, equals, equalArrays, identityHash, structuralHash, numberHash, toString } from "./Util";
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.declare = declare;
+exports.SystemObject = SystemObject;
+exports.List = List;
+exports.L = L;
+exports.Union = Union;
+exports.Record = Record;
+exports.isException = isException;
+exports.Attribute = exports.HashSet = exports.Dictionary = exports.MatchFailureException = exports.FSharpException = exports.Exception = exports.FSharpRef = void 0;
+
+var _Map = require("./Map");
+
+var _Set = require("./Set");
+
+var _Util = require("./Util");
 
 function sameType(x, y) {
   return y != null && Object.getPrototypeOf(x).constructor === Object.getPrototypeOf(y).constructor;
@@ -27,18 +43,19 @@ function inherits(subClass, superClass) {
   //     : (subClass.__proto__ = superClass);
 }
 
-export function declare(cons, superClass) {
+function declare(cons, superClass) {
   inherits(cons, superClass || SystemObject);
   return cons;
 }
-export function SystemObject() {}
+
+function SystemObject() {}
 
 SystemObject.prototype.toString = function () {
-  return "{" + Object.keys(this).map(k => k + " = " + toString(this[k])).join(";\n ") + "}";
+  return "{" + Object.keys(this).map(k => k + " = " + (0, _Util.toString)(this[k])).join(";\n ") + "}";
 };
 
 SystemObject.prototype.GetHashCode = function () {
-  return identityHash(this);
+  return (0, _Util.identityHash)(this);
 };
 
 SystemObject.prototype.Equals = function (other) {
@@ -58,7 +75,7 @@ function compareList(self, other) {
         return 1;
       }
 
-      const res = compare(self.head, other.head);
+      const res = (0, _Util.compare)(self.head, other.head);
 
       if (res !== 0) {
         return res;
@@ -72,13 +89,13 @@ function compareList(self, other) {
   }
 }
 
-export function List(head, tail) {
+function List(head, tail) {
   this.head = head;
   this.tail = tail;
 }
 
 List.prototype.toString = function () {
-  return "[" + Array.from(this).map(x => toString(x)).join("; ") + "]";
+  return "[" + Array.from(this).map(x => (0, _Util.toString)(x)).join("; ") + "]";
 };
 
 List.prototype.toJSON = function () {
@@ -100,8 +117,8 @@ List.prototype[Symbol.iterator] = function () {
 };
 
 List.prototype.GetHashCode = function () {
-  const hashes = Array.from(this).map(structuralHash);
-  return combineHashCodes(hashes);
+  const hashes = Array.from(this).map(_Util.structuralHash);
+  return (0, _Util.combineHashCodes)(hashes);
 };
 
 List.prototype.Equals = function (other) {
@@ -112,10 +129,11 @@ List.prototype.CompareTo = function (other) {
   return compareList(this, other);
 };
 
-export function L(h, t) {
+function L(h, t) {
   return new List(h, t);
 }
-export function Union(tag, name, ...fields) {
+
+function Union(tag, name, ...fields) {
   this.tag = tag | 0;
   this.name = name;
   this.fields = fields;
@@ -127,9 +145,9 @@ Union.prototype.toString = function () {
   if (len === 0) {
     return this.name;
   } else if (len === 1) {
-    return this.name + " " + toString(this.fields[0]);
+    return this.name + " " + (0, _Util.toString)(this.fields[0]);
   } else {
-    return this.name + " (" + this.fields.map(toString).join(",") + ")";
+    return this.name + " (" + this.fields.map(_Util.toString).join(",") + ")";
   }
 };
 
@@ -138,13 +156,13 @@ Union.prototype.toJSON = function () {
 };
 
 Union.prototype.GetHashCode = function () {
-  let hashes = this.fields.map(structuralHash);
-  hashes.splice(0, 0, numberHash(this.tag));
-  return combineHashCodes(hashes);
+  let hashes = this.fields.map(_Util.structuralHash);
+  hashes.splice(0, 0, (0, _Util.numberHash)(this.tag));
+  return (0, _Util.combineHashCodes)(hashes);
 };
 
 Union.prototype.Equals = function (other) {
-  return this === other || sameType(this, other) && this.tag === other.tag && equalArrays(this.fields, other.fields);
+  return this === other || sameType(this, other) && this.tag === other.tag && (0, _Util.equalArrays)(this.fields, other.fields);
 };
 
 Union.prototype.CompareTo = function (other) {
@@ -153,7 +171,7 @@ Union.prototype.CompareTo = function (other) {
   } else if (!sameType(this, other)) {
     return -1;
   } else if (this.tag === other.tag) {
-    return compareArrays(this.fields, other.fields);
+    return (0, _Util.compareArrays)(this.fields, other.fields);
   } else {
     return this.tag < other.tag ? -1 : 1;
   }
@@ -179,7 +197,7 @@ function recordEquals(self, other, getFieldNames) {
     const thisNames = getFieldNames == null ? Object.keys(self) : getFieldNames(self);
 
     for (let i = 0; i < thisNames.length; i++) {
-      if (!equals(self[thisNames[i]], other[thisNames[i]])) {
+      if (!(0, _Util.equals)(self[thisNames[i]], other[thisNames[i]])) {
         return false;
       }
     }
@@ -197,7 +215,7 @@ function recordCompare(self, other, getFieldNames) {
     const thisNames = getFieldNames == null ? Object.keys(self) : getFieldNames(self);
 
     for (let i = 0; i < thisNames.length; i++) {
-      const result = compare(self[thisNames[i]], other[thisNames[i]]);
+      const result = (0, _Util.compare)(self[thisNames[i]], other[thisNames[i]]);
 
       if (result !== 0) {
         return result;
@@ -208,10 +226,10 @@ function recordCompare(self, other, getFieldNames) {
   }
 }
 
-export function Record() {}
+function Record() {}
 
 Record.prototype.toString = function () {
-  return "{" + Object.keys(this).map(k => k + " = " + toString(this[k])).join(";\n ") + "}";
+  return "{" + Object.keys(this).map(k => k + " = " + (0, _Util.toString)(this[k])).join(";\n ") + "}";
 };
 
 Record.prototype.toJSON = function () {
@@ -219,8 +237,8 @@ Record.prototype.toJSON = function () {
 };
 
 Record.prototype.GetHashCode = function () {
-  const hashes = Object.keys(this).map(k => structuralHash(this[k]));
-  return combineHashCodes(hashes);
+  const hashes = Object.keys(this).map(k => (0, _Util.structuralHash)(this[k]));
+  return (0, _Util.combineHashCodes)(hashes);
 };
 
 Record.prototype.Equals = function (other) {
@@ -231,15 +249,18 @@ Record.prototype.CompareTo = function (other) {
   return recordCompare(this, other);
 };
 
-export const FSharpRef = declare(function FSharpRef(contents) {
+const FSharpRef = declare(function FSharpRef(contents) {
   this.contents = contents;
 }, Record); // EXCEPTIONS
 
-export const Exception = declare(function Exception(msg) {
+exports.FSharpRef = FSharpRef;
+const Exception = declare(function Exception(msg) {
   this.stack = Error().stack;
   this.message = msg;
 });
-export function isException(x) {
+exports.Exception = Exception;
+
+function isException(x) {
   return x instanceof Error || x instanceof Exception;
 }
 
@@ -247,9 +268,10 @@ function getFSharpExceptionFieldNames(self) {
   return Object.keys(self).filter(k => k !== "message" && k !== "stack");
 }
 
-export const FSharpException = declare(function FSharpException() {
+const FSharpException = declare(function FSharpException() {
   Exception.call(this);
 }, Exception);
+exports.FSharpException = FSharpException;
 
 FSharpException.prototype.toString = function () {
   const fieldNames = getFSharpExceptionFieldNames(this);
@@ -269,8 +291,8 @@ FSharpException.prototype.toJSON = function () {
 };
 
 FSharpException.prototype.GetHashCode = function () {
-  const hashes = getFSharpExceptionFieldNames(this).map(k => structuralHash(this[k]));
-  return combineHashCodes(hashes);
+  const hashes = getFSharpExceptionFieldNames(this).map(k => (0, _Util.structuralHash)(this[k]));
+  return (0, _Util.combineHashCodes)(hashes);
 };
 
 FSharpException.prototype.Equals = function (other) {
@@ -281,14 +303,16 @@ FSharpException.prototype.CompareTo = function (other) {
   return recordCompare(this, other, getFSharpExceptionFieldNames);
 };
 
-export const MatchFailureException = declare(function MatchFailureException(arg1, arg2, arg3) {
+const MatchFailureException = declare(function MatchFailureException(arg1, arg2, arg3) {
   this.arg1 = arg1;
   this.arg2 = arg2 | 0;
   this.arg3 = arg3 | 0;
 }, FSharpException);
-export const Dictionary = declare(function Dictionary(source, comparer) {
-  this.__mutableMap = createMutableMap(source, comparer);
+exports.MatchFailureException = MatchFailureException;
+const Dictionary = declare(function Dictionary(source, comparer) {
+  this.__mutableMap = (0, _Map.createMutable)(source, comparer);
 });
+exports.Dictionary = Dictionary;
 Object.defineProperty(Dictionary.prototype, "size", {
   get: function () {
     return this.__mutableMap.size;
@@ -331,9 +355,10 @@ Dictionary.prototype[Symbol.iterator] = function () {
   return this.__mutableMap[Symbol.iterator]();
 };
 
-export const HashSet = declare(function HashSet(source, comparer) {
-  this.__mutableSet = createMutableSet(source, comparer);
+const HashSet = declare(function HashSet(source, comparer) {
+  this.__mutableSet = (0, _Set.createMutable)(source, comparer);
 });
+exports.HashSet = HashSet;
 Object.defineProperty(HashSet.prototype, "size", {
   get: function () {
     return this.__mutableSet.size;
@@ -364,4 +389,5 @@ HashSet.prototype[Symbol.iterator] = function () {
   return this.__mutableSet[Symbol.iterator]();
 };
 
-export const Attribute = declare(function Attribute() {});
+const Attribute = declare(function Attribute() {});
+exports.Attribute = Attribute;

@@ -1,26 +1,53 @@
-import { declare, Union } from "../fable-core.2.0.0-beta-004/Types";
-import { some, value } from "../fable-core.2.0.0-beta-004/Option";
-import { delay, map as map$$1, rangeNumber } from "../fable-core.2.0.0-beta-004/Seq";
-import { map as map$$2, ofSeq } from "../fable-core.2.0.0-beta-004/Array";
-export const On$00601 = declare(function On$00601(tag, name, ...fields) {
-  Union.call(this, tag, name, ...fields);
-}, Union);
-export function Send$$$event(t, a, _arg1) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Send$$$event = Send$$$event;
+exports.Send$$$end$0027 = Send$$$end$0027;
+exports.Send$$$error = Send$$$error;
+exports.return$0027 = return$0027;
+exports.map = map;
+exports.filter = filter;
+exports.filterMap = filterMap;
+exports.skipRepeats = skipRepeats;
+exports.combineArray = combineArray;
+exports.mergeArray = mergeArray;
+exports.On$00601 = void 0;
+
+var _Types = require("../fable-core.2.0.0-beta-004/Types");
+
+var _Option = require("../fable-core.2.0.0-beta-004/Option");
+
+var _Seq = require("../fable-core.2.0.0-beta-004/Seq");
+
+var _Array = require("../fable-core.2.0.0-beta-004/Array");
+
+const On$00601 = (0, _Types.declare)(function On$00601(tag, name, ...fields) {
+  _Types.Union.call(this, tag, name, ...fields);
+}, _Types.Union);
+exports.On$00601 = On$00601;
+
+function Send$$$event(t, a, _arg1) {
   const g = _arg1;
   g(new On$00601(0, "Event", t, a));
 }
-export function Send$$$end$0027(t$$1, _arg1$$1) {
+
+function Send$$$end$0027(t$$1, _arg1$$1) {
   const g$$1 = _arg1$$1;
   g$$1(new On$00601(1, "End", t$$1));
 }
-export function Send$$$error(t$$2, err, _arg1$$2) {
+
+function Send$$$error(t$$2, err, _arg1$$2) {
   const g$$2 = _arg1$$2;
   g$$2(new On$00601(2, "Error", t$$2, err));
 }
-export function return$0027(f) {
+
+function return$0027(f) {
   return f;
 }
-export function map(f$$1, _arg1$$3) {
+
+function map(f$$1, _arg1$$3) {
   const g$$3 = _arg1$$3;
   return function (_arg2) {
     switch (_arg2.tag) {
@@ -49,7 +76,8 @@ export function map(f$$1, _arg1$$3) {
     }
   };
 }
-export function filter(p, _arg1$$4) {
+
+function filter(p, _arg1$$4) {
   const g$$4 = _arg1$$4;
   return function (_arg2$$1) {
     switch (_arg2$$1.tag) {
@@ -80,7 +108,8 @@ export function filter(p, _arg1$$4) {
     }
   };
 }
-export function filterMap(f$$2, p$$1, _arg1$$5) {
+
+function filterMap(f$$2, p$$1, _arg1$$5) {
   const g$$5 = _arg1$$5;
   return function (_arg2$$2) {
     switch (_arg2$$2.tag) {
@@ -112,7 +141,8 @@ export function filterMap(f$$2, p$$1, _arg1$$5) {
     }
   };
 }
-export function skipRepeats(eq, _arg1$$6) {
+
+function skipRepeats(eq, _arg1$$6) {
   const g$$6 = _arg1$$6;
   let prev = null;
   return function (_arg2$$3) {
@@ -138,7 +168,7 @@ export function skipRepeats(eq, _arg1$$6) {
           const a$$4 = _arg2$$3.fields[1];
 
           if (prev != null) {
-            const prev$$1 = value(prev);
+            const prev$$1 = (0, _Option.value)(prev);
 
             if (eq(prev$$1, a$$4)) {
               g$$6(new On$00601(0, "Event", t$$12, a$$4));
@@ -191,12 +221,12 @@ function safeSink(o) {
   };
 }
 
-export function combineArray(qty, _arg1$$8) {
+function combineArray(qty, _arg1$$8) {
   const o$$1 = _arg1$$8;
-  const values = ofSeq(delay(function () {
-    return map$$1(function (i) {
+  const values = (0, _Array.ofSeq)((0, _Seq.delay)(function () {
+    return (0, _Seq.map)(function (i) {
       return null;
-    }, rangeNumber(0, 1, qty - 1));
+    }, (0, _Seq.rangeNumber)(0, 1, qty - 1));
   }), Array);
   let ready = false;
   const o$$2 = safeSink(o$$1);
@@ -215,11 +245,11 @@ export function combineArray(qty, _arg1$$8) {
           {
             const t$$17 = _arg2$$4.fields[0];
             const a$$5 = _arg2$$4.fields[1];
-            values[i$$1] = some(a$$5);
+            values[i$$1] = (0, _Option.some)(a$$5);
 
             if (ready) {
-              const $arg$$19 = [t$$17, map$$2(function mapping(v) {
-                return value(v);
+              const $arg$$19 = [t$$17, (0, _Array.map)(function mapping(v) {
+                return (0, _Option.value)(v);
               }, values, Array)];
               o$$2(new On$00601(0, "Event", $arg$$19[0], $arg$$19[1]));
             } else {
@@ -248,13 +278,14 @@ export function combineArray(qty, _arg1$$8) {
     };
   };
 
-  return ofSeq(delay(function () {
-    return map$$1(function (i$$3) {
+  return (0, _Array.ofSeq)((0, _Seq.delay)(function () {
+    return (0, _Seq.map)(function (i$$3) {
       return sink(i$$3);
-    }, rangeNumber(0, 1, qty - 1));
+    }, (0, _Seq.rangeNumber)(0, 1, qty - 1));
   }), Array);
 }
-export function mergeArray(qty$$1, _arg1$$9) {
+
+function mergeArray(qty$$1, _arg1$$9) {
   const o$$3 = _arg1$$9;
   let endsLeft = qty$$1 | 0;
   const o$$4 = safeSink(o$$3);
@@ -288,9 +319,9 @@ export function mergeArray(qty$$1, _arg1$$9) {
     }
   };
 
-  return ofSeq(delay(function () {
-    return map$$1(function (i$$4) {
+  return (0, _Array.ofSeq)((0, _Seq.delay)(function () {
+    return (0, _Seq.map)(function (i$$4) {
       return sink$$1;
-    }, rangeNumber(0, 1, qty$$1 - 1));
+    }, (0, _Seq.rangeNumber)(0, 1, qty$$1 - 1));
   }), Array);
 }

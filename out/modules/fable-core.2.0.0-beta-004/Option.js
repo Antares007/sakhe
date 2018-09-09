@@ -1,5 +1,29 @@
-import { declare, Union } from "./Types";
-import { compare, equals, structuralHash, toString } from "./Util"; // Options are erased in runtime by Fable, but we have
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.some = some;
+exports.value = value;
+exports.defaultArg = defaultArg;
+exports.defaultArgWith = defaultArgWith;
+exports.filter = filter;
+exports.choice1 = choice1;
+exports.choice2 = choice2;
+exports.tryValueIfChoice1 = tryValueIfChoice1;
+exports.tryValueIfChoice2 = tryValueIfChoice2;
+exports.ok = ok;
+exports.error = error;
+exports.mapOk = mapOk;
+exports.mapError = mapError;
+exports.bindOk = bindOk;
+exports.Result = exports.Choice = exports.Some = void 0;
+
+var _Types = require("./Types");
+
+var _Util = require("./Util");
+
+// Options are erased in runtime by Fable, but we have
 // the `Some` type below to wrap values that would evaluate
 // to null in runtime. These two rules must be followed:
 // 1- None is always null in runtime, a non-strict null check
@@ -8,15 +32,14 @@ import { compare, equals, structuralHash, toString } from "./Util"; // Options a
 //    below must **always** be used.
 // export type Option<T> = T | Some<T>;
 // Using a class here for better compatibility with TS files importing Some
-
-export class Some {
+class Some {
   constructor(value) {
     this.value = value;
   } // Don't add "Some" for consistency with erased options
 
 
   toString() {
-    return toString(this.value);
+    return (0, _Util.toString)(this.value);
   }
 
   toJSON() {
@@ -24,22 +47,26 @@ export class Some {
   }
 
   GetHashCode() {
-    return structuralHash(this.value);
+    return (0, _Util.structuralHash)(this.value);
   }
 
   Equals(other) {
-    return other == null ? false : equals(this.value, other instanceof Some ? other.value : other);
+    return other == null ? false : (0, _Util.equals)(this.value, other instanceof Some ? other.value : other);
   }
 
   CompareTo(other) {
-    return other == null ? 1 : compare(this.value, other instanceof Some ? other.value : other);
+    return other == null ? 1 : (0, _Util.compare)(this.value, other instanceof Some ? other.value : other);
   }
 
 }
-export function some(x) {
+
+exports.Some = Some;
+
+function some(x) {
   return x == null || x instanceof Some ? new Some(x) : x;
 }
-export function value(x, acceptNull) {
+
+function value(x, acceptNull) {
   if (x == null) {
     if (!acceptNull) {
       throw new Error("Option has no value");
@@ -50,47 +77,63 @@ export function value(x, acceptNull) {
     return x instanceof Some ? x.value : x;
   }
 }
-export function defaultArg(arg, defaultValue, f) {
+
+function defaultArg(arg, defaultValue, f) {
   return arg == null ? defaultValue : f != null ? f(value(arg)) : value(arg);
 }
-export function defaultArgWith(arg, defThunk) {
+
+function defaultArgWith(arg, defThunk) {
   return arg == null ? defThunk() : value(arg);
 }
-export function filter(predicate, arg) {
+
+function filter(predicate, arg) {
   return arg != null ? !predicate(value(arg)) ? null : arg : arg;
 } // CHOICE
 
-export const Choice = declare(function Choice(tag, name, field) {
-  Union.call(this, tag, name, field);
-}, Union);
-export function choice1(x) {
+
+const Choice = (0, _Types.declare)(function Choice(tag, name, field) {
+  _Types.Union.call(this, tag, name, field);
+}, _Types.Union);
+exports.Choice = Choice;
+
+function choice1(x) {
   return new Choice(0, "Choice1Of2", x);
 }
-export function choice2(x) {
+
+function choice2(x) {
   return new Choice(1, "Choice2Of2", x);
 }
-export function tryValueIfChoice1(x) {
+
+function tryValueIfChoice1(x) {
   return x.tag === 0 ? some(x.fields[0]) : null;
 }
-export function tryValueIfChoice2(x) {
+
+function tryValueIfChoice2(x) {
   return x.tag === 1 ? some(x.fields[0]) : null;
 } // RESULT
 
-export const Result = declare(function Result(tag, name, field) {
-  Union.call(this, tag, name, field);
-}, Union);
-export function ok(x) {
+
+const Result = (0, _Types.declare)(function Result(tag, name, field) {
+  _Types.Union.call(this, tag, name, field);
+}, _Types.Union);
+exports.Result = Result;
+
+function ok(x) {
   return new Result(0, "Ok", x);
 }
-export function error(x) {
+
+function error(x) {
   return new Result(1, "Error", x);
 }
-export function mapOk(f, result) {
+
+function mapOk(f, result) {
   return result.tag === 0 ? ok(f(result.fields[0])) : result;
 }
-export function mapError(f, result) {
+
+function mapError(f, result) {
   return result.tag === 1 ? error(f(result.fields[0])) : result;
 }
-export function bindOk(f, result) {
+
+function bindOk(f, result) {
   return result.tag === 0 ? f(result.fields[0]) : result;
 }

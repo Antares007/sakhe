@@ -1,7 +1,55 @@
-import { toString as dateToString } from "./Date";
-import Long, { fromBytes as longFromBytes, toBytes as longToBytes, toString as longToString } from "./Long";
-import { escape } from "./RegExp";
-import { toString } from "./Util";
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.compare = compare;
+exports.compareOrdinal = compareOrdinal;
+exports.compareTo = compareTo;
+exports.startsWith = startsWith;
+exports.indexOfAny = indexOfAny;
+exports.printf = printf;
+exports.toConsole = toConsole;
+exports.toConsoleError = toConsoleError;
+exports.toText = toText;
+exports.toFail = toFail;
+exports.fsFormat = fsFormat;
+exports.format = format;
+exports.endsWith = endsWith;
+exports.initialize = initialize;
+exports.insert = insert;
+exports.isNullOrEmpty = isNullOrEmpty;
+exports.isNullOrWhiteSpace = isNullOrWhiteSpace;
+exports.join = join;
+exports.joinWithIndices = joinWithIndices;
+exports.validateGuid = validateGuid;
+exports.newGuid = newGuid;
+exports.guidToArray = guidToArray;
+exports.arrayToGuid = arrayToGuid;
+exports.toBase64String = toBase64String;
+exports.fromBase64String = fromBase64String;
+exports.padLeft = padLeft;
+exports.padRight = padRight;
+exports.remove = remove;
+exports.replace = replace;
+exports.replicate = replicate;
+exports.getCharAtIndex = getCharAtIndex;
+exports.split = split;
+exports.trim = trim;
+exports.trimStart = trimStart;
+exports.trimEnd = trimEnd;
+exports.filter = filter;
+
+var _Date = require("./Date");
+
+var _Long = _interopRequireWildcard(require("./Long"));
+
+var _RegExp = require("./RegExp");
+
+var _Util = require("./Util");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
 const fsFormatRegExp = /(^|[^%])%([0+ ]*)(-?\d+)?(?:\.(\d+))?(\w)/;
 const formatRegExp = /\{(\d+)(,-?\d+)?(?:\:(.+?))?\}/g; // From https://stackoverflow.com/a/13653180/3922220
 
@@ -52,7 +100,7 @@ function cmp(x, y, ic) {
   }
 }
 
-export function compare(...args) {
+function compare(...args) {
   switch (args.length) {
     case 2:
       return cmp(args[0], args[1], false);
@@ -76,24 +124,28 @@ export function compare(...args) {
       throw new Error("String.compare: Unsupported number of parameters");
   }
 }
-export function compareOrdinal(x, y) {
+
+function compareOrdinal(x, y) {
   return cmp(x, y, 4
   /* Ordinal */
   );
 }
-export function compareTo(x, y) {
+
+function compareTo(x, y) {
   return cmp(x, y, 0
   /* CurrentCulture */
   );
 }
-export function startsWith(str, pattern, ic) {
+
+function startsWith(str, pattern, ic) {
   if (str.length >= pattern.length) {
     return cmp(str.substr(0, pattern.length), pattern, ic) === 0;
   }
 
   return false;
 }
-export function indexOfAny(str, anyOf, ...args) {
+
+function indexOfAny(str, anyOf, ...args) {
   if (str == null || str === "") {
     return -1;
   }
@@ -128,34 +180,38 @@ export function indexOfAny(str, anyOf, ...args) {
 }
 
 function toHex(x) {
-  if (x instanceof Long) {
-    return longToString(x.unsigned ? x : longFromBytes(longToBytes(x), true), 16);
+  if (x instanceof _Long.default) {
+    return (0, _Long.toString)(x.unsigned ? x : (0, _Long.fromBytes)((0, _Long.toBytes)(x), true), 16);
   } else {
     return (Number(x) >>> 0).toString(16);
   }
 }
 
-export function printf(input) {
+function printf(input) {
   return {
     input,
     cont: fsFormat(input)
   };
 }
-export function toConsole(arg) {
+
+function toConsole(arg) {
   // Don't remove the lambda here, see #1357
   return arg.cont(x => {
     console.log(x);
   });
 }
-export function toConsoleError(arg) {
+
+function toConsoleError(arg) {
   return arg.cont(x => {
     console.error(x);
   });
 }
-export function toText(arg) {
+
+function toText(arg) {
   return arg.cont(x => x);
 }
-export function toFail(arg) {
+
+function toFail(arg) {
   return arg.cont(x => {
     throw new Error(x);
   });
@@ -180,11 +236,11 @@ function formatOnce(str2, rep) {
         break;
 
       case "O":
-        rep = toString(rep);
+        rep = (0, _Util.toString)(rep);
         break;
 
       case "A":
-        rep = toString(rep, true);
+        rep = (0, _Util.toString)(rep, true);
         break;
 
       case "x":
@@ -222,12 +278,13 @@ function createPrinter(str, cont) {
   };
 }
 
-export function fsFormat(str) {
+function fsFormat(str) {
   return cont => {
     return fsFormatRegExp.test(str) ? createPrinter(str, cont) : cont(str);
   };
 }
-export function format(str, ...args) {
+
+function format(str, ...args) {
   if (typeof str === "object" && args.length > 0) {
     // Called with culture info
     str = args[0];
@@ -238,7 +295,7 @@ export function format(str, ...args) {
     let rep = args[idx];
     let padSymbol = " ";
 
-    if (typeof rep === "number" || rep instanceof Long) {
+    if (typeof rep === "number" || rep instanceof _Long.default) {
       switch ((pattern || "").substring(0, 1)) {
         case "f":
         case "F":
@@ -286,7 +343,7 @@ export function format(str, ...args) {
 
       }
     } else if (rep instanceof Date) {
-      rep = dateToString(rep, pattern);
+      rep = (0, _Date.toString)(rep, pattern);
     }
 
     pad = parseInt((pad || "").substring(1), 10);
@@ -298,11 +355,13 @@ export function format(str, ...args) {
     return rep;
   });
 }
-export function endsWith(str, search) {
+
+function endsWith(str, search) {
   const idx = str.lastIndexOf(search);
   return idx >= 0 && idx === str.length - search.length;
 }
-export function initialize(n, f) {
+
+function initialize(n, f) {
   if (n < 0) {
     throw new Error("String length must be non-negative");
   }
@@ -315,23 +374,28 @@ export function initialize(n, f) {
 
   return xs.join("");
 }
-export function insert(str, startIndex, value) {
+
+function insert(str, startIndex, value) {
   if (startIndex < 0 || startIndex > str.length) {
     throw new Error("startIndex is negative or greater than the length of this instance.");
   }
 
   return str.substring(0, startIndex) + value + str.substring(startIndex);
 }
-export function isNullOrEmpty(str) {
+
+function isNullOrEmpty(str) {
   return typeof str !== "string" || str.length === 0;
 }
-export function isNullOrWhiteSpace(str) {
+
+function isNullOrWhiteSpace(str) {
   return typeof str !== "string" || /^\s*$/.test(str);
 }
-export function join(delimiter, ...xs) {
+
+function join(delimiter, ...xs) {
   return xs.map(x => String(x)).join(delimiter);
 }
-export function joinWithIndices(delimiter, xs, startIndex, count) {
+
+function joinWithIndices(delimiter, xs, startIndex, count) {
   const endIndexPlusOne = startIndex + count;
 
   if (endIndexPlusOne > xs.length) {
@@ -342,7 +406,8 @@ export function joinWithIndices(delimiter, xs, startIndex, count) {
 }
 /** Validates UUID as specified in RFC4122 (versions 1-5). Trims braces. */
 
-export function validateGuid(str, doNotThrow) {
+
+function validateGuid(str, doNotThrow) {
   const trimmed = trim(str, "{", "}");
 
   if (guidRegex.test(trimmed)) {
@@ -354,7 +419,8 @@ export function validateGuid(str, doNotThrow) {
   throw new Error("Guid should contain 32 digits with 4 dashes: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
 } // From https://gist.github.com/LeverOne/1308368
 
-export function newGuid() {
+
+function newGuid() {
   let b = "";
 
   for (let a = 0; a++ < 36;) {
@@ -363,6 +429,7 @@ export function newGuid() {
 
   return b;
 } // Maps for number <-> hex string conversion
+
 
 let _convertMapsInitialized = false;
 
@@ -385,7 +452,7 @@ function initConvertMaps() {
 // Adapted from https://github.com/zefferus/uuid-parse
 
 
-export function guidToArray(s) {
+function guidToArray(s) {
   if (!_convertMapsInitialized) {
     initConvertMaps();
   }
@@ -434,7 +501,8 @@ export function guidToArray(s) {
 }
 /** Convert UUID byte array into a string */
 
-export function arrayToGuid(buf) {
+
+function arrayToGuid(buf) {
   if (buf.length !== 16) {
     throw new Error("Byte array for GUID must be exactly 16 bytes long");
   }
@@ -450,7 +518,7 @@ function notSupported(name) {
   throw new Error("The environment doesn't support '" + name + "', please use a polyfill.");
 }
 
-export function toBase64String(inArray) {
+function toBase64String(inArray) {
   let str = "";
 
   for (let i = 0; i < inArray.length; i++) {
@@ -459,7 +527,8 @@ export function toBase64String(inArray) {
 
   return typeof btoa === "function" ? btoa(str) : notSupported("btoa");
 }
-export function fromBase64String(b64Encoded) {
+
+function fromBase64String(b64Encoded) {
   const binary = typeof atob === "function" ? atob(b64Encoded) : notSupported("atob");
   const bytes = new Uint8Array(binary.length);
 
@@ -469,7 +538,8 @@ export function fromBase64String(b64Encoded) {
 
   return bytes;
 }
-export function padLeft(str, len, ch, isRight) {
+
+function padLeft(str, len, ch, isRight) {
   ch = ch || " ";
   len = len - str.length;
 
@@ -479,10 +549,12 @@ export function padLeft(str, len, ch, isRight) {
 
   return str;
 }
-export function padRight(str, len, ch) {
+
+function padRight(str, len, ch) {
   return padLeft(str, len, ch, true);
 }
-export function remove(str, startIndex, count) {
+
+function remove(str, startIndex, count) {
   if (startIndex >= str.length) {
     throw new Error("startIndex must be less than length of string");
   }
@@ -493,20 +565,24 @@ export function remove(str, startIndex, count) {
 
   return str.slice(0, startIndex) + (typeof count === "number" ? str.substr(startIndex + count) : "");
 }
-export function replace(str, search, replace) {
-  return str.replace(new RegExp(escape(search), "g"), replace);
+
+function replace(str, search, replace) {
+  return str.replace(new RegExp((0, _RegExp.escape)(search), "g"), replace);
 }
-export function replicate(n, x) {
+
+function replicate(n, x) {
   return initialize(n, () => x);
 }
-export function getCharAtIndex(input, index) {
+
+function getCharAtIndex(input, index) {
   if (index < 0 || index >= input.length) {
     throw new Error("Index was outside the bounds of the array.");
   }
 
   return input[index];
 }
-export function split(str, splitters, count, removeEmpty) {
+
+function split(str, splitters, count, removeEmpty) {
   count = typeof count === "number" ? count : null;
   removeEmpty = typeof removeEmpty === "number" ? removeEmpty : null;
 
@@ -531,7 +607,7 @@ export function split(str, splitters, count, removeEmpty) {
     }
   }
 
-  splitters = splitters.map(x => escape(x));
+  splitters = splitters.map(x => (0, _RegExp.escape)(x));
   splitters = splitters.length > 0 ? splitters : [" "];
   let i = 0;
   const splits = [];
@@ -558,20 +634,24 @@ export function split(str, splitters, count, removeEmpty) {
 
   return splits;
 }
-export function trim(str, ...chars) {
+
+function trim(str, ...chars) {
   if (chars.length === 0) {
     return str.trim();
   }
 
-  const pattern = "[" + escape(chars.join("")) + "]+";
+  const pattern = "[" + (0, _RegExp.escape)(chars.join("")) + "]+";
   return str.replace(new RegExp("^" + pattern), "").replace(new RegExp(pattern + "$"), "");
 }
-export function trimStart(str, ...chars) {
-  return chars.length === 0 ? str.trimStart() : str.replace(new RegExp("^[" + escape(chars.join("")) + "]+"), "");
+
+function trimStart(str, ...chars) {
+  return chars.length === 0 ? str.trimStart() : str.replace(new RegExp("^[" + (0, _RegExp.escape)(chars.join("")) + "]+"), "");
 }
-export function trimEnd(str, ...chars) {
-  return chars.length === 0 ? str.trimEnd() : str.replace(new RegExp("[" + escape(chars.join("")) + "]+$"), "");
+
+function trimEnd(str, ...chars) {
+  return chars.length === 0 ? str.trimEnd() : str.replace(new RegExp("[" + (0, _RegExp.escape)(chars.join("")) + "]+$"), "");
 }
-export function filter(pred, x) {
+
+function filter(pred, x) {
   return x.split("").filter(pred).join("");
 }
