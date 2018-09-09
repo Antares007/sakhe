@@ -1,7 +1,6 @@
 module Sakhe.Show
-open Sakhe.S
-open System.IO
 open Fable.Core
+open Sakhe.S
 
 let clock = Default.clock ()
 let sch = Scheduler.schedule
@@ -26,22 +25,30 @@ let task i = Task.return' <| function
 let delay1000 = Time.Delay.return' <| 1000
 let delay500 = Time.Delay.return' <| 500
 
-let d1 = Scheduler.schedule
-            None
-            (Some delay1000)
-            (task 1)
-            scheduler
-let d2 = Scheduler.schedule
-            (Some delay500)
-            (Some delay1000)
-            (task 2)
-            scheduler
+// let d1 = Scheduler.schedule
+//             None
+//             (Some delay1000)
+//             (task 1)
+//             scheduler
+// let d2 = Scheduler.schedule
+//             (Some delay500)
+//             (Some delay1000)
+//             (task 2)
+//             scheduler
+let see =
+    Stream.periodic delay1000
+    |> Stream.map (fun () -> 42)
+    |> Stream.run scheduler (Sink.return' <| function
+        | Sink.On.Event (t, e) -> printfn "Event %A at %A" e t
+        | Sink.On.End (t) -> printfn "End at %A" t
+        | Sink.On.Error (t, err) -> printfn "Error %A at %A" err t)
 
-open Fable.Import.Browser
-open Fable.Core.JsInterop
 
-window?d1 <- d1
-window?d2 <- d2
+// open Fable.Import.Browser
+// open Fable.Core.JsInterop
+
+// window?d1 <- d1
+// window?d2 <- d2
 
 // let makeTask i =
 //     Task.return' <| function

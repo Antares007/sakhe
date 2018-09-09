@@ -5,6 +5,8 @@ import { now } from "./s/clock";
 import { return$0027 as return$00240027 } from "./s/disposable";
 import { return$0027 as return$00240027$$1 } from "./s/task";
 import { DelayModule$$$return$0027 as DelayModule$0024$0024$0024return$00240027 } from "./s/time";
+import { return$0027 as return$00240027$$2 } from "./s/sink";
+import { run, map, periodic } from "./s/stream";
 export const clock = clock$$1();
 export function sch(delay) {
   return function (period) {
@@ -38,7 +40,30 @@ export function task(i) {
 }
 export const delay1000 = DelayModule$0024$0024$0024return$00240027(1000);
 export const delay500 = DelayModule$0024$0024$0024return$00240027(500);
-export const d1 = schedule(null, delay1000, task(1), scheduler);
-export const d2 = schedule(delay500, delay1000, task(2), scheduler);
-window.d1 = d1;
-window.d2 = d2;
+export const see = run(scheduler, return$00240027$$2(function (_arg1$$1) {
+  switch (_arg1$$1.tag) {
+    case 1:
+      {
+        const t$$3 = _arg1$$1.fields[0];
+        toConsole(printf("End at %A"))(t$$3);
+        break;
+      }
+
+    case 2:
+      {
+        const t$$4 = _arg1$$1.fields[0];
+        const err$$1 = _arg1$$1.fields[1];
+        toConsole(printf("Error %A at %A"))(err$$1)(t$$4);
+        break;
+      }
+
+    default:
+      {
+        const t$$2 = _arg1$$1.fields[0];
+        const e = _arg1$$1.fields[1] | 0;
+        toConsole(printf("Event %A at %A"))(e)(t$$2);
+      }
+  }
+}), map(function f$$3() {
+  return 42;
+}, periodic(delay1000)));
