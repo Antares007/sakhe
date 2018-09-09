@@ -18,7 +18,7 @@ let run (Task g) = try g (Run ()) with err -> g (Exn ((), err))
 let append l r = Task <| function
     | Run a ->
         let a () = a
-        match (run (map a l), run (map a r)) with
+        match run (map a l), run (map a r) with
         | (None,     None) -> None
         | (Some d,   None) -> Some d
         | (None,   Some d) -> Some d
