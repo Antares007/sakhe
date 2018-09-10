@@ -55,7 +55,7 @@ function TimelineModule$$$empty() {
 function TimelineModule$$$nextArrival(_arg1) {
   const array$$1 = _arg1;
 
-  if (array$$1.length === 0) {
+  if ((0, _Util.equals)(array$$1.length, 0)) {
     return null;
   } else {
     return array$$1[0][0];
@@ -63,18 +63,19 @@ function TimelineModule$$$nextArrival(_arg1) {
 }
 
 function TimelineModule$$$add(time, task, _arg1$$1) {
+  var v, v$$1;
   const array$$2 = _arg1$$1;
   const i = TimelineModule$$$findAppendPosition(time, array$$2) | 0;
 
   if (i === -1) {
-    array$$2.splice(0, 0, [time, task]);
+    v = [time, task], array$$2.splice(0, 0, v);
   } else {
     const patternInput = array$$2[i];
 
     if ((0, _Util.equals)(patternInput[0], time)) {
       array$$2[i] = [patternInput[0], (0, _task.append)(patternInput[1], task)];
     } else {
-      array$$2.splice(i + 1, 0, [time, task]);
+      v$$1 = [time, task], array$$2.splice(i + 1, 0, v$$1);
     }
   }
 }
@@ -130,7 +131,7 @@ function setNextRun(nextArrival$$2, scheduler$$1) {
 
       throw err;
     } else {
-      const s = _arg1$$4.fields[0][1];
+      const s$$3 = _arg1$$4.fields[0][1];
       ref$$1.contents = null;
       (0, _task.run)(TimelineModule$$$removeTasks((0, _clock.now)(clock$$1), timeline$$1));
       scheduleNextRun(scheduler$$1);

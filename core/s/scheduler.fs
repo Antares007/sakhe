@@ -11,13 +11,13 @@ type [<Erase>] T =
 
 module private Timeline =
     open System.Collections.Generic
+    open Fable.Core.JsInterop
+
     type List<'a> with
-        [<Emit("$0.length")>]
-        member __.``length``: int = jsNative
-        [<Emit("$0.splice($1, $2)")>]
-        member __.``splice`` ((_: int), (_: int)): ResizeArray<'a> = jsNative
-        [<Emit("$0.splice($1, $2, $3)")>]
-        member __.``splice`` ((_: int), (_: int), (_: 'a)): ResizeArray<'a> = jsNative
+        member inline a.``length``: int = !!a?length
+        member inline a.``splice`` (s: int, e: int): ResizeArray<'a> = !!a?splice(s, e)
+        member inline a.``splice`` (s: int, e: int, v: 'a): ResizeArray<'a> = !!a?splice(s, e, v)
+
 
     let private findAppendPosition (a: 'a) (array: List<'a * 'b>) =
         let rec go l r =
