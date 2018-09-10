@@ -9,7 +9,6 @@
     <Compile Include="s/clock.fs" />
     <Compile Include="s/task.fs" />
     <Compile Include="s/timer.fs" />
-    <Compile Include="s/timeline.fs" />
     <Compile Include="s/scheduler.fs" />
     <Compile Include="s/sink.fs" />
     <Compile Include="s/stream.fs" />
