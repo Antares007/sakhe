@@ -21,21 +21,44 @@ let task i = Task.return' <| function
 
 let delay x = Time.Delay.return' x
 
-// let d1 = Scheduler.schedule
-//             None
-//             (Some delay1000)
-//             (task 1)
-//             scheduler
-// let d2 = Scheduler.schedule
-//             (Some delay500)
-//             (Some delay1000)
-//             (task 2)
-//             scheduler
+open Fable.Import
+
+let fs = Fable.Core.JsInterop.importAll<Fable.Import.Node.Fs.IExports> "fs"
+
+let http = Fable.Core.JsInterop.importAll<Fable.Import.Node.Http.IExports> "http"
+
+
+let tree a =
+    function
+        | Task.On.Run (s, cs) ->
+            s <| Sink.Now.Event a
+            s <| Sink.Now.End
+            None
+        | Task.On.Exn ((s, cs), err) ->
+            s <| Sink.Now.Error err
+            None
+    |> Stream.fromTask None None
+
+let now2 a =
+    function
+        | Task.On.Run (s, cs) ->
+            s <| Sink.Now.Event a
+            s <| Sink.Now.End
+            None
+        | Task.On.Exn ((s, cs), err) ->
+            s <| Sink.Now.Error err
+            None
+    |> Stream.fromTask None None
+
+
+
+
+
 
 let see =
     Stream.mergeArray [|
         Stream.periodic (delay 10000) |> Stream.map (fun () -> 10000)
-        Stream.now 42
+        now2 42
         Stream.periodic (delay 1000) |> Stream.map (fun () -> 1000)
         Stream.periodic (delay 2000) |> Stream.map (fun () -> 2000)
         Stream.periodic (delay 3000) |> Stream.map (fun () -> 3000)

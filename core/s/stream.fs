@@ -3,10 +3,22 @@ open Sakhe.S
 
 type T<'a> = Stream of (Sink.T<'a> * Scheduler.T -> Disposable.T)
 
-let return' f = Stream <| fun (sink, scheduler) -> f sink scheduler
+let return' f = Stream <| fun (sink, scheduler) ->
+    f sink scheduler
 
 let run scheduler sink (Stream f) =
     f (sink, scheduler)
+
+let fromTask
+     delay period t = Stream <| fun (sink, scheduler) ->
+    let s t = function
+        | Sink.Now.Event a -> Sink.unbox sink <| Sink.On.Event (t, a)
+        | Sink.Now.End -> Sink.unbox sink <| Sink.On.End t
+        | Sink.Now.Error err -> Sink.unbox sink <| Sink.On.Error (t, err)
+    scheduler
+    |> (Task.return' <| t
+        |> Task.map (fun (time, cs) -> s time, cs)
+        |> Scheduler.schedule delay period)
 
 let map f source = Stream <| fun (sink, scheduler) ->
     source |> run scheduler (Sink.map f sink)
