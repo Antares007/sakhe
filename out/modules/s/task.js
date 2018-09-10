@@ -8,6 +8,7 @@ exports.empty = empty;
 exports.map = map;
 exports.run = run;
 exports.append = append;
+exports.appendArray = appendArray;
 exports.Cancelable$$$ifCanceledThenRaiseCancellationException = Cancelable$$$ifCanceledThenRaiseCancellationException;
 exports.Cancelable$$$extend = Cancelable$$$extend;
 exports.Cancelable$$$return$0027 = Cancelable$$$return$0027;
@@ -16,6 +17,10 @@ exports.Cancelable$002ESource = exports.Cancelable$002EException = exports.On$00
 var _Types = require("../fable-core.2.0.0-beta-004/Types");
 
 var _disposable = require("./disposable");
+
+var _Seq = require("../fable-core.2.0.0-beta-004/Seq");
+
+var _Array = require("../fable-core.2.0.0-beta-004/Array");
 
 const On$00601 = (0, _Types.declare)(function On$00601(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -75,6 +80,37 @@ function append(l, r) {
   };
 }
 
+function appendArray(tasks) {
+  const length = tasks.length | 0;
+
+  if (length === 0) {
+    return empty();
+  } else if (length === 1) {
+    return tasks[0];
+  } else {
+    return function (_arg1$$4) {
+      if (_arg1$$4.tag === 1) {
+        return null;
+      } else {
+        const a$$4 = _arg1$$4.fields[0];
+
+        const a$$5 = function a$$5() {
+          return a$$4;
+        };
+
+        const disposables = (0, _Array.ofSeq)((0, _Seq.map)(function mapping$$1(o$$1) {
+          return o$$1;
+        }, (0, _Seq.filter)(function predicate(o) {
+          return o != null;
+        }, (0, _Seq.map)(function mapping(t) {
+          return run(map(a$$5, t));
+        }, tasks))), Array);
+        return (0, _disposable.appendArray)(disposables);
+      }
+    };
+  }
+}
+
 const Cancelable$002EException = (0, _Types.declare)(function Cancelable$002EException() {}, _Types.FSharpException);
 exports.Cancelable$002EException = Cancelable$002EException;
 const Cancelable$002ESource = (0, _Types.declare)(function Cancelable$002ESource(tag, name, ...fields) {
@@ -82,8 +118,8 @@ const Cancelable$002ESource = (0, _Types.declare)(function Cancelable$002ESource
 }, _Types.Union);
 exports.Cancelable$002ESource = Cancelable$002ESource;
 
-function Cancelable$$$ifCanceledThenRaiseCancellationException(_arg1$$4) {
-  const f$$2 = _arg1$$4.fields[0];
+function Cancelable$$$ifCanceledThenRaiseCancellationException(_arg1$$5) {
+  const f$$2 = _arg1$$5.fields[0];
   f$$2();
 }
 
@@ -103,17 +139,17 @@ function Cancelable$$$extend(task) {
       f$$4();
     }
   });
-  const task$$1 = return$0027(function (_arg1$$6) {
-    if (_arg1$$6.tag === 1) {
+  const task$$1 = return$0027(function (_arg1$$7) {
+    if (_arg1$$7.tag === 1) {
       return null;
     } else {
-      const a$$4 = _arg1$$6.fields[0];
+      const a$$6 = _arg1$$7.fields[0];
 
       if (canceled) {
         return null;
       } else {
         taskDisposable = run(map(function f$$6() {
-          return [a$$4, cancellationSource];
+          return [a$$6, cancellationSource];
         }, task));
 
         if (canceled ? taskDisposable != null : false) {
@@ -129,6 +165,6 @@ function Cancelable$$$extend(task) {
   return [task$$1, cancelDisposable];
 }
 
-function Cancelable$$$return$0027(t) {
-  return Cancelable$$$extend(return$0027(t));
+function Cancelable$$$return$0027(t$$1) {
+  return Cancelable$$$extend(return$0027(t$$1));
 }

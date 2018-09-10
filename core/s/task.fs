@@ -25,6 +25,24 @@ let append l r = Task <| function
         | (Some l, Some r) -> Some (Disposable.append l r)
     | Exn _ -> None
 
+let appendArray tasks =
+    let length = Array.length tasks
+    if length = 0 then empty
+    else
+    if length = 1 then tasks.[0]
+    else
+    Task <| function
+        | Run a ->
+            let a () = a
+            let disposables =
+                tasks
+                |> Seq.map (fun t -> run (map a t))
+                |> Seq.filter (fun o -> o.IsSome)
+                |> Seq.map (fun o -> o.Value)
+                |> Seq.toArray
+            Some <| Disposable.appendArray disposables
+        | Exn _ -> None
+
 module Cancelable =
     exception Exception
 

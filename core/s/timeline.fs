@@ -38,4 +38,6 @@ let add time (task: unit Task.T) (Timeline array) =
 
 let removeTasks time (Timeline array) =
     array.splice(0, findAppendPosition time array + 1)
-    |> Seq.fold (fun acc (time, task) -> Task.append acc task) Task.empty
+    |> Seq.map snd
+    |> Seq.toArray
+    |> Task.appendArray

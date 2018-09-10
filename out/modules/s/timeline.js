@@ -14,6 +14,8 @@ var _task = require("./task");
 
 var _Seq = require("../fable-core.2.0.0-beta-004/Seq");
 
+var _Array = require("../fable-core.2.0.0-beta-004/Array");
+
 function findAppendPosition(a, array) {
   const go = function go(l, r) {
     go: while (true) {
@@ -71,7 +73,7 @@ function add(time, task, _arg1$$1) {
 
 function removeTasks(time$$1, _arg1$$2) {
   const array$$3 = _arg1$$2;
-  return (0, _Seq.fold)(function folder(acc, tupledArg) {
-    return (0, _task.append)(acc, tupledArg[1]);
-  }, (0, _task.empty)(), array$$3.splice(0, findAppendPosition(time$$1, array$$3) + 1));
+  return (0, _task.appendArray)((0, _Array.ofSeq)((0, _Seq.map)(function mapping(tuple) {
+    return tuple[1];
+  }, array$$3.splice(0, findAppendPosition(time$$1, array$$3) + 1)), Array));
 }
