@@ -29,14 +29,6 @@
     <Compile Include="dom.fs" />
     <Compile Include="show.old.fs" />
     <Compile Include="s.fs" />
-    <Compile Include="scheduler/types_.fs" />
-    <Compile Include="scheduler/disposable.fs" />
-    <Compile Include="scheduler/task_.fs" />
-    <Compile Include="scheduler/clocktimer.fs" />
-    <Compile Include="scheduler/extensions.fs" />
-    <Compile Include="scheduler/timeline_.fs" />
-    <Compile Include="scheduler/scheduledtask.fs" />
-    <Compile Include="scheduler/scheduler_.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
