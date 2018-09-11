@@ -68,13 +68,13 @@ and private setNextRun nextArrival scheduler =
     let task = Task.return' <| function
         | Task.On.Run ((), s) ->
             ref.Value <- None
-            Task.run (Timeline.removeTasks (Time.Clock.now clock) timeline) |> ignore
+            Task.run (Timeline.removeTasks (Time.Clock.localTime clock) timeline) |> ignore
             scheduleNextRun scheduler
             None
         | Task.On.Exn (_, err) ->
             assert false
             raise err
-    let delay = Time.Delay.fromTo (Time.Clock.now clock) nextArrival
+    let delay = Time.Delay.fromTo (Time.Clock.localTime clock) nextArrival
     Timer.setTimer task delay timer
 
 let rec private add time period task (cancelRef: Disposable.T ref) scheduler =
@@ -101,7 +101,7 @@ let rec private add time period task (cancelRef: Disposable.T ref) scheduler =
 
 let schedule delay period task scheduler =
         let (Scheduler (_, _, clock, _)) = scheduler
-        let now = Time.Clock.now clock
+        let now = Time.Clock.localTime clock
         let time =
             match delay with
             | None -> now

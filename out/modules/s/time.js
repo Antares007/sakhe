@@ -8,8 +8,8 @@ exports.add = add;
 exports.DelayModule$$$return$0027 = DelayModule$$$return$0027;
 exports.DelayModule$$$value = DelayModule$$$value;
 exports.DelayModule$$$fromTo = DelayModule$$$fromTo;
-exports.ClockModule$$$return$0027 = ClockModule$$$return$0027;
-exports.ClockModule$$$now = ClockModule$$$now;
+exports.ClockModule$$$localTime = ClockModule$$$localTime;
+exports.ClockModule$$$performanceClock = void 0;
 
 var _Util = require("../fable-core.2.0.0-beta-004/Util");
 
@@ -46,11 +46,13 @@ function DelayModule$$$fromTo(_arg2$$1, _arg1$$2) {
   return (0, _Util.max)(_Util.comparePrimitives, 0, to$0027 - from);
 }
 
-function ClockModule$$$return$0027(f$$1) {
-  return f$$1;
-}
+const ClockModule$$$performanceClock = [function () {
+  return Math.floor(window.performance.now());
+}, 0];
+exports.ClockModule$$$performanceClock = ClockModule$$$performanceClock;
 
-function ClockModule$$$now(_arg1$$3) {
-  const f$$2 = _arg1$$3;
-  return f$$2();
+function ClockModule$$$localTime(_arg1$$3) {
+  const t = _arg1$$3[0]();
+
+  return t + _arg1$$3[1];
 }

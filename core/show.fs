@@ -53,7 +53,7 @@ let d = ref Disposable.empty
 let see =
     Stream.mergeArray [|
         Stream.periodic (delay 10000) |> Stream.map (fun () -> 10000)
-        now2 42 |> Stream.map (fun x -> Disposable.dispose d.Value; x)
+        now2 42 // |> Stream.map (fun x -> Disposable.dispose d.Value; x)
         Stream.periodic (delay 1000) |> Stream.map (fun () -> 1000)
         Stream.periodic (delay 2000) |> Stream.map (fun () -> 2000)
         Stream.periodic (delay 3000) |> Stream.map (fun () -> 3000)

@@ -4,7 +4,7 @@ open Fable.Core
 type [<Erase>] Offset = private Offset of float
 type [<Erase>] Delay = private PositiveInt of int
 type [<Erase>] T = private Time of float
-type [<Erase>] Clock = private Clock of ((unit -> T))
+type [<Erase>] Clock = private Clock of ((unit -> T) * Offset)
 
 let return' f =
     assert (f >= 0.0)
@@ -24,7 +24,11 @@ module Delay =
         PositiveInt << unbox <| System.Math.Max (0., to' - from)
 
 module Clock =
+    open Fable.Import.Browser
 
-    let return' f  = Clock (f)
+    let performanceClock =
+        Clock (
+                fun () -> Time <| System.Math.Floor(window.performance.now ())
+              , Offset 0.0)
 
-    let now (Clock f) = f()
+    let localTime (Clock (f, Offset offset)) = let (Time t) = f() in Time <| t + offset

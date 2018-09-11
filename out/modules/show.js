@@ -102,41 +102,37 @@ function now2(a) {
 
 const d = new _Types.FSharpRef(_disposable.empty);
 exports.d = d;
-const see = (0, _stream.run)(scheduler, (0, _sink.return$0027)(function (_arg1$$3) {
-  switch (_arg1$$3.tag) {
+const see = (0, _stream.run)(scheduler, (0, _sink.return$0027)(function (_arg1$$2) {
+  switch (_arg1$$2.tag) {
     case 1:
       {
-        const t$$4 = _arg1$$3.fields[0];
+        const t$$4 = _arg1$$2.fields[0];
         (0, _String.toConsole)((0, _String.printf)("End at %A"))(t$$4);
         break;
       }
 
     case 2:
       {
-        const t$$5 = _arg1$$3.fields[0];
-        const err$$2 = _arg1$$3.fields[1];
+        const t$$5 = _arg1$$2.fields[0];
+        const err$$2 = _arg1$$2.fields[1];
         (0, _String.toConsole)((0, _String.printf)("Error %A at %A"))(err$$2)(t$$5);
         break;
       }
 
     default:
       {
-        const t$$3 = _arg1$$3.fields[0];
-        const e = _arg1$$3.fields[1] | 0;
+        const t$$3 = _arg1$$2.fields[0];
+        const e = _arg1$$2.fields[1] | 0;
         (0, _String.toConsole)((0, _String.printf)("Event %A at %A"))(e)(t$$3);
       }
   }
 }), (0, _stream.mergeArray)([(0, _stream.map)(function f$$3() {
   return 10000;
-}, (0, _stream.periodic)(delay(10000))), (0, _stream.map)(function f$$5(x$$1) {
-  const f$$4 = d.contents;
-  f$$4();
-  return x$$1 | 0;
-}, now2(42)), (0, _stream.map)(function f$$6() {
+}, (0, _stream.periodic)(delay(10000))), now2(42), (0, _stream.map)(function f$$4() {
   return 1000;
-}, (0, _stream.periodic)(delay(1000))), (0, _stream.map)(function f$$7() {
+}, (0, _stream.periodic)(delay(1000))), (0, _stream.map)(function f$$5() {
   return 2000;
-}, (0, _stream.periodic)(delay(2000))), (0, _stream.map)(function f$$8() {
+}, (0, _stream.periodic)(delay(2000))), (0, _stream.map)(function f$$6() {
   return 3000;
 }, (0, _stream.periodic)(delay(3000)))]));
 exports.see = see;
