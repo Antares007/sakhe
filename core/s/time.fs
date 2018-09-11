@@ -1,7 +1,7 @@
 module Sakhe.S.Time
 open Fable.Core
 
-type [<Erase>] Offset = private Offset of (unit -> float)
+type [<Erase>] Offset = private Offset of (Lazy<float>)
 type [<Erase>] Delay = private PositiveInt of int
 type [<Erase>] Point = private Point of float
 type [<Erase>] T = private Time of (unit -> float)
@@ -29,17 +29,15 @@ module Clock =
 
     let performanceClock =
         Clock ( Time <| fun () -> System.Math.Floor(window.performance.now ())
-              , Offset <| fun () -> 0.0)
+              , Offset <| lazy 0.0)
     let localClock (Clock (Time t, Offset o)) =
         let fZero = lazy ( t() )
         Clock ( Time <| fun () ->
                             let t = 0.0 - fZero.Value + t()
                             assert (t >= 0.0)
                             t  // t = 0.0 at first run
-              , Offset <| fun () -> 0.0 - fZero.Value + o())
+              , Offset <| lazy (0.0 - fZero.Value + o.Value))
 
-    let localTime (Clock (Time t, Offset offset)) =
-        Time <| fun () -> t()
+    let value (Clock (t, o)) = (t, o)
 
-    let originTime (Clock (Time t, Offset offset)) =
-        Time <| fun () -> t() + offset()
+    let localTime (Clock (t, _)) = t

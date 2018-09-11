@@ -7,7 +7,6 @@ exports.return$0027 = return$0027;
 exports.scheduleNextRun3 = scheduleNextRun3;
 exports.schedule = schedule;
 exports.getClock = getClock;
-exports.relative = relative;
 
 var _Util = require("../fable-core.2.0.0-beta-004/Util");
 
@@ -88,15 +87,15 @@ function TimelineModule$$$removeTasks(time$$1, _arg1$$2) {
   }, array$$3.splice(0, TimelineModule$$$findAppendPosition(time$$1, array$$3) + 1)), Array));
 }
 
-function return$0027(clock) {
-  return [new _Types.FSharpRef(null), _timer.defaultTimer, clock, TimelineModule$$$empty()];
+function return$0027(originClock) {
+  return [new _Types.FSharpRef(null), _timer.defaultTimer, (0, _time.ClockModule$$$localClock)(_time.ClockModule$$$performanceClock), TimelineModule$$$empty(), originClock];
 }
 
 function scheduleNextRun2(scheduler, point) {
   const timer = scheduler[1];
   const timeline = scheduler[3];
   const netRunRef = scheduler[0];
-  const clock$$1 = scheduler[2];
+  const clock = scheduler[2];
 
   if (point != null) {
     const point$$1 = point;
@@ -121,8 +120,8 @@ function scheduleNextRun3(scheduler$$1, point$$2) {
   const timer$$1 = scheduler$$1[1];
   const timeline$$1 = scheduler$$1[3];
   const netRunRef$$1 = scheduler$$1[0];
-  const clock$$2 = scheduler$$1[2];
-  const now = (0, _time.PointModule$$$return$0027)((0, _time.ClockModule$$$localTime)(clock$$2));
+  const clock$$1 = scheduler$$1[2];
+  const now = (0, _time.PointModule$$$return$0027)((0, _time.ClockModule$$$localTime)(clock$$1));
   const delay = (0, _time.DelayModule$$$fromTo)(now, point$$2);
   const task$$1 = (0, _task.return$0027)(function (_arg1$$4) {
     if (_arg1$$4.tag === 1) {
@@ -136,7 +135,7 @@ function scheduleNextRun3(scheduler$$1, point$$2) {
     } else {
       const s$$3 = _arg1$$4.fields[0][1];
       netRunRef$$1.contents = null;
-      const now$$1 = (0, _time.PointModule$$$return$0027)((0, _time.ClockModule$$$localTime)(clock$$2));
+      const now$$1 = (0, _time.PointModule$$$return$0027)((0, _time.ClockModule$$$localTime)(clock$$1));
       (0, _task.run)(TimelineModule$$$removeTasks(now$$1, timeline$$1));
       const point$$3 = TimelineModule$$$nextArrival(timeline$$1);
       scheduleNextRun2(scheduler$$1, point$$3);
@@ -148,6 +147,7 @@ function scheduleNextRun3(scheduler$$1, point$$2) {
 
 function add(point$$4, period, task$$2, cancelRef, scheduler$$2) {
   const timeline$$2 = scheduler$$2[3];
+  const originClock$$1 = scheduler$$2[4];
   let task$$3;
 
   if (period == null) {
@@ -182,8 +182,8 @@ function add(point$$4, period, task$$2, cancelRef, scheduler$$2) {
 
 function schedule(delay$$1, period$$2, task$$6, scheduler$$3) {
   const netRunRef$$2 = scheduler$$3[0];
-  const clock$$3 = scheduler$$3[2];
-  const now$$2 = (0, _time.ClockModule$$$localTime)(clock$$3);
+  const localClock = scheduler$$3[2];
+  const now$$2 = (0, _time.ClockModule$$$localTime)(localClock);
   let now$$3;
 
   if (delay$$1 != null) {
@@ -205,8 +205,4 @@ function schedule(delay$$1, period$$2, task$$6, scheduler$$3) {
 
 function getClock(_arg1$$8) {
   return _arg1$$8[2];
-}
-
-function relative(_arg1$$9) {
-  return [_arg1$$9[0], _arg1$$9[1], _arg1$$9[2], _arg1$$9[3]];
 }
