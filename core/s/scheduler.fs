@@ -118,11 +118,5 @@ let schedule delay period task scheduler =
 
         add point period task cancelRef scheduler
         scheduleNextRun2 scheduler (Some point)
-        // match netRunRef.Value with
-        // | None -> scheduleNextRun2 scheduler point
-        // | Some (nextRun, cancel) ->
-        //     if nextRun <= point then ()
-        //     else
-        //     Disposable.dispose cancel
-        //     scheduleNextRun2 scheduler point
+
         Disposable.return' <| fun () -> Disposable.dispose cancelRef.Value
