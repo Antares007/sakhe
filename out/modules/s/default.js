@@ -10,8 +10,6 @@ var _Util = require("../fable-core.2.0.0-beta-004/Util");
 
 var _time = require("./time");
 
-var _clock = require("./clock");
-
 var _timer = require("./timer");
 
 var _scheduler = require("./scheduler");
@@ -20,7 +18,7 @@ function clock() {
   const runAt = new _Util.Lazy(function () {
     return Math.floor(performance.now());
   });
-  return (0, _clock.return$0027)(function () {
+  return (0, _time.ClockModule$$$return$0027)(function () {
     const prev = runAt.Value;
     return (0, _time.return$0027)(Math.floor(performance.now()) - prev);
   });

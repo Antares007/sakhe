@@ -7,7 +7,7 @@ type [<Erase>] Timeline = private Timeline of ResizeArray< (Time.T * Task.T<unit
 
 type [<Erase>] T =
     private
-    | Scheduler of (NextRunRef * Timer.T * Clock.T * Timeline)
+    | Scheduler of (NextRunRef * Timer.T * Time.Clock * Timeline)
 
 module private Timeline =
     open System.Collections.Generic
@@ -68,13 +68,13 @@ and private setNextRun nextArrival scheduler =
     let task = Task.return' <| function
         | Task.On.Run ((), s) ->
             ref.Value <- None
-            Task.run (Timeline.removeTasks (Clock.now clock) timeline) |> ignore
+            Task.run (Timeline.removeTasks (Time.Clock.now clock) timeline) |> ignore
             scheduleNextRun scheduler
             None
         | Task.On.Exn (_, err) ->
             assert false
             raise err
-    let delay = Time.Delay.fromTo (Clock.now clock) nextArrival
+    let delay = Time.Delay.fromTo (Time.Clock.now clock) nextArrival
     Timer.setTimer task delay timer
 
 let rec private add time period task (cancelRef: Disposable.T ref) scheduler =
@@ -101,7 +101,7 @@ let rec private add time period task (cancelRef: Disposable.T ref) scheduler =
 
 let schedule delay period task scheduler =
         let (Scheduler (_, _, clock, _)) = scheduler
-        let now = Clock.now clock
+        let now = Time.Clock.now clock
         let time =
             match delay with
             | None -> now

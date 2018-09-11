@@ -6,7 +6,6 @@
   <ItemGroup>
     <Compile Include="s/time.fs" />
     <Compile Include="s/disposable.fs" />
-    <Compile Include="s/clock.fs" />
     <Compile Include="s/task.fs" />
     <Compile Include="s/timer.fs" />
     <Compile Include="s/scheduler.fs" />

@@ -16,8 +16,6 @@ var _Array = require("../fable-core.2.0.0-beta-004/Array");
 
 var _Types = require("../fable-core.2.0.0-beta-004/Types");
 
-var _clock = require("./clock");
-
 var _time = require("./time");
 
 var _timer = require("./timer");
@@ -133,12 +131,12 @@ function setNextRun(nextArrival$$2, scheduler$$1) {
     } else {
       const s$$3 = _arg1$$4.fields[0][1];
       ref$$1.contents = null;
-      (0, _task.run)(TimelineModule$$$removeTasks((0, _clock.now)(clock$$1), timeline$$1));
+      (0, _task.run)(TimelineModule$$$removeTasks((0, _time.ClockModule$$$now)(clock$$1), timeline$$1));
       scheduleNextRun(scheduler$$1);
       return null;
     }
   });
-  const delay = (0, _time.DelayModule$$$fromTo)((0, _clock.now)(clock$$1), nextArrival$$2);
+  const delay = (0, _time.DelayModule$$$fromTo)((0, _time.ClockModule$$$now)(clock$$1), nextArrival$$2);
   return (0, _timer.setTimer)(task$$1, delay, timer$$1);
 }
 
@@ -178,7 +176,7 @@ function add(time$$2, period, task$$2, cancelRef, scheduler$$2) {
 
 function schedule(delay$$1, period$$2, task$$6, scheduler$$3) {
   const clock$$2 = scheduler$$3[2];
-  const now = (0, _clock.now)(clock$$2);
+  const now = (0, _time.ClockModule$$$now)(clock$$2);
   let time$$5;
 
   if (delay$$1 != null) {
