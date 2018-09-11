@@ -66,7 +66,13 @@ function ClockModule$$$localClock(_arg1$$5) {
     return _arg1$$5[0]();
   });
   return [function () {
-    return _arg1$$5[0]() - fZero.Value;
+    const t$$4 = 0 - fZero.Value + _arg1$$5[0]();
+
+    if (!(t$$4 >= 0)) {
+      debugger;
+    }
+
+    return t$$4;
   }, function () {
     return 0 - fZero.Value + _arg1$$5[1]();
   }];

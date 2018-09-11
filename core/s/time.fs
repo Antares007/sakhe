@@ -32,7 +32,10 @@ module Clock =
               , Offset <| fun () -> 0.0)
     let localClock (Clock (Time t, Offset o)) =
         let fZero = lazy ( t() )
-        Clock ( Time <| fun () -> t() - fZero.Value // = 0.0 at first run
+        Clock ( Time <| fun () ->
+                            let t = 0.0 - fZero.Value + t()
+                            assert (t >= 0.0)
+                            t  // t = 0.0 at first run
               , Offset <| fun () -> 0.0 - fZero.Value + o())
 
     let localTime (Clock (Time t, Offset offset)) =
