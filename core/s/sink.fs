@@ -7,9 +7,9 @@ type Now<'a> =
     | Error of exn
 
 type On<'a> =
-    | Event of Time.T * 'a
-    | End   of Time.T
-    | Error of Time.T * exn
+    | Event of Time.Point * 'a
+    | End   of Time.Point
+    | Error of Time.Point * exn
 
 type [<Erase>] T<'a> = Sink of (On<'a> -> unit)
 

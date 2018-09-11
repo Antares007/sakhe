@@ -1,9 +1,13 @@
 module Sakhe.S.Scheduler
 open Fable.Core
 
-type [<Erase>] NextRunRef = private Ref of (Time.T * Disposable.T) option ref
+type [<Erase>] NextRunRef =
+    private
+    | Ref of (Time.Point * Disposable.T) option ref
 
-type [<Erase>] Timeline = private Timeline of ResizeArray< (Time.T * Task.T<unit>) >
+type [<Erase>] Timeline =
+    private
+    | Timeline of ResizeArray< (Time.Point * Task.T<unit>) >
 
 type [<Erase>] T =
     private
@@ -17,7 +21,6 @@ module private Timeline =
         member inline a.``length``: int = !!a?length
         member inline a.``splice`` (s: int, e: int): ResizeArray<'a> = !!a?splice(s, e)
         member inline a.``splice`` (s: int, e: int, v: 'a): ResizeArray<'a> = !!a?splice(s, e, v)
-
 
     let private findAppendPosition (a: 'a) (array: List<'a * 'b>) =
         let rec go l r =
@@ -68,16 +71,18 @@ and private setNextRun nextArrival scheduler =
     let task = Task.return' <| function
         | Task.On.Run ((), s) ->
             ref.Value <- None
-            Task.run (Timeline.removeTasks (Time.Clock.localTime clock) timeline) |> ignore
+            let now = Time.Point.return' <| Time.Clock.localTime clock
+            Task.run (Timeline.removeTasks now timeline) |> ignore
             scheduleNextRun scheduler
             None
         | Task.On.Exn (_, err) ->
             assert false
             raise err
-    let delay = Time.Delay.fromTo (Time.Clock.localTime clock) nextArrival
+    let now = Time.Point.return' <| Time.Clock.localTime clock
+    let delay = Time.Delay.fromTo now nextArrival
     Timer.setTimer task delay timer
 
-let rec private add time period task (cancelRef: Disposable.T ref) scheduler =
+let rec private add (point: Time.Point) period task (cancelRef: Disposable.T ref) scheduler =
     let (Scheduler (_, _, _, timeline)) = scheduler
     let task =
         match period with
@@ -85,28 +90,29 @@ let rec private add time period task (cancelRef: Disposable.T ref) scheduler =
             Task.append
                 task
                 (Task.return' <| function
-                | Task.On.Run (time: Time.T, _) ->
-                    let time = Time.add time period
-                    add time (Some period) task cancelRef scheduler
+                | Task.On.Run (time: Time.Point, _) ->
+                    let point = Time.Point.add time period
+                    add point (Some period) task cancelRef scheduler
                     None
                 | Task.On.Exn _ ->
                     assert false
                     None)
         | None -> task
     let (task, cancelD) = Task.Cancelable.extend task
-    let task = task |> Task.map (fun () -> time)
+    let task = task |> Task.map (fun () -> point)
     Disposable.dispose cancelRef.Value
     cancelRef.Value <- cancelD
-    Timeline.add time task timeline
+    Timeline.add point task timeline
 
 let schedule delay period task scheduler =
         let (Scheduler (_, _, clock, _)) = scheduler
         let now = Time.Clock.localTime clock
-        let time =
+        let now =
             match delay with
             | None -> now
             | Some delay -> Time.add now delay
         let cancelRef = ref Disposable.empty
-        add time period task cancelRef scheduler
+
+        add (Time.Point.return' now) period task cancelRef scheduler
         scheduleNextRun scheduler
         Disposable.return' <| fun () -> Disposable.dispose cancelRef.Value

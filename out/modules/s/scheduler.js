@@ -131,16 +131,18 @@ function setNextRun(nextArrival$$2, scheduler$$1) {
     } else {
       const s$$3 = _arg1$$4.fields[0][1];
       ref$$1.contents = null;
-      (0, _task.run)(TimelineModule$$$removeTasks((0, _time.ClockModule$$$localTime)(clock$$1), timeline$$1));
+      const now = (0, _time.PointModule$$$return$0027)((0, _time.ClockModule$$$localTime)(clock$$1));
+      (0, _task.run)(TimelineModule$$$removeTasks(now, timeline$$1));
       scheduleNextRun(scheduler$$1);
       return null;
     }
   });
-  const delay = (0, _time.DelayModule$$$fromTo)((0, _time.ClockModule$$$localTime)(clock$$1), nextArrival$$2);
+  const now$$1 = (0, _time.PointModule$$$return$0027)((0, _time.ClockModule$$$localTime)(clock$$1));
+  const delay = (0, _time.DelayModule$$$fromTo)(now$$1, nextArrival$$2);
   return (0, _timer.setTimer)(task$$1, delay, timer$$1);
 }
 
-function add(time$$2, period, task$$2, cancelRef, scheduler$$2) {
+function add(point, period, task$$2, cancelRef, scheduler$$2) {
   const timeline$$2 = scheduler$$2[3];
   let task$$3;
 
@@ -156,9 +158,9 @@ function add(time$$2, period, task$$2, cancelRef, scheduler$$2) {
 
         return null;
       } else {
-        const time$$3 = _arg1$$5.fields[0][0];
-        const time$$4 = (0, _time.add)(time$$3, period$$1);
-        add(time$$4, period$$1, task$$2, cancelRef, scheduler$$2);
+        const time$$2 = _arg1$$5.fields[0][0];
+        const point$$1 = (0, _time.PointModule$$$add)(time$$2, period$$1);
+        add(point$$1, period$$1, task$$2, cancelRef, scheduler$$2);
         return null;
       }
     }));
@@ -166,28 +168,28 @@ function add(time$$2, period, task$$2, cancelRef, scheduler$$2) {
 
   const patternInput$$1 = (0, _task.Cancelable$$$extend)(task$$3);
   const task$$5 = (0, _task.map)(function f$$3() {
-    return time$$2;
+    return point;
   }, patternInput$$1[0]);
   const f$$4 = cancelRef.contents;
   f$$4();
   cancelRef.contents = patternInput$$1[1];
-  TimelineModule$$$add(time$$2, task$$5, timeline$$2);
+  TimelineModule$$$add(point, task$$5, timeline$$2);
 }
 
 function schedule(delay$$1, period$$2, task$$6, scheduler$$3) {
   const clock$$2 = scheduler$$3[2];
-  const now = (0, _time.ClockModule$$$localTime)(clock$$2);
-  let time$$5;
+  const now$$2 = (0, _time.ClockModule$$$localTime)(clock$$2);
+  let now$$3;
 
   if (delay$$1 != null) {
     const delay$$2 = delay$$1;
-    time$$5 = (0, _time.add)(now, delay$$2);
+    now$$3 = (0, _time.add)(now$$2, delay$$2);
   } else {
-    time$$5 = now;
+    now$$3 = now$$2;
   }
 
   const cancelRef$$1 = new _Types.FSharpRef(_disposable.empty);
-  add(time$$5, period$$2, task$$6, cancelRef$$1, scheduler$$3);
+  add((0, _time.PointModule$$$return$0027)(now$$3), period$$2, task$$6, cancelRef$$1, scheduler$$3);
   scheduleNextRun(scheduler$$3);
   return (0, _disposable.return$0027)(function () {
     const f$$6 = cancelRef$$1.contents;

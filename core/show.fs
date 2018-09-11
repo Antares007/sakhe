@@ -44,10 +44,6 @@ let now2 a =
         s <| Sink.Now.Error err
         None
 
-
-
-
-
 let d = ref Disposable.empty
 
 let see =

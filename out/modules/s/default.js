@@ -16,5 +16,5 @@ const timer = (0, _timer.return$0027)(setTimeout, clearTimeout);
 exports.timer = timer;
 
 function scheduler() {
-  return (0, _scheduler.return$0027)(timer, _time.ClockModule$$$performanceClock);
+  return (0, _scheduler.return$0027)(timer, (0, _time.ClockModule$$$localClock)(_time.ClockModule$$$performanceClock));
 }

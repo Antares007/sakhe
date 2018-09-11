@@ -5,4 +5,4 @@ open Fable.Import.Browser
 
 let timer = Timer.return' setTimeout clearTimeout
 
-let scheduler () = Scheduler.return' timer (Time.Clock.performanceClock)
+let scheduler () = Scheduler.return' timer (Time.Clock.localClock Time.Clock.performanceClock)
