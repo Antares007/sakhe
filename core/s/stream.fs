@@ -20,6 +20,9 @@ let fromTask
         |> Task.map (fun (time, cs) -> s time, cs)
         |> Scheduler.schedule delay period)
 
+let fromTask2 delay period f = Stream <| fun (sink, scheduler) ->
+    Scheduler.schedule delay period (Task.return' <| f sink scheduler) scheduler
+
 let map f source = Stream <| fun (sink, scheduler) ->
     source |> run scheduler (Sink.map f sink)
 
@@ -60,6 +63,26 @@ let empty<'a> = Stream <| fun (sink: Sink.T<'a>, scheduler) ->
         | Task.On.Exn ((t, _), err) ->
             sink |> Sink.Send.error t err
             None)
+let empty2<'a> =
+    (fun (s: Sink.T<'a>) _ -> function
+    | Task.On.Run (t, cs) ->
+        s |> Sink.Send.end' t
+        None
+    | Task.On.Exn ((t, _), err) ->
+        s |> Sink.Send.error t err
+        None)
+    |> fromTask2 None None
+
+let startWith a source =
+    (fun (s: Sink.T<'a>) scheduler -> function
+    | Task.On.Run (t, cs) ->
+        s |> Sink.Send.event t a
+        Some <| run scheduler s source
+    | Task.On.Exn ((t, _), err) ->
+        s |> Sink.Send.error t err
+        None)
+    |> fromTask2 None None
+
 
 /// Create a Stream containing no events and never ends.
 /// ```

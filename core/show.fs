@@ -28,37 +28,32 @@ let fs = Fable.Core.JsInterop.importAll<Fable.Import.Node.Fs.IExports> "fs"
 let http = Fable.Core.JsInterop.importAll<Fable.Import.Node.Http.IExports> "http"
 
 
-let tree a =
-    function
-        | Task.On.Run (s, cs) ->
-            s <| Sink.Now.Event a
-            s <| Sink.Now.End
-            None
-        | Task.On.Exn ((s, cs), err) ->
-            s <| Sink.Now.Error err
-            None
-    |> Stream.fromTask None None
-
 let now2 a =
-    function
-        | Task.On.Run (s, cs) ->
-            s <| Sink.Now.Event a
-            s <| Sink.Now.End
-            None
-        | Task.On.Exn ((s, cs), err) ->
-            s <| Sink.Now.Error err
-            None
-    |> Stream.fromTask None None
+    Stream.fromTask None None <| function
+    | Task.On.Run (s, cs) ->
+        s <| Sink.Now.Event a
+        printfn "yess"
+        Task.Cancelable.ifCanceledThenRaiseCancellationException cs
+        printfn "noooooo"
+        s <| Sink.Now.End
+        None
+    | Task.On.Exn (_, Task.Cancelable.Exception) ->
+        printfn "yay"
+        None
+    | Task.On.Exn ((s, cs), err) ->
+        s <| Sink.Now.Error err
+        None
 
 
 
 
 
+let d = ref Disposable.empty
 
 let see =
     Stream.mergeArray [|
         Stream.periodic (delay 10000) |> Stream.map (fun () -> 10000)
-        now2 42
+        now2 42 |> Stream.map (fun x -> Disposable.dispose d.Value; x)
         Stream.periodic (delay 1000) |> Stream.map (fun () -> 1000)
         Stream.periodic (delay 2000) |> Stream.map (fun () -> 2000)
         Stream.periodic (delay 3000) |> Stream.map (fun () -> 3000)
@@ -68,6 +63,7 @@ let see =
         | Sink.On.End (t) -> printfn "End at %A" t
         | Sink.On.Error (t, err) -> printfn "Error %A at %A" err t)
 
+d.Value <- see
 
 open Fable.Import.Browser
 open Fable.Core.JsInterop
