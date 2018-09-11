@@ -6,7 +6,7 @@ type [<Erase>] T =
     private
     | Timer of (Task.T<unit * Task.Cancelable.Source> -> Time.Delay -> Disposable.T)
 
-let return' set clear = Timer <| fun task delay ->
+let private return' set clear = Timer <| fun task delay ->
     let delay = Time.Delay.value delay
     let (task, cancelDisposable) = Task.Cancelable.extend task
     if 0 = delay then
@@ -17,5 +17,6 @@ let return' set clear = Timer <| fun task delay ->
         Disposable.append
             (Disposable.return' (fun () -> clear handle))
             cancelDisposable
+let defaultTimer = return' setTimeout clearTimeout
 
 let setTimer task time (Timer set) = set task time

@@ -1,5 +1,7 @@
 module Sakhe.S.Scheduler
 open Fable.Core
+open Sakhe.S
+open System.Timers
 
 type [<Erase>] NextRunRef =
     private
@@ -51,8 +53,8 @@ module private Timeline =
         |> Seq.toArray
         |> Task.appendArray
 
-let return' timer clock=
-    Scheduler (Ref (ref None), timer, clock, Timeline.empty())
+let return' clock =
+    Scheduler (Ref (ref None), Timer.defaultTimer, clock, Timeline.empty())
 
 let rec private scheduleNextRun2 scheduler point =
     let (Scheduler (Ref netRunRef, timer, clock, timeline)) = scheduler
@@ -120,3 +122,7 @@ let schedule delay period task scheduler =
         scheduleNextRun2 scheduler (Some point)
 
         Disposable.return' <| fun () -> Disposable.dispose cancelRef.Value
+let getClock (Scheduler (_,_,clock,_)) = clock
+
+let relative (Scheduler (Ref netRunRef, timer, clock, timeline)) =
+    Scheduler (Ref netRunRef, timer, clock, timeline)

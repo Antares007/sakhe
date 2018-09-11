@@ -9,6 +9,16 @@ let return' f = Stream <| fun (sink, scheduler) ->
 let run scheduler sink (Stream f) =
     f (sink, scheduler)
 
+/// Create a stream with its own local clock
+/// This transforms time from the provided scheduler's clock to a stream-local
+/// clock (which starts at 0), and then *back* to the scheduler's clock before
+/// propagating events to sink.  In other words, upstream sources will see local times,
+/// and downstream sinks will see non-local (original) times.let withLocalTime t upStream =
+let withLocalTime t upStream = Stream <| fun (downStreamSink, downScheduler) ->
+    let downClock = Scheduler.getClock downScheduler
+    let upprClock = Time.Clock.localClock downClock
+    Disposable.empty
+
 let fromTask
      delay period t = Stream <| fun (sink, scheduler) ->
     let s t = function

@@ -3,8 +3,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.return$0027 = return$0027;
 exports.setTimer = setTimer;
+exports.defaultTimer = void 0;
 
 var _time = require("./time");
 
@@ -32,6 +32,9 @@ function return$0027(set, clear) {
     };
   };
 }
+
+const defaultTimer = return$0027(setTimeout, clearTimeout);
+exports.defaultTimer = defaultTimer;
 
 function setTimer(task$$2, time, _arg1) {
   const set$$1 = _arg1;

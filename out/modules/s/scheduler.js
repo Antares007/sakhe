@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.return$0027 = return$0027;
 exports.scheduleNextRun3 = scheduleNextRun3;
 exports.schedule = schedule;
+exports.getClock = getClock;
+exports.relative = relative;
 
 var _Util = require("../fable-core.2.0.0-beta-004/Util");
 
@@ -17,9 +19,9 @@ var _Array = require("../fable-core.2.0.0-beta-004/Array");
 
 var _Types = require("../fable-core.2.0.0-beta-004/Types");
 
-var _time = require("./time");
-
 var _timer = require("./timer");
+
+var _time = require("./time");
 
 var _disposable = require("./disposable");
 
@@ -86,12 +88,12 @@ function TimelineModule$$$removeTasks(time$$1, _arg1$$2) {
   }, array$$3.splice(0, TimelineModule$$$findAppendPosition(time$$1, array$$3) + 1)), Array));
 }
 
-function return$0027(timer, clock) {
-  return [new _Types.FSharpRef(null), timer, clock, TimelineModule$$$empty()];
+function return$0027(clock) {
+  return [new _Types.FSharpRef(null), _timer.defaultTimer, clock, TimelineModule$$$empty()];
 }
 
 function scheduleNextRun2(scheduler, point) {
-  const timer$$1 = scheduler[1];
+  const timer = scheduler[1];
   const timeline = scheduler[3];
   const netRunRef = scheduler[0];
   const clock$$1 = scheduler[2];
@@ -116,7 +118,7 @@ function scheduleNextRun2(scheduler, point) {
 }
 
 function scheduleNextRun3(scheduler$$1, point$$2) {
-  const timer$$2 = scheduler$$1[1];
+  const timer$$1 = scheduler$$1[1];
   const timeline$$1 = scheduler$$1[3];
   const netRunRef$$1 = scheduler$$1[0];
   const clock$$2 = scheduler$$1[2];
@@ -141,7 +143,7 @@ function scheduleNextRun3(scheduler$$1, point$$2) {
       return null;
     }
   });
-  netRunRef$$1.contents = [point$$2, (0, _timer.setTimer)(task$$1, delay, timer$$2)];
+  netRunRef$$1.contents = [point$$2, (0, _timer.setTimer)(task$$1, delay, timer$$1)];
 }
 
 function add(point$$4, period, task$$2, cancelRef, scheduler$$2) {
@@ -199,4 +201,12 @@ function schedule(delay$$1, period$$2, task$$6, scheduler$$3) {
     const f$$6 = cancelRef$$1.contents;
     f$$6();
   });
+}
+
+function getClock(_arg1$$8) {
+  return _arg1$$8[2];
+}
+
+function relative(_arg1$$9) {
+  return [_arg1$$9[0], _arg1$$9[1], _arg1$$9[2], _arg1$$9[3]];
 }
