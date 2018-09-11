@@ -54,33 +54,35 @@ module private Timeline =
 let return' timer clock=
     Scheduler (Ref (ref None), timer, clock, Timeline.empty())
 
-let rec private scheduleNextRun scheduler =
-    let (Scheduler (Ref ref, _, _, timeline)) = scheduler
-    match (Timeline.nextArrival timeline, ref.Value) with
-    | Some nextArrival, None ->
-        ref.Value <- Some (nextArrival, setNextRun nextArrival scheduler)
-    | Some nextArrival, Some (scheduledNextArrival, nextRun) ->
-        if nextArrival >= scheduledNextArrival then ()
-        else
-        Disposable.dispose nextRun
-        ref.Value <- Some (nextArrival, setNextRun nextArrival scheduler)
-    | None, None -> ()
-    | None, Some _ -> assert false; ()
-and private setNextRun nextArrival scheduler =
-    let (Scheduler (Ref ref, timer, clock, timeline)) = scheduler
+let rec private scheduleNextRun2 scheduler point =
+    let (Scheduler (Ref netRunRef, timer, clock, timeline)) = scheduler
+    match point with
+    | None -> ()
+    | Some point ->
+        match netRunRef.Value with
+        | None -> scheduleNextRun3 scheduler point
+        | Some (nextRun, cancel) ->
+            if nextRun <= point then ()
+            else
+            Disposable.dispose cancel
+            scheduleNextRun3 scheduler nextRun
+and scheduleNextRun3 scheduler point =
+    let (Scheduler (Ref netRunRef, timer, clock, timeline)) = scheduler
+    let now = Time.Point.return' <| Time.Clock.localTime clock
+    let delay = Time.Delay.fromTo now point
+
     let task = Task.return' <| function
         | Task.On.Run ((), s) ->
-            ref.Value <- None
+            netRunRef.Value <- None
             let now = Time.Point.return' <| Time.Clock.localTime clock
             Task.run (Timeline.removeTasks now timeline) |> ignore
-            scheduleNextRun scheduler
+            let point = Timeline.nextArrival timeline
+            scheduleNextRun2 scheduler point
             None
         | Task.On.Exn (_, err) ->
             assert false
             raise err
-    let now = Time.Point.return' <| Time.Clock.localTime clock
-    let delay = Time.Delay.fromTo now nextArrival
-    Timer.setTimer task delay timer
+    netRunRef.Value <- Some (point, Timer.setTimer task delay timer)
 
 let rec private add (point: Time.Point) period task (cancelRef: Disposable.T ref) scheduler =
     let (Scheduler (_, _, _, timeline)) = scheduler
@@ -105,14 +107,22 @@ let rec private add (point: Time.Point) period task (cancelRef: Disposable.T ref
     Timeline.add point task timeline
 
 let schedule delay period task scheduler =
-        let (Scheduler (_, _, clock, _)) = scheduler
+        let (Scheduler (Ref netRunRef, _, clock, _)) = scheduler
         let now = Time.Clock.localTime clock
         let now =
             match delay with
             | None -> now
             | Some delay -> Time.add now delay
         let cancelRef = ref Disposable.empty
+        let point = Time.Point.return' now
 
-        add (Time.Point.return' now) period task cancelRef scheduler
-        scheduleNextRun scheduler
+        add point period task cancelRef scheduler
+        scheduleNextRun2 scheduler (Some point)
+        // match netRunRef.Value with
+        // | None -> scheduleNextRun2 scheduler point
+        // | Some (nextRun, cancel) ->
+        //     if nextRun <= point then ()
+        //     else
+        //     Disposable.dispose cancel
+        //     scheduleNextRun2 scheduler point
         Disposable.return' <| fun () -> Disposable.dispose cancelRef.Value

@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.return$0027 = return$0027;
+exports.scheduleNextRun3 = scheduleNextRun3;
 exports.schedule = schedule;
 
 var _Util = require("../fable-core.2.0.0-beta-004/Util");
@@ -89,36 +90,38 @@ function return$0027(timer, clock) {
   return [new _Types.FSharpRef(null), timer, clock, TimelineModule$$$empty()];
 }
 
-function scheduleNextRun(scheduler) {
+function scheduleNextRun2(scheduler, point) {
+  const timer$$1 = scheduler[1];
   const timeline = scheduler[3];
-  const ref = scheduler[0];
-  const matchValue = [TimelineModule$$$nextArrival(timeline), ref.contents];
+  const netRunRef = scheduler[0];
+  const clock$$1 = scheduler[2];
 
-  if (matchValue[0] == null) {
-    if (matchValue[1] != null) {
-      if (!false) {
-        debugger;
+  if (point != null) {
+    const point$$1 = point;
+    const matchValue = netRunRef.contents;
+
+    if (matchValue != null) {
+      const nextRun = matchValue[0];
+      const cancel = matchValue[1];
+
+      if ((0, _Util.compare)(nextRun, point$$1) <= 0) {} else {
+        const f = cancel;
+        f();
+        scheduleNextRun3(scheduler, nextRun);
       }
+    } else {
+      scheduleNextRun3(scheduler, point$$1);
     }
-  } else if (matchValue[1] != null) {
-    const nextArrival$$1 = matchValue[0];
-
-    if ((0, _Util.compare)(nextArrival$$1, matchValue[1][0]) >= 0) {} else {
-      const f = matchValue[1][1];
-      f();
-      ref.contents = [nextArrival$$1, setNextRun(nextArrival$$1, scheduler)];
-    }
-  } else {
-    const nextArrival = matchValue[0];
-    ref.contents = [nextArrival, setNextRun(nextArrival, scheduler)];
   }
 }
 
-function setNextRun(nextArrival$$2, scheduler$$1) {
-  const timer$$1 = scheduler$$1[1];
+function scheduleNextRun3(scheduler$$1, point$$2) {
+  const timer$$2 = scheduler$$1[1];
   const timeline$$1 = scheduler$$1[3];
-  const ref$$1 = scheduler$$1[0];
-  const clock$$1 = scheduler$$1[2];
+  const netRunRef$$1 = scheduler$$1[0];
+  const clock$$2 = scheduler$$1[2];
+  const now = (0, _time.PointModule$$$return$0027)((0, _time.ClockModule$$$localTime)(clock$$2));
+  const delay = (0, _time.DelayModule$$$fromTo)(now, point$$2);
   const task$$1 = (0, _task.return$0027)(function (_arg1$$4) {
     if (_arg1$$4.tag === 1) {
       const err = _arg1$$4.fields[1];
@@ -130,19 +133,18 @@ function setNextRun(nextArrival$$2, scheduler$$1) {
       throw err;
     } else {
       const s$$3 = _arg1$$4.fields[0][1];
-      ref$$1.contents = null;
-      const now = (0, _time.PointModule$$$return$0027)((0, _time.ClockModule$$$localTime)(clock$$1));
-      (0, _task.run)(TimelineModule$$$removeTasks(now, timeline$$1));
-      scheduleNextRun(scheduler$$1);
+      netRunRef$$1.contents = null;
+      const now$$1 = (0, _time.PointModule$$$return$0027)((0, _time.ClockModule$$$localTime)(clock$$2));
+      (0, _task.run)(TimelineModule$$$removeTasks(now$$1, timeline$$1));
+      const point$$3 = TimelineModule$$$nextArrival(timeline$$1);
+      scheduleNextRun2(scheduler$$1, point$$3);
       return null;
     }
   });
-  const now$$1 = (0, _time.PointModule$$$return$0027)((0, _time.ClockModule$$$localTime)(clock$$1));
-  const delay = (0, _time.DelayModule$$$fromTo)(now$$1, nextArrival$$2);
-  return (0, _timer.setTimer)(task$$1, delay, timer$$1);
+  netRunRef$$1.contents = [point$$2, (0, _timer.setTimer)(task$$1, delay, timer$$2)];
 }
 
-function add(point, period, task$$2, cancelRef, scheduler$$2) {
+function add(point$$4, period, task$$2, cancelRef, scheduler$$2) {
   const timeline$$2 = scheduler$$2[3];
   let task$$3;
 
@@ -159,8 +161,8 @@ function add(point, period, task$$2, cancelRef, scheduler$$2) {
         return null;
       } else {
         const time$$2 = _arg1$$5.fields[0][0];
-        const point$$1 = (0, _time.PointModule$$$add)(time$$2, period$$1);
-        add(point$$1, period$$1, task$$2, cancelRef, scheduler$$2);
+        const point$$5 = (0, _time.PointModule$$$add)(time$$2, period$$1);
+        add(point$$5, period$$1, task$$2, cancelRef, scheduler$$2);
         return null;
       }
     }));
@@ -168,17 +170,18 @@ function add(point, period, task$$2, cancelRef, scheduler$$2) {
 
   const patternInput$$1 = (0, _task.Cancelable$$$extend)(task$$3);
   const task$$5 = (0, _task.map)(function f$$3() {
-    return point;
+    return point$$4;
   }, patternInput$$1[0]);
   const f$$4 = cancelRef.contents;
   f$$4();
   cancelRef.contents = patternInput$$1[1];
-  TimelineModule$$$add(point, task$$5, timeline$$2);
+  TimelineModule$$$add(point$$4, task$$5, timeline$$2);
 }
 
 function schedule(delay$$1, period$$2, task$$6, scheduler$$3) {
-  const clock$$2 = scheduler$$3[2];
-  const now$$2 = (0, _time.ClockModule$$$localTime)(clock$$2);
+  const netRunRef$$2 = scheduler$$3[0];
+  const clock$$3 = scheduler$$3[2];
+  const now$$2 = (0, _time.ClockModule$$$localTime)(clock$$3);
   let now$$3;
 
   if (delay$$1 != null) {
@@ -189,8 +192,9 @@ function schedule(delay$$1, period$$2, task$$6, scheduler$$3) {
   }
 
   const cancelRef$$1 = new _Types.FSharpRef(_disposable.empty);
-  add((0, _time.PointModule$$$return$0027)(now$$3), period$$2, task$$6, cancelRef$$1, scheduler$$3);
-  scheduleNextRun(scheduler$$3);
+  const point$$6 = (0, _time.PointModule$$$return$0027)(now$$3);
+  add(point$$6, period$$2, task$$6, cancelRef$$1, scheduler$$3);
+  scheduleNextRun2(scheduler$$3, point$$6);
   return (0, _disposable.return$0027)(function () {
     const f$$6 = cancelRef$$1.contents;
     f$$6();
