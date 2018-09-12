@@ -26,10 +26,6 @@ exports.T$00601 = void 0;
 
 var _Types = require("../fable-core.2.0.0-beta-004/Types");
 
-var _scheduler = require("./scheduler");
-
-var _time = require("./time");
-
 var _disposable = require("./disposable");
 
 var _sink = require("./sink");
@@ -37,6 +33,8 @@ var _sink = require("./sink");
 var _Util = require("../fable-core.2.0.0-beta-004/Util");
 
 var _task = require("./task");
+
+var _scheduler = require("./scheduler");
 
 var _Array = require("../fable-core.2.0.0-beta-004/Array");
 
@@ -58,8 +56,6 @@ function run(scheduler$$1, sink$$1, _arg1) {
 
 function withLocalTime(t, upStream) {
   return new T$00601(0, "Stream", function (tupledArg$$1) {
-    const downClock = (0, _scheduler.getClock)(tupledArg$$1[1]);
-    const upprClock = (0, _time.ClockModule$$$localClock)(downClock);
     return _disposable.empty;
   });
 }

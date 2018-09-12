@@ -15,8 +15,8 @@ let run scheduler sink (Stream f) =
 /// propagating events to sink.  In other words, upstream sources will see local times,
 /// and downstream sinks will see non-local (original) times.let withLocalTime t upStream =
 let withLocalTime t upStream = Stream <| fun (downStreamSink, downScheduler) ->
-    let downClock = Scheduler.getClock downScheduler
-    let upprClock = Time.Clock.localClock downClock
+    // let downClock = Scheduler.getClock downScheduler
+    // let upprClock = Time.Clock.localClock downClock
     Disposable.empty
 
 let fromTask

@@ -1,43 +1,29 @@
 module Sakhe.S.Time
 open Fable.Core
 
-type [<Erase>] Offset = private Offset of (Lazy<float>)
-type [<Erase>] Delay = private PositiveInt of int
-type [<Erase>] Point = private Point of float
-type [<Erase>] T = private Time of (unit -> float)
-type [<Erase>] Clock = private Clock of (T * Offset)
+type [<Erase>] Offset = private Offset of float
+type [<Erase>] Delay = private Delay of int
+type [<Erase>] T = private Time of float
 
-let add (Time t) (PositiveInt delay) = Time <| fun () -> (t() + float delay)
+let return' (t) =
+    assert (t >= 0.0)
+    assert (t = System.Math.Floor(t))
+    Time <| t
 
-module Point =
-    let return' (Time t) = Point <| t()
+let add (Delay delay) (Time t) = return' <| t + float delay
 
-    let add (Point t) (PositiveInt delay) = Point <| t + float delay
+let change (Offset offset) (Time t) = return' <| (t + offset)
 
 module Delay =
     let return' i =
         assert (i >= 0)
-        PositiveInt i
+        Delay i
 
-    let value (PositiveInt i) = i
+    let fromTo (Time from) (Time to') =
+        Delay << unbox <| System.Math.Max (0., to' - from)
 
-    let fromTo (Point from) (Point to') =
-        PositiveInt << unbox <| System.Math.Max (0., to' - from)
+    let unbox (Delay v) = v
 
-module Clock =
-    open Fable.Import.Browser
-
-    let performanceClock =
-        Clock ( Time <| fun () -> System.Math.Floor(window.performance.now ())
-              , Offset <| lazy 0.0)
-    let localClock (Clock (Time t, Offset o)) =
-        let fZero = lazy ( t() )
-        Clock ( Time <| fun () ->
-                            let t = 0.0 - fZero.Value + t()
-                            assert (t >= 0.0)
-                            t  // t = 0.0 at first run
-              , Offset <| lazy (0.0 - fZero.Value + o.Value))
-
-    let value (Clock (t, o)) = (t, o)
-
-    let localTime (Clock (t, _)) = t
+module Offset =
+    let return' a = Offset a
+    let from (Time origin) (Time local) = Offset <| local - origin

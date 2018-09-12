@@ -13,6 +13,8 @@ var _scheduler = require("./s/scheduler");
 
 var _default = require("./s/default");
 
+var _clock = require("./s/clock");
+
 var _String = require("./fable-core.2.0.0-beta-004/String");
 
 var _disposable = require("./s/disposable");
@@ -43,7 +45,7 @@ function sch(delay$$1) {
   };
 }
 
-const scheduler = (0, _default.scheduler)();
+const scheduler = (0, _scheduler.return$0027)((0, _clock.localClock)(_default.performanceClock), _default.performanceClock);
 exports.scheduler = scheduler;
 
 function task(i) {

@@ -15,7 +15,7 @@ var _disposable = require("./disposable");
 function return$0027(set, clear) {
   return function (task) {
     return function (delay) {
-      const delay$$1 = (0, _time.DelayModule$$$value)(delay) | 0;
+      const delay$$1 = (0, _time.DelayModule$$$unbox)(delay) | 0;
       const patternInput = (0, _task.Cancelable$$$extend)(task);
 
       if (0 === delay$$1) {

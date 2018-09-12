@@ -4,7 +4,10 @@ open Sakhe.S
 
 let sch = Scheduler.schedule
 
-let scheduler = Default.scheduler ()
+let scheduler =
+    Scheduler.return'
+        (Clock.localClock Default.performanceClock)
+        Default.performanceClock
 
 [<Emit("console.timeStamp($0)")>]
 let timeStamp (a: string): unit = Exceptions.jsNative

@@ -3,12 +3,19 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.scheduler = scheduler;
+exports.performanceClock = void 0;
 
 var _time = require("./time");
 
-var _scheduler = require("./scheduler");
+var _clock = require("./clock");
 
-function scheduler() {
-  return (0, _scheduler.return$0027)((0, _time.ClockModule$$$localClock)(_time.ClockModule$$$performanceClock));
-}
+const performanceClock = (() => {
+  const tf = function tf() {
+    return (0, _time.return$0027)(Math.floor(performance.now()));
+  };
+
+  const offset = (0, _time.OffsetModule$$$return$0027)(0);
+  return (0, _clock.return$0027)(tf, offset);
+})();
+
+exports.performanceClock = performanceClock;

@@ -7,7 +7,7 @@ type [<Erase>] T =
     | Timer of (Task.T<unit * Task.Cancelable.Source> -> Time.Delay -> Disposable.T)
 
 let private return' set clear = Timer <| fun task delay ->
-    let delay = Time.Delay.value delay
+    let delay = Time.Delay.unbox delay
     let (task, cancelDisposable) = Task.Cancelable.extend task
     if 0 = delay then
         Promise.resolve(task).``then``(Task.run) |> ignore
