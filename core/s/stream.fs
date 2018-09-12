@@ -19,17 +19,6 @@ let withLocalTime t upStream = Stream <| fun (downStreamSink, downScheduler) ->
     // let upprClock = Time.Clock.localClock downClock
     Disposable.empty
 
-let fromTask
-     delay period t = Stream <| fun (sink, scheduler) ->
-    let s t = function
-        | Sink.Now.Event a -> Sink.unbox sink <| Sink.On.Event (t, a)
-        | Sink.Now.End -> Sink.unbox sink <| Sink.On.End t
-        | Sink.Now.Error err -> Sink.unbox sink <| Sink.On.Error (t, err)
-    scheduler
-    |> (Task.return' <| t
-        |> Task.map (fun (time, cs) -> s time, cs)
-        |> Scheduler.schedule delay period)
-
 let fromTask2 delay period f = Stream <| fun (sink, scheduler) ->
     Scheduler.schedule delay period (Task.return' <| f sink scheduler) scheduler
 

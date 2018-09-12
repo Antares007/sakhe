@@ -26,3 +26,5 @@ let localClock (Clock (baseTf, baseOf)) =
     Clock (localNow, localOffset)
 
 let localTime (Clock (f, _)) = f()
+
+let offset (Clock (_, offset)) = offset

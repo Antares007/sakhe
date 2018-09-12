@@ -7,7 +7,7 @@ exports.sch = sch;
 exports.task = task;
 exports.delay = delay;
 exports.now2 = now2;
-exports.see = exports.d = exports.http = exports.fs = exports.scheduler = void 0;
+exports.see = exports.d = exports.http = exports.fs = exports.scheduler = exports.localClock = exports.performanceClock = void 0;
 
 var _scheduler = require("./s/scheduler");
 
@@ -45,7 +45,13 @@ function sch(delay$$1) {
   };
 }
 
-const scheduler = (0, _scheduler.return$0027)((0, _clock.localClock)(_default.performanceClock), _default.performanceClock);
+const performanceClock = _default.performanceClock;
+exports.performanceClock = performanceClock;
+const localClock = (0, _clock.localClock)(performanceClock);
+exports.localClock = localClock;
+const scheduler = (0, _scheduler.map)(function f(c) {
+  return performanceClock;
+}, (0, _scheduler.return$0027)(performanceClock));
 exports.scheduler = scheduler;
 
 function task(i) {
@@ -78,25 +84,22 @@ const http = http$$1;
 exports.http = http;
 
 function now2(a) {
-  return (0, _stream.fromTask)(null, null, function (_arg1$$1) {
+  return (0, _stream.fromTask2)(null, null, function (sink, scheduler$$2, _arg1$$1) {
     if (_arg1$$1.tag === 1) {
       if (_arg1$$1.fields[1] instanceof _task.Cancelable$002EException) {
         (0, _String.toConsole)((0, _String.printf)("yay"));
+        (0, _sink.Send$$$event)(_arg1$$1.fields[0][0], 666, sink);
         return null;
       } else {
-        _arg1$$1.fields[0][0](new _sink.Now$00601(2, "Error", _arg1$$1.fields[1]));
-
+        (0, _sink.Send$$$error)(_arg1$$1.fields[0][0], _arg1$$1.fields[1], sink);
         return null;
       }
     } else {
-      _arg1$$1.fields[0][0](new _sink.Now$00601(0, "Event", a));
-
+      (0, _sink.Send$$$event)(_arg1$$1.fields[0][0], a, sink);
       (0, _String.toConsole)((0, _String.printf)("yess"));
       (0, _task.Cancelable$$$ifCanceledThenRaiseCancellationException)(_arg1$$1.fields[0][1]);
       (0, _String.toConsole)((0, _String.printf)("noooooo"));
-
-      _arg1$$1.fields[0][0](new _sink.Now$00601(1, "End"));
-
+      (0, _sink.Send$$$end$0027)(_arg1$$1.fields[0][0], sink);
       return null;
     }
   });
@@ -108,35 +111,37 @@ const see = (0, _stream.run)(scheduler, (0, _sink.return$0027)(function (_arg1$$
   switch (_arg1$$2.tag) {
     case 1:
       {
-        const t$$4 = _arg1$$2.fields[0];
-        (0, _String.toConsole)((0, _String.printf)("End at %A"))(t$$4);
+        const t$$6 = _arg1$$2.fields[0];
+        (0, _String.toConsole)((0, _String.printf)("End at %A"))(t$$6);
         break;
       }
 
     case 2:
       {
-        const t$$5 = _arg1$$2.fields[0];
+        const t$$7 = _arg1$$2.fields[0];
         const err$$2 = _arg1$$2.fields[1];
-        (0, _String.toConsole)((0, _String.printf)("Error %A at %A"))(err$$2)(t$$5);
+        (0, _String.toConsole)((0, _String.printf)("Error %A at %A"))(err$$2)(t$$7);
         break;
       }
 
     default:
       {
-        const t$$3 = _arg1$$2.fields[0];
+        const t$$5 = _arg1$$2.fields[0];
         const e = _arg1$$2.fields[1] | 0;
-        (0, _String.toConsole)((0, _String.printf)("Event %A at %A"))(e)(t$$3);
+        (0, _String.toConsole)((0, _String.printf)("Event %A at %A"))(e)(t$$5);
       }
   }
-}), (0, _stream.mergeArray)([(0, _stream.map)(function f$$3() {
-  return 10000;
-}, (0, _stream.periodic)(delay(10000))), now2(42), (0, _stream.map)(function f$$4() {
-  return 1000;
-}, (0, _stream.periodic)(delay(1000))), (0, _stream.map)(function f$$5() {
-  return 2000;
-}, (0, _stream.periodic)(delay(2000))), (0, _stream.map)(function f$$6() {
-  return 3000;
-}, (0, _stream.periodic)(delay(3000)))]));
+}), (0, _stream.mergeArray)([(0, _stream.map)(function f$$5() {
+  return 13;
+}, (0, _stream.periodic)(delay(13000))), now2(42), (0, _stream.map)(function f$$6() {
+  return 2;
+}, (0, _stream.periodic)(delay(2000))), (0, _stream.map)(function f$$7() {
+  return 3;
+}, (0, _stream.periodic)(delay(3000))), (0, _stream.map)(function f$$8() {
+  return 5;
+}, (0, _stream.periodic)(delay(5000))), (0, _stream.map)(function f$$9() {
+  return 8;
+}, (0, _stream.periodic)(delay(8000)))]));
 exports.see = see;
 d.contents = see;
 window.d = see;

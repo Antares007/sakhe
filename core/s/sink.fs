@@ -1,11 +1,6 @@
 module Sakhe.S.Sink
 open Fable.Core
 
-type Now<'a> =
-    | Event of 'a
-    | End
-    | Error of exn
-
 type On<'a> =
     | Event of Time.T * 'a
     | End   of Time.T

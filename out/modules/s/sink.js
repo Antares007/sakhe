@@ -14,7 +14,7 @@ exports.filterMap = filterMap;
 exports.skipRepeats = skipRepeats;
 exports.combineArray = combineArray;
 exports.mergeArray = mergeArray;
-exports.On$00601 = exports.Now$00601 = void 0;
+exports.On$00601 = void 0;
 
 var _Types = require("../fable-core.2.0.0-beta-004/Types");
 
@@ -24,10 +24,6 @@ var _Seq = require("../fable-core.2.0.0-beta-004/Seq");
 
 var _Array = require("../fable-core.2.0.0-beta-004/Array");
 
-const Now$00601 = (0, _Types.declare)(function Now$00601(tag, name, ...fields) {
-  _Types.Union.call(this, tag, name, ...fields);
-}, _Types.Union);
-exports.Now$00601 = Now$00601;
 const On$00601 = (0, _Types.declare)(function On$00601(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);

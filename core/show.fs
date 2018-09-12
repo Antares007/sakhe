@@ -4,10 +4,13 @@ open Sakhe.S
 
 let sch = Scheduler.schedule
 
+let performanceClock = Default.performanceClock
+let localClock = Clock.localClock performanceClock
+
 let scheduler =
-    Scheduler.return'
-        (Clock.localClock Default.performanceClock)
-        Default.performanceClock
+    Scheduler.return' performanceClock
+    |> Scheduler.map (fun c -> Some performanceClock)
+
 
 [<Emit("console.timeStamp($0)")>]
 let timeStamp (a: string): unit = Exceptions.jsNative
@@ -30,32 +33,33 @@ let fs = Fable.Core.JsInterop.importAll<Fable.Import.Node.Fs.IExports> "fs"
 
 let http = Fable.Core.JsInterop.importAll<Fable.Import.Node.Http.IExports> "http"
 
-
 let now2 a =
-    Stream.fromTask None None <| function
-    | Task.On.Run (s, cs) ->
-        s <| Sink.Now.Event a
+    Stream.fromTask2 None None <| fun sink scheduler -> function
+    | Task.On.Run (t, cs) ->
+        sink |> Sink.Send.event t a
         printfn "yess"
         Task.Cancelable.ifCanceledThenRaiseCancellationException cs
         printfn "noooooo"
-        s <| Sink.Now.End
+        sink |> Sink.Send.end' t
         None
-    | Task.On.Exn (_, Task.Cancelable.Exception) ->
+    | Task.On.Exn ((t, _), Task.Cancelable.Exception) ->
         printfn "yay"
+        sink |> Sink.Send.event t 666
         None
-    | Task.On.Exn ((s, cs), err) ->
-        s <| Sink.Now.Error err
+    | Task.On.Exn ((t, cs), err) ->
+        sink |> Sink.Send.error t err
         None
 
 let d = ref Disposable.empty
 
 let see =
     Stream.mergeArray [|
-        Stream.periodic (delay 10000) |> Stream.map (fun () -> 10000)
+        Stream.periodic (delay 13000) |> Stream.map (fun () -> 13)
         now2 42 // |> Stream.map (fun x -> Disposable.dispose d.Value; x)
-        Stream.periodic (delay 1000) |> Stream.map (fun () -> 1000)
-        Stream.periodic (delay 2000) |> Stream.map (fun () -> 2000)
-        Stream.periodic (delay 3000) |> Stream.map (fun () -> 3000)
+        Stream.periodic (delay 2000) |> Stream.map (fun () -> 2)
+        Stream.periodic (delay 3000) |> Stream.map (fun () -> 3)
+        Stream.periodic (delay 5000) |> Stream.map (fun () -> 5)
+        Stream.periodic (delay 8000) |> Stream.map (fun () -> 8)
     |]
     |> Stream.run scheduler (Sink.return' <| function
         | Sink.On.Event (t, e) -> printfn "Event %A at %A" e t

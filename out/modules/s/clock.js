@@ -6,14 +6,15 @@ Object.defineProperty(exports, "__esModule", {
 exports.return$0027 = return$0027;
 exports.localClock = localClock;
 exports.localTime = localTime;
+exports.offset = offset;
 
 var _Util = require("../fable-core.2.0.0-beta-004/Util");
 
 var _time = require("./time");
 
-function return$0027(now, offset) {
+function return$0027(now, offset$$1) {
   return [now, new _Util.Lazy(function () {
-    return offset;
+    return offset$$1;
   })];
 }
 
@@ -49,4 +50,8 @@ function localClock(_arg1) {
 
 function localTime(_arg1$$1) {
   return _arg1$$1[0]();
+}
+
+function offset(_arg1$$2) {
+  return _arg1$$2[1];
 }
