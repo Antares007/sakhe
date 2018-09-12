@@ -63,19 +63,19 @@ let return' originClock =
 let map f (Scheduler (ref, timer, localClock, timeline, relativeClock)) =
     Scheduler (ref, timer, localClock, timeline, f relativeClock)
 
-let rec private scheduleNextRun2 scheduler point =
+let rec private scheduleNextRun scheduler nextRun =
     let (Scheduler (Ref netRunRef, _, _, _, _)) = scheduler
-    match point with
+    match nextRun with
     | None -> ()
-    | Some point ->
+    | Some nextRun ->
         match netRunRef.Value with
-        | None -> scheduleNextRun3 scheduler point
+        | None -> setTimer scheduler nextRun
         | Some (nextRun, cancel) ->
-            if nextRun <= point then ()
+            if nextRun <= nextRun then ()
             else
             Disposable.dispose cancel
-            scheduleNextRun3 scheduler nextRun
-and private scheduleNextRun3 scheduler point =
+            setTimer scheduler nextRun
+and private setTimer scheduler point =
     let (Scheduler (Ref netRunRef, timer, clock, timeline, _)) = scheduler
     let now = Clock.localTime clock
     let delay = Time.Delay.fromTo now point
@@ -86,14 +86,14 @@ and private scheduleNextRun3 scheduler point =
             let now = Clock.localTime clock
             Task.run (Timeline.removeTasks now timeline) |> ignore
             let point = Timeline.nextArrival timeline
-            scheduleNextRun2 scheduler point
+            scheduleNextRun scheduler point
             None
         | Task.On.Exn (_, err) ->
             assert false
             raise err
     netRunRef.Value <- Some (point, Timer.setTimer task delay timer)
 
-let rec private add (point) period task (cancelRef: Disposable.T ref) scheduler =
+let rec private add localNow relNow period task (cancelRef: Disposable.T ref) scheduler =
     let (Scheduler (_, _, _, timeline, _)) = scheduler
     let task =
         match period with
@@ -101,19 +101,20 @@ let rec private add (point) period task (cancelRef: Disposable.T ref) scheduler 
             Task.append
                 task
                 (Task.return' <| function
-                | Task.On.Run (time: Time.T, _) ->
-                    let point = Time.add period point
-                    add point (Some period) task cancelRef scheduler
+                | Task.On.Run (_: Time.T, _) ->
+                    let localNow = Time.add period localNow
+                    let relNow = Time.add period relNow
+                    add localNow relNow (Some period) task cancelRef scheduler
                     None
                 | Task.On.Exn _ ->
                     assert false
                     None)
         | None -> task
     let (task, cancelD) = Task.Cancelable.extend task
-    let task = task |> Task.map (fun () -> point)
+    let task = task |> Task.map (fun () -> relNow)
     Disposable.dispose cancelRef.Value
     cancelRef.Value <- cancelD
-    Timeline.add point task timeline
+    Timeline.add localNow task timeline
 
 let private localTimes (Scheduler (_, _, localClock, _, relClock)) =
     match relClock with
@@ -121,18 +122,20 @@ let private localTimes (Scheduler (_, _, localClock, _, relClock)) =
         let t = Clock.localTime localClock
         t, t
     | Some relClock ->
-        (Clock.localTime localClock, Clock.localTime relClock)
+        let localNow = Clock.localTime localClock
+        let relNow = Clock.localTime relClock
+        localNow, relNow
 
 let schedule delay period task scheduler =
         let (Scheduler (Ref netRunRef, _, localClock, _, _)) = scheduler
-        let (now, now2) = localTimes scheduler
-        let (now, now2) =
+        let (localNow, relNow) = localTimes scheduler
+        let (localNow, relNow) =
             match delay with
-            | None -> (now, now)
-            | Some delay -> (Time.add delay now, Time.add delay now2)
+            | None -> (localNow, localNow)
+            | Some delay -> (Time.add delay localNow, Time.add delay relNow)
         let cancelRef = ref Disposable.empty
 
-        add now2 period task cancelRef scheduler
-        scheduleNextRun2 scheduler (Some now)
+        add localNow relNow period task cancelRef scheduler
+        scheduleNextRun scheduler (Some localNow)
 
         Disposable.return' <| fun () -> Disposable.dispose cancelRef.Value
