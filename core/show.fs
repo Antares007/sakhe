@@ -18,7 +18,7 @@ let schedule delay period scheduler task =
     Scheduler.schedule delay period (Task.return' task) scheduler
 open Time
 
-schedule (Some <| Delay.return' 10) None scheduler <| function
+schedule (Some <| Delay.return' A.a) None scheduler <| function
 | Task.On.Run (t, cs) ->
     printfn "run: %A" t
     schedule (Some <| Delay.return' 10) None scheduler <| function

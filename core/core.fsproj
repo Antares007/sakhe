@@ -19,6 +19,7 @@
     <Compile Include="most/disposable.fs" />
     <Compile Include="most.fs" />
     <Compile Include="pith.fs" />
+    <Compile Include="io.fs" />
     <Compile Include="so.fs" />
     <Compile Include="update.fs" />
     <Compile Include="state.fs" />

@@ -2,6 +2,7 @@
 open Fable.Core
 
 [<Erase>] type Pith<'a> = Pith of (('a -> unit) -> unit)
+[<Erase>] type IO<'i, 'o> = IO of ('i -> Pith<'o>)
 
 [<RequireQualifiedAccess>]
 module Pith =
@@ -10,6 +11,9 @@ module Pith =
 
     let empty =
         Pith ignore
+
+    let filter f (Pith p) =
+        Pith <| fun o -> p (fun a -> if f a then o a)
 
     let map f (Pith p) =
         Pith <| fun o -> p (o << f)

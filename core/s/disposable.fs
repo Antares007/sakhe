@@ -5,7 +5,6 @@ open Sakhe.S
 type [<Erase>] T = private Disposable of (unit -> unit)
 
 let empty = Disposable ignore
-
 let return' f =
     let mutable disposed = false
     Disposable <| fun () ->
