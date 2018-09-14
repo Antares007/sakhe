@@ -155,10 +155,9 @@ function Cancelable$$$extend(task) {
         if (canceled ? taskDisposable != null : false) {
           const f$$7 = taskDisposable;
           f$$7();
-          return null;
-        } else {
-          return taskDisposable;
         }
+
+        return taskDisposable;
       }
     }
   });

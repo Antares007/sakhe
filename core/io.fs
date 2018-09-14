@@ -1,5 +1,8 @@
 namespace Sakhe
+open Fable.Core
 open Sakhe.S
+
+[<Erase>] type IO<'i, 'o> = IO of ('i -> Pith<'o>)
 
 [<RequireQualifiedAccess>]
 module IO =
@@ -12,30 +15,25 @@ module IO =
     let empty<'Ob> =
         IO <| fun () -> Pith <| fun (o: 'Ob -> unit) -> ()
 
-    let append
-        (IO o) (IO a): IO<'Oa, 'Ob> =
+    let append (IO o) (IO a) =
         IO <| fun i -> Pith.append (o i) (a i)
 
-    let map
-        (f: ('Oa -> 'Ob)) (g: ('Ib -> 'Ib)) (IO pithIO) =
-        IO <| fun i -> pithIO <| g i |> Pith.map(f)
+    let map g f (IO io) =
+        IO <| fun i -> io <| (g i) |> Pith.map(f)
 
-    let fold
-        (f:(Pith<'Io> -> _ -> _)) (s) (IO (g: 'Ia -> Pith<'Ob>)) =
-        IO <| fun (i) -> (g i) |> Pith.fold (f) s
+    let fold f s (IO io) =
+        IO <| fun (i) -> (io i) |> Pith.fold (f) s
 
     let run (IO io) =
         Task.run << Task.return' <| fun i ->
             match i with
-            | Task.On.Run  () ->
-                io <| Run ()
-            | Task.On.Exn (a, err) ->
-                io <| Exn (a, err)
+            | Task.On.Run ()       -> io << Run <| ()
+            | Task.On.Exn ((), err) -> io << Exn <| ((), err)
             |> Pith.toList
             |> List.fold (fun o a ->
                 match (o, a) with
-                | None ,    None    -> None
-                | None,     Some d  -> Some d
-                | Some o, None    -> Some o
-                | Some o, Some a  -> Some <| Disposable.append a o
+                | None ,  None   -> None
+                | None,   Some d -> Some d
+                | Some o, None   -> Some o
+                | Some o, Some a -> Some <| Disposable.append a o
             ) None
