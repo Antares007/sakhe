@@ -17,8 +17,6 @@ var _scheduler = require("./s/scheduler");
 
 var _task = require("./s/task");
 
-var _s = require("./s");
-
 var _time = require("./s/time");
 
 const performanceClock = _default.performanceClock;
@@ -41,7 +39,7 @@ function schedule(delay, period, scheduler$$1, task) {
   return (0, _scheduler.schedule)(delay, period, (0, _task.return$0027)(task), scheduler$$1);
 }
 
-schedule((0, _time.DelayModule$$$return$0027)(_s.a), null, scheduler, function (_arg1) {
+schedule((0, _time.DelayModule$$$return$0027)(10), null, scheduler, function (_arg1) {
   if (_arg1.tag === 1) {
     return null;
   } else {
