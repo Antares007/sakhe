@@ -27,9 +27,7 @@ function return$0027(set, clear) {
         return patternInput[1];
       } else {
         const handle = set(function () {
-          (function (arg10$0040$$1) {
-            return (0, _task.run)(patternInput[0], arg10$0040$$1);
-          });
+          (0, _task.run)(null, patternInput[0]);
         }, delay$$1);
         return (0, _disposable.append)((0, _disposable.return$0027)(function () {
           clear(handle);

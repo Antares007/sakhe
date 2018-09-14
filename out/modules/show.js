@@ -10,7 +10,7 @@ exports.scheduler = exports.localClock = exports.performanceClock = void 0;
 
 var _String = require("./fable-core.2.0.0-beta-004/String");
 
-var _s = require("./s");
+var _TaskIO = require("./TaskIO");
 
 var _Date = require("./fable-core.2.0.0-beta-004/Date");
 
@@ -25,7 +25,7 @@ var _task = require("./s/task");
 var _time = require("./s/time");
 
 function testTaskIO(now) {
-  return (0, _s.run)(now, (0, _s.return$0027)(function (_arg1) {
+  return (0, _TaskIO.run)(now, (0, _TaskIO.return$0027)(function (_arg1) {
     if (_arg1.tag === 1) {
       const err = _arg1.fields[1];
       const a$$1 = _arg1.fields[0];

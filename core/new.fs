@@ -17,9 +17,9 @@ module O =
     let Run f = Run << return' <| f
     let Dispose d = Dispose d
 
-let run a (TimeIO io) =
-    let see = io
-    TaskIO.run
+let private setTask = 1
+
+let rec run (delay: Time.Delay) (TimeIO io) =
     ()
 
 function
@@ -36,7 +36,6 @@ function
         | I.Exn (a, err) -> Pith ignore
 
     o << O.Dispose <| Disposable.empty
-
 | I.Exn (a, err) -> Pith <| fun o ->
     failwith "never"
-|> (run (Time.return' 0.0) << return')
+|> (run (Time.Delay.return' 0) << return')

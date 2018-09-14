@@ -18,4 +18,4 @@ module IO =
     let fold f s (IO io) =
         IO <| fun (i) -> (io i) |> Pith.fold (f) s
 
-    let run (IO io) = io ()
+    let run a (IO io) = io a

@@ -3,9 +3,8 @@ open Fable.Core
 
 
 type [<Erase>] T<'a> =
-    private Task of (I<'a> -> O)
+    private Task of (I<'a> -> Disposable.T option)
 and I<'a> = Run of 'a | Exn of 'a * exn
-and O = Disposable.T option
 
 let return' f = Task f
 

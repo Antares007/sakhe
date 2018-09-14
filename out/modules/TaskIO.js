@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.return$0027 = return$0027;
 exports.run = run;
-exports.O$00601 = exports.I$00601 = exports.T$00601 = void 0;
+exports.O$00601 = exports.I$00601 = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-004/Types");
 
@@ -17,10 +17,6 @@ var _List = require("./fable-core.2.0.0-beta-004/List");
 
 var _task = require("./s/task");
 
-const T$00601 = (0, _Types.declare)(function T$00601(tag, name, ...fields) {
-  _Types.Union.call(this, tag, name, ...fields);
-}, _Types.Union);
-exports.T$00601 = T$00601;
 const I$00601 = (0, _Types.declare)(function I$00601(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
@@ -31,11 +27,11 @@ const O$00601 = (0, _Types.declare)(function O$00601(tag, name, ...fields) {
 exports.O$00601 = O$00601;
 
 function return$0027(f) {
-  return new T$00601(0, "TaskIO", f);
+  return f;
 }
 
 function run(a, _arg1) {
-  const io = _arg1.fields[0];
+  const io = _arg1;
   return (0, _task.run)(a, (0, _task.return$0027)(function (i) {
     var err, a$$2, a$$1;
     return (0, _List.fold)(function folder(o, _arg2) {

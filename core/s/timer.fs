@@ -13,7 +13,7 @@ let private return' set clear = Timer <| fun task delay ->
         Promise.resolve(task).``then``(Task.run) |> ignore
         cancelDisposable
     else
-        let handle = set (fun () -> Task.run task |> ignore) delay
+        let handle = set (fun () -> Task.run () task |> ignore) delay
         Disposable.append
             (Disposable.return' (fun () -> clear handle))
             cancelDisposable
