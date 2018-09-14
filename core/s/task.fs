@@ -1,24 +1,25 @@
 module Sakhe.S.Task
 open Fable.Core
 
-type On<'a> = Run of 'a | Exn of 'a * exn
 
-type [<Erase>] T<'a> = private Task of (On<'a> -> Disposable.T option)
+type [<Erase>] T<'a> =
+    private Task of (I<'a> -> O)
+and I<'a> = Run of 'a | Exn of 'a * exn
+and O = Disposable.T option
 
 let return' f = Task f
 
-let empty<'a> = Task <| fun (_: On<'a>) -> None
+let empty<'a> = Task <| fun (_: I<'a>) -> None
 
 let map f (Task g) = Task <| function
     | Run (a)      -> g (Run (f a))
     | Exn (a, err) -> g (Exn (f a, err))
 
-let run (Task g) = try g (Run ()) with err -> g (Exn ((), err))
+let run a (Task g) = try g (Run a) with err -> g (Exn (a, err))
 
 let append l r = Task <| function
     | Run a ->
-        let a () = a
-        match run (map a l), run (map a r) with
+        match run a l, run a r with
         | (None,     None) -> None
         | (Some d,   None) -> Some d
         | (None,   Some d) -> Some d
@@ -33,10 +34,9 @@ let appendArray tasks =
     else
     Task <| function
         | Run a ->
-            let a () = a
             let disposables =
                 tasks
-                |> Seq.map (fun t -> run (map a t))
+                |> Seq.map (run a)
                 |> Seq.filter (fun o -> o.IsSome)
                 |> Seq.map (fun o -> o.Value)
                 |> Seq.toArray
@@ -58,14 +58,14 @@ module Cancelable =
             canceled <- true
             if taskDisposable.IsSome then Disposable.dispose taskDisposable.Value
         let task = return' <| function
-            | On.Run a ->
+            | I.Run a ->
                 if canceled then None
                 else
-                taskDisposable <- task |> map (fun () -> a, cancellationSource) |> run
+                taskDisposable <- task |> run (a, cancellationSource)
                 if canceled && taskDisposable.IsSome then
                     Disposable.dispose taskDisposable.Value
                 taskDisposable
-            | On.Exn _ -> None
+            | I.Exn _ -> None
         task, cancelDisposable
 
     let return' t = extend << return' <| t

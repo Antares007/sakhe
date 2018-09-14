@@ -139,7 +139,11 @@ function setTimer(scheduler$$1, point) {
       const s$$3 = _arg1$$5.fields[0][1];
       netRunRef$$1.contents = null;
       const now$$1 = (0, _clock.localTime)(clock);
-      (0, _task.run)(TimelineModule$$$removeTasks(now$$1, timeline$$1));
+
+      (function (arg10$0040) {
+        return (0, _task.run)(TimelineModule$$$removeTasks(now$$1, timeline$$1), arg10$0040);
+      });
+
       const point$$1 = TimelineModule$$$nextArrival(timeline$$1);
       scheduleNextRun(scheduler$$1, point$$1);
       return null;

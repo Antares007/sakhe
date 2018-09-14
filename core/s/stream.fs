@@ -56,28 +56,28 @@ let mergeArray sources =
 /// ```
 let empty<'a> = Stream <| fun (sink: Sink.T<'a>, scheduler) ->
     scheduler |> Scheduler.schedule None None (Task.return' <| function
-        | Task.On.Run (t, s) ->
+        | Task.I.Run (t, s) ->
             sink |> Sink.Send.end' t
             None
-        | Task.On.Exn ((t, _), err) ->
+        | Task.I.Exn ((t, _), err) ->
             sink |> Sink.Send.error t err
             None)
 let empty2<'a> =
     (fun (s: Sink.T<'a>) _ -> function
-    | Task.On.Run (t, cs) ->
+    | Task.I.Run (t, cs) ->
         s |> Sink.Send.end' t
         None
-    | Task.On.Exn ((t, _), err) ->
+    | Task.I.Exn ((t, _), err) ->
         s |> Sink.Send.error t err
         None)
     |> fromTask2 None None
 
 let startWith a source =
     (fun (s: Sink.T<'a>) scheduler -> function
-    | Task.On.Run (t, cs) ->
+    | Task.I.Run (t, cs) ->
         s |> Sink.Send.event t a
         Some <| run scheduler s source
-    | Task.On.Exn ((t, _), err) ->
+    | Task.I.Exn ((t, _), err) ->
         s |> Sink.Send.error t err
         None)
     |> fromTask2 None None
@@ -95,11 +95,11 @@ let never<'a> = Stream <| fun (_: Sink.T<'a>, _) -> Disposable.empty
 /// ```
 let now a = Stream <| fun (sink, scheduler) ->
     scheduler |> Scheduler.schedule None None (Task.return' <| function
-        | Task.On.Run (t, s) ->
+        | Task.I.Run (t, s) ->
             sink |> Sink.Send.event t a
             sink |> Sink.Send.end' t
             None
-        | Task.On.Exn ((t, _), err) ->
+        | Task.I.Exn ((t, _), err) ->
             sink |> Sink.Send.error t err
             None)
 
@@ -109,11 +109,11 @@ let now a = Stream <| fun (sink, scheduler) ->
 /// ```
 let at delay a = Stream <| fun (sink, scheduler) ->
     scheduler |> Scheduler.schedule (Some delay) None (Task.return' <| function
-        | Task.On.Run (t, s) ->
+        | Task.I.Run (t, s) ->
             sink |> Sink.Send.event t a
             sink |> Sink.Send.end' t
             None
-        | Task.On.Exn ((t, _), err) ->
+        | Task.I.Exn ((t, _), err) ->
             sink |> Sink.Send.error t err
             None)
 
@@ -123,10 +123,10 @@ let at delay a = Stream <| fun (sink, scheduler) ->
 /// ```
 let periodic period = Stream <| fun (sink, scheduler) ->
     scheduler |> Scheduler.schedule None (Some period) (Task.return' <| function
-        | Task.On.Run (t, s) ->
+        | Task.I.Run (t, s) ->
             sink |> Sink.Send.event t ()
             None
-        | Task.On.Exn ((t, _), err) ->
+        | Task.I.Exn ((t, _), err) ->
             sink |> Sink.Send.error t err
             None)
 
@@ -136,9 +136,9 @@ let periodic period = Stream <| fun (sink, scheduler) ->
 /// ```
 let throwError err = Stream <| fun (sink, scheduler) ->
     scheduler |> Scheduler.schedule None None (Task.return' <| function
-        | Task.On.Run (t, s) ->
+        | Task.I.Run (t, s) ->
             sink |> Sink.Send.error t err
             None
-        | Task.On.Exn ((t, _), err) ->
+        | Task.I.Exn ((t, _), err) ->
             raise err
             None)

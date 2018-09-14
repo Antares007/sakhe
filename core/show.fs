@@ -1,5 +1,15 @@
 module Sakhe.Show
 open Sakhe.S
+open System
+
+let testTaskIO now = TaskIO.run now << TaskIO.return' <| function
+    | TaskIO.I.Run  (a)       -> Pith <| fun o ->
+        printfn "run: %A" a
+        failwith "test error"
+    | TaskIO.I.Exn (a, err) -> Pith <| fun o ->
+        printfn "Exn: %A %A" a err
+
+testTaskIO DateTime.Now |> ignore
 
 let performanceClock = Default.performanceClock
 let localClock = Clock.localClock performanceClock
@@ -18,26 +28,45 @@ let schedule delay period scheduler task =
     Scheduler.schedule delay period (Task.return' task) scheduler
 open Time
 
+
+// let see = schedule zero << TimeIO << IO <| function
+//     | IO.On.Run t -> Pith <| fun o ->
+//         o << now <| function
+//         | IO.On.Run t -> Pith <| fun o ->
+//             o << now <| function
+//             | IO.On.Run t -> Pith <| fun o -> ()
+//             | IO.On.Exn (t, err) -> Pith <| fun o -> ()
+//         | IO.On.Exn (t, err) -> Pith <| fun o -> ()
+
+//         o << (delay 100) <| function
+//         | IO.On.Run t -> Pith <| fun o ->
+//             o << now <| function
+//             | IO.On.Run t -> Pith <| fun o -> ()
+//             | IO.On.Exn (t, err) -> Pith <| fun o -> ()
+//         | IO.On.Exn (t, err) -> Pith <| fun o -> ()
+//     | IO.On.Exn (t, err) -> Pith <| fun o -> ()
+
+
 schedule (Some <| Delay.return' 10) None scheduler <| function
-| Task.On.Run (t, cs) ->
+| Task.I.Run (t, cs) ->
     printfn "run: %A" t
     schedule (Some <| Delay.return' 10) None scheduler <| function
-    | Task.On.Run (t, cs) ->
+    | Task.I.Run (t, cs) ->
         printfn "run: %A" t
         schedule (Some <| Delay.return' 10) None scheduler <| function
-        | Task.On.Run (t, cs) ->
+        | Task.I.Run (t, cs) ->
             printfn "run: %A" t
             schedule (Some <| Delay.return' 10) None scheduler <| function
-            | Task.On.Run (t, cs) ->
+            | Task.I.Run (t, cs) ->
                 printfn "run: %A" t
                 None
-            | Task.On.Exn _ -> None
+            | Task.I.Exn _ -> None
             |> Some
-        | Task.On.Exn _ -> None
+        | Task.I.Exn _ -> None
         |> Some
-    | Task.On.Exn _ -> None
+    | Task.I.Exn _ -> None
     |> Some
-| Task.On.Exn _ -> None
+| Task.I.Exn _ -> None
 |> ignore
 
 // let my = (Clock.return' (fun () -> Time.return' 0.0) (Time.Offset.return' 0.0))
@@ -50,11 +79,11 @@ schedule (Some <| Delay.return' 10) None scheduler <| function
 // let timeStamp (a: string): unit = Exceptions.jsNative
 
 // let task i = Task.return' <| function
-//     | Task.On.Run (t:Time.T, s: Task.Cancelable.Source) ->
+//     | Task.I.Run (t:Time.T, s: Task.Cancelable.Source) ->
 //         printfn "task %d run at: %A" i t
 //         Some << Disposable.return' <| fun () ->
 //             printfn "task %d disposed Run" i
-//     | Task.On.Exn ((t, _), err) ->
+//     | Task.I.Exn ((t, _), err) ->
 //         printfn "task %d exn at: %A with: %A" i t err
 //         Some << Disposable.return' <| fun () ->
 //             printfn "task %d disposed Exn" i
@@ -69,18 +98,18 @@ schedule (Some <| Delay.return' 10) None scheduler <| function
 
 // let now2 a =
 //     Stream.fromTask2 None None <| fun sink scheduler -> function
-//     | Task.On.Run (t, cs) ->
+//     | Task.I.Run (t, cs) ->
 //         sink |> Sink.Send.event t a
 //         printfn "yess"
 //         Task.Cancelable.ifCanceledThenRaiseCancellationException cs
 //         printfn "noooooo"
 //         sink |> Sink.Send.end' t
 //         None
-//     | Task.On.Exn ((t, _), Task.Cancelable.Exception) ->
+//     | Task.I.Exn ((t, _), Task.Cancelable.Exception) ->
 //         printfn "yay"
 //         sink |> Sink.Send.event t 666
 //         None
-//     | Task.On.Exn ((t, cs), err) ->
+//     | Task.I.Exn ((t, cs), err) ->
 //         sink |> Sink.Send.error t err
 //         None
 

@@ -19,11 +19,17 @@ function return$0027(set, clear) {
       const patternInput = (0, _task.Cancelable$$$extend)(task);
 
       if (0 === delay$$1) {
-        Promise.resolve(patternInput[0]).then(_task.run);
+        Promise.resolve(patternInput[0]).then(function (a) {
+          return function (arg10$0040) {
+            return (0, _task.run)(a, arg10$0040);
+          };
+        });
         return patternInput[1];
       } else {
         const handle = set(function () {
-          (0, _task.run)(patternInput[0]);
+          (function (arg10$0040$$1) {
+            return (0, _task.run)(patternInput[0], arg10$0040$$1);
+          });
         }, delay$$1);
         return (0, _disposable.append)((0, _disposable.return$0027)(function () {
           clear(handle);

@@ -29,7 +29,7 @@
     <Compile Include="pnode.fs" />
     <Compile Include="dom.fs" />
     <Compile Include="show.old.fs" />
-    <Compile Include="s.fs" />
+    <Compile Include="TaskIO.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

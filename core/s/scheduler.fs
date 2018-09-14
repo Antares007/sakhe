@@ -81,14 +81,14 @@ and private setTimer scheduler point =
     let delay = Time.Delay.fromTo now point
 
     let task = Task.return' <| function
-        | Task.On.Run ((), s) ->
+        | Task.I.Run ((), s) ->
             netRunRef.Value <- None
             let now = Clock.localTime clock
             Task.run (Timeline.removeTasks now timeline) |> ignore
             let point = Timeline.nextArrival timeline
             scheduleNextRun scheduler point
             None
-        | Task.On.Exn (_, err) ->
+        | Task.I.Exn (_, err) ->
             assert false
             raise err
     netRunRef.Value <- Some (point, Timer.setTimer task delay timer)
@@ -101,12 +101,12 @@ let rec private add localNow relNow period task (cancelRef: Disposable.T ref) sc
             Task.append
                 task
                 (Task.return' <| function
-                | Task.On.Run (_: Time.T, _) ->
+                | Task.I.Run (_: Time.T, _) ->
                     let localNow = Time.add period localNow
                     let relNow = Time.add period relNow
                     add localNow relNow (Some period) task cancelRef scheduler
                     None
-                | Task.On.Exn _ ->
+                | Task.I.Exn _ ->
                     assert false
                     None)
         | None -> task
