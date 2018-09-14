@@ -30,9 +30,13 @@ function
 
     o << O.Run <| function
         | I.Run a -> Pith <| fun o ->
-            o << O.Delay 100 <| function
-                | I.Run a -> Pith ignore
+            let rec t = function
+                | I.Run a -> Pith <| fun o ->
+                    printfn "tick"
+                    o << O.Delay 100 <| t
                 | I.Exn (a, err) -> Pith ignore
+            o << O.Delay 100 <| t
+
         | I.Exn (a, err) -> Pith ignore
 
     o << O.Dispose <| Disposable.empty
