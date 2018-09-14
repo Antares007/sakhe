@@ -20,6 +20,7 @@
     <Compile Include="most.fs" />
     <Compile Include="pith.fs" />
     <Compile Include="io.fs" />
+    <Compile Include="TaskIO.fs" />
     <Compile Include="so.fs" />
     <Compile Include="update.fs" />
     <Compile Include="state.fs" />
@@ -29,7 +30,7 @@
     <Compile Include="pnode.fs" />
     <Compile Include="dom.fs" />
     <Compile Include="show.old.fs" />
-    <Compile Include="TaskIO.fs" />
+    <Compile Include="new.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

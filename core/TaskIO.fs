@@ -1,7 +1,8 @@
 module Sakhe.TaskIO
+open Fable.Core
 open Sakhe.S
 
-type T<'a> = TaskIO of IO<I<'a>, O<'a>>
+type [<Erase>] T<'a> = TaskIO of IO<I<'a>, O<'a>>
 and I<'a> = Run of 'a | Exn of 'a * exn
 and O<'a> =
     | Run of T<'a>
