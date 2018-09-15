@@ -6,7 +6,7 @@ type [<Erase>] IO<'i, 'o> = IO of ('i -> Pith<'o>)
 
 [<RequireQualifiedAccess>]
 module IO =
-    let return' f = IO <| f
+    let return' f = IO <| (Pith << f)
 
     let empty<'Ob> =
         IO <| fun () -> Pith <| fun (o: 'Ob -> unit) -> ()
@@ -15,7 +15,7 @@ module IO =
         IO <| fun i -> Pith.append (l i) (r i)
 
     let map f (IO io) =
-        IO <| (f << io)
+        IO <| fun i -> io i |> Pith.map f
 
     let contraMap f (IO io) =
         IO <| (io << f)
@@ -29,4 +29,4 @@ module IO =
     let fold f s (IO io) =
         IO <| fun (i) -> (io i) |> Pith.fold (f) s
 
-    let run a (IO io) = io a
+    let run f i (IO io) = f (io i)

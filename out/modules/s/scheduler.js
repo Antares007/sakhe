@@ -177,7 +177,7 @@ function add(localNow, relNow, period, task$$2, cancelRef, scheduler$$2) {
   }
 
   const patternInput$$1 = (0, _task.Cancelable$$$extend)(task$$3);
-  const task$$5 = (0, _task.map)(function f$$4() {
+  const task$$5 = (0, _task.contraMap)(function f$$4() {
     return relNow;
   }, patternInput$$1[0]);
   const f$$5 = cancelRef.contents;

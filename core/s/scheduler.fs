@@ -111,7 +111,7 @@ let rec private add localNow relNow period task (cancelRef: Disposable.T ref) sc
                     None)
         | None -> task
     let (task, cancelD) = Task.Cancelable.extend task
-    let task = task |> Task.map (fun () -> relNow)
+    let task = task |> Task.contraMap (fun () -> relNow)
     Disposable.dispose cancelRef.Value
     cancelRef.Value <- cancelD
     Timeline.add localNow task timeline

@@ -3,6 +3,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.O$$$run = O$$$run;
+exports.O$$$dispose = O$$$dispose;
 exports.return$0027 = return$0027;
 exports.run = run;
 exports.O$00601 = exports.I$00601 = void 0;
@@ -15,8 +17,6 @@ var _pith = require("./pith");
 
 var _List = require("./fable-core.2.0.0-beta-004/List");
 
-var _task = require("./s/task");
-
 const I$00601 = (0, _Types.declare)(function I$00601(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
@@ -26,28 +26,48 @@ const O$00601 = (0, _Types.declare)(function O$00601(tag, name, ...fields) {
 }, _Types.Union);
 exports.O$00601 = O$00601;
 
-function return$0027(f) {
-  return f;
+function O$$$run(f) {
+  return new O$00601(0, "Run", f);
+}
+
+function O$$$dispose(d) {
+  return new O$00601(1, "Dispose", d);
+}
+
+function return$0027(f$$1) {
+  return f$$1;
 }
 
 function run(a, _arg1) {
   const io = _arg1;
-  return (0, _task.run)(a, (0, _task.return$0027)(function (i) {
-    var err, a$$2, a$$1;
-    return (0, _List.fold)(function folder(o, _arg2) {
-      if (_arg2.tag === 1) {
-        const a$$3 = _arg2.fields[0];
-
-        if (o != null) {
-          const o$$1 = o;
-          return (0, _disposable.append)(a$$3, o$$1);
+  return (0, _List.fold)(function folder(r, l) {
+    if (r != null) {
+      const r$$1 = r;
+      return (0, _disposable.append)(l, r$$1);
+    } else {
+      return l;
+    }
+  }, null, (() => {
+    try {
+      return (0, _pith.Pith$$$toList)((0, _pith.Pith$$$filterMap)(function f$$2(_arg2) {
+        if (_arg2.tag === 1) {
+          const d$$1 = _arg2.fields[0];
+          return d$$1;
         } else {
-          return a$$3;
+          const io$$1 = _arg2.fields[0];
+          return run(a, io$$1);
         }
-      } else {
-        const io$$1 = _arg2.fields[0];
-        return run(a, io$$1);
-      }
-    }, null, (0, _pith.Pith$$$toList)(i.tag === 1 ? (err = i.fields[1], (a$$2 = i.fields[0], io(new I$00601(1, "Exn", a$$2, err)))) : (a$$1 = i.fields[0], io(new I$00601(0, "Run", a$$1)))));
-  }));
+      }, io(new I$00601(0, "Run", a))));
+    } catch (err) {
+      return (0, _pith.Pith$$$toList)((0, _pith.Pith$$$filterMap)(function f$$3(_arg3) {
+        if (_arg3.tag === 1) {
+          const d$$2 = _arg3.fields[0];
+          return d$$2;
+        } else {
+          const io$$2 = _arg3.fields[0];
+          return run(a, io$$2);
+        }
+      }, io(new I$00601(1, "Exn", a, err))));
+    }
+  })());
 }

@@ -11,6 +11,12 @@ module Pith =
     let filter f (Pith p) =
         Pith <| fun o -> p (fun a -> if f a then o a)
 
+    let filterMap f (Pith p) =
+        Pith <| fun o -> p (fun a ->
+            match f a with
+            | None -> ()
+            | Some a -> o a)
+
     let map f (Pith p) =
         Pith <| fun o -> p (o << f)
 

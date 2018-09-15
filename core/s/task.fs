@@ -8,13 +8,17 @@ and I<'a> = Run of 'a | Exn of 'a * exn
 
 let return' f = Task f
 
-let empty<'a> = Task <| fun (_: I<'a>) -> None
+let empty<'a> = Task <| fun (a: I<'a>) -> None
 
-let map f (Task g) = Task <| function
-    | Run (a)      -> g (Run (f a))
-    | Exn (a, err) -> g (Exn (f a, err))
+let contraMap f (Task g) = Task <| function
+    | Run (a)      -> g << Run <| (f a)
+    | Exn (a, err) -> g << Exn <| (f a, err)
 
-let run a (Task g) = try g (Run a) with err -> g (Exn (a, err))
+let run a (Task t) =
+    try
+        t << I.Run <| a
+    with err ->
+        t << I.Exn <| (a, err)
 
 let append l r = Task <| function
     | Run a ->

@@ -6,7 +6,9 @@ Object.defineProperty(exports, "__esModule", {
 exports.testTaskIO = testTaskIO;
 exports.printClock = printClock;
 exports.schedule = schedule;
-exports.scheduler = exports.localClock = exports.performanceClock = void 0;
+exports.scheduler = exports.localClock = exports.performanceClock = exports.a = void 0;
+
+var _io = require("./io");
 
 var _String = require("./fable-core.2.0.0-beta-004/String");
 
@@ -24,18 +26,39 @@ var _task = require("./s/task");
 
 var _time = require("./s/time");
 
+const a = (0, _io.IO$$$return$0027)(function (unitVar0, o) {
+  o(1);
+});
+exports.a = a;
+
 function testTaskIO(now) {
   return (0, _taskIo.run)(now, (0, _taskIo.return$0027)(function (_arg1) {
     if (_arg1.tag === 1) {
-      const err = _arg1.fields[1];
-      const a$$1 = _arg1.fields[0];
-      return function (o$$1) {
-        (0, _String.toConsole)((0, _String.printf)("Exn: %A %A"))(a$$1)(err);
+      const err$$1 = _arg1.fields[1];
+      const a$$4 = _arg1.fields[0];
+      return function (o$$4) {
+        (0, _String.toConsole)((0, _String.printf)("Exn: %A %A"))(a$$4)(err$$1);
       };
     } else {
-      const a = _arg1.fields[0];
-      return function (o) {
-        (0, _String.toConsole)((0, _String.printf)("run: %A"))(a);
+      const a$$1 = _arg1.fields[0];
+      return function (o$$1) {
+        (0, _String.toConsole)((0, _String.printf)("run: %A"))(a$$1);
+        o$$1((0, _taskIo.O$$$run)(function (_arg2) {
+          if (_arg2.tag === 1) {
+            const err = _arg2.fields[1];
+            const a$$3 = _arg2.fields[0];
+            return function (o$$3) {
+              throw new Error("test error22");
+              (0, _String.toConsole)((0, _String.printf)("Exn2: %A %A"))(a$$3)(err);
+            };
+          } else {
+            const a$$2 = _arg2.fields[0];
+            return function (o$$2) {
+              (0, _String.toConsole)((0, _String.printf)("run2: %A"))(a$$2);
+              throw new Error("test error2");
+            };
+          }
+        }));
         throw new Error("test error");
       };
     }
@@ -70,12 +93,12 @@ schedule((0, _time.DelayModule$$$return$0027)(10), null, scheduler, function (_a
     const t = _arg1$$1.fields[0][0];
     const cs = _arg1$$1.fields[0][1];
     (0, _String.toConsole)((0, _String.printf)("run: %A"))(t);
-    return schedule((0, _time.DelayModule$$$return$0027)(10), null, scheduler, function (_arg2) {
-      if (_arg2.tag === 1) {
+    return schedule((0, _time.DelayModule$$$return$0027)(10), null, scheduler, function (_arg2$$1) {
+      if (_arg2$$1.tag === 1) {
         return null;
       } else {
-        const t$$1 = _arg2.fields[0][0];
-        const cs$$1 = _arg2.fields[0][1];
+        const t$$1 = _arg2$$1.fields[0][0];
+        const cs$$1 = _arg2$$1.fields[0][1];
         (0, _String.toConsole)((0, _String.printf)("run: %A"))(t$$1);
         return schedule((0, _time.DelayModule$$$return$0027)(10), null, scheduler, function (_arg3) {
           if (_arg3.tag === 1) {

@@ -22,24 +22,24 @@ let private setTask = 1
 let rec run (delay: Time.Delay) (TimeIO io) =
     ()
 
-function
-| I.Run a -> Pith <| fun o ->
-    o << O.Delay 100 <| function
-        | I.Run a -> Pith ignore
-        | I.Exn (a, err) -> Pith ignore
+// function
+// | I.Run a -> Pith <| fun o ->
+//     o << O.Delay 100 <| function
+//         | I.Run a -> Pith ignore
+//         | I.Exn (a, err) -> Pith ignore
 
-    o << O.Run <| function
-        | I.Run a -> Pith <| fun o ->
-            let rec t = function
-                | I.Run a -> Pith <| fun o ->
-                    printfn "tick"
-                    o << O.Delay 100 <| t
-                | I.Exn (a, err) -> Pith ignore
-            o << O.Delay 100 <| t
+//     o << O.Run <| function
+//         | I.Run a -> Pith <| fun o ->
+//             let rec t = function
+//                 | I.Run a -> Pith <| fun o ->
+//                     printfn "tick"
+//                     o << O.Delay 100 <| t
+//                 | I.Exn (a, err) -> Pith ignore
+//             o << O.Delay 100 <| t
 
-        | I.Exn (a, err) -> Pith ignore
+//         | I.Exn (a, err) -> Pith ignore
 
-    o << O.Dispose <| Disposable.empty
-| I.Exn (a, err) -> Pith <| fun o ->
-    failwith "never"
-|> (run (Time.Delay.return' 0) << return')
+//     o << O.Dispose <| Disposable.empty
+// | I.Exn (a, err) -> Pith <| fun o ->
+//     failwith "never"
+// |> (run (Time.Delay.return' 0) << return')

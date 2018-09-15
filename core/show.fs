@@ -2,11 +2,22 @@ module Sakhe.Show
 open Sakhe.S
 open System
 
-let testTaskIO now = TaskIO.run now << TaskIO.return' <| function
-    | TaskIO.I.Run  (a)       -> Pith <| fun o ->
+
+let a = IO.return' <| fun () -> fun o -> o 1
+open TaskIO
+
+let testTaskIO now = run now << return' <| function
+    | I.Run  (a)       -> Pith <| fun o ->
         printfn "run: %A" a
+        o << O.run <| function
+            | I.Run  (a)       -> Pith <| fun o ->
+                printfn "run2: %A" a
+                failwith "test error2"
+            | I.Exn (a, err) -> Pith <| fun o ->
+                failwith "test error22"
+                printfn "Exn2: %A %A" a err
         failwith "test error"
-    | TaskIO.I.Exn (a, err) -> Pith <| fun o ->
+    | I.Exn (a, err) -> Pith <| fun o ->
         printfn "Exn: %A %A" a err
 
 testTaskIO DateTime.Now |> ignore
