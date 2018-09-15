@@ -2,43 +2,46 @@ module Sakhe.TaskIO
 open Fable.Core
 open Sakhe.S
 
-type [<Erase>] T<'a> =
+type [<Erase>] T<'a, 'b> =
     private
-    | TaskIO of (I<'a> -> Pith<O<'a>>)
+    | TaskIO of (I<'a> -> (Disposable.T -> unit) -> 'b)
 and I<'a> =
     | Run of 'a
     | Exn of 'a * exn
-and O<'a> =
-    private
-    | Run of T<'a>
-    | Dispose of Disposable.T
-
-module O =
-    let run f = Run << TaskIO <| f
-    let dispose d = Dispose d
 
 let return' f = TaskIO <| f
 
-let rec run a (TaskIO io) =
-    (
-        try
-            (io << I.Run <| (a))
-            |> Pith.filterMap (function
-            | O.Run (io)    -> run a io
-            | O.Dispose (d) -> Some d)
-            |> Pith.toList
-        with err ->
-            io << I.Exn <| (a, err)
-            |> Pith.filterMap (function
-            | O.Run (io)    -> run a io
-            | O.Dispose (d) -> Some d)
-            |> Pith.toList
-    )
-    |> List.fold (fun r l ->
-        match r with
-        | None   -> Some l
-        | Some r -> Some <| Disposable.append l r
-    ) None
+let map f (TaskIO io) =
+    TaskIO <| fun i -> f << (io i)
+
+let contraMap f (TaskIO io) = TaskIO <| function
+    | I.Run (a) -> io << I.Run <| (f a)
+    | I.Exn (a, err) -> io << I.Exn <| (f a, err)
+
+let run a (TaskIO io) =
+    let mutable r = Disposable.empty
+    let add l = r <- Disposable.append r l
+    let rez =
+        try         io <| Run (a)      <| add
+        with err -> io <| Exn (a, err) <| add
+    (rez, r)
+
+let inline append (l: T<'a, ^b>) (r: T<'a, ^b>): T<'a, ^b> = TaskIO <| function
+        | I.Run (a) ->
+            let (l, dl) = run a l
+            let (r, dr) = run a r
+            fun o -> o dl; o dr; l + r
+        | I.Exn (_, err) -> raise err
+
+let bind f io = TaskIO <| function
+        | I.Run (a) ->
+            let (rez, d) = run a io
+            fun o ->
+                o d
+                let (TaskIO io2) = f rez
+                o |> io2 (I.Run (a))
+        | I.Exn (_, err) -> raise err
+
 
 // let rec run2 a (TaskIO io) =
 //     let see f = Task.run a << Task.return' <| f

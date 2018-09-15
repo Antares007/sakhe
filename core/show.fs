@@ -6,38 +6,53 @@ open System
 let a = IO.return' <| fun () -> fun o -> o 1
 open TaskIO
 
-let testTaskIO now = run now << return' <| function
-    | I.Run  (a)       -> Pith <| fun o ->
-        printfn "run: %A" a
-        o << O.run <| function
-            | I.Run  (a)       -> Pith <| fun o ->
-                printfn "run2: %A" a
-                failwith "test error2"
-            | I.Exn (a, err) -> Pith <| fun o ->
-                failwith "test error22"
-                printfn "Exn2: %A %A" a err
-        failwith "test error"
-    | I.Exn (a, err) -> Pith <| fun o ->
-        printfn "Exn: %A %A" a err
+let rec testTaskIO now d = run now << return' <| function
+    | I.Run  (a)     -> fun o ->
+        o << Disposable.return' <| fun () -> printfn "dispose(%d) 0" d
+        printfn "run(%d): %A" d a
+        o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
+        let rez =
+            if d > 0 then
+                let (rez, d) = testTaskIO DateTime.Now (d - 1)
+                o d
+                rez
+            else
+                0
+        failwith (sprintf "hmm(%d)" d)
+        1 + rez
+    | I.Exn (a, err) -> fun o ->
+        o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
+        printfn "Exn(%d): %A %A" d a err
+        2
 
-testTaskIO DateTime.Now |> ignore
+let (rez, d) = testTaskIO DateTime.Now 3
+printfn "rez: %A" rez
+Disposable.dispose d
 
-let performanceClock = Default.performanceClock
-let localClock = Clock.localClock performanceClock
+// run: 9/15/2018, 9:31:14 AM
+// Exn: 9/15/2018, 9:31:14 AM Error: test error
+// rez: 2
+// dispose 2
+// dispose 1
+// dispose 0
 
-let printClock name clock =
-    let time = Clock.localTime clock
-    let offset = Clock.offset clock
-    printfn "%s: %A %A" name time offset.Value
 
-printClock "performanceClock" performanceClock
-printClock "localClock" localClock
+// let performanceClock = Default.performanceClock
+// let localClock = Clock.localClock performanceClock
 
-let scheduler = Scheduler.return' performanceClock
+// let printClock name clock =
+//     let time = Clock.localTime clock
+//     let offset = Clock.offset clock
+//     printfn "%s: %A %A" name time offset.Value
 
-let schedule delay period scheduler task =
-    Scheduler.schedule delay period (Task.return' task) scheduler
-open Time
+// printClock "performanceClock" performanceClock
+// printClock "localClock" localClock
+
+// let scheduler = Scheduler.return' performanceClock
+
+// let schedule delay period scheduler task =
+//     Scheduler.schedule delay period (Task.return' task) scheduler
+// open Time
 
 
 // let see = schedule zero << TimeIO << IO <| function
@@ -58,27 +73,27 @@ open Time
 //     | IO.On.Exn (t, err) -> Pith <| fun o -> ()
 
 
-schedule (Some <| Delay.return' 10) None scheduler <| function
-| Task.I.Run (t, cs) ->
-    printfn "run: %A" t
-    schedule (Some <| Delay.return' 10) None scheduler <| function
-    | Task.I.Run (t, cs) ->
-        printfn "run: %A" t
-        schedule (Some <| Delay.return' 10) None scheduler <| function
-        | Task.I.Run (t, cs) ->
-            printfn "run: %A" t
-            schedule (Some <| Delay.return' 10) None scheduler <| function
-            | Task.I.Run (t, cs) ->
-                printfn "run: %A" t
-                None
-            | Task.I.Exn _ -> None
-            |> Some
-        | Task.I.Exn _ -> None
-        |> Some
-    | Task.I.Exn _ -> None
-    |> Some
-| Task.I.Exn _ -> None
-|> ignore
+// schedule (Some <| Delay.return' 10) None scheduler <| function
+// | Task.I.Run (t, cs) ->
+//     printfn "run: %A" t
+//     schedule (Some <| Delay.return' 10) None scheduler <| function
+//     | Task.I.Run (t, cs) ->
+//         printfn "run: %A" t
+//         schedule (Some <| Delay.return' 10) None scheduler <| function
+//         | Task.I.Run (t, cs) ->
+//             printfn "run: %A" t
+//             schedule (Some <| Delay.return' 10) None scheduler <| function
+//             | Task.I.Run (t, cs) ->
+//                 printfn "run: %A" t
+//                 None
+//             | Task.I.Exn _ -> None
+//             |> Some
+//         | Task.I.Exn _ -> None
+//         |> Some
+//     | Task.I.Exn _ -> None
+//     |> Some
+// | Task.I.Exn _ -> None
+// |> ignore
 
 // let my = (Clock.return' (fun () -> Time.return' 0.0) (Time.Offset.return' 0.0))
 // let scheduler =
