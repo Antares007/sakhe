@@ -42,18 +42,44 @@ let bind f io = TaskIO <| function
                 o |> io2 (I.Run (a))
         | I.Exn (_, err) -> raise err
 
+module Cancellation =
+    exception Exception
+    type Source =
+        | Source of (bool ref)
+            member cs.IsCanceled =
+                let (Source canceled) = cs
+                canceled.Value
 
-// let rec run2 a (TaskIO io) =
-//     let see f = Task.run a << Task.return' <| f
-//     Task.run a << Task.return' <| fun i ->
-//         match i with
-//         | Task.I.Run a       -> io << I.Run <| a
-//         | Task.I.Exn (a, err) -> io << I.Exn <| (a, err)
-//         |> Pith.toList
-//         |> List.fold (fun o -> function
-//             | O.Run (io) -> run a io
-//             | O.Dispose a ->
-//                 match o with
-//                 | None -> Some a
-//                 | Some o -> Some <| Disposable.append a o
-//         ) None
+            member cs.IfCanceledThenRaiseCancellationException =
+                let (Source canceled) = cs
+                if canceled.Value then raise Exception
+
+    let cancelable io =
+        let mutable taskDisposable = Disposable.empty
+        let canceled = ref false
+        let cancel () =
+            canceled.Value <- true
+            Disposable.dispose taskDisposable
+        let task = TaskIO <| function
+            | I.Run (a) ->
+                if canceled.Value then ignore
+                else
+                fun o ->
+                    let ((), d) = run (a, Source canceled) io
+                    taskDisposable <- d
+                    if canceled.Value then Disposable.dispose d
+                    else
+                    o d
+            | I.Exn (_, Exception) -> ignore
+            | I.Exn (_, err) -> raise err
+        (task, Disposable.return' cancel)
+
+    let return' f = cancelable << return' <| f
+
+    // let t = return' <| function
+    //     | Run (a, cs) -> fun o ->
+    //         let b = a + 1
+    //         cs.IfCanceledThenRaiseCancellationException
+    //         ()
+    //     | Exn (_, Exception) -> ignore
+    //     | Exn (_, err) -> raise err

@@ -17,7 +17,18 @@ module O =
     let Run f = Run << return' <| f
     let Dispose d = Dispose d
 
-let private setTask = 1
+open Fable.Import
+
+let private setTask delay task =
+    let mutable disposable = Disposable.empty
+    let delay = Time.Delay.unbox delay
+    let token =
+        JS.setTimeout (fun () ->
+            let ((), d) = TaskIO.run () task
+            disposable <- d) delay
+    Disposable.return' <| fun () ->
+        JS.clearTimeout token
+        Disposable.dispose disposable
 
 let rec run (delay: Time.Delay) (TimeIO io) =
     ()

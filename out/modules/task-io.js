@@ -8,7 +8,11 @@ exports.map = map;
 exports.contraMap = contraMap;
 exports.run = run;
 exports.bind = bind;
-exports.I$00601 = void 0;
+exports.Cancellation$002ESource$$get_IsCanceled = Cancellation$002ESource$$get_IsCanceled;
+exports.Cancellation$002ESource$$get_IfCanceledThenRaiseCancellationException = Cancellation$002ESource$$get_IfCanceledThenRaiseCancellationException;
+exports.Cancellation$$$cancelable = Cancellation$$$cancelable;
+exports.Cancellation$$$return$0027 = Cancellation$$$return$0027;
+exports.Cancellation$002ESource = exports.Cancellation$002EException = exports.I$00601 = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-004/Types");
 
@@ -86,4 +90,67 @@ function bind(f$$3, io$$3) {
       };
     }
   };
+}
+
+const Cancellation$002EException = (0, _Types.declare)(function Cancellation$002EException() {}, _Types.FSharpException);
+exports.Cancellation$002EException = Cancellation$002EException;
+const Cancellation$002ESource = (0, _Types.declare)(function Cancellation$002ESource(tag, name, ...fields) {
+  _Types.Union.call(this, tag, name, ...fields);
+}, _Types.Union);
+exports.Cancellation$002ESource = Cancellation$002ESource;
+
+function Cancellation$002ESource$$get_IsCanceled(cs) {
+  const canceled = cs.fields[0];
+  return canceled.contents;
+}
+
+function Cancellation$002ESource$$get_IfCanceledThenRaiseCancellationException(cs$$1) {
+  const canceled$$1 = cs$$1.fields[0];
+
+  if (canceled$$1.contents) {
+    throw new Cancellation$002EException();
+  }
+}
+
+function Cancellation$$$cancelable(io$$4) {
+  let taskDisposable = _disposable.empty;
+  const canceled$$2 = new _Types.FSharpRef(false);
+
+  const cancel = function cancel() {
+    canceled$$2.contents = true;
+    const f$$4 = taskDisposable;
+    f$$4();
+  };
+
+  const task = function (_arg1$$5) {
+    if (_arg1$$5.tag === 1) {
+      if (_arg1$$5.fields[1] instanceof Cancellation$002EException) {
+        return function (value$$1) {
+          value$$1;
+        };
+      } else {
+        throw _arg1$$5.fields[1];
+      }
+    } else {
+      return canceled$$2.contents ? function (value) {
+        value;
+      } : function (o$$1) {
+        const patternInput$$2 = run([_arg1$$5.fields[0], new Cancellation$002ESource(0, "Source", canceled$$2)], io$$4);
+        taskDisposable = patternInput$$2[1];
+
+        if (canceled$$2.contents) {
+          const f$$5 = patternInput$$2[1];
+          f$$5();
+        } else {
+          o$$1(patternInput$$2[1]);
+        }
+      };
+    }
+  };
+
+  return [task, (0, _disposable.return$0027)(cancel)];
+}
+
+function Cancellation$$$return$0027(f$$6) {
+  return Cancellation$$$cancelable(return$0027(f$$6));
 }

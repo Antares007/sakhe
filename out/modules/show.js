@@ -62,10 +62,10 @@ function testTaskIO(now, d$$1) {
   })));
 }
 
-const patternInput$004028$002D24 = testTaskIO((0, _Date.now)(), 3);
-const rez = patternInput$004028$002D24[0];
+const patternInput$004028$002D27 = testTaskIO((0, _Date.now)(), 3);
+const rez = patternInput$004028$002D27[0];
 exports.rez = rez;
-const d = patternInput$004028$002D24[1];
+const d = patternInput$004028$002D27[1];
 exports.d = d;
 (0, _String.toConsole)((0, _String.printf)("rez: %A"))(rez);
 
