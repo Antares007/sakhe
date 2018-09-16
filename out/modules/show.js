@@ -43,7 +43,9 @@ const t2 = (() => {
 })();
 
 exports.t2 = t2;
-const see = (0, _taskIo.run)(1, t2);
+const see = (0, _taskIo.run)(function () {
+  return 1;
+}, t2);
 exports.see = see;
 (0, _String.toConsole)((0, _String.printf)("see: %A"))([see[0], see[1]]);
 
@@ -76,7 +78,9 @@ function testTaskIO(now, d$$1) {
       let rez$$2;
 
       if (d$$1 > 0) {
-        const patternInput = testTaskIO((0, _Date.now)(), d$$1 - 1);
+        const patternInput = testTaskIO(function () {
+          return (0, _Date.now)();
+        }, d$$1 - 1);
         o$$2(patternInput[1]);
         rez$$2 = patternInput[0];
       } else {
@@ -88,10 +92,12 @@ function testTaskIO(now, d$$1) {
   }));
 }
 
-const patternInput$004041$002D9 = testTaskIO((0, _Date.now)(), 3);
-const rez = patternInput$004041$002D9[0];
+const patternInput$004041 = testTaskIO(function () {
+  return (0, _Date.now)();
+}, 3);
+const rez = patternInput$004041[0];
 exports.rez = rez;
-const d = patternInput$004041$002D9[1];
+const d = patternInput$004041[1];
 exports.d = d;
 (0, _String.toConsole)((0, _String.printf)("rez: %A"))(rez);
 

@@ -7,7 +7,8 @@ exports.return$0027 = return$0027;
 exports.map = map;
 exports.bind = bind;
 exports.run = run;
-exports.I$00601 = void 0;
+exports.Cancellation$$$cancelable = Cancellation$$$cancelable;
+exports.Cancellation$002EException = exports.I$00601 = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-004/Types");
 
@@ -47,13 +48,66 @@ function run(a$$1, _arg1$$2) {
 
   try {
     patternInput$$1 = (0, _io.IO$$$run)(function () {
-      return new I$00601(0, "Run", a$$1);
+      return new I$00601(0, "Run", a$$1());
     }, io$$3);
   } catch (err) {
     patternInput$$1 = (0, _io.IO$$$run)(function () {
-      return new I$00601(1, "Exn", a$$1, err);
+      return new I$00601(1, "Exn", a$$1(), err);
     }, io$$3);
   }
 
   return [patternInput$$1[0], (0, _List.fold)(_disposable.append, _disposable.empty, patternInput$$1[1])];
+}
+
+const Cancellation$002EException = (0, _Types.declare)(function Cancellation$002EException() {}, _Types.FSharpException);
+exports.Cancellation$002EException = Cancellation$002EException;
+
+function Cancellation$$$cancelable(io$$4) {
+  let taskDisposable = _disposable.empty;
+  const canceled = new _Types.FSharpRef(false);
+
+  const cancel = function cancel() {
+    canceled.contents = true;
+    const f$$3 = taskDisposable;
+    f$$3();
+  };
+
+  const task = return$0027(function (i, o) {
+    const matchValue = i();
+
+    if (matchValue.tag === 1) {
+      if (matchValue.fields[1] instanceof Cancellation$002EException) {} else {
+        throw matchValue.fields[1];
+      }
+    } else {
+      const i$$1 = function i$$1() {
+        if (canceled.contents) {
+          throw new Cancellation$002EException();
+        } else {
+          return matchValue.fields[0];
+        }
+      };
+
+      const mapO = function mapO(d) {
+        if (canceled.contents) {
+          const f$$5 = d;
+          f$$5();
+          throw new Cancellation$002EException();
+        }
+
+        return d;
+      };
+
+      const patternInput$$2 = run(i$$1, map(mapO, function f$$6() {}, io$$4));
+      taskDisposable = patternInput$$2[1];
+
+      if (canceled.contents) {
+        const f$$7 = patternInput$$2[1];
+        f$$7();
+      }
+
+      o(patternInput$$2[1]);
+    }
+  });
+  return [task, (0, _disposable.return$0027)(cancel)];
 }

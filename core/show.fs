@@ -14,7 +14,7 @@ let t1 = return' <| fun i o ->
 
 let t2 = append t1 t1
 
-let see = run 1 t2
+let see = run (fun () -> 1) t2
 printfn "see: %A" see
 Disposable.dispose (snd see)
 
@@ -26,7 +26,7 @@ let rec testTaskIO now d = run now << return' <| fun i o ->
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
         let rez =
             if d > 0 then
-                let (rez, d) = testTaskIO DateTime.Now (d - 1)
+                let (rez, d) = testTaskIO (fun () -> DateTime.Now) (d - 1)
                 o d
                 rez
             else
@@ -38,7 +38,7 @@ let rec testTaskIO now d = run now << return' <| fun i o ->
         printfn "Exn(%d): %A %A" d a err
         2
 
-let (rez, d) = testTaskIO DateTime.Now 3
+let (rez, d) = testTaskIO (fun () -> DateTime.Now) 3
 printfn "rez: %A" rez
 Disposable.dispose d
 
