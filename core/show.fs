@@ -3,11 +3,24 @@ open Sakhe.S
 open System
 
 
-let a = IO.return' <| fun () -> fun o -> o 1
 open TaskIO
 
-let rec testTaskIO now d = run now << return' <| function
-    | I.Run  (a)     -> fun o ->
+let t1 = return' <| fun i o ->
+    match i() with
+    | I.Run  (a: int) ->
+        o << Disposable.return' <| fun () -> printfn "d"
+        a
+    | I.Exn (a, err) -> a
+
+let t2 = append t1 t1
+
+let see = run 1 t2
+printfn "see: %A" see
+Disposable.dispose (snd see)
+
+let rec testTaskIO now d = run now << return' <| fun i o ->
+    match i() with
+    | I.Run  (a) ->
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 0" d
         printfn "run(%d): %A" d a
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
@@ -18,9 +31,9 @@ let rec testTaskIO now d = run now << return' <| function
                 rez
             else
                 0
-        failwith (sprintf "hmm(%d)" d)
+        // failwith (sprintf "hmm(%d)" d)
         1 + rez
-    | I.Exn (a, err) -> fun o ->
+    | I.Exn (a, err) ->
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
         printfn "Exn(%d): %A %A" d a err
         2
