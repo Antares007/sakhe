@@ -16,10 +16,8 @@ var _pith = require("./pith");
 
 var _io = require("./io");
 
-var _taskIo = require("./task-io");
-
 function testTaskIO(now, d$$1) {
-  return (0, _taskIo.run)(now, function (i) {
+  return (0, _io.run)(now, function (i) {
     return (0, _io.return$0027)(function (o, _arg1) {
       if (_arg1.tag === 1) {
         const err = _arg1.fields[1];
@@ -56,10 +54,10 @@ function testTaskIO(now, d$$1) {
   });
 }
 
-const patternInput$004028$002D50 = testTaskIO((0, _pith.I$$$Of)((0, _Date.now)()), 3);
-const rez = patternInput$004028$002D50[0];
+const patternInput$004026$002D53 = testTaskIO((0, _pith.I$$$Of)((0, _Date.now)()), 3);
+const rez = patternInput$004026$002D53[0];
 exports.rez = rez;
-const d = patternInput$004028$002D50[1];
+const d = patternInput$004026$002D53[1];
 exports.d = d;
 (0, _String.toConsole)((0, _String.printf)("rez: %A"))(rez);
 

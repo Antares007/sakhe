@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.I$$$empty = I$$$empty;
 exports.I$$$Of = I$$$Of;
-exports.I$$$contraMap = I$$$contraMap;
+exports.I$$$map = I$$$map;
 exports.I$$$bind = I$$$bind;
 exports.I$$$run = I$$$run;
 exports.O$$$empty = O$$$empty;
@@ -26,7 +26,7 @@ function I$$$Of(a) {
   };
 }
 
-function I$$$contraMap(f, _arg1) {
+function I$$$map(f, _arg1) {
   const i = _arg1;
   return function () {
     return f(i());

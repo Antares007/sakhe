@@ -3,10 +3,8 @@ open Sakhe.S
 open System
 
 
-open TaskIO
-
-let rec testTaskIO now d = run now << IO.return' <| fun o -> function
-    | Try  (a) ->
+let rec testTaskIO now d = IO.run now << IO.return' <| fun o -> function
+    | IO.Try  (a) ->
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 0" d
         printfn "run(%d): %A" d a
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
@@ -19,7 +17,7 @@ let rec testTaskIO now d = run now << IO.return' <| fun o -> function
                 0
         failwith (sprintf "hmm(%d)" d)
         1 + rez
-    | Catch (a, err) ->
+    | IO.Catch (a, err) ->
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
         printfn "Exn(%d): %A %A" d a err
         failwith (sprintf "hmm2(%d)" d)

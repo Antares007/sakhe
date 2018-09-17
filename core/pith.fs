@@ -12,7 +12,7 @@ module I =
     let Of a =
         I <| fun () -> a
 
-    let contraMap f (I i) =
+    let map f (I i) =
         I <| fun () -> i () |> f
 
     let inline append (I l) (I r) =

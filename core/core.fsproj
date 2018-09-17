@@ -15,7 +15,6 @@
     <Compile Include="s/default.fs" />
     <Compile Include="pith.fs" />
     <Compile Include="io.fs" />
-    <Compile Include="task-io.fs" />
     <Compile Include="time-io.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
