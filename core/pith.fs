@@ -1,37 +1,58 @@
 ﻿namespace Sakhe
 open Fable.Core
 
-[<Erase>] type Pith<'a> = Pith of (('a -> unit) -> unit)
+type [<Erase>] I<'a> = I of (unit -> 'a)
+type [<Erase>] O<'a, 'b> = O of (('a -> unit) -> 'b)
 
 [<RequireQualifiedAccess>]
-module Pith =
+module I =
     let empty =
-        Pith ignore
+        I ignore
 
-    let filter f (Pith p) =
-        Pith <| fun o -> p (fun a -> if f a then o a)
+    let Of a =
+        I <| fun () -> a
 
-    let filterMap f (Pith p) =
-        Pith <| fun o -> p (fun a ->
-            match f a with
-            | None -> ()
-            | Some a -> o a)
+    let contraMap f (I i) =
+        I <| fun () -> i () |> f
 
-    let map f (Pith p) =
-        Pith <| fun o -> p (o << f)
+    let inline append (I l) (I r) =
+        I <| fun () -> l () + r ()
 
-    let append (Pith f) (Pith s) =
-        Pith <| fun o -> f o; s o
+    let bind f (I i) =
+        I <| fun () -> let (I i) = f (i ()) in i ()
 
-    let fold f s (Pith pith) =
+    let run (I i) = i ()
+
+[<RequireQualifiedAccess>]
+module O =
+    let empty =
+        O ignore
+
+    let filter f (O p) =
+        O <| fun o -> p (fun a -> if f a then o a)
+
+    let filterMap f (O p) =
+        O <| fun o ->
+            p (fun a ->
+                match f a with
+                | None -> ()
+                | Some a -> o a)
+
+    let map f g (O p) =
+        O <| fun o -> (g << p) (o << f)
+
+    let inline append (O l) (O r) =
+        O <| fun o -> (l o) + (r o)
+
+    let bind f (O p) =
+        O <| fun o ->
+            let a = p o
+            let (O p) = f a
+            p o
+
+    let fold f s (O o) =
         let mutable state = s
-        pith <| fun a -> state <- f state a
-        state
+        (state, (o <| fun a -> state <- f state a))
 
-    let toList (Pith pith) =
-        let mutable list = []
-        pith <| fun a -> list <- a :: list
-        list
-
-    let tree deltaC pith =
-        pith |> toList |> deltaC
+    let run o (O p) =
+        p o

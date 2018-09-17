@@ -1,6 +1,5 @@
 namespace Sakhe
 open Fable.Core
-type Pith<'a> = Pith of (('a -> unit) -> unit)
 
 type [<Erase>] IO<'i, 'o, 'a> = IO of ((unit -> 'i) -> ('o -> unit) -> 'a)
 

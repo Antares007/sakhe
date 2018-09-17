@@ -2,20 +2,21 @@ module Sakhe.TimeIO
 open Fable.Core
 open Sakhe.S
 
-// type [<Erase>] T = private TimeIO of IO<I, O>
+// type [<Erase>] T<'a> = private TimeIO of IO<I, O, 'a>
 // and I = TaskIO.I<Time.T>
 // and O =
 //     private
-//     | Run of T
+//     | Run of T<unit>
 //     | Dispose of Disposable.T
-//     | Delay of Time.Delay * T
+//     | Delay of Time.Delay * T<unit>
+
 
 // let return' f = TimeIO << IO <| f
 
-// module O =
-//     let Delay a f = Delay <| (Time.Delay.return' a, return' f)
-//     let Run f = Run << return' <| f
-//     let Dispose d = Dispose d
+// // module O =
+// //     let Delay a f = Delay <| (Time.Delay.return' a, return' f)
+// //     let Run f = Run << return' <| f
+// //     let Dispose d = Dispose d
 
 // open Fable.Import
 
@@ -24,7 +25,7 @@ open Sakhe.S
 //     let delay = Time.Delay.unbox delay
 //     let token =
 //         JS.setTimeout (fun () ->
-//             let ((), d) = TaskIO.run () task
+//             let ((), d) = TaskIO.run ignore task
 //             disposable <- d) delay
 //     Disposable.return' <| fun () ->
 //         JS.clearTimeout token

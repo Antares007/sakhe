@@ -5,40 +5,43 @@ open System
 
 open TaskIO
 
-let t1 = return' <| fun i o ->
-    match i() with
-    | I.Run  (a: int) ->
-        o << Disposable.return' <| fun () -> printfn "d"
-        a
-    | I.Exn (a, err) -> a
+let z i f = run i << return' <| f
 
-let t2 = append t1 t1
+let (r, d1) = z (I.Of 1) <| fun o -> function
+    | In.Run  (a) ->
+        let (rez, d) = z (I.Of 2) <| fun o -> function
+            | In.Run  (a) ->
+                o << Disposable.return' <| fun () -> printfn "ddd!!!"
+                a
+            | In.Exn (a, err) -> a
+        o d
+        failwith "a"
+        rez + a
+    | In.Exn (a, err) -> a
 
-let see = run (fun () -> 1) t2
-printfn "see: %A" see
-Disposable.dispose (snd see)
+printfn "%d" r
+Disposable.dispose d1
 
-let rec testTaskIO now d = run now << return' <| fun i o ->
-    match i() with
-    | I.Run  (a) ->
+let rec testTaskIO now d = run now << return' <| fun o -> function
+    | In.Run  (a) ->
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 0" d
         printfn "run(%d): %A" d a
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
         let rez =
             if d > 0 then
-                let (rez, d) = testTaskIO (fun () -> DateTime.Now) (d - 1)
+                let (rez, d) = testTaskIO (I.Of DateTime.Now) (d - 1)
                 o d
                 rez
             else
                 0
-        // failwith (sprintf "hmm(%d)" d)
+        failwith (sprintf "hmm(%d)" d)
         1 + rez
-    | I.Exn (a, err) ->
+    | In.Exn (a, err) ->
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
         printfn "Exn(%d): %A %A" d a err
         2
 
-let (rez, d) = testTaskIO (fun () -> DateTime.Now) 3
+let (rez, d) = testTaskIO (I.Of DateTime.Now) 3
 printfn "rez: %A" rez
 Disposable.dispose d
 
