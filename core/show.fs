@@ -5,23 +5,6 @@ open System
 
 open TaskIO
 
-let z i f = run i << IO.return' <| f
-
-let (r, d1) = z (I.Of 1) <| fun o -> function
-    | Try  (a) ->
-        let (rez, d) = z (I.Of 2) <| fun o -> function
-            | Try  (a) ->
-                o << Disposable.return' <| fun () -> printfn "ddd!!!"
-                a
-            | Catch (a, err) -> a
-        o d
-        failwith "a"
-        rez + a
-    | Catch (a, err) -> a
-
-printfn "%d" r
-Disposable.dispose d1
-
 let rec testTaskIO now d = run now << IO.return' <| fun o -> function
     | Try  (a) ->
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 0" d
@@ -39,6 +22,7 @@ let rec testTaskIO now d = run now << IO.return' <| fun o -> function
     | Catch (a, err) ->
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
         printfn "Exn(%d): %A %A" d a err
+        failwith (sprintf "hmm2(%d)" d)
         2
 
 let (rez, d) = testTaskIO (I.Of DateTime.Now) 3
