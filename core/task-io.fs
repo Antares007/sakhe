@@ -3,20 +3,19 @@ open Fable.Core
 open Sakhe.S
 open System
 
-type In<'a> =
-    | Run of 'a
-    | Exn of 'a * exn
-
-let return' f =
-    fun i -> O <| fun o -> f o (I.run i)
+type TryCatch<'a> =
+    | Try of 'a
+    | Catch of 'a * exn
 
 let run a io =
     let mutable list = []
     let o a = list <- a :: list
     let rez =
-        try         O.run o (io (a |> I.contraMap Run))
-        with err -> O.run o (io (a |> I.contraMap (fun a -> Exn (a, err))))
+        try         O.run o (io (a |> I.contraMap Try))
+        with err -> O.run o (io (a |> I.contraMap (fun a -> Catch (a, err))))
     rez, (list |> List.fold Disposable.append Disposable.empty)
+
+let see = run (I.Of 1) <| fun i -> O <| fun o -> 1
 
 // module Cancellation =
 //     exception Exception

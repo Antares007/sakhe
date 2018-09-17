@@ -7,6 +7,8 @@ exports.z = z;
 exports.testTaskIO = testTaskIO;
 exports.d = exports.rez = exports.d1 = exports.r = void 0;
 
+var _io = require("./io");
+
 var _taskIo = require("./task-io");
 
 var _pith = require("./pith");
@@ -19,11 +21,11 @@ var _Date = require("./fable-core.2.0.0-beta-004/Date");
 
 function z(i, f) {
   return (0, _taskIo.run)(i, function (i$$1) {
-    return (0, _taskIo.return$0027)(f, i$$1);
+    return (0, _io.return$0027)(f, i$$1);
   });
 }
 
-const patternInput$004010$002D30 = z((0, _pith.I$$$Of)(1), function (o, _arg1) {
+const patternInput$004010$002D42 = z((0, _pith.I$$$Of)(1), function (o, _arg1) {
   if (_arg1.tag === 1) {
     const err$$1 = _arg1.fields[1];
     const a$$3 = _arg1.fields[0] | 0;
@@ -48,9 +50,9 @@ const patternInput$004010$002D30 = z((0, _pith.I$$$Of)(1), function (o, _arg1) {
     return patternInput[0] + a | 0;
   }
 });
-const r = patternInput$004010$002D30[0];
+const r = patternInput$004010$002D42[0];
 exports.r = r;
-const d1 = patternInput$004010$002D30[1];
+const d1 = patternInput$004010$002D42[1];
 exports.d1 = d1;
 (0, _String.toConsole)((0, _String.printf)("%d"))(r);
 
@@ -61,7 +63,7 @@ exports.d1 = d1;
 
 function testTaskIO(now, d$$2) {
   return (0, _taskIo.run)(now, function (i$$4) {
-    return (0, _taskIo.return$0027)(function (o$$2, _arg1$$2) {
+    return (0, _io.return$0027)(function (o$$2, _arg1$$2) {
       if (_arg1$$2.tag === 1) {
         const err$$2 = _arg1$$2.fields[1];
         const a$$5 = _arg1$$2.fields[0];
@@ -96,10 +98,10 @@ function testTaskIO(now, d$$2) {
   });
 }
 
-const patternInput$004044$002D31 = testTaskIO((0, _pith.I$$$Of)((0, _Date.now)()), 3);
-const rez = patternInput$004044$002D31[0];
+const patternInput$004044$002D43 = testTaskIO((0, _pith.I$$$Of)((0, _Date.now)()), 3);
+const rez = patternInput$004044$002D43[0];
 exports.rez = rez;
-const d = patternInput$004044$002D31[1];
+const d = patternInput$004044$002D43[1];
 exports.d = d;
 (0, _String.toConsole)((0, _String.printf)("rez: %A"))(rez);
 
