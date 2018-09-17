@@ -1,27 +1,27 @@
 ﻿namespace Sakhe
 open Fable.Core
 
-type [<Erase>] I<'a> = I of (unit -> 'a)
+// type [<Erase>] I<'a> = I of (unit -> 'a)
 type [<Erase>] O<'a, 'b> = O of (('a -> unit) -> 'b)
 
-[<RequireQualifiedAccess>]
-module I =
-    let empty =
-        I ignore
+// [<RequireQualifiedAccess>]
+// module I =
+//     let empty =
+//         I ignore
 
-    let Of a =
-        I <| fun () -> a
+//     let Of a =
+//         I <| fun () -> a
 
-    let map f (I i) =
-        I <| fun () -> i () |> f
+//     let map f (I i) =
+//         I <| fun () -> i () |> f
 
-    let inline append (I l) (I r) =
-        I <| fun () -> l () + r ()
+//     let inline append (I l) (I r) =
+//         I <| fun () -> l () + r ()
 
-    let bind f (I i) =
-        I <| fun () -> let (I i) = f (i ()) in i ()
+//     let bind f (I i) =
+//         I <| fun () -> let (I i) = f (i ()) in i ()
 
-    let run (I i) = i ()
+//     let run (I i) = i ()
 
 [<RequireQualifiedAccess>]
 module O =

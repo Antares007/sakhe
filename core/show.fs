@@ -10,7 +10,7 @@ let rec testTaskIO now d = IO.run now << IO.return' <| fun o -> function
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
         let rez =
             if d > 0 then
-                let (rez, d) = testTaskIO (I.Of DateTime.Now) (d - 1)
+                let (rez, d) = testTaskIO DateTime.Now (d - 1)
                 o d
                 rez
             else
@@ -20,12 +20,34 @@ let rec testTaskIO now d = IO.run now << IO.return' <| fun o -> function
     | IO.Catch (a, err) ->
         o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
         printfn "Exn(%d): %A %A" d a err
-        failwith (sprintf "hmm2(%d)" d)
+        // failwith (sprintf "hmm2(%d)" d)
         2
 
-let (rez, d) = testTaskIO (I.Of DateTime.Now) 3
+let (rez, d) = testTaskIO DateTime.Now 0
 printfn "rez: %A" rez
 Disposable.dispose d
+
+open TimeIO
+
+let rec see d =
+    fun o -> function
+    | IO.Try t ->
+        printfn "1(%d) %A" d t
+        if d > 0 then o << O.delay 1000 <| see (d - 1)
+        let rec t d = O.delay 10 <| fun o -> function
+            | IO.Try a ->
+                printfn "2 %A" a
+                if d > 0 then o <| t (d - 1)
+                ()
+            | IO.Catch (a, err) -> ()
+
+        o <| t 9
+    | IO.Catch (a, err) -> ()
+
+let dd =
+    see 3
+    |> IO.return'
+    |> run (Time.return' 0.) (Time.Delay.return' 1000)
 
 // run: 9/15/2018, 9:31:14 AM
 // Exn: 9/15/2018, 9:31:14 AM Error: test error

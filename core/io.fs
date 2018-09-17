@@ -1,29 +1,24 @@
 module Sakhe.IO
 open Sakhe.S
 
-type TryCatch<'a> =
+type I<'a> =
     | Try of 'a
     | Catch of 'a * exn
 
-let return' f = fun i -> O <| fun o -> f o (I.run i)
+let return' f = fun i -> O <| fun o -> f o i
 
-let inline private tryRun o i io =
-    try         O.run o (io (i |> I.map Try))
-    with err -> O.run o (io (i |> I.map (fun a -> Catch (a, err))))
-
-let run i io =
+let run a io =
     let mutable list = []
     let o a = list <- a :: list
     let rez =
         try
-            tryRun o i io
+            try         O.run o << io << Try   <| (a)
+            with err -> O.run o << io << Catch <| (a, err)
         with err ->
             List.iter Disposable.dispose list
             raise err
     let disposable = list |> List.fold Disposable.append Disposable.empty
     rez, disposable
-
-
 
 // module Cancellation =
 //     exception Exception
