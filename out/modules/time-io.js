@@ -90,45 +90,71 @@ function setTask(delay, task) {
 function run(now, delay$$2, io$$2) {
   const now$$1 = (0, _time.add)(delay$$2, now);
 
-  const io$$5 = function io$$5(i$$3) {
-    return (0, _pith.Pith$$$map)(function f$$5(_arg1$$4) {
-      switch (_arg1$$4.tag) {
+  const see = function see(i$$3) {
+    return io$$2((0, _io.I$$$map)(function f$$4() {
+      return now$$1;
+    }, i$$3));
+  };
+
+  const o$$3 = (0, _pith.O$$$return$0027)(function (ref, a) {
+    return (0, _Types.L)(a, ref);
+  }, (0, _Types.L)())(function (arg10$0040) {
+    return (0, _pith.O$$$contraMap)(function (_arg1$$4) {
+      if (_arg1$$4.tag === 0) {
+        const io$$3 = _arg1$$4.fields[0];
+
+        const o$$2 = function o$$2(i$$4) {
+          return io$$3((0, _io.I$$$map)(function f$$5() {
+            return now$$1;
+          }, i$$4));
+        };
+
+        return [now$$1, o$$2];
+      } else {
+        throw new _Types.MatchFailureException("C:/code/sakhecore/core/time-io.fs", 57, 69);
+      }
+    }, arg10$0040);
+  });
+
+  const io$$6 = function io$$6(i$$5) {
+    return (0, _pith.Pith$$$map)(function f$$7(_arg2$$1) {
+      switch (_arg2$$1.tag) {
         case 1:
           {
-            const d$$1 = _arg1$$4.fields[0];
+            const d$$1 = _arg2$$1.fields[0];
             return d$$1;
           }
 
         case 2:
           {
-            const io$$4 = _arg1$$4.fields[1];
-            const delay$$3 = _arg1$$4.fields[0];
-            return run(now$$1, delay$$3, io$$4);
+            const io$$5 = _arg2$$1.fields[1];
+            const delay$$3 = _arg2$$1.fields[0];
+            return run(now$$1, delay$$3, io$$5);
           }
 
         default:
           {
-            const io$$3 = _arg1$$4.fields[0];
-            return run(now$$1, _time.DelayModule$$$zero, io$$3);
+            const io$$4 = _arg2$$1.fields[0];
+            return run(now$$1, _time.DelayModule$$$zero, io$$4);
           }
       }
-    }, function g$$2() {}, io$$2((0, _io.I$$$map)(function f$$4() {
+    }, function g$$3() {}, io$$2((0, _io.I$$$map)(function f$$6() {
       return now$$1;
-    }, i$$3)));
+    }, i$$5)));
   };
 
-  return setTask(delay$$2, io$$5);
+  return setTask(delay$$2, io$$6);
 }
 
-function OModule$$$delay(d$$2, io$$6) {
-  return new O(2, "Delay", (0, _time.DelayModule$$$return$0027)(d$$2), function (i$$4) {
-    return (0, _io.return$0027)(io$$6, i$$4);
+function OModule$$$delay(d$$2, io$$7) {
+  return new O(2, "Delay", (0, _time.DelayModule$$$return$0027)(d$$2), function (i$$6) {
+    return (0, _io.return$0027)(io$$7, i$$6);
   });
 }
 
-function OModule$$$run(io$$7) {
-  return new O(0, "Run", function (i$$5) {
-    return (0, _io.return$0027)(io$$7, i$$5);
+function OModule$$$run(io$$8) {
+  return new O(0, "Run", function (i$$7) {
+    return (0, _io.return$0027)(io$$8, i$$7);
   });
 }
 

@@ -39,8 +39,8 @@ module Pith =
                 | None -> ()
                 | Some a -> o a)
 
-    let map f g (Pith p) =
-        Pith <| fun o -> (g << p) (o << f)
+    let map f (Pith p) =
+        Pith (f << p)
 
     let inline append (Pith l) (Pith r) =
         Pith <| fun o -> (l o) + (r o)

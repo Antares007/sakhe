@@ -4,7 +4,7 @@ open System
 
 
 let rec testTaskIO now d =
-    let o = IO.O.return' ()
+    let o = O.return' Disposable.append Disposable.empty
     let rez =
         IO.run o now << IO.return' <| fun o -> function
         | IO.Try  (a) ->
