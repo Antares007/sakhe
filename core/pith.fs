@@ -13,7 +13,11 @@ module O =
         O ((fun b -> a <- f a b), (fun () -> a))
 
     let map f (O (put, get)) =
-        O (put << f, f << get)
+        O (put, get >> f)
+
+    let contraMap g (O (put, get)) =
+        O (g >> put, get)
+
 
 type [<Erase>] Pith<'a, 'b> = Pith of (('a -> unit) -> 'b)
 
@@ -21,6 +25,9 @@ type [<Erase>] Pith<'a, 'b> = Pith of (('a -> unit) -> 'b)
 module Pith =
     let empty =
         Pith ignore
+
+    let run (O (b, _)) (Pith p) =
+        p b
 
     let filter f (Pith p) =
         Pith <| fun o -> p (fun a -> if f a then o a)
@@ -43,6 +50,3 @@ module Pith =
             let a = p o
             let (Pith p) = f a
             p o
-
-    let run (O (b, _)) (Pith p) =
-        p b
