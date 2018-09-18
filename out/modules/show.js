@@ -72,10 +72,12 @@ function see(d$$2, o$$2, _arg1$$1) {
   } else {
     const t = _arg1$$1.fields[0];
     (0, _String.toConsole)((0, _String.printf)("a(%d) %A"))(d$$2)(t);
+    const f$$4 = dd();
+    f$$4();
 
     if (d$$2 < 2) {
-      o$$2((0, _timeIo.OModule$$$delay)(100, function (o$$3, _arg1$$2) {
-        see(d$$2 + 1, o$$3, _arg1$$2);
+      o$$2((0, _timeIo.OModule$$$delay)(100, function (o$$3, _arg1$$3) {
+        see(d$$2 + 1, o$$3, _arg1$$3);
       }));
     }
 
@@ -91,9 +93,6 @@ function see(d$$2, o$$2, _arg1$$1) {
           if (d2 < 2) {
             o$$4(t$$1(d2 + 1));
           }
-
-          const f$$4 = dd();
-          f$$4();
         }
       });
     };

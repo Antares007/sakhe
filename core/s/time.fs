@@ -19,6 +19,8 @@ module Delay =
         assert (i >= 0)
         Delay i
 
+    let zero = Delay 0
+
     let fromTo (Time from) (Time to') =
         Delay << unbox <| System.Math.Max (0., to' - from)
 

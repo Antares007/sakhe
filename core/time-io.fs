@@ -19,17 +19,16 @@ let private cancelable io =
         | IO.Try () ->
             if canceled then ()
             else
-            let ohole =
-                IO.O.return' ()
-                |> O.map (fun d ->
-                            if not canceled then d
-                            else
-                            Disposable.dispose d
-                            raise CancellationException)
+            let mapO = fun d ->
+                if not canceled then d
+                else
+                Disposable.dispose d
+                raise CancellationException
+            let ohole = IO.O.return' ()
             IO.run ohole () (function
-                    | IO.Try _ as i -> io i
+                    | IO.Try _ as i -> io i |> Pith.map mapO id
                     | IO.Catch (_, CancellationException) -> Pith.empty
-                    | IO.Catch _ as i -> io i)
+                    | IO.Catch _ as i -> io i |> Pith.map mapO id)
             disposable <- ohole.Value
             if canceled then cancel ()
             else
@@ -55,10 +54,10 @@ let rec run now delay (io) =
     let t = Time.add delay now
     let io = fun i ->
         io (match i with
-            |IO.Try () -> IO.Try t
-            |IO.Catch ((), err) -> IO.Catch (t, err))
+            | IO.Try () -> IO.Try t
+            | IO.Catch ((), err) -> IO.Catch (t, err))
         |> Pith.map (function
-            | Run io -> run t (Time.Delay.return' 0) io
+            | Run io -> run t Time.Delay.zero io
             | Dispose d -> d
             | Delay (delay, io) -> run t delay io) id
     setTask delay io

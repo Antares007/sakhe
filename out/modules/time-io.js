@@ -42,7 +42,7 @@ function cancelable(io) {
         throw err;
       } else {
         if (canceled) {} else {
-          const ohole = (0, _pith.O$$$map)(function f$$2(d) {
+          const mapO = function mapO(d) {
             if (!canceled) {
               return d;
             } else {
@@ -50,9 +50,11 @@ function cancelable(io) {
               f$$1();
               throw new CancellationException();
             }
-          }, (0, _io.O$$$return$0027)());
+          };
+
+          const ohole = (0, _io.O$$$return$0027)();
           (0, _io.run)(ohole, null, function (_arg2) {
-            return _arg2.tag === 1 ? _arg2.fields[1] instanceof CancellationException ? (0, _pith.Pith$$$empty)() : io(_arg2) : io(_arg2);
+            return _arg2.tag === 1 ? _arg2.fields[1] instanceof CancellationException ? (0, _pith.Pith$$$empty)() : (0, _pith.Pith$$$map)(mapO, function g$$1() {}, io(_arg2)) : (0, _pith.Pith$$$map)(mapO, function g() {}, io(_arg2));
           });
           disposable = (0, _pith.O$00602$$get_Value)(ohole);
 
@@ -80,8 +82,8 @@ function setTask(delay, task) {
   }, delay$$1);
   return (0, _disposable.return$0027)(function () {
     clearTimeout(token);
-    const f$$4 = disposable$$1;
-    f$$4();
+    const f$$3 = disposable$$1;
+    f$$3();
   });
 }
 
@@ -90,7 +92,7 @@ function run(now, delay$$2, io$$2) {
 
   const io$$5 = function io$$5(i$$3) {
     var err$$1;
-    return (0, _pith.Pith$$$map)(function f$$5(_arg1$$3) {
+    return (0, _pith.Pith$$$map)(function f$$4(_arg1$$3) {
       switch (_arg1$$3.tag) {
         case 1:
           {
@@ -108,10 +110,10 @@ function run(now, delay$$2, io$$2) {
         default:
           {
             const io$$3 = _arg1$$3.fields[0];
-            return run(t, (0, _time.DelayModule$$$return$0027)(0), io$$3);
+            return run(t, _time.DelayModule$$$zero, io$$3);
           }
       }
-    }, function g() {}, io$$2(i$$3.tag === 1 ? (err$$1 = i$$3.fields[1], new _io.I$00601(1, "Catch", t, err$$1)) : new _io.I$00601(0, "Try", t)));
+    }, function g$$2() {}, io$$2(i$$3.tag === 1 ? (err$$1 = i$$3.fields[1], new _io.I$00601(1, "Catch", t, err$$1)) : new _io.I$00601(0, "Try", t)));
   };
 
   return setTask(delay$$2, io$$5);
