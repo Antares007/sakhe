@@ -1,8 +1,14 @@
 module Sakhe.S.Disposable
 open Fable.Core
 open Sakhe.S
+open Sakhe.S
 
-type [<Erase>] T = private Disposable of (unit -> unit)
+type [<Erase>] T =
+    private
+    | Disposable of (unit -> unit)
+    member d.Dispose () =
+        let (Disposable d) = d
+        d ()
 
 let empty = Disposable ignore
 let return' f =

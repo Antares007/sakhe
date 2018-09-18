@@ -23,29 +23,34 @@ let rec testTaskIO now d = IO.run now << IO.return' <| fun o -> function
         // failwith (sprintf "hmm2(%d)" d)
         2
 
-let (rez, d) = testTaskIO DateTime.Now 0
-printfn "rez: %A" rez
-Disposable.dispose d
+// let (rez, d) = testTaskIO DateTime.Now 0
+// printfn "rez: %A" rez
+// Disposable.dispose d
 
 open TimeIO
+
+let mutable dd = Disposable.empty
 
 let rec see d =
     fun o -> function
     | IO.Try t ->
-        printfn "1(%d) %A" d t
-        if d > 0 then o << O.delay 1000 <| see (d - 1)
-        let rec t d = O.delay 10 <| fun o -> function
+        printfn "a(%d) %A" d t
+
+        if d < 2 then o << O.delay 1000 <| see (d + 1)
+
+        let rec t d2 = O.delay 1100 <| fun o -> function
             | IO.Try a ->
-                printfn "2 %A" a
-                if d > 0 then o <| t (d - 1)
+                printfn "a(%d.%d) %A" d d2 a
+                if d2 < 2 then o <| t (d2 + 1)
+                Disposable.dispose dd
                 ()
             | IO.Catch (a, err) -> ()
 
-        o <| t 9
+        o <| t 0
     | IO.Catch (a, err) -> ()
 
-let dd =
-    see 3
+dd <-
+    see 0
     |> IO.return'
     |> run (Time.return' 0.) (Time.Delay.return' 1000)
 

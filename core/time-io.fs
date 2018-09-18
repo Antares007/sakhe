@@ -9,13 +9,31 @@ type O =
     | Delay of Time.Delay * (IO.I<Time.T> -> O<O, unit>)
 
 
+let private cancelable io =
+    let mutable disposable = Disposable.empty
+    let mutable canceled = false
+    let cancel () = canceled <- true; disposable.Dispose()
+
+    let io = IO.return' <| fun o -> function
+        | IO.Try () ->
+            if canceled then ()
+            else
+            disposable <- snd (IO.run () io)
+            if canceled then cancel ()
+            else
+            o disposable
+        | IO.Catch ((), err) -> raise err
+
+    io, (Disposable.return' cancel)
+
 open Fable.Import
 let private setTask delay task =
     let mutable disposable = Disposable.empty
     let delay = Time.Delay.unbox delay
     let token =
         JS.setTimeout (fun () ->
-            let ((), d) = IO.run () task
+            let (task, d) = cancelable task
+            IO.run () task |> ignore
             disposable <- d) delay
     Disposable.return' <| fun () ->
         JS.clearTimeout token

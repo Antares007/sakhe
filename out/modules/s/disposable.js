@@ -3,10 +3,16 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.T$$Dispose = T$$Dispose;
 exports.empty = empty;
 exports.return$0027 = return$0027;
 exports.append = append;
 exports.appendArray = appendArray;
+
+function T$$Dispose(d) {
+  const d$$1 = d;
+  d$$1();
+}
 
 function empty() {}
 
