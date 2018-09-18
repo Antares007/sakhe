@@ -8,23 +8,34 @@ type O =
     | Dispose of Disposable.T
     | Delay of Time.Delay * (IO.I<Time.T> -> Pith<O, unit>)
 
+exception CancellationException
 
-// let private cancelable io =
-//     let mutable disposable = Disposable.empty
-//     let mutable canceled = false
-//     let cancel () = canceled <- true; disposable.Dispose()
+let private cancelable io =
+    let mutable disposable = Disposable.empty
+    let mutable canceled = false
+    let cancel () = canceled <- true; disposable.Dispose()
 
-//     let io = IO.return' <| fun o -> function
-//         | IO.Try () ->
-//             if canceled then ()
-//             else
-//             disposable <- snd (IO.run () io)
-//             if canceled then cancel ()
-//             else
-//             o disposable
-//         | IO.Catch ((), err) -> raise err
-
-//     io, (Disposable.return' cancel)
+    let io = IO.return' <| fun o -> function
+        | IO.Try () ->
+            if canceled then ()
+            else
+            let ohole =
+                IO.O.return' ()
+                |> O.map (fun d ->
+                            if not canceled then d
+                            else
+                            Disposable.dispose d
+                            raise CancellationException)
+            IO.run ohole () (function
+                    | IO.Try _ as i -> io i
+                    | IO.Catch (_, CancellationException) -> Pith.empty
+                    | IO.Catch _ as i -> io i)
+            disposable <- ohole.Value
+            if canceled then cancel ()
+            else
+            o disposable
+        | IO.Catch ((), err) -> raise err
+    io, (Disposable.return' cancel)
 
 open Fable.Import
 let private setTask delay task =
@@ -33,8 +44,9 @@ let private setTask delay task =
     let token =
         JS.setTimeout (fun () ->
             let o = IO.O.return' ()
+            let (task, cancel) = cancelable task
             IO.run o () task
-            disposable <- o.Value) delay
+            disposable <- cancel) delay
     Disposable.return' <| fun () ->
         JS.clearTimeout token
         Disposable.dispose disposable

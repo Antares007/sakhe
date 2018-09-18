@@ -42,11 +42,11 @@ let rec see d =
 
         if d < 2 then o << O.delay 100 <| see (d + 1)
 
-        let rec t d2 = O.delay 110 <| fun o -> function
+        let rec t d2 = O.delay 50 <| fun o -> function
             | IO.Try a ->
                 printfn "a(%d.%d) %A" d d2 a
                 if d2 < 2 then o <| t (d2 + 1)
-                // Disposable.dispose dd
+                Disposable.dispose dd
                 ()
             | IO.Catch (a, err) -> ()
 

@@ -80,7 +80,7 @@ function see(d$$2, o$$2, _arg1$$1) {
     }
 
     const t$$1 = function t$$1(d2) {
-      return (0, _timeIo.OModule$$$delay)(110, function (o$$4, _arg2) {
+      return (0, _timeIo.OModule$$$delay)(50, function (o$$4, _arg2) {
         if (_arg2.tag === 1) {
           const err$$1 = _arg2.fields[1];
           const a$$3 = _arg2.fields[0];
@@ -91,6 +91,9 @@ function see(d$$2, o$$2, _arg1$$1) {
           if (d2 < 2) {
             o$$4(t$$1(d2 + 1));
           }
+
+          const f$$4 = dd();
+          f$$4();
         }
       });
     };
@@ -100,7 +103,7 @@ function see(d$$2, o$$2, _arg1$$1) {
 }
 
 dd((0, _timeIo.run)((0, _time.return$0027)(0), (0, _time.DelayModule$$$return$0027)(1000), function (i$$1) {
-  return (0, _io.return$0027)(function (o$$5, _arg1$$3) {
-    see(0, o$$5, _arg1$$3);
+  return (0, _io.return$0027)(function (o$$5, _arg1$$4) {
+    see(0, o$$5, _arg1$$4);
   }, i$$1);
 }));
