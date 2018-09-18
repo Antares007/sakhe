@@ -50,16 +50,14 @@ let private setTask delay task =
         JS.clearTimeout token
         Disposable.dispose disposable
 
-let rec run now delay (io) =
-    let t = Time.add delay now
-    let io = fun i ->
-        io (match i with
-            | IO.Try () -> IO.Try t
-            | IO.Catch ((), err) -> IO.Catch (t, err))
-        |> Pith.map (function
-            | Run io -> run t Time.Delay.zero io
-            | Dispose d -> d
-            | Delay (delay, io) -> run t delay io) id
+let rec run now delay io =
+    let now = Time.add delay now
+    let io i = i |> IO.I.map (fun () -> now)
+                 |> io
+                 |> Pith.map (function
+                              | Run io -> run now Time.Delay.zero io
+                              | Dispose d -> d
+                              | Delay (delay, io) -> run now delay io) id
     setTask delay io
 
 

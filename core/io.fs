@@ -5,6 +5,11 @@ type I<'a> =
     | Try of 'a
     | Catch of 'a * exn
 
+module I =
+    let map f = function
+        | Try  (a) -> Try (f a)
+        | Catch (a, exn) -> Catch (f a, exn)
+
 module O =
     let return' () = O.return' Disposable.append Disposable.empty
 

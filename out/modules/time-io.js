@@ -88,32 +88,33 @@ function setTask(delay, task) {
 }
 
 function run(now, delay$$2, io$$2) {
-  const t = (0, _time.add)(delay$$2, now);
+  const now$$1 = (0, _time.add)(delay$$2, now);
 
   const io$$5 = function io$$5(i$$3) {
-    var err$$1;
-    return (0, _pith.Pith$$$map)(function f$$4(_arg1$$3) {
-      switch (_arg1$$3.tag) {
+    return (0, _pith.Pith$$$map)(function f$$5(_arg1$$4) {
+      switch (_arg1$$4.tag) {
         case 1:
           {
-            const d$$1 = _arg1$$3.fields[0];
+            const d$$1 = _arg1$$4.fields[0];
             return d$$1;
           }
 
         case 2:
           {
-            const io$$4 = _arg1$$3.fields[1];
-            const delay$$3 = _arg1$$3.fields[0];
-            return run(t, delay$$3, io$$4);
+            const io$$4 = _arg1$$4.fields[1];
+            const delay$$3 = _arg1$$4.fields[0];
+            return run(now$$1, delay$$3, io$$4);
           }
 
         default:
           {
-            const io$$3 = _arg1$$3.fields[0];
-            return run(t, _time.DelayModule$$$zero, io$$3);
+            const io$$3 = _arg1$$4.fields[0];
+            return run(now$$1, _time.DelayModule$$$zero, io$$3);
           }
       }
-    }, function g$$2() {}, io$$2(i$$3.tag === 1 ? (err$$1 = i$$3.fields[1], new _io.I$00601(1, "Catch", t, err$$1)) : new _io.I$00601(0, "Try", t)));
+    }, function g$$2() {}, io$$2((0, _io.I$$$map)(function f$$4() {
+      return now$$1;
+    }, i$$3)));
   };
 
   return setTask(delay$$2, io$$5);
