@@ -3,25 +3,29 @@ open Sakhe.S
 open System
 
 
-let rec testTaskIO now d = IO.run now << IO.return' <| fun o -> function
-    | IO.Try  (a) ->
-        o << Disposable.return' <| fun () -> printfn "dispose(%d) 0" d
-        printfn "run(%d): %A" d a
-        o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
-        let rez =
-            if d > 0 then
-                let (rez, d) = testTaskIO DateTime.Now (d - 1)
-                o d
-                rez
-            else
-                0
-        failwith (sprintf "hmm(%d)" d)
-        1 + rez
-    | IO.Catch (a, err) ->
-        o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
-        printfn "Exn(%d): %A %A" d a err
-        // failwith (sprintf "hmm2(%d)" d)
-        2
+let rec testTaskIO now d =
+    let o = IO.O.return' ()
+    let rez =
+        IO.run o now << IO.return' <| fun o -> function
+        | IO.Try  (a) ->
+            o << Disposable.return' <| fun () -> printfn "dispose(%d) 0" d
+            printfn "run(%d): %A" d a
+            o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
+            let rez =
+                if d > 0 then
+                    let (rez, d) = testTaskIO DateTime.Now (d - 1)
+                    o d
+                    rez
+                else
+                    0
+            failwith (sprintf "hmm(%d)" d)
+            1 + rez
+        | IO.Catch (a, err) ->
+            o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
+            printfn "Exn(%d): %A %A" d a err
+            // failwith (sprintf "hmm2(%d)" d)
+            2
+    rez, o.Value
 
 // let (rez, d) = testTaskIO DateTime.Now 0
 // printfn "rez: %A" rez
@@ -36,13 +40,13 @@ let rec see d =
     | IO.Try t ->
         printfn "a(%d) %A" d t
 
-        if d < 2 then o << O.delay 1000 <| see (d + 1)
+        if d < 2 then o << O.delay 100 <| see (d + 1)
 
-        let rec t d2 = O.delay 1100 <| fun o -> function
+        let rec t d2 = O.delay 110 <| fun o -> function
             | IO.Try a ->
                 printfn "a(%d.%d) %A" d d2 a
                 if d2 < 2 then o <| t (d2 + 1)
-                Disposable.dispose dd
+                // Disposable.dispose dd
                 ()
             | IO.Catch (a, err) -> ()
 
