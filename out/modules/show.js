@@ -71,38 +71,45 @@ function see(d$$2, o$$2, _arg1$$1) {
     const a$$4 = _arg1$$1.fields[0];
   } else {
     const t = _arg1$$1.fields[0];
-    (0, _String.toConsole)((0, _String.printf)("a(%d) %A"))(d$$2)(t);
-    const f$$4 = dd();
-    f$$4();
+    (0, _String.toConsole)((0, _String.printf)("|> a(%d) %A"))(d$$2)(t);
+    o$$2((0, _timeIo.OModule$$$run)(function (o$$3, _arg2) {
+      if (_arg2.tag === 1) {} else {
+        const t$$1 = _arg2.fields[0];
+        (0, _String.toConsole)((0, _String.printf)("aaa"));
+      }
+    }));
 
     if (d$$2 < 2) {
-      o$$2((0, _timeIo.OModule$$$delay)(100, function (o$$3, _arg1$$3) {
-        see(d$$2 + 1, o$$3, _arg1$$3);
+      o$$2((0, _timeIo.OModule$$$delay)(100, function (o$$4, _arg1$$2) {
+        see(d$$2 + 1, o$$4, _arg1$$2);
       }));
     }
 
-    const t$$1 = function t$$1(d2) {
-      return (0, _timeIo.OModule$$$delay)(50, function (o$$4, _arg2) {
-        if (_arg2.tag === 1) {
-          const err$$1 = _arg2.fields[1];
-          const a$$3 = _arg2.fields[0];
+    const t$$2 = function t$$2(d2) {
+      return (0, _timeIo.OModule$$$delay)(50, function (o$$5, _arg3) {
+        if (_arg3.tag === 1) {
+          const err$$1 = _arg3.fields[1];
+          const a$$3 = _arg3.fields[0];
         } else {
-          const a$$2 = _arg2.fields[0];
-          (0, _String.toConsole)((0, _String.printf)("a(%d.%d) %A"))(d$$2)(d2)(a$$2);
+          const a$$2 = _arg3.fields[0];
+          (0, _String.toConsole)((0, _String.printf)("|> b(%d.%d) %A"))(d$$2)(d2)(a$$2);
 
           if (d2 < 2) {
-            o$$4(t$$1(d2 + 1));
+            o$$5(t$$2(d2 + 1));
           }
+
+          (0, _String.toConsole)((0, _String.printf)("<| b(%d.%d) %A"))(d$$2)(d2)(a$$2);
         }
       });
     };
 
-    o$$2(t$$1(0));
+    o$$2(t$$2(0));
+    (0, _String.toConsole)((0, _String.printf)("<| a(%d) %A"))(d$$2)(t$$2);
   }
 }
 
-dd((0, _timeIo.run)((0, _time.return$0027)(0), (0, _time.DelayModule$$$return$0027)(1000), function (i$$1) {
-  return (0, _io.IO$$$return$0027)(function (o$$5, _arg1$$4) {
-    see(0, o$$5, _arg1$$4);
+dd((0, _timeIo.dalay)((0, _time.return$0027)(0), (0, _time.DelayModule$$$return$0027)(1000), function (i$$1) {
+  return (0, _io.IO$$$return$0027)(function (o$$6, _arg1$$3) {
+    see(0, o$$6, _arg1$$3);
   }, i$$1);
 }));

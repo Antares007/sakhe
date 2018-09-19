@@ -38,25 +38,33 @@ let mutable dd = Disposable.empty
 let rec see d =
     fun o -> function
     | IO.Try t ->
-        printfn "a(%d) %A" d t
-        Disposable.dispose dd
+        printfn "|> a(%d) %A" d t
+        o << O.run <| fun o -> function
+            | IO.Try t ->
+                printfn "aaa"
+                ()
+            | IO.Catch _ -> ()
+
 
         if d < 2 then o << O.delay 100 <| see (d + 1)
 
         let rec t d2 = O.delay 50 <| fun o -> function
             | IO.Try a ->
-                printfn "a(%d.%d) %A" d d2 a
+                printfn "|> b(%d.%d) %A" d d2 a
+
                 if d2 < 2 then o <| t (d2 + 1)
-                ()
+
+                printfn "<| b(%d.%d) %A" d d2 a
             | IO.Catch (a, err) -> ()
 
         o <| t 0
+        printfn "<| a(%d) %A" d t
     | IO.Catch (a, err) -> ()
 
 dd <-
     see 0
     |> IO.return'
-    |> run (Time.return' 0.) (Time.Delay.return' 1000)
+    |> dalay (Time.return' 0.) (Time.Delay.return' 1000)
 
 // run: 9/15/2018, 9:31:14 AM
 // Exn: 9/15/2018, 9:31:14 AM Error: test error

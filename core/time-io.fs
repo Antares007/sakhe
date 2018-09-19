@@ -16,27 +16,44 @@ let private setTask delay task =
     let token = JS.setTimeout task (Time.Delay.unbox delay)
     Disposable.return' <| fun () -> JS.clearTimeout token
 
-let rec run now delay io =
+let rec ring ioB =
+    let ioA = fun iA -> Pith <| fun oA ->
+        match iA with
+        | IO.Catch (now, _)
+        | IO.Try now ->
+            let fold d = function
+                | Run io -> Disposable.append d (run now io)
+                | Dispose d2 -> Disposable.append d d2
+                | Delay (delay, io) -> Disposable.append d (dalay now delay io)
+
+            let pithB = ioB <| IO.Try now
+            let oB = O.return' fold Disposable.empty
+            let rez = Pith.run oB pithB
+            oA oB.Value
+            rez
+    ioA
+
+and run now io =
+    let o = O.return' Disposable.append Disposable.empty
+    IO.run o now (ring io)
+    o.Value
+
+and dalay now delay io =
     let now = Time.add delay now
-    let clearTimeOut = setTask delay <| fun () ->
-        let o = O.return' Disposable.append Disposable.empty
+    let mutable d = Disposable.empty
+    let mutable canceled = false
+    let cancel () = canceled <- true; d.Dispose()
 
-        IO.run o now <| fun i -> Pith <| fun o ->
-            let foldO = fun d -> function
-                | Run io ->
-                    run now Time.Delay.zero io
-                | Dispose d -> d
-                | Delay (delay, io) -> run now delay io
+    let task () =
+        if canceled then ()
+        else
+        d <- run now io
+        if canceled then d.Dispose()
 
-            let o2 =
-                (O.return' (fun list a -> a :: list) [])
-
-
-            Pith.run o2 (io i)
-
-            o <| List.fold foldO Disposable.empty o2.Value
-    clearTimeOut
-
+    let token = JS.setTimeout task (Time.Delay.unbox delay)
+    Disposable.return' <| fun () ->
+        JS.clearTimeout token
+        cancel()
 
 
 
