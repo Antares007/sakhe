@@ -78,20 +78,18 @@ function Pith$$$filterMap(f$$3, _arg1$$4) {
   };
 }
 
-function Pith$$$map(f$$4, g$$1, _arg1$$5) {
+function Pith$$$map(f$$4, _arg1$$5) {
   const p$$4 = _arg1$$5;
-  return function (o$$2) {
-    g$$1(p$$4(function ($arg$$4) {
-      o$$2(f$$4($arg$$4));
-    }));
+  return function ($arg$$3) {
+    return f$$4(p$$4($arg$$3));
   };
 }
 
 function Pith$$$bind(f$$5, _arg1$$6) {
   const p$$5 = _arg1$$6;
-  return function (o$$3) {
-    const a$$5 = p$$5(o$$3);
+  return function (o$$2) {
+    const a$$5 = p$$5(o$$2);
     const p$$6 = f$$5(a$$5);
-    return p$$6(o$$3);
+    return p$$6(o$$2);
   };
 }

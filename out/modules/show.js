@@ -7,15 +7,15 @@ exports.testTaskIO = testTaskIO;
 exports.see = see;
 exports.dd = void 0;
 
-var _io = require("./io");
+var _disposable = require("./s/disposable");
+
+var _pith = require("./pith");
 
 var _String = require("./fable-core.2.0.0-beta-004/String");
 
-var _disposable = require("./s/disposable");
-
 var _Date = require("./fable-core.2.0.0-beta-004/Date");
 
-var _pith = require("./pith");
+var _io = require("./io");
 
 var _Util = require("./fable-core.2.0.0-beta-004/Util");
 
@@ -24,9 +24,9 @@ var _timeIo = require("./time-io");
 var _time = require("./s/time");
 
 function testTaskIO(now, d) {
-  const o = (0, _io.O$$$return$0027)();
-  const rez$$2 = (0, _io.run)(o, now, function (i) {
-    return (0, _io.return$0027)(function (o$$1, _arg1) {
+  const o = (0, _pith.O$$$return$0027)(_disposable.append, _disposable.empty);
+  const rez$$2 = (0, _io.IO$$$run)(o, now, function (i) {
+    return (0, _io.IO$$$return$0027)(function (o$$1, _arg1) {
       if (_arg1.tag === 1) {
         const err = _arg1.fields[1];
         const a$$1 = _arg1.fields[0];
@@ -102,7 +102,7 @@ function see(d$$2, o$$2, _arg1$$1) {
 }
 
 dd((0, _timeIo.run)((0, _time.return$0027)(0), (0, _time.DelayModule$$$return$0027)(1000), function (i$$1) {
-  return (0, _io.return$0027)(function (o$$5, _arg1$$4) {
+  return (0, _io.IO$$$return$0027)(function (o$$5, _arg1$$4) {
     see(0, o$$5, _arg1$$4);
   }, i$$1);
 }));
