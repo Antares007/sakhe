@@ -61,6 +61,7 @@ let rec see d =
                 printfn "|> err: %A" err
                 raise err
             | IO.Catch (a, err) -> raise err
+        raise err
 
 dd.Set (
     see 0

@@ -74,6 +74,7 @@ function see(d$$2, o$$1, _arg1$$1) {
         throw err$$2;
       }
     }));
+    throw err$$2;
   } else {
     const t = _arg1$$1.fields[0];
     (0, _String.toConsole)((0, _String.printf)("|> a(%d) %A"))(d$$2)(t);
