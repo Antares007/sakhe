@@ -3,28 +3,35 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.return$0027 = return$0027;
 exports.run = run;
 exports.OModule$$$delay = OModule$$$delay;
 exports.OModule$$$run = OModule$$$run;
 exports.OModule$$$dispose = OModule$$$dispose;
-exports.O = exports.TimeIO = void 0;
+exports.O = exports.T = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-004/Types");
+
+var _io = require("./io");
 
 var _time = require("./s/time");
 
 var _disposable = require("./s/disposable");
 
-var _io = require("./io");
-
-const TimeIO = (0, _Types.declare)(function TimeIO(tag, name, ...fields) {
+const T = (0, _Types.declare)(function T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
-exports.TimeIO = TimeIO;
+exports.T = T;
 const O = (0, _Types.declare)(function O(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
 exports.O = O;
+
+function return$0027(f) {
+  return new T(0, "TimeIO", function (i) {
+    return (0, _io.IO$$$return$0027)(f, i);
+  });
+}
 
 function setTask(delay, task) {
   const token = setTimeout(task, (0, _time.DelayModule$$$unbox)(delay));
@@ -35,9 +42,9 @@ function setTask(delay, task) {
 
 function run(now, _arg1) {
   const io = _arg1.fields[0];
-  return (0, _io.IO$$$run)(now, function (i) {
+  return (0, _io.IO$$$run)(now, function (i$$1) {
     return function (o) {
-      const pith = io(i);
+      const pith = io(i$$1);
       pith(function (_arg2) {
         switch (_arg2.tag) {
           case 0:
@@ -70,14 +77,14 @@ function run(now, _arg1) {
 }
 
 function OModule$$$delay(d$$2, io$$4) {
-  return new O(1, "Delay", (0, _time.DelayModule$$$return$0027)(d$$2), new TimeIO(0, "TimeIO", function (i$$1) {
-    return (0, _io.IO$$$return$0027)(io$$4, i$$1);
+  return new O(1, "Delay", (0, _time.DelayModule$$$return$0027)(d$$2), new T(0, "TimeIO", function (i$$2) {
+    return (0, _io.IO$$$return$0027)(io$$4, i$$2);
   }));
 }
 
 function OModule$$$run(io$$5) {
-  return new O(0, "Run", new TimeIO(0, "TimeIO", function (i$$2) {
-    return (0, _io.IO$$$return$0027)(io$$5, i$$2);
+  return new O(0, "Run", new T(0, "TimeIO", function (i$$3) {
+    return (0, _io.IO$$$return$0027)(io$$5, i$$3);
   }));
 }
 

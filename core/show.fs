@@ -63,10 +63,15 @@ let rec see d =
             | IO.Catch (a, err) -> raise err
         raise err
 
-dd.Set (
-    see 0
-    |> (TimeIO << IO.return')
-    |> run Time.zero)
+
+// dd.Set (
+//     see 0
+//     |> (TimeIO << IO.return')
+//     |> run Time.zero)
+
+let s = Stream.now 1
+
+let d = TimeIO.run S.Time.zero << Stream.run (Sink.return' (printfn "%A")) <| s
 
 // run: 9/15/2018, 9:31:14 AM
 // Exn: 9/15/2018, 9:31:14 AM Error: test error

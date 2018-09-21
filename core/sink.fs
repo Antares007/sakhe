@@ -1,5 +1,6 @@
-module Sakhe.S.Sink
+module Sakhe.Sink
 open Fable.Core
+open Sakhe.S
 
 type On<'a> =
     | Event of Time.T * 'a
@@ -14,6 +15,7 @@ module Send =
     let error  t err (Sink g) = g << Error   <| (t, err)
 
 let return' f = Sink f
+
 let unbox (Sink v) = v
 
 let map f (Sink g) = Sink <| function

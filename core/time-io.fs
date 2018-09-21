@@ -3,13 +3,13 @@ open System
 open Fable.Import
 open Sakhe.S
 
-type TimeIO = TimeIO of (IO<Time.T> -> Pith<O, unit>)
+type T = TimeIO of (IO<Time.T> -> Pith<O, unit>)
 and O =
     private
-    | Run of TimeIO
-    | Delay of Time.Delay * TimeIO
+    | Run of T
+    | Delay of Time.Delay * T
     | Dispose of IDisposable
-
+let return' f = TimeIO << IO.return' <| f
 let private setTask delay task =
     let token = JS.setTimeout task (Time.Delay.unbox delay)
     Disposable.return' <| fun () -> JS.clearTimeout token
