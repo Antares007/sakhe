@@ -10,6 +10,8 @@ exports.IO$00601 = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-004/Types");
 
+var _disposable = require("./s/disposable");
+
 var _pith = require("./pith");
 
 const IO$00601 = (0, _Types.declare)(function IO$00601(tag, name, ...fields) {
@@ -34,10 +36,20 @@ function IO$$$return$0027(f$$1, i) {
   };
 }
 
-function IO$$$run(o$$1, a$$2, io) {
+function IO$$$run(a$$2, io) {
+  const o$$1 = (0, _pith.O$$$return$0027)(_disposable.append, _disposable.empty);
+  let b;
+
   try {
-    return (0, _pith.Pith$$$run)(o$$1, io(new IO$00601(0, "Try", a$$2)));
-  } catch (err) {
-    return (0, _pith.Pith$$$run)(o$$1, io(new IO$00601(1, "Catch", a$$2, err)));
+    try {
+      b = (0, _pith.Pith$$$run)(o$$1, io(new IO$00601(0, "Try", a$$2)));
+    } catch (err) {
+      b = (0, _pith.Pith$$$run)(o$$1, io(new IO$00601(1, "Catch", a$$2, err)));
+    }
+  } catch (err$$1) {
+    (0, _pith.O$00602$$get_Value)(o$$1).Dispose();
+    throw err$$1;
   }
+
+  return [b, (0, _pith.O$00602$$get_Value)(o$$1)];
 }

@@ -4,53 +4,48 @@ open System
 
 
 let rec testTaskIO now d =
-    let o = O.return' Disposable.append Disposable.empty
-    let rez =
-        IO.run o now << IO.return' <| fun o -> function
-        | IO.Try  (a) ->
-            o << Disposable.return' <| fun () -> printfn "dispose(%d) 0" d
-            printfn "run(%d): %A" d a
-            o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
-            let rez =
-                if d > 0 then
-                    let (rez, d) = testTaskIO DateTime.Now (d - 1)
-                    o d
-                    rez
-                else
-                    0
-            failwith (sprintf "hmm(%d)" d)
-            1 + rez
-        | IO.Catch (a, err) ->
-            o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
-            printfn "Exn(%d): %A %A" d a err
-            // failwith (sprintf "hmm2(%d)" d)
-            2
-    rez, o.Value
+    IO.run now << IO.return' <| fun o -> function
+    | IO.Try  (a) ->
+        o << Disposable.return' <| fun () -> printfn "dispose(%d) 0" d
+        printfn "run(%d): %A" d a
+        o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
+        let rez =
+            if d > 0 then
+                let (rez, d) = testTaskIO DateTime.Now (d - 1)
+                o d
+                rez
+            else
+                0
+        failwith (sprintf "hmm(%d)" d)
+        1 + rez
+    | IO.Catch (a, err) ->
+        o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
+        printfn "Exn(%d): %A %A" d a err
+        // failwith (sprintf "hmm2(%d)" d)
+        2
 
-// let (rez, d) = testTaskIO DateTime.Now 0
+// let (rez, d) = testTaskIO DateTime.Now 2
 // printfn "rez: %A" rez
-// Disposable.dispose d
+
+// let aa = new Disposable.SettableDisposable()
+// Disposable.dispose aa
+// aa.Set d
 
 open TimeIO
 
-let mutable dd = Disposable.empty
+let dd = new Disposable.SettableDisposable()
 
 let rec see d =
     fun o -> function
     | IO.Try t ->
         printfn "|> a(%d) %A" d t
-        o << O.run <| fun o -> function
-            | IO.Try t ->
-                printfn "aaa"
-                ()
-            | IO.Catch _ -> ()
+        if d < 2 then o << O.delay 1000 <| see (d + 1)
+        failwith "test"
 
-
-        if d < 2 then o << O.delay 100 <| see (d + 1)
-
-        let rec t d2 = O.delay 50 <| fun o -> function
+        let rec t d2 = O.delay 1500 <| fun o -> function
             | IO.Try a ->
                 printfn "|> b(%d.%d) %A" d d2 a
+
 
                 if d2 < 2 then o <| t (d2 + 1)
 
@@ -59,12 +54,18 @@ let rec see d =
 
         o <| t 0
         printfn "<| a(%d) %A" d t
-    | IO.Catch (a, err) -> ()
 
-dd <-
+    | IO.Catch (a, err) ->
+        o << O.delay 1500 <| fun o -> function
+            | IO.Try a ->
+                printfn "|> err: %A" err
+                raise err
+            | IO.Catch (a, err) -> raise err
+
+dd.Set (
     see 0
-    |> IO.return'
-    |> dalay (Time.return' 0.) (Time.Delay.return' 1000)
+    |> (TimeIO << IO.return')
+    |> run Time.zero)
 
 // run: 9/15/2018, 9:31:14 AM
 // Exn: 9/15/2018, 9:31:14 AM Error: test error

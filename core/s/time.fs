@@ -9,6 +9,7 @@ let return' (t) =
     assert (t >= 0.0)
     assert (t = System.Math.Floor(t))
     Time <| t
+let zero = Time 0.0
 
 let add (Delay delay) (Time t) = return' <| t + float delay
 

@@ -22,6 +22,13 @@ module IO =
     /// ```
     let return' f = fun i -> Pith <| fun o -> f o i
 
-    let run o a io =
-        try         Pith.run o << io << Try   <| (a)
-        with err -> Pith.run o << io << Catch <| (a, err)
+    let run a io =
+        let o = O.return' Disposable.append Disposable.empty
+        let b =
+            try
+                try         Pith.run o << io << Try   <| (a)
+                with err -> Pith.run o << io << Catch <| (a, err)
+            with err ->
+                o.Value.Dispose()
+                raise err
+        (b, o.Value)

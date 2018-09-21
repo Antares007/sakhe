@@ -1,11 +1,11 @@
 module Sakhe.S.Scheduler
 open Fable.Core
 open Sakhe.S
-open System.Timers
+open System
 
 type [<Erase>] NextRunRef =
     private
-    | Ref of (Time.T * Disposable.T) option ref
+    | Ref of (Time.T * IDisposable) option ref
 
 type [<Erase>] Timeline =
     private
@@ -93,7 +93,7 @@ and private setTimer scheduler point =
             raise err
     netRunRef.Value <- Some (point, Timer.setTimer task delay timer)
 
-let rec private add localNow relNow period task (cancelRef: Disposable.T ref) scheduler =
+let rec private add localNow relNow period task (cancelRef: IDisposable ref) scheduler =
     let (Scheduler (_, _, _, timeline, _)) = scheduler
     let task =
         match period with

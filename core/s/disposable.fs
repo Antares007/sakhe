@@ -1,27 +1,39 @@
 module Sakhe.S.Disposable
-open Fable.Core
-open Sakhe.S
-open Sakhe.S
+open System
 
-type [<Erase>] T =
-    private
-    | Disposable of (unit -> unit)
-    member d.Dispose () =
-        let (Disposable d) = d
-        d ()
-
-let empty = Disposable ignore
-let return' f =
+type AnonymousDisposable(f) =
     let mutable disposed = false
-    Disposable <| fun () ->
-        if not disposed then
+    interface IDisposable with
+        member __.Dispose () =
+            if disposed then ()
+            else
             disposed <- true
             f ()
+type SettableDisposable() =
+    let mutable disposed = false
+    let mutable disposable = None
+    interface IDisposable with
+        member __.Dispose () =
+            if disposed then ()
+            else
+            disposed <- true
+            if disposable.IsSome then disposable.Value.Dispose()
+    member inline this.Dispose () = (this :> IDisposable).Dispose()
 
-let append (Disposable l) (Disposable r) = return' (fun () -> l(); r())
+    member __.Set (d: IDisposable) =
+        if disposable.IsSome then failwith "Settable already set"
+        else
+        disposable <- Some d
+        if disposed then d.Dispose()
 
-let inline dispose (Disposable f) = f ()
 
-let appendArray disposables = return' <| fun () ->
+
+let empty = new AnonymousDisposable(ignore) :> IDisposable
+let return' f = new AnonymousDisposable(f) :> IDisposable
+let append (l: #IDisposable) (r: #IDisposable) = return' (fun () -> l.Dispose(); r.Dispose())
+
+let inline dispose (d: IDisposable) = d.Dispose()
+
+let appendArray (disposables: IDisposable []) = return' <| fun () ->
     let to' = Array.length disposables - 1
-    for i = 0 to to' do dispose disposables.[i]
+    for i = 0 to to' do disposables.[i].Dispose()

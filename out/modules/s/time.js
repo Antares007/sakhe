@@ -11,7 +11,7 @@ exports.DelayModule$$$fromTo = DelayModule$$$fromTo;
 exports.DelayModule$$$unbox = DelayModule$$$unbox;
 exports.OffsetModule$$$return$0027 = OffsetModule$$$return$0027;
 exports.OffsetModule$$$from = OffsetModule$$$from;
-exports.DelayModule$$$zero = void 0;
+exports.DelayModule$$$zero = exports.zero = void 0;
 
 var _Util = require("../fable-core.2.0.0-beta-004/Util");
 
@@ -26,6 +26,9 @@ function return$0027(t) {
 
   return t;
 }
+
+const zero = 0;
+exports.zero = zero;
 
 function add(_arg2, _arg1) {
   const delay = _arg2;
