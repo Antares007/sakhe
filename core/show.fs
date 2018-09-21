@@ -3,50 +3,18 @@ open Sakhe.S
 open System
 
 
-let rec testTaskIO now d =
-    IO.run now << IO.return' <| fun o -> function
-    | IO.Try  (a) ->
-        o << Disposable.return' <| fun () -> printfn "dispose(%d) 0" d
-        printfn "run(%d): %A" d a
-        o << Disposable.return' <| fun () -> printfn "dispose(%d) 1" d
-        let rez =
-            if d > 0 then
-                let (rez, d) = testTaskIO DateTime.Now (d - 1)
-                o d
-                rez
-            else
-                0
-        failwith (sprintf "hmm(%d)" d)
-        1 + rez
-    | IO.Catch (a, err) ->
-        o << Disposable.return' <| fun () -> printfn "dispose(%d) 3" d
-        printfn "Exn(%d): %A %A" d a err
-        // failwith (sprintf "hmm2(%d)" d)
-        2
-
-// let (rez, d) = testTaskIO DateTime.Now 2
-// printfn "rez: %A" rez
-
-// let aa = new Disposable.SettableDisposable()
-// Disposable.dispose aa
-// aa.Set d
-
-
 let dd = new Disposable.SettableDisposable()
 
 let rec see d =
-    fun i -> Pith <| fun o ->
+    TimeIO.return' <| fun i -> Pith <| fun o ->
     match i with
     | IO.Try t ->
         printfn "|> a(%d) %A" d t
 
-        let see = Stream.periodic 1000
-        let io =  Stream.run see (Sink.return' <| function
-            | Sink.On.Event (t, ()) ->
-                printfn "%A" t
-                ()
-            | _ -> ())
-        o << TimeIO.O.dispose <| TimeIO.run t io
+        for i = 0 to 10 do
+            o << TimeIO.O.run
+              << Stream.run (Stream.periodic 1000)
+              << Sink.return' <| printfn "a:%A"
 
         printfn "<| a(%d) %A" d t
 
@@ -62,7 +30,6 @@ let rec see d =
 
 dd.Set (
     see 0
-    |> TimeIO.return'
     |> TimeIO.run Time.zero)
 
 let s = Stream.now 1

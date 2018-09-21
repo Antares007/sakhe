@@ -1,9 +1,10 @@
 namespace Sakhe
-type IO<'a> =
-    | Try of 'a
-    | Catch of 'a * exn
 
 module IO =
+    type T<'a, 'o, 'b> = IO of (I<'a> -> Pith<'o,'b>)
+    and I<'a> =
+        | Try of 'a
+        | Catch of 'a * exn
     open Sakhe.S
 
 
@@ -20,9 +21,9 @@ module IO =
     /// | Catch (a, err) -> a + 2
     /// |> return'
     /// ```
-    let return' f = fun i -> Pith <| fun o -> f o i
+    let return' f = IO <| f
 
-    let run a io =
+    let run a (IO io) =
         let o = O.return' Disposable.append Disposable.empty
         let b =
             try
