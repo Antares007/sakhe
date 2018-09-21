@@ -31,32 +31,28 @@ let rec testTaskIO now d =
 // Disposable.dispose aa
 // aa.Set d
 
-open TimeIO
 
 let dd = new Disposable.SettableDisposable()
 
 let rec see d =
-    fun o -> function
+    fun i -> Pith <| fun o ->
+    match i with
     | IO.Try t ->
         printfn "|> a(%d) %A" d t
-        if d < 2 then o << O.delay 1000 <| see (d + 1)
-        failwith "test"
 
-        let rec t d2 = O.delay 1500 <| fun o -> function
-            | IO.Try a ->
-                printfn "|> b(%d.%d) %A" d d2 a
+        let see = Stream.periodic 1000
+        let io =  Stream.run see (Sink.return' <| function
+            | Sink.On.Event (t, ()) ->
+                printfn "%A" t
+                ()
+            | _ -> ())
+        o << TimeIO.O.dispose <| TimeIO.run t io
 
-
-                if d2 < 2 then o <| t (d2 + 1)
-
-                printfn "<| b(%d.%d) %A" d d2 a
-            | IO.Catch (a, err) -> ()
-
-        o <| t 0
         printfn "<| a(%d) %A" d t
 
     | IO.Catch (a, err) ->
-        o << O.delay 1500 <| fun o -> function
+        o << TimeIO.O.delay 1500 <| fun i -> Pith <| fun o ->
+            match i with
             | IO.Try a ->
                 printfn "|> err: %A" err
                 raise err
@@ -64,14 +60,13 @@ let rec see d =
         raise err
 
 
-// dd.Set (
-//     see 0
-//     |> (TimeIO << IO.return')
-//     |> run Time.zero)
+dd.Set (
+    see 0
+    |> TimeIO.return'
+    |> TimeIO.run Time.zero)
 
 let s = Stream.now 1
 
-let d = TimeIO.run S.Time.zero << Stream.run (Sink.return' (printfn "%A")) <| s
 
 // run: 9/15/2018, 9:31:14 AM
 // Exn: 9/15/2018, 9:31:14 AM Error: test error

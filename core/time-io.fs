@@ -9,7 +9,7 @@ and O =
     | Run of T
     | Delay of Time.Delay * T
     | Dispose of IDisposable
-let return' f = TimeIO << IO.return' <| f
+let return' f = TimeIO <| f
 let private setTask delay task =
     let token = JS.setTimeout task (Time.Delay.unbox delay)
     Disposable.return' <| fun () -> JS.clearTimeout token
@@ -27,6 +27,6 @@ let rec run now (TimeIO io) =
 
 
 module O =
-    let delay d io = Delay (Time.Delay.return' d, TimeIO << IO.return' <| io)
+    let delay d io = Delay (Time.Delay.return' d, TimeIO <| io)
     let run io = Run << TimeIO << IO.return' <| io
     let dispose d = Dispose d

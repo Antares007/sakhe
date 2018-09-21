@@ -12,11 +12,11 @@ exports.O = exports.T = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-004/Types");
 
-var _io = require("./io");
-
 var _time = require("./s/time");
 
 var _disposable = require("./s/disposable");
+
+var _io = require("./io");
 
 const T = (0, _Types.declare)(function T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -28,9 +28,7 @@ const O = (0, _Types.declare)(function O(tag, name, ...fields) {
 exports.O = O;
 
 function return$0027(f) {
-  return new T(0, "TimeIO", function (i) {
-    return (0, _io.IO$$$return$0027)(f, i);
-  });
+  return new T(0, "TimeIO", f);
 }
 
 function setTask(delay, task) {
@@ -42,9 +40,9 @@ function setTask(delay, task) {
 
 function run(now, _arg1) {
   const io = _arg1.fields[0];
-  return (0, _io.IO$$$run)(now, function (i$$1) {
+  return (0, _io.IO$$$run)(now, function (i) {
     return function (o) {
-      const pith = io(i$$1);
+      const pith = io(i);
       pith(function (_arg2) {
         switch (_arg2.tag) {
           case 0:
@@ -77,14 +75,12 @@ function run(now, _arg1) {
 }
 
 function OModule$$$delay(d$$2, io$$4) {
-  return new O(1, "Delay", (0, _time.DelayModule$$$return$0027)(d$$2), new T(0, "TimeIO", function (i$$2) {
-    return (0, _io.IO$$$return$0027)(io$$4, i$$2);
-  }));
+  return new O(1, "Delay", (0, _time.DelayModule$$$return$0027)(d$$2), new T(0, "TimeIO", io$$4));
 }
 
 function OModule$$$run(io$$5) {
-  return new O(0, "Run", new T(0, "TimeIO", function (i$$3) {
-    return (0, _io.IO$$$return$0027)(io$$5, i$$3);
+  return new O(0, "Run", new T(0, "TimeIO", function (i$$1) {
+    return (0, _io.IO$$$return$0027)(io$$5, i$$1);
   }));
 }
 
