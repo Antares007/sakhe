@@ -13,9 +13,9 @@ var _Types = require("./fable-core.2.0.0-beta-004/Types");
 
 var _sink = require("./sink");
 
-var _Util = require("./fable-core.2.0.0-beta-004/Util");
-
 var _timeIo = require("./time-io");
+
+var _Util = require("./fable-core.2.0.0-beta-004/Util");
 
 const T$00601 = (0, _Types.declare)(function T$00601(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -32,8 +32,8 @@ function run(_arg1, sink) {
 }
 
 function now(a) {
-  return return$0027(function (sink$$1) {
-    return function (i) {
+  return new T$00601(0, "Stream", function (sink$$1) {
+    return (0, _timeIo.return$0027)(function (i) {
       return function (o) {
         if (i.tag === 0) {
           const now$$1 = i.fields[0];
@@ -43,7 +43,7 @@ function now(a) {
           throw new Error("never");
         }
       };
-    };
+    });
   });
 }
 
@@ -60,9 +60,9 @@ function periodic(period) {
     };
   };
 
-  return return$0027(function (sink$$3) {
-    return function (i$$2) {
+  return new T$00601(0, "Stream", function (sink$$3) {
+    return (0, _timeIo.return$0027)(function (i$$2) {
       return io(sink$$3, i$$2);
-    };
+    });
   });
 }

@@ -31,9 +31,9 @@ function io(d$$1) {
       } else {
         const t = i.fields[0];
 
-        for (let i$$1 = 1; i$$1 <= 10; i$$1++) {
-          o((0, _timeIo.OModule$$$run)((0, _stream.run)((0, _stream.periodic)(1000), (0, _sink.return$0027)(function (arg20) {
-            (0, _String.toConsole)((0, _String.printf)("a(%d):%A"))(i$$1)(arg20);
+        for (let i$$1 = 1; i$$1 <= 100; i$$1++) {
+          o((0, _timeIo.OModule$$$run)((0, _stream.run)((0, _stream.periodic)(1000), (0, _sink.return$0027)(function (arg10) {
+            (0, _String.toConsole)((0, _String.printf)("%A"))(arg10);
           }))));
         }
       }

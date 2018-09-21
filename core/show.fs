@@ -9,10 +9,10 @@ let rec io d =
     TimeIO.return' <| fun i -> Pith <| fun o ->
     match i with
     | IO.Try t ->
-        for i = 1 to 10 do
+        for i = 1 to 100 do
             o << TimeIO.O.run
               << Stream.run (Stream.periodic 1000)
-              << Sink.return' <| printfn "a(%d):%A" i
+              << Sink.return' <| printfn "%A"
     | IO.Catch (a, err) -> raise err
 
 d.Set (io 0 |> TimeIO.run Time.zero)

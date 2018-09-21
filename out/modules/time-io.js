@@ -16,16 +16,6 @@ var _time = require("./s/time");
 
 var _disposable = require("./s/disposable");
 
-var _Seq = require("./fable-core.2.0.0-beta-004/Seq");
-
-var _Array = require("./fable-core.2.0.0-beta-004/Array");
-
-var _String = require("./fable-core.2.0.0-beta-004/String");
-
-var _Util = require("./fable-core.2.0.0-beta-004/Util");
-
-var _Map = require("./fable-core.2.0.0-beta-004/Map");
-
 var _io = require("./io");
 
 const O = (0, _Types.declare)(function O(tag, name, ...fields) {
@@ -49,7 +39,6 @@ function run(now, _arg1) {
   return (0, _io.run)(now, (0, _io.return$0027)(function (i) {
     return function (o) {
       const pith = io(i);
-      const array = [];
       pith(function (_arg2) {
         switch (_arg2.tag) {
           case 0:
@@ -63,7 +52,11 @@ function run(now, _arg1) {
             {
               const io$$2 = _arg2.fields[1];
               const delay$$1 = _arg2.fields[0];
-              array.push([delay$$1, io$$2]);
+              const d$$1 = (0, _disposable.SettableDisposable$$$$002Ector)();
+              o((0, _disposable.append)(d$$1, setTask(delay$$1, function () {
+                const now$$1 = (0, _time.add)(delay$$1, now);
+                (0, _disposable.SettableDisposable$$Set$$Z5A296901)(d$$1, run(now$$1, io$$2));
+              })));
               break;
             }
 
@@ -74,40 +67,18 @@ function run(now, _arg1) {
             }
         }
       });
-      o((0, _Seq.fold)(function folder$$1(d$$1, tupledArg) {
-        const prods = (0, _Array.ofSeq)((0, _Seq.map)(function mapping(tupledArg$$1) {
-          const d$$2 = (0, _disposable.SettableDisposable$$$$002Ector)();
-          return [d$$2, tupledArg$$1[1]];
-        }, tupledArg[1]), Array);
-        const d$$3 = (0, _Seq.fold)(_disposable.append, d$$1, (0, _Seq.map)(function mapping$$1(tuple$$2) {
-          return tuple$$2[0];
-        }, prods));
-        (0, _String.toConsole)((0, _String.printf)("aaa set Delay: %A %A"))(now)(tupledArg[0]);
-        return (0, _disposable.append)(d$$3, setTask(tupledArg[0], function () {
-          const now$$1 = (0, _time.add)(tupledArg[0], now);
-
-          for (let i$$1 = 0; i$$1 <= prods.length - 1; i$$1++) {
-            const patternInput$$1 = prods[i$$1];
-            (0, _disposable.SettableDisposable$$Set$$Z5A296901)(patternInput$$1[0], run(now$$1, patternInput$$1[1]));
-          }
-        }));
-      }, _disposable.empty, (0, _Map.groupBy)(function projection(tuple$$1) {
-        return tuple$$1[0];
-      }, array, {
-        Compare: _Util.compare
-      })));
     };
   }))[1];
 }
 
-function OModule$$$delay(d$$5, io$$5) {
-  return new O(1, "Delay", (0, _time.DelayModule$$$return$0027)(d$$5), io$$5);
+function OModule$$$delay(d$$2, io$$3) {
+  return new O(1, "Delay", (0, _time.DelayModule$$$return$0027)(d$$2), io$$3);
 }
 
-function OModule$$$run(io$$6) {
-  return new O(0, "Run", io$$6);
+function OModule$$$run(io$$4) {
+  return new O(0, "Run", io$$4);
 }
 
-function OModule$$$dispose(d$$6) {
-  return new O(2, "Dispose", d$$6);
+function OModule$$$dispose(d$$3) {
+  return new O(2, "Dispose", d$$3);
 }

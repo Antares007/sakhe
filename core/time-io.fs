@@ -4,7 +4,7 @@ open Fable.Import
 open Fable.Core
 open Sakhe.S
 
-type [<Erase>] T = TimeIO of (IO.I<Time.T> -> Pith<O, unit>)
+type [<Erase>] T = private TimeIO of (IO.I<Time.T> -> Pith<O, unit>)
 
 and O =
     private
@@ -12,7 +12,8 @@ and O =
     | Delay of Time.Delay * T
     | Dispose of IDisposable
 
-let return' f = TimeIO <| f
+let return' f =
+    TimeIO <| f
 
 let private setTask delay task =
     let token = JS.setTimeout task (Time.Delay.unbox delay)
@@ -21,33 +22,15 @@ let private setTask delay task =
 let rec run now (TimeIO io) =
     snd << IO.run now << IO.return' <| fun i -> Pith <| fun o ->
         let (Pith pith) = io i
-        let array = ResizeArray()
-        pith <| (function
+        pith <| function
             | Dispose d -> o d
             | Run io -> o << run now <| io
             | Delay (delay, io) ->
-                array.Add ((delay, io)))
-        array
-        |> Seq.groupBy fst
-        |> Seq.fold (fun d (delay, ios) ->
-            let prods =
-                ios
-                |> Seq.map(fun (_, io) ->
-                    let d = new Disposable.SettableDisposable()
-                    d, io)
-                |> Seq.toArray
-
-            let d = prods |> Seq.map fst |> Seq.fold Disposable.append d
-
-            printfn "aaa set Delay: %A %A" now delay
-
-            Disposable.append d << setTask delay <| fun () ->
-                let now = Time.add delay now
-                for i = 0 to prods.Length - 1 do
-                    let (d, io) = prods.[i]
+                let d = new Disposable.SettableDisposable()
+                o << Disposable.append d << setTask delay <| fun () ->
+                    let now = Time.add delay now
                     d.Set <| run now io
-        ) Disposable.empty
-        |> o
+
 
 module O =
     let delay d io = Delay (Time.Delay.return' d, TimeIO <| io)

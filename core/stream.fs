@@ -7,8 +7,7 @@ let return' f = Stream <| f
 let run (Stream s) sink =
     s sink
 
-
-let now a = return' <| fun sink -> TimeIO.TimeIO <| fun i -> Pith <| fun o ->
+let now a = Stream <| fun sink -> TimeIO.return' <| fun i -> Pith <| fun o ->
     match i with
     | IO.Catch _ -> failwith "never"
     | IO.Try now ->
@@ -22,4 +21,4 @@ let periodic period =
         | IO.Try now ->
             Sink.Send.event now () sink
             o << TimeIO.O.delay period <| io sink
-    return' <| fun sink -> TimeIO.TimeIO <| fun i -> io sink i
+    Stream <| fun sink -> TimeIO.return' <| fun i -> io sink i
