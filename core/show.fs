@@ -3,36 +3,20 @@ open Sakhe.S
 open System
 
 
-let dd = new Disposable.SettableDisposable()
+let d = new Disposable.SettableDisposable()
 
-let rec see d =
+let rec io d =
     TimeIO.return' <| fun i -> Pith <| fun o ->
     match i with
     | IO.Try t ->
-        printfn "|> a(%d) %A" d t
-
-        for i = 0 to 10 do
+        for i = 1 to 10 do
             o << TimeIO.O.run
               << Stream.run (Stream.periodic 1000)
-              << Sink.return' <| printfn "a:%A"
+              << Sink.return' <| printfn "a(%d):%A" i
+    | IO.Catch (a, err) -> raise err
 
-        printfn "<| a(%d) %A" d t
+d.Set (io 0 |> TimeIO.run Time.zero)
 
-    | IO.Catch (a, err) ->
-        o << TimeIO.O.delay 1500 <| fun i -> Pith <| fun o ->
-            match i with
-            | IO.Try a ->
-                printfn "|> err: %A" err
-                raise err
-            | IO.Catch (a, err) -> raise err
-        raise err
-
-
-dd.Set (
-    see 0
-    |> TimeIO.run Time.zero)
-
-let s = Stream.now 1
 
 
 // run: 9/15/2018, 9:31:14 AM

@@ -82,7 +82,7 @@ function run(now, _arg1) {
         const d$$3 = (0, _Seq.fold)(_disposable.append, d$$1, (0, _Seq.map)(function mapping$$1(tuple$$2) {
           return tuple$$2[0];
         }, prods));
-        (0, _String.toConsole)((0, _String.printf)("aaa set Delay: %A"))(tupledArg[0]);
+        (0, _String.toConsole)((0, _String.printf)("aaa set Delay: %A %A"))(now)(tupledArg[0]);
         return (0, _disposable.append)(d$$3, setTask(tupledArg[0], function () {
           const now$$1 = (0, _time.add)(tupledArg[0], now);
 

@@ -22,14 +22,11 @@ let rec run now (TimeIO io) =
     snd << IO.run now << IO.return' <| fun i -> Pith <| fun o ->
         let (Pith pith) = io i
         let array = ResizeArray()
-        pith <| function
-        | Dispose d -> o d
-        | Run io -> o << run now <| io // TODO: descripe deeper layer
-        | Delay (delay, io) ->
-            array.Add ((delay, io))
-            // let d = new Disposable.SettableDisposable()
-            // o << Disposable.append d << setTask delay <| fun () ->
-            //     d.Set <| run (Time.add delay now) io
+        pith <| (function
+            | Dispose d -> o d
+            | Run io -> o << run now <| io
+            | Delay (delay, io) ->
+                array.Add ((delay, io)))
         array
         |> Seq.groupBy fst
         |> Seq.fold (fun d (delay, ios) ->
@@ -42,14 +39,13 @@ let rec run now (TimeIO io) =
 
             let d = prods |> Seq.map fst |> Seq.fold Disposable.append d
 
+            printfn "aaa set Delay: %A %A" now delay
 
-            printfn "aaa set Delay: %A" delay
             Disposable.append d << setTask delay <| fun () ->
                 let now = Time.add delay now
                 for i = 0 to prods.Length - 1 do
                     let (d, io) = prods.[i]
                     d.Set <| run now io
-                ()
         ) Disposable.empty
         |> o
 
