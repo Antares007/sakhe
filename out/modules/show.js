@@ -16,15 +16,13 @@ var _sink = require("./sink");
 
 var _timeIo = require("./time-io");
 
-var _io = require("./io");
-
 var _time = require("./s/time");
 
 const d = (0, _disposable.SettableDisposable$$$$002Ector)();
 exports.d = d;
 
 function io(d$$1) {
-  return (0, _timeIo.return$0027)((0, _io.return$0027)(function (i, o) {
+  return (0, _timeIo.return$0027)(function (i, o) {
     if (i.tag === 1) {
       const err = i.fields[1];
       const a = i.fields[0];
@@ -38,7 +36,7 @@ function io(d$$1) {
         }))));
       }
     }
-  }));
+  });
 }
 
 (0, _disposable.SettableDisposable$$Set$$Z5A296901)(d, (0, _timeIo.run)(_time.zero, io(0)));

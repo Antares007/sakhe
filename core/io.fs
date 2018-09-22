@@ -6,8 +6,6 @@ type [<Erase>] T<'i, 'o, 'b> = IO of ('i -> Pith<'o, 'b>)
 
 let return' f = IO <| (Pith << f)
 
-
-
 let map f (IO io) = IO <| fun i ->
     let (Pith p) = io i
     Pith <| f p
@@ -23,36 +21,15 @@ let inline append l r =
 let run (i: 'i) (o: O<'o, 'a>) (IO (io: 'i -> Pith<'o, 'b>)) =
     Pith.run o (io i)
 
-
-
-
 module TaskIO =
     type [<Erase>] T<'a, 'b> = TaskIO of T<TryCatch<'a>, IDisposable, unit> //(I<'a> -> Pith<IDisposable, 'b>)
     and TryCatch<'a> =
         | Try of 'a
         | Catch of 'a * exn
 
-
     open Sakhe.S
 
-    let pmap f (IO io) = IO <| fun i ->
-        let (Pith p) = io i
-        Pith <| f p
-
-    module I =
-        let map f = function
-            | Try  (a) -> Try (f a)
-            | Catch (a, exn) -> Catch (f a, exn)
-
-    /// ```fsharp
-    /// fun o -> function
-    /// | Try (a) ->
-    ///     o Disposable.empty
-    ///     a + 1
-    /// | Catch (a, err) -> a + 2
-    /// |> return'
-    /// ```
-    let return' f = IO <| f
+    let return' f = return' <| f
 
     let run a (IO io) =
         let o = O.return' Disposable.append Disposable.empty
