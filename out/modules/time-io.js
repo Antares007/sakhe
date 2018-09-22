@@ -10,7 +10,7 @@ exports.OModule$$$run = OModule$$$run;
 exports.OModule$$$dispose = OModule$$$dispose;
 exports.O = void 0;
 
-var _Types = require("./fable-core.2.0.0-beta-004/Types");
+var _Types = require("./fable-core.2.0.0-beta-005/Types");
 
 var _time = require("./s/time");
 

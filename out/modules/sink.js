@@ -16,13 +16,13 @@ exports.combineArray = combineArray;
 exports.mergeArray = mergeArray;
 exports.On$00601 = void 0;
 
-var _Types = require("./fable-core.2.0.0-beta-004/Types");
+var _Types = require("./fable-core.2.0.0-beta-005/Types");
 
-var _Option = require("./fable-core.2.0.0-beta-004/Option");
+var _Option = require("./fable-core.2.0.0-beta-005/Option");
 
-var _Seq = require("./fable-core.2.0.0-beta-004/Seq");
+var _Seq = require("./fable-core.2.0.0-beta-005/Seq");
 
-var _Array = require("./fable-core.2.0.0-beta-004/Array");
+var _Array = require("./fable-core.2.0.0-beta-005/Array");
 
 const On$00601 = (0, _Types.declare)(function On$00601(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);

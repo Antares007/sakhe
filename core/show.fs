@@ -17,6 +17,11 @@ let rec io d =
 
 d.Set (io 0 |> TimeIO.run Time.zero)
 
+open Fable.Import.Browser
+open Fable.Core.JsInterop
+
+window?d <- d
+
 
 
 // run: 9/15/2018, 9:31:14 AM

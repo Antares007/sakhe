@@ -10,7 +10,7 @@ var _disposable = require("./s/disposable");
 
 var _stream = require("./stream");
 
-var _String = require("./fable-core.2.0.0-beta-004/String");
+var _String = require("./fable-core.2.0.0-beta-005/String");
 
 var _sink = require("./sink");
 
@@ -42,3 +42,4 @@ function io(d$$1) {
 }
 
 (0, _disposable.SettableDisposable$$Set$$Z5A296901)(d, (0, _timeIo.run)(_time.zero, io(0)));
+window.d = d;
