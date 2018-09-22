@@ -16,6 +16,8 @@ var _time = require("./s/time");
 
 var _disposable = require("./s/disposable");
 
+var _pith = require("./pith");
+
 var _io = require("./io");
 
 const O = (0, _Types.declare)(function O(tag, name, ...fields) {
@@ -36,10 +38,9 @@ function setTask(delay, task) {
 
 function run(now, _arg1) {
   const io = _arg1;
-  return (0, _io.run)(now, (0, _io.return$0027)(function (i) {
+  return (0, _io.TaskIO$$$run)(now, (0, _io.TaskIO$$$return$0027)(function (i) {
     return function (o) {
-      const pith = io(i);
-      pith(function (_arg2) {
+      const o$$1 = (0, _pith.O$$$contraMap)(function g(_arg2) {
         switch (_arg2.tag) {
           case 0:
             {
@@ -60,23 +61,33 @@ function run(now, _arg1) {
               break;
             }
 
+          case 3:
+            {
+              const period = _arg2.fields[0];
+              const io$$3 = _arg2.fields[1];
+              break;
+            }
+
           default:
             {
               const d = _arg2.fields[0];
               o(d);
             }
         }
-      });
+      }, (0, _pith.O$$$return$0027)(function (l, a) {
+        return (0, _Types.L)(null, l);
+      }, (0, _Types.L)()));
+      (0, _io.run)(i, o$$1, io);
     };
   }))[1];
 }
 
-function OModule$$$delay(d$$2, io$$3) {
-  return new O(1, "Delay", (0, _time.DelayModule$$$return$0027)(d$$2), io$$3);
+function OModule$$$delay(d$$2, io$$4) {
+  return new O(1, "Delay", (0, _time.DelayModule$$$return$0027)(d$$2), io$$4);
 }
 
-function OModule$$$run(io$$4) {
-  return new O(0, "Run", io$$4);
+function OModule$$$run(io$$5) {
+  return new O(0, "Run", io$$5);
 }
 
 function OModule$$$dispose(d$$3) {
