@@ -6,7 +6,7 @@ open System
 let d = new Disposable.SettableDisposable()
 
 let rec io d =
-    TimeIO.return' << IO.return' <| fun i -> Pith <| fun o ->
+    TimeIO.return' << IO.return' <| fun i o ->
     match i with
     | IO.TaskIO.TryCatch.Try t ->
         for i = 1 to 100 do
