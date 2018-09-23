@@ -11,7 +11,7 @@ type O =
     | Dispose of IDisposable
     | Periodic of Time.Delay * T
 
-and [<Erase>] T = private TimeIO of IO.T<IO.TaskIO.TryCatch<Time.T>, O, unit> // (IO.TaskIO.TryCatch<Time.T> -> Pith<O, unit>)
+and [<Erase>] T = private TimeIO of IO.T<TaskIO.TryCatch<Time.T>, O, unit> // (IO.TaskIO.TryCatch<Time.T> -> Pith<O, unit>)
 
 
 let return' f =
@@ -22,7 +22,7 @@ let private setTask delay task =
     Disposable.return' <| fun () -> JS.clearTimeout token
 
 let rec run now (TimeIO io) =
-    snd << IO.TaskIO.run now << IO.TaskIO.return' <| fun i o ->
+    TaskIO.run now << TaskIO.return' <| fun i o ->
         let oMap = function
             | Dispose d -> o d
             | Run io -> o << run now <| io

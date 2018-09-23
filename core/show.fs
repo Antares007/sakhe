@@ -8,12 +8,12 @@ let d = new Disposable.SettableDisposable()
 let rec io d =
     TimeIO.return' <| fun i o ->
     match i with
-    | IO.TaskIO.TryCatch.Try t ->
+    | TaskIO.TryCatch.Try t ->
         for i = 1 to 100 do
             o << TimeIO.O.run
               << Stream.run (Stream.periodic 1000)
               << Sink.return' <| printfn "%A"
-    | IO.TaskIO.TryCatch.Catch (a, err) -> raise err
+    | TaskIO.TryCatch.Catch (a, err) -> raise err
 
 d.Set (io 0 |> TimeIO.run Time.zero)
 

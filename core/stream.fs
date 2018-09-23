@@ -55,16 +55,16 @@ module Stream =
 
     let now a = Stream <| fun sink -> TimeIO.return' <| fun i o ->
         match i with
-        | IO.TaskIO.Catch _ -> failwith "never"
-        | IO.TaskIO.Try now ->
+        | TaskIO.Catch _ -> failwith "never"
+        | TaskIO.Try now ->
             Sink.Send.event now a sink
             Sink.Send.end' now sink
 
     let periodic period =
         let rec io sink = TimeIO.return' <| fun i o ->
             match i with
-            | IO.TaskIO.Catch _ -> failwith "never"
-            | IO.TaskIO.Try now ->
+            | TaskIO.Catch _ -> failwith "never"
+            | TaskIO.Try now ->
                 Sink.Send.event now () sink
                 o << TimeIO.O.delay period <| io sink
         Stream <| io

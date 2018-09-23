@@ -9,6 +9,7 @@
     <Compile Include="s/disposable.fs" />
     <Compile Include="pith.fs" />
     <Compile Include="io.fs" />
+    <Compile Include="task-io.fs" />
     <Compile Include="time-io.fs" />
     <Compile Include="sink.fs" />
     <Compile Include="stream.fs" />

@@ -20,6 +20,8 @@ var _disposable = require("./s/disposable");
 
 var _pith = require("./pith");
 
+var _taskIo = require("./task-io");
+
 const O = (0, _Types.declare)(function O(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
@@ -38,7 +40,7 @@ function setTask(delay, task) {
 
 function run(now, _arg1) {
   const io = _arg1;
-  return (0, _io.TaskIO$$$run)(now, (0, _io.TaskIO$$$return$0027)(function (i, o) {
+  return (0, _taskIo.run)(now, (0, _taskIo.return$0027)(function (i, o) {
     const oMap = function oMap(_arg2) {
       switch (_arg2.tag) {
         case 0:
@@ -79,7 +81,7 @@ function run(now, _arg1) {
       return (0, _Types.L)(null, l);
     }, (0, _Types.L)()));
     (0, _io.run)(i, o$$1, io);
-  }))[1];
+  }));
 }
 
 function OModule$$$delay(d$$2, io$$4) {
