@@ -31,7 +31,7 @@ function io(d$$1) {
       const t = i.fields[0];
 
       for (let i$$1 = 1; i$$1 <= 100; i$$1++) {
-        o((0, _timeIo.OModule$$$run)((0, _stream.run)((0, _stream.periodic)(1000), (0, _sink.return$0027)(function (arg10) {
+        o((0, _timeIo.OModule$$$run)((0, _stream.Stream$$$run)((0, _stream.Stream$$$periodic)(1000), (0, _sink.return$0027)(function (arg10) {
           (0, _String.toConsole)((0, _String.printf)("%A"))(arg10);
         }))));
       }
