@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.return$0027 = return$0027;
 exports.map = map;
+exports.pmap = pmap;
 exports.bind = bind;
 exports.run = run;
 
@@ -22,6 +23,14 @@ function map(f$$2, _arg1) {
   const io = _arg1;
   return function ($arg$$2) {
     return f$$2(io($arg$$2));
+  };
+}
+
+function pmap(f$$3) {
+  return function (arg10$0040) {
+    return map(function (arg10$0040$$1) {
+      return (0, _pith.pmap)(f$$3, arg10$0040$$1);
+    }, arg10$0040);
   };
 }
 

@@ -6,7 +6,8 @@ type [<Erase>] T<'i, 'o, 'b> = IO of ('i -> Pith.T<'o, 'b>)
 let return' f = IO <| (Pith.return' << f)
 
 let map f (IO io) = IO <| (f << io)
-    // Pith <| f p
+
+let pmap f = map << Pith.pmap <| f
 
 let bind g (IO io) = IO <| fun i ->
     let p = io i

@@ -23,7 +23,7 @@ let private setTask delay task =
     Disposable.return' <| fun () -> JS.clearTimeout token
 
 let rec run now (TimeIO io) =
-    let ring = (IO.map << Pith.pmap) <| fun p o ->
+    let ring = IO.pmap <| fun p o ->
         p <| function
         | Dispose d -> o d
         | Run io -> o << run now <| io
