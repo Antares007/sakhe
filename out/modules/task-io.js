@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.return$0027 = return$0027;
+exports.lift = lift;
 exports.run = run;
 exports.TryCatch$00601 = void 0;
 
@@ -24,15 +25,19 @@ function return$0027(f) {
   return (0, _io.return$0027)(f);
 }
 
+function lift(io) {
+  return io;
+}
+
 function run(a, _arg1) {
-  const io = _arg1;
+  const io$$1 = _arg1;
   const o = (0, _o.return$0027)(_disposable.append, _disposable.empty);
 
   try {
-    (0, _io.run)(new TryCatch$00601(0, "Try", a), o, io);
+    (0, _io.run)(new TryCatch$00601(0, "Try", a), o, io$$1);
   } catch (err) {
     try {
-      (0, _io.run)(new TryCatch$00601(1, "Catch", a, err), o, io);
+      (0, _io.run)(new TryCatch$00601(1, "Catch", a, err), o, io$$1);
     } catch (err$$1) {
       try {
         (0, _o.T$00602$$get_Value)(o).Dispose();

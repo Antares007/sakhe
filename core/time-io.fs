@@ -3,6 +3,7 @@ open System
 open Fable.Import
 open Fable.Core
 open Sakhe.S
+open Sakhe
 
 type O =
     private
@@ -22,18 +23,18 @@ let private setTask delay task =
     Disposable.return' <| fun () -> JS.clearTimeout token
 
 let rec run now (TimeIO io) =
-    TaskIO.run now << TaskIO.return' <| fun i o ->
-        let oMap = function
-            | Dispose d -> o d
-            | Run io -> o << run now <| io
-            | Delay (delay, io) ->
-                let d = new Disposable.SettableDisposable()
-                o << Disposable.append d << setTask delay <| fun () ->
-                    let now = Time.add delay now
-                    d.Set <| run now io
-            | Periodic (period, io) -> ()
-        let o = O.return' (fun l a -> a :: l) [] |> O.contraMap oMap
-        IO.run i o io
+    let ring = (IO.map << Pith.pmap) <| fun p o ->
+        p <| function
+        | Dispose d -> o d
+        | Run io -> o << run now <| io
+        | Delay (delay, io) ->
+            let d = new Disposable.SettableDisposable()
+            o << Disposable.append d << setTask delay <| fun () ->
+                let now = Time.add delay now
+                d.Set <| run now io
+        | Periodic (period, io) -> ()
+    let y = TaskIO.lift (ring io)
+    TaskIO.run now y
 
 module O =
     let delay d io = Delay (Time.Delay.return' d, io)

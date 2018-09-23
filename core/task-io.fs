@@ -10,6 +10,8 @@ and TryCatch<'a> =
 
 let return' f = TaskIO << IO.return' <| f
 
+let lift io = TaskIO <| io
+
 let run a (TaskIO io) =
     let o = O.return' Disposable.append Disposable.empty
     try
