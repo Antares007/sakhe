@@ -34,17 +34,6 @@ let rec run now (TimeIO io) =
             | Periodic (period, io) -> ()
         let o = O.return' (fun l a -> a :: l) [] |> O.contraMap oMap
         IO.run i o io
-        // let (Pith pith) = io i
-        // pith <| function
-        //     | Dispose d -> o d
-        //     | Run io -> o << run now <| io
-        //     | Delay (delay, io) ->
-        //         let d = new Disposable.SettableDisposable()
-        //         o << Disposable.append d << setTask delay <| fun () ->
-        //             let now = Time.add delay now
-        //             d.Set <| run now io
-        //     | Periodic (period, io) -> ()
-
 
 module O =
     let delay d io = Delay (Time.Delay.return' d, io)

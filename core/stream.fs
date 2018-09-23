@@ -1,7 +1,7 @@
 namespace Sakhe
 open System
 
-module S =
+module S2 =
     open Sakhe.S
 
     type I<'a> =
