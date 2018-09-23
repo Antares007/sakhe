@@ -14,10 +14,8 @@ let bind g (IO io) = IO <| fun i ->
     let (IO io) = g p
     io i
 
-let inline append l r =
-    l |> bind (fun lpith ->
-    r |> bind (fun rpith ->
-        IO <| fun () -> Pith.append lpith rpith))
+let inline append (IO l) (IO r) =
+    IO <| fun i -> Pith.append (l i) (r i)
 
 let run i o (IO io) =
     Pith.run o (io i)
