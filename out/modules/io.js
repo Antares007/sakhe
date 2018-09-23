@@ -14,28 +14,27 @@ var _pith = require("./pith");
 
 function return$0027(f) {
   return function ($arg$$1) {
-    return (0, _Util.partialApply)(1, f, [$arg$$1]);
+    return (0, _pith.return$0027)((0, _Util.partialApply)(1, f, [$arg$$1]));
   };
 }
 
-function map(f$$1, _arg1) {
+function map(f$$2, _arg1) {
   const io = _arg1;
-  return function (i) {
-    const p = io(i);
-    return (0, _Util.partialApply)(1, f$$1, [p]);
+  return function ($arg$$2) {
+    return f$$2(io($arg$$2));
   };
 }
 
 function bind(g, _arg1$$1) {
   const io$$1 = _arg1$$1;
-  return function (i$$1) {
-    const p$$1 = io$$1(i$$1);
-    const io$$2 = g(p$$1);
-    return io$$2(i$$1);
+  return function (i) {
+    const p = io$$1(i);
+    const io$$2 = g(p);
+    return io$$2(i);
   };
 }
 
-function run(i$$2, o, _arg1$$2) {
+function run(i$$1, o, _arg1$$2) {
   const io$$3 = _arg1$$2;
-  return (0, _pith.Pith$$$run)(o, io$$3(i$$2));
+  return (0, _pith.run)(o, io$$3(i$$1));
 }

@@ -19,7 +19,9 @@ var _io = require("./io");
 
 var _pith = require("./pith");
 
-var _disposable = require("./s/disposable");
+var _o = require("./o");
+
+var _disposable = require("./disposable");
 
 var _time = require("./s/time");
 
@@ -37,34 +39,34 @@ const S2$002ET$00601 = (0, _Types.declare)(function S2$002ET$00601(tag, name, ..
 exports.S2$002ET$00601 = S2$002ET$00601;
 
 function S2$$$return$0027(f) {
-  return new S2$002ET$00601(0, "Stream", function (s) {
+  return new S2$002ET$00601(0, "Stream", (0, _pith.return$0027)(function (s) {
     return (0, _io.return$0027)(function (i, o) {
       f(s, i, function (arg00) {
         o(arg00);
       });
     });
-  });
+  }));
 }
 
 function S2$$$run(now, sink, _arg1) {
   const pith = _arg1.fields[0];
-  const o$$1 = (0, _pith.O$$$return$0027)(function (unitVar0, a) {
+  const o$$1 = (0, _o.return$0027)(function (unitVar0, a) {
     sink(a);
   }, null);
-  const io = (0, _pith.Pith$$$run)(o$$1, pith);
-  const o2 = (0, _pith.O$$$return$0027)(_disposable.append, _disposable.empty);
+  const io = (0, _pith.run)(o$$1, pith);
+  const o2 = (0, _o.return$0027)(_disposable.append, _disposable.empty);
 
   try {
     (0, _io.run)(now, o2, io);
   } catch (err) {
     try {
-      (0, _pith.O$00602$$get_Value)(o2).Dispose();
+      (0, _o.T$00602$$get_Value)(o2).Dispose();
     } catch (matchValue) {}
 
     sink(new S2$002EI$00601(2, "Error", now, err));
   }
 
-  return (0, _pith.O$00602$$get_Value)(o2);
+  return (0, _o.T$00602$$get_Value)(o2);
 }
 
 function S2$$$now(a$$1) {
@@ -98,8 +100,8 @@ const Stream$002ET$00601 = (0, _Types.declare)(function Stream$002ET$00601(tag, 
 }, _Types.Union);
 exports.Stream$002ET$00601 = Stream$002ET$00601;
 
-function Stream$$$return$0027(f$$5) {
-  return new Stream$002ET$00601(0, "Stream", f$$5);
+function Stream$$$return$0027(f$$6) {
+  return new Stream$002ET$00601(0, "Stream", f$$6);
 }
 
 function Stream$$$run(_arg1$$1, sink$$3) {

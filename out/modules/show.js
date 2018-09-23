@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.io = io;
 exports.d = void 0;
 
-var _disposable = require("./s/disposable");
+var _disposable = require("./disposable");
 
 var _stream = require("./stream");
 

@@ -16,9 +16,9 @@ var _io = require("./io");
 
 var _time = require("./s/time");
 
-var _disposable = require("./s/disposable");
+var _disposable = require("./disposable");
 
-var _pith = require("./pith");
+var _o = require("./o");
 
 var _taskIo = require("./task-io");
 
@@ -77,7 +77,7 @@ function run(now, _arg1) {
       }
     };
 
-    const o$$1 = (0, _pith.O$$$contraMap)(oMap, (0, _pith.O$$$return$0027)(function (l, a) {
+    const o$$1 = (0, _o.contraMap)(oMap, (0, _o.return$0027)(function (l, a) {
       return (0, _Types.L)(null, l);
     }, (0, _Types.L)()));
     (0, _io.run)(i, o$$1, io);

@@ -8,9 +8,9 @@ module S2 =
         | Event of Time.T * 'a
         | End   of Time.T
         | Error of Time.T * exn
-    and T<'a> = Stream of (Pith<I<'a>, IO.T<Time.T, IDisposable, unit>>)
+    and T<'a> = Stream of (Pith.T<I<'a>, IO.T<Time.T, IDisposable, unit>>)
 
-    let return' f = Stream << Pith <| fun s ->
+    let return' f = Stream << Pith.return' <| fun s ->
         IO.return' <| fun i o -> f s i o
 
     let rec run now sink (Stream pith) =

@@ -11,9 +11,9 @@ var _Types = require("./fable-core.2.0.0-beta-005/Types");
 
 var _io = require("./io");
 
-var _disposable = require("./s/disposable");
+var _disposable = require("./disposable");
 
-var _pith = require("./pith");
+var _o = require("./o");
 
 const TryCatch$00601 = (0, _Types.declare)(function TryCatch$00601(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -26,7 +26,7 @@ function return$0027(f) {
 
 function run(a, _arg1) {
   const io = _arg1;
-  const o = (0, _pith.O$$$return$0027)(_disposable.append, _disposable.empty);
+  const o = (0, _o.return$0027)(_disposable.append, _disposable.empty);
 
   try {
     (0, _io.run)(new TryCatch$00601(0, "Try", a), o, io);
@@ -35,12 +35,12 @@ function run(a, _arg1) {
       (0, _io.run)(new TryCatch$00601(1, "Catch", a, err), o, io);
     } catch (err$$1) {
       try {
-        (0, _pith.O$00602$$get_Value)(o).Dispose();
+        (0, _o.T$00602$$get_Value)(o).Dispose();
       } catch (err$$2) {}
 
       throw err$$1;
     }
   }
 
-  return (0, _pith.O$00602$$get_Value)(o);
+  return (0, _o.T$00602$$get_Value)(o);
 }

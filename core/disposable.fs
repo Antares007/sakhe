@@ -1,4 +1,4 @@
-module Sakhe.S.Disposable
+module Sakhe.Disposable
 open System
 
 type AnonymousDisposable(f) =

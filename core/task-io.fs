@@ -1,14 +1,12 @@
 module Sakhe.TaskIO
-open Fable.Core
 open System
+open Fable.Core
 
 type [<Erase>] T<'a, 'b> = TaskIO of IO.T<TryCatch<'a>, IDisposable, unit>
 
 and TryCatch<'a> =
     | Try of 'a
     | Catch of 'a * exn
-
-open Sakhe.S
 
 let return' f = TaskIO << IO.return' <| f
 

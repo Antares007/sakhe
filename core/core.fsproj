@@ -6,9 +6,10 @@
   <ItemGroup>
     <Compile Include="s/time.fs" />
     <Compile Include="s/clock.fs" />
-    <Compile Include="s/disposable.fs" />
+    <Compile Include="o.fs" />
     <Compile Include="pith.fs" />
     <Compile Include="io.fs" />
+    <Compile Include="disposable.fs" />
     <Compile Include="task-io.fs" />
     <Compile Include="time-io.fs" />
     <Compile Include="sink.fs" />

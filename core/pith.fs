@@ -1,52 +1,39 @@
-﻿namespace Sakhe
+﻿[<RequireQualifiedAccess>]
+module Sakhe.Pith
 open Fable.Core
 
-type [<Erase>] O<'b, 'a> =
-    private
-    | O of (('b -> unit) * (unit -> 'a))
-    member p.Value = let (O (_, a)) = p in a ()
+type [<Erase>] T<'a, 'b> = Pith of (('a -> unit) -> 'b)
 
-[<RequireQualifiedAccess>]
-module O =
-    let return' f ua =
-        let mutable a = ua
-        O ((fun b -> a <- f a b), (fun () -> a))
+let return' f =
+    Pith f
 
-    let map f (O (put, get)) =
-        O (put, get >> f)
+let empty =
+    Pith ignore
 
-    let contraMap g (O (put, get)) =
-        O (g >> put, get)
+let run o (Pith p) =
+    p (O.put o)
 
+let filter f (Pith p) =
+    Pith <| fun o -> p (fun a -> if f a then o a)
 
-type [<Erase>] Pith<'a, 'b> = Pith of (('a -> unit) -> 'b)
+let filterMap f (Pith p) =
+    Pith <| fun o ->
+        p (fun a ->
+            match f a with
+            | None -> ()
+            | Some a -> o a)
 
-[<RequireQualifiedAccess>]
-module Pith =
-    let empty =
-        Pith ignore
+let map f (Pith p) =
+    Pith (f << p)
 
-    let run (O (b, _)) (Pith p) =
-        p b
+let pmap f (Pith p) =
+    Pith (f p)
 
-    let filter f (Pith p) =
-        Pith <| fun o -> p (fun a -> if f a then o a)
+let inline append (Pith l) (Pith r) =
+    Pith <| fun o -> (l o) + (r o)
 
-    let filterMap f (Pith p) =
-        Pith <| fun o ->
-            p (fun a ->
-                match f a with
-                | None -> ()
-                | Some a -> o a)
-
-    let map f (Pith p) =
-        Pith (f << p)
-
-    let inline append (Pith l) (Pith r) =
-        Pith <| fun o -> (l o) + (r o)
-
-    let bind f (Pith p) =
-        Pith <| fun o ->
-            let a = p o
-            let (Pith p) = f a
-            p o
+let bind f (Pith p) =
+    Pith <| fun o ->
+        let a = p o
+        let (Pith p) = f a
+        p o
