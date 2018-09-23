@@ -1,7 +1,6 @@
 module Sakhe.TIO
 open System
 open Fable.Core
-open Sakhe.S
 
 type O =
     private

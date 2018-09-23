@@ -2,8 +2,6 @@ module Sakhe.TimeIO
 open System
 open Fable.Import
 open Fable.Core
-open Sakhe.S
-open Sakhe
 
 type O =
     private

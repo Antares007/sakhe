@@ -16,7 +16,7 @@ var _sink = require("./sink");
 
 var _timeIo = require("./time-io");
 
-var _time = require("./s/time");
+var _time = require("./time");
 
 const d = (0, _disposable.SettableDisposable$$$$002Ector)();
 exports.d = d;

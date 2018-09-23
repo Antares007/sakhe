@@ -1,7 +1,4 @@
 module Sakhe.Show
-open Sakhe.S
-open System
-
 
 let d = new Disposable.SettableDisposable()
 

@@ -4,13 +4,12 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="s/time.fs" />
-    <Compile Include="s/clock.fs" />
     <Compile Include="o.fs" />
     <Compile Include="pith.fs" />
     <Compile Include="io.fs" />
     <Compile Include="disposable.fs" />
     <Compile Include="task-io.fs" />
+    <Compile Include="time.fs" />
     <Compile Include="new.fs" />
     <Compile Include="time-io.fs" />
     <Compile Include="sink.fs" />

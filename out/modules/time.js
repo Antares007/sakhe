@@ -13,7 +13,7 @@ exports.OffsetModule$$$return$0027 = OffsetModule$$$return$0027;
 exports.OffsetModule$$$from = OffsetModule$$$from;
 exports.DelayModule$$$zero = exports.zero = void 0;
 
-var _Util = require("../fable-core.2.0.0-beta-005/Util");
+var _Util = require("./fable-core.2.0.0-beta-005/Util");
 
 function return$0027(t) {
   if (!(t >= 0)) {

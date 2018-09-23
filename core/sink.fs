@@ -1,6 +1,5 @@
 module Sakhe.Sink
 open Fable.Core
-open Sakhe.S
 
 type On<'a> =
     | Event of Time.T * 'a

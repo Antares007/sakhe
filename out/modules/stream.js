@@ -23,7 +23,7 @@ var _o = require("./o");
 
 var _disposable = require("./disposable");
 
-var _time = require("./s/time");
+var _time = require("./time");
 
 var _sink = require("./sink");
 

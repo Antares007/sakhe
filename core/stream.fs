@@ -2,8 +2,6 @@ namespace Sakhe
 open System
 
 module S2 =
-    open Sakhe.S
-
     type I<'a> =
         | Event of Time.T * 'a
         | End   of Time.T

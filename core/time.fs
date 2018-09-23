@@ -1,4 +1,4 @@
-module Sakhe.S.Time
+module Sakhe.Time
 open Fable.Core
 
 type [<Erase>] Offset = private Offset of float

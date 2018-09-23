@@ -14,7 +14,7 @@ var _Types = require("./fable-core.2.0.0-beta-005/Types");
 
 var _io = require("./io");
 
-var _time = require("./s/time");
+var _time = require("./time");
 
 var _disposable = require("./disposable");
 
