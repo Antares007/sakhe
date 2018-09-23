@@ -11,6 +11,7 @@
     <Compile Include="io.fs" />
     <Compile Include="disposable.fs" />
     <Compile Include="task-io.fs" />
+    <Compile Include="new.fs" />
     <Compile Include="time-io.fs" />
     <Compile Include="sink.fs" />
     <Compile Include="stream.fs" />
