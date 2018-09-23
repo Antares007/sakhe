@@ -32,13 +32,26 @@ let run now (TimeIO io) =
     go now o io
 
 
-let see = return' <| fun now o ->
-    o << O.run <| fun now o ->
-        o << O.delay 10 <| fun now o ->
-            ()
-        ()
-    o << O.delay 10 <| fun now o ->
-        o << O.periodic 10 <| fun now o ->
-            ()
-        ()
-    ()
+type ORay(o: O -> unit) =
+    static member Api f = return' <| fun now o -> f now (ORay(o))
+    member __.Run f =
+        o << Run << ORay.Api <| f
+    member __.Delay delay f =
+        o <| Delay (Time.Delay.return' delay, ORay.Api f)
+    member __.Periodic delay f =
+        o <| Periodic (Time.Delay.return' delay, ORay.Api f)
+    member __.Dispose d =
+        o <| Dispose d
+
+
+let see = ORay.Api <| fun now o ->
+    o.Run (fun now o ->
+        o.Delay 10 (fun now o ->
+            o.Dispose Disposable.empty
+        )
+    )
+    o.Delay 10 (fun now o ->
+        o.Periodic 10 (fun now o ->
+            o.Dispose Disposable.empty
+        )
+    )
