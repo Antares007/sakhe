@@ -10,7 +10,7 @@ exports.Stream$$$return$0027 = Stream$$$return$0027;
 exports.Stream$$$run = Stream$$$run;
 exports.Stream$$$now = Stream$$$now;
 exports.Stream$$$periodic = Stream$$$periodic;
-exports.Stream$002ET$00601 = exports.S$002ET$00601 = exports.S$002EO$00601 = exports.S$002EI$00601 = void 0;
+exports.Stream$002ET$00601 = exports.S$002ET$00601 = exports.S$002EI$00601 = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-005/Types");
 
@@ -28,10 +28,6 @@ const S$002EI$00601 = (0, _Types.declare)(function S$002EI$00601(tag, name, ...f
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
 exports.S$002EI$00601 = S$002EI$00601;
-const S$002EO$00601 = (0, _Types.declare)(function S$002EO$00601(tag, name, ...fields) {
-  _Types.Union.call(this, tag, name, ...fields);
-}, _Types.Union);
-exports.S$002EO$00601 = S$002EO$00601;
 const S$002ET$00601 = (0, _Types.declare)(function S$002ET$00601(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
@@ -40,7 +36,9 @@ exports.S$002ET$00601 = S$002ET$00601;
 function S$$$return$0027(f) {
   return new S$002ET$00601(0, "Stream", function (s) {
     return (0, _io.return$0027)(function (i, o) {
-      f(s, i, o);
+      f(s, i, function (arg00) {
+        o(arg00);
+      });
     });
   });
 }
@@ -51,21 +49,25 @@ function S$$$run(now, sink, _arg1) {
     sink(a);
   }, null);
   const io = (0, _pith.Pith$$$run)(o$$1, s$$1);
-  const o2 = (0, _pith.O$$$contraMap)(function g(_arg1$$1) {
-    return _disposable.empty;
-  }, (0, _pith.O$$$return$0027)(_disposable.append, _disposable.empty));
-  (0, _io.run)(now, o2, io);
+  const o2 = (0, _pith.O$$$return$0027)(_disposable.append, _disposable.empty);
+
+  try {
+    (0, _io.run)(now, o2, io);
+  } catch (err) {
+    try {
+      (0, _pith.O$00602$$get_Value)(o2).Dispose();
+    } catch (matchValue) {}
+
+    sink(new S$002EI$00601(2, "Error", now, err));
+  }
+
   return (0, _pith.O$00602$$get_Value)(o2);
 }
 
 function S$$$see1(a$$1) {
   return S$$$return$0027(function (sink$$1, time, o$$2) {
-    try {
-      sink$$1(new S$002EI$00601(0, "Event", time, a$$1));
-      sink$$1(new S$002EI$00601(1, "End", time));
-    } catch (err) {
-      sink$$1(new S$002EI$00601(2, "Error", time, err));
-    }
+    sink$$1(new S$002EI$00601(0, "Event", time, a$$1));
+    sink$$1(new S$002EI$00601(1, "End", time));
   });
 }
 
@@ -78,8 +80,8 @@ function Stream$$$return$0027(f$$3) {
   return new Stream$002ET$00601(0, "Stream", f$$3);
 }
 
-function Stream$$$run(_arg1$$2, sink$$2) {
-  const s$$2 = _arg1$$2.fields[0];
+function Stream$$$run(_arg1$$1, sink$$2) {
+  const s$$2 = _arg1$$1.fields[0];
   return s$$2(sink$$2);
 }
 
