@@ -1,23 +1,25 @@
 module Sakhe.Show
 
-let d = new Disposable.SettableDisposable()
+printfn "%A" TIO.see
 
-let rec io d =
-    TimeIO.return' <| fun i o ->
-    match i with
-    | TaskIO.TryCatch.Try t ->
-        for i = 1 to 100 do
-            o << TimeIO.O.run
-              << Stream.run (Stream.periodic 1000)
-              << Sink.return' <| printfn "%A"
-    | TaskIO.TryCatch.Catch (a, err) -> raise err
+// let d = new Disposable.SettableDisposable()
 
-d.Set (io 0 |> TimeIO.run Time.zero)
+// let rec io d =
+//     TimeIO.return' <| fun i o ->
+//     match i with
+//     | TaskIO.TryCatch.Try t ->
+//         for i = 1 to 100 do
+//             o << TimeIO.O.run
+//               << Stream.run (Stream.periodic 1000)
+//               << Sink.return' <| printfn "%A"
+//     | TaskIO.TryCatch.Catch (a, err) -> raise err
 
-open Fable.Import.Browser
-open Fable.Core.JsInterop
+// d.Set (io 0 |> TimeIO.run Time.zero)
 
-window?d <- d
+// open Fable.Import.Browser
+// open Fable.Core.JsInterop
+
+// window?d <- d
 
 
 

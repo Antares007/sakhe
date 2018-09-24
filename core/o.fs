@@ -19,5 +19,8 @@ let return' f ua =
 let map f (O (put, get)) =
     O (put, get >> f)
 
+let filter f (O (put, get)) =
+    O ((fun a -> if f a then put a else ()), get)
+
 let contraMap g (O (put, get)) =
     O (g >> put, get)

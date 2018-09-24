@@ -22,14 +22,14 @@ module O =
 let run now (TimeIO io) =
     let o = O.return' (fun l a -> a :: l) []
     let rec go now o io =
-        let io = io |> IO.pmap (fun p o ->
-            p <| function
-            | Run io -> o <| Disposable.empty
-            | _ -> o Disposable.empty
-            ()
-        )
-        IO.run now o io
+        IO.run
+            now
+            (o |> O.filter (function
+                | Run (TimeIO io) -> go now o io; false
+                | _ -> true))
+            io
     go now o io
+    o.Value
 
 
 type ORay(o: O -> unit) =
@@ -45,13 +45,21 @@ type ORay(o: O -> unit) =
 
 
 let see = ORay.Api <| fun now o ->
-    o.Run (fun now o ->
-        o.Delay 10 (fun now o ->
+    o.Run <| fun now o ->
+        o.Delay 1 <| fun now o ->
             o.Dispose Disposable.empty
-        )
-    )
-    o.Delay 10 (fun now o ->
-        o.Periodic 10 (fun now o ->
+        o.Run <| fun now o ->
+            o.Delay 2 <| fun now o ->
+                o.Dispose Disposable.empty
+            o.Run <| fun now o ->
+                o.Delay 3 <| fun now o ->
+                    o.Dispose Disposable.empty
+                o.Run <| fun now o ->
+                    o.Delay 4 <| fun now o ->
+                        o.Dispose Disposable.empty
+    o.Delay 5 <| fun now o ->
+        o.Periodic 6 <| fun now o ->
             o.Dispose Disposable.empty
-        )
-    )
+
+let rez = run Time.zero see
+printfn "%A" rez

@@ -7,6 +7,7 @@ exports.T$00602$$get_Value = T$00602$$get_Value;
 exports.T$00602$$Put$$2B595 = T$00602$$Put$$2B595;
 exports.return$0027 = return$0027;
 exports.map = map;
+exports.filter = filter;
 exports.contraMap = contraMap;
 
 function T$00602$$get_Value(o) {
@@ -34,8 +35,16 @@ function map(f$$1, _arg1) {
   }];
 }
 
-function contraMap(g, _arg1$$1) {
-  return [function ($arg$$2) {
-    _arg1$$1[0](g($arg$$2));
+function filter(f$$2, _arg1$$1) {
+  return [function (a$$2) {
+    if (f$$2(a$$2)) {
+      _arg1$$1[0](a$$2);
+    }
   }, _arg1$$1[1]];
+}
+
+function contraMap(g, _arg1$$2) {
+  return [function ($arg$$2) {
+    _arg1$$2[0](g($arg$$2));
+  }, _arg1$$2[1]];
 }
