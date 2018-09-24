@@ -8,6 +8,11 @@ type On<'a> =
 
 type [<Erase>] T<'a> = Sink of (On<'a> -> unit)
 
+module O =
+    let event  t a   = Event <| (t,  a)
+    let end'   t     = End   <| (t)
+    let error  t err = Error <| (t, err)
+
 module Send =
     let event  t a   (Sink g) = g << Event <| (t,  a)
     let end'   t     (Sink g) = g << End   <| (t)

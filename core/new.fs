@@ -2,22 +2,22 @@ module Sakhe.Scheduler
 open System
 open Fable.Core
 
-type On<'a> =
-    | Event of Time.T * 'a
-    | End   of Time.T
-    | Error of Time.T * exn
-type TryCatch =
-    | Try
-    | Catch of exn
+// type On<'a> =
+//     | Event of Time.T * 'a
+//     | End   of Time.T
+//     | Error of Time.T * exn
+// type TryCatch =
+//     | Try
+//     | Catch of exn
 
-type [<Erase>] T<'a> = private Stream of Pith.T<On<'a>, IO.T<Time.T, O<'a>, IO.T<TryCatch, IDisposable, unit>>>
+type [<Erase>] T<'a> = private Stream of IO.T<Sink.T<'a>, O<'a>, TaskIO.T<Time.T>>
 and O<'a> =
     private
     | Now of T<'a>
     | Delay of Time.Delay * T<'a>
     | Periodic of Time.Delay * T<'a>
 
-let return' f = Stream << Pith.return' <| (IO.return' << f)
+let return' f = Stream << IO.return' <| f
 
 module O =
     let Now f = Now << return' <| f
@@ -43,11 +43,12 @@ module O =
 //         o'.Value
 
 
-let see = return' <| fun sink now o ->
-    IO.return' <| fun i o ->
+let see = return' <| fun sink o ->
+    TaskIO.return' <| fun i o ->
         match i with
-        | Try ->
+        | TaskIO.Try now ->
             o <| Disposable.empty
-            sink <| Event (now, 1)
-        | Catch err ->
-            sink <| Error (now, err)
+            Sink.Send.event now 1 sink
+
+        | TaskIO.Catch (now, err) ->
+            Sink.Send.error now err sink
