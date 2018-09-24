@@ -10,9 +10,9 @@
     <Compile Include="disposable.fs" />
     <Compile Include="task-io.fs" />
     <Compile Include="time.fs" />
-    <Compile Include="new.fs" />
     <Compile Include="time-io.fs" />
     <Compile Include="sink.fs" />
+    <Compile Include="new.fs" />
     <Compile Include="stream.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>

@@ -10,7 +10,14 @@ type O =
     | Dispose of IDisposable
     | Periodic of Time.Delay * T
 
-and [<Erase>] T = private TimeIO of IO.T<TaskIO.TryCatch<Time.T>, O, unit> // (IO.TaskIO.TryCatch<Time.T> -> Pith<O, unit>)
+and [<Erase>] T =
+    private
+    | TimeIO of IO.T<TaskIO.TryCatch<Time.T>, O, unit> // (IO.TaskIO.TryCatch<Time.T> -> Pith<O, unit>)
+    static member inline (+) ((TimeIO a), (TimeIO b)) = TimeIO << IO.return' <| fun i o ->
+        let o = O.return' (fun () a -> o a) ()
+        IO.run i o a
+        IO.run i o b
+
 
 
 let return' f =

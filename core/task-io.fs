@@ -2,7 +2,13 @@ module Sakhe.TaskIO
 open System
 open Fable.Core
 
-type [<Erase>] T<'a> = TaskIO of IO.T<TryCatch<'a>, IDisposable, unit>
+type [<Erase>] T<'a> =
+    private
+    | TaskIO of IO.T<TryCatch<'a>, IDisposable, unit>
+    static member inline (+) ((TaskIO l), (TaskIO r)) = TaskIO << IO.return' <| fun i o ->
+        let o = O.return' (fun () a -> o a) ()
+        IO.run i o l
+        IO.run i o r
 
 and TryCatch<'a> =
     | Try of 'a
