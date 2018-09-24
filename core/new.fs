@@ -9,9 +9,9 @@ type O =
     | Dispose of IDisposable
     | Periodic of Time.Delay * T
 
-and [<Erase>] T = private TimeIO of IO.T<Time.T, O, unit>
+and [<Erase>] T = private TIO of IO.T<Time.T, O, unit>
 
-let return' f = TimeIO << IO.return' <| f
+let return' f = TIO << IO.return' <| f
 
 module O =
     let run f = Run << return' <| f
@@ -19,13 +19,13 @@ module O =
     let periodic delay f = Periodic (Time.Delay.return' delay, return' f)
     let dispose d = Dispose d
 
-let run now (TimeIO io) =
+let run now (TIO io) =
     let o = O.return' (fun l a -> a :: l) []
     let rec go now o io =
         IO.run
             now
             (o |> O.filter (function
-                | Run (TimeIO io) -> go now o io; false
+                | Run (TIO io) -> go now o io; false
                 | _ -> true))
             io
     go now o io
