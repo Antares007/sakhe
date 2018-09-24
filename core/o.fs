@@ -10,7 +10,7 @@ type [<Erase>] T<'b, 'a> =
 
 let inline get (O (_, get)) = get ()
 
-let inline put (O (put, _)) a = put a
+let inline put a (O (put, _)) = put a
 
 let return' f ua =
     let mutable a = ua

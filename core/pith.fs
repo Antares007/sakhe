@@ -11,7 +11,7 @@ let empty =
     Pith ignore
 
 let run o (Pith p) =
-    p (O.put o)
+    p (fun a -> O.put a o)
 
 let filter f (Pith p) =
     Pith <| fun o -> p (fun a -> if f a then o a)

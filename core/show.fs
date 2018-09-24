@@ -1,6 +1,6 @@
 module Sakhe.Show
 
-printfn "%A" TIO.see
+printfn "%A" Scheduler.see
 
 // let d = new Disposable.SettableDisposable()
 

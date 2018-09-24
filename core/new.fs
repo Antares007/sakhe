@@ -1,65 +1,31 @@
-module Sakhe.TIO
+module Sakhe.Scheduler
 open System
 open Fable.Core
 
-type O =
+type [<Erase>] T<'a> = private Scheduler of IO.T<Time.T, O<'a>, 'a>
+and O<'a> =
     private
-    | Run of T
-    | Delay of Time.Delay * T
-    | Dispose of IDisposable
-    | Periodic of Time.Delay * T
+    | Run of T<'a>
+    | Delay of Time.Delay * T<'a>
+    | Periodic of Time.Delay * T<'a>
 
-and [<Erase>] T = private TIO of IO.T<Time.T, O, unit>
-
-let return' f = TIO << IO.return' <| f
+let return' f = Scheduler << IO.return' <| f
 
 module O =
     let run f = Run << return' <| f
     let delay delay f = Delay (Time.Delay.return' delay, return' f)
     let periodic delay f = Periodic (Time.Delay.return' delay, return' f)
-    let dispose d = Dispose d
 
-let run now (TIO io) =
-    let o = O.return' (fun l a -> a :: l) []
-    let rec go now o io =
-        IO.run
-            now
-            (o |> O.filter (function
-                | Run (TIO io) -> go now o io; false
-                | _ -> true))
-            io
-    go now o io
-    o.Value
+let inline run o now (Scheduler io) =
+    let o' =
+        O.return'
+            (fun acc -> function
+                | Run (Scheduler io) -> io :: acc
+                | x -> O.put x o; acc)
+            []
+    Seq.fold (fun acc io -> acc + (IO.run now o' io)) (IO.run now o' io) o'.Value
 
 
-type ORay(o: O -> unit) =
-    static member Api f = return' <| fun now o -> f now (ORay(o))
-    member __.Run f =
-        o << Run << ORay.Api <| f
-    member __.Delay delay f =
-        o <| Delay (Time.Delay.return' delay, ORay.Api f)
-    member __.Periodic delay f =
-        o <| Periodic (Time.Delay.return' delay, ORay.Api f)
-    member __.Dispose d =
-        o <| Dispose d
 
-
-let see = ORay.Api <| fun now o ->
-    o.Run <| fun now o ->
-        o.Delay 1 <| fun now o ->
-            o.Dispose Disposable.empty
-        o.Run <| fun now o ->
-            o.Delay 2 <| fun now o ->
-                o.Dispose Disposable.empty
-            o.Run <| fun now o ->
-                o.Delay 3 <| fun now o ->
-                    o.Dispose Disposable.empty
-                o.Run <| fun now o ->
-                    o.Delay 4 <| fun now o ->
-                        o.Dispose Disposable.empty
-    o.Delay 5 <| fun now o ->
-        o.Periodic 6 <| fun now o ->
-            o.Dispose Disposable.empty
-
-let rez = run Time.zero see
-printfn "%A" rez
+let see = return' <| fun i o ->
+    1
