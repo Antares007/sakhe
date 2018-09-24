@@ -5,12 +5,9 @@
   "main": "index.js",
   "scripts": {
     "fable": "dotnet run -c Release -p ../fable/src/dotnet/Fable.Compiler",
-    "build2": "node /code/Fable/src/js/fable-splitter/dist/cli.js --config splitter.config.js",
     "build": "yarn fable fable-splitter --args \"-c splitter.config.js\"",
     "watch": "yarn fable fable-splitter --args \"-c splitter.config.js -w\"",
-    "postinstall": "dotnet restore",
-    "daemon": "fable-next.cmd start --port 61225",
-    "rollup": "rollup -c rollup-config.js"
+    "postinstall": "dotnet restore"
   },
   "author": "",
   "license": "ISC",
