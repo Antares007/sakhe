@@ -2,7 +2,7 @@ module Sakhe.TaskIO
 open System
 open Fable.Core
 
-type [<Erase>] T<'a, 'b> = TaskIO of IO.T<TryCatch<'a>, IDisposable, unit>
+type [<Erase>] T<'a> = TaskIO of IO.T<TryCatch<'a>, IDisposable, unit>
 
 and TryCatch<'a> =
     | Try of 'a
