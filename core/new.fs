@@ -6,21 +6,23 @@ open Fable.Core
 //     | Event of Time.T * 'a
 //     | End   of Time.T
 //     | Error of Time.T * exn
-// type TryCatch =
-//     | Try
-//     | Catch of exn
+type TryCatch<'a> =
+    | Try of 'a
+    | Catch of 'a * exn
 
-type [<Erase>] T<'a> = private Stream of IO.T<Sink.T<'a>, O<'a>, TaskIO.T<Time.T>>
-and O<'a> =
+type [<Erase>] T = private Stream of IO.T<TryCatch<unit -> Time.T>, O, unit>
+and O =
     private
-    | Now of T<'a>
-    | Delay of Time.Delay * T<'a>
-    | Periodic of Time.Delay * T<'a>
+    | Dispose of IDisposable
+    | Now of T
+    | Delay of Time.Delay * T
+    | Periodic of Time.Delay * T
 
 let return' f = Stream << IO.return' <| f
 
 module O =
-    let Now f = Now << return' <| f
+    let dispose d = Dispose <| d
+    let now f = Now << return' <| f
     let delay delay f = Delay (Time.Delay.return' delay, return' f)
     let periodic delay f = Periodic (Time.Delay.return' delay, return' f)
 
@@ -43,12 +45,10 @@ module O =
 //         o'.Value
 
 
-let see = return' <| fun sink o ->
-    TaskIO.return' <| fun i o ->
+let see = return' <| fun i o ->
+    o << O.dispose <| Disposable.empty
+    o << O.now <| fun i o ->
+    o << O.delay 10 <| fun i o ->
         match i with
-        | TaskIO.Try now ->
-            o <| Disposable.empty
-            Sink.Send.event now 1 sink
-
-        | TaskIO.Catch (now, err) ->
-            Sink.Send.error now err sink
+        | Try tf -> ()
+        | Catch (tf, err) -> ()
