@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.T$00602$$get_Value = T$00602$$get_Value;
 exports.T$00602$$Put$$2B595 = T$00602$$Put$$2B595;
 exports.return$0027 = return$0027;
+exports.proxy = proxy;
 exports.map = map;
 exports.filter = filter;
 exports.contraMap = contraMap;
@@ -27,6 +28,10 @@ function return$0027(f, ua) {
   }, function () {
     return a$$1;
   }];
+}
+
+function proxy(p) {
+  return [p, function () {}];
 }
 
 function map(f$$1, _arg1) {

@@ -10,8 +10,8 @@ type [<Erase>] T<'a, 'b> =
 let return' f =
     Pith f
 
-let empty =
-    Pith ignore
+let empty<'a> =
+    Pith <| fun (o: 'a -> unit) -> ()
 
 let run o (Pith p) =
     p (fun a -> O.put a o)

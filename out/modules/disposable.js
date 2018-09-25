@@ -46,14 +46,14 @@ function SettableDisposable$$$$002Ector() {
 }
 
 function SettableDisposable$$Set$$Z5A296901(__$$1, d) {
-  if (__$$1.disposable != null) {
-    throw new Error("Settable already set");
+  if (__$$1.disposed) {
+    d.Dispose();
   } else {
-    __$$1.disposable = d;
-
-    if (__$$1.disposed) {
-      d.Dispose();
+    if (__$$1.disposable != null) {
+      __$$1.disposable.Dispose();
     }
+
+    __$$1.disposable = d;
   }
 }
 

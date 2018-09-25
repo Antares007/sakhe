@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.return$0027 = return$0027;
+exports.empty = empty;
 exports.map = map;
 exports.pmap = pmap;
 exports.bind = bind;
@@ -19,23 +20,27 @@ function return$0027(f) {
   };
 }
 
-function map(f$$2, _arg1) {
-  const io = _arg1;
+function empty() {
+  return return$0027(function (_arg2, _arg1) {});
+}
+
+function map(f$$3, _arg1$$1) {
+  const io = _arg1$$1;
   return function ($arg$$2) {
-    return f$$2(io($arg$$2));
+    return f$$3(io($arg$$2));
   };
 }
 
-function pmap(f$$3) {
+function pmap(f$$4) {
   return function (arg10$0040) {
     return map(function (arg10$0040$$1) {
-      return (0, _pith.pmap)(f$$3, arg10$0040$$1);
+      return (0, _pith.pmap)(f$$4, arg10$0040$$1);
     }, arg10$0040);
   };
 }
 
-function bind(g, _arg1$$1) {
-  const io$$1 = _arg1$$1;
+function bind(g, _arg1$$2) {
+  const io$$1 = _arg1$$2;
   return function (i) {
     const p = io$$1(i);
     const io$$2 = g(p);
@@ -43,7 +48,7 @@ function bind(g, _arg1$$1) {
   };
 }
 
-function run(i$$1, o, _arg1$$2) {
-  const io$$3 = _arg1$$2;
+function run(i$$1, o, _arg1$$3) {
+  const io$$3 = _arg1$$3;
   return (0, _pith.run)(o, io$$3(i$$1));
 }

@@ -21,24 +21,22 @@ function return$0027(f) {
 }
 
 function empty() {
-  return function (value) {
-    value;
-  };
+  return function (o) {};
 }
 
-function run(o, _arg1) {
+function run(o$$1, _arg1) {
   const p = _arg1;
   return p(function (a) {
-    o[0](a);
+    o$$1[0](a);
   });
 }
 
 function filter(f$$1, _arg1$$2) {
   const p$$1 = _arg1$$2;
-  return function (o$$1) {
+  return function (o$$2) {
     return p$$1(function (a$$2) {
       if (f$$1(a$$2)) {
-        o$$1(a$$2);
+        o$$2(a$$2);
       }
     });
   };
@@ -46,13 +44,13 @@ function filter(f$$1, _arg1$$2) {
 
 function filterMap(f$$2, _arg1$$3) {
   const p$$2 = _arg1$$3;
-  return function (o$$2) {
+  return function (o$$3) {
     return p$$2(function (a$$3) {
       const matchValue = f$$2(a$$3);
 
       if (matchValue != null) {
         const a$$4 = (0, _Option.value)(matchValue);
-        o$$2(a$$4);
+        o$$3(a$$4);
       }
     });
   };
@@ -72,9 +70,9 @@ function pmap(f$$4, _arg1$$5) {
 
 function bind(f$$5, _arg1$$6) {
   const p$$5 = _arg1$$6;
-  return function (o$$3) {
-    const a$$5 = p$$5(o$$3);
+  return function (o$$4) {
+    const a$$5 = p$$5(o$$4);
     const p$$6 = f$$5(a$$5);
-    return p$$6(o$$3);
+    return p$$6(o$$4);
   };
 }

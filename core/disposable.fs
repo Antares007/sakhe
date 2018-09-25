@@ -1,5 +1,6 @@
 module Sakhe.Disposable
 open System
+open Sakhe
 
 type AnonymousDisposable(f) =
     let mutable disposed = false
@@ -11,7 +12,7 @@ type AnonymousDisposable(f) =
             f ()
 type SettableDisposable() =
     let mutable disposed = false
-    let mutable disposable = None
+    let mutable disposable: IDisposable option = None
     interface IDisposable with
         member __.Dispose () =
             if disposed then ()
@@ -21,10 +22,11 @@ type SettableDisposable() =
     member inline this.Dispose () = (this :> IDisposable).Dispose()
 
     member __.Set (d: IDisposable) =
-        if disposable.IsSome then failwith "Settable already set"
+        if disposed then
+            d.Dispose()
         else
-        disposable <- Some d
-        if disposed then d.Dispose()
+            if disposable.IsSome then disposable.Value.Dispose()
+            disposable <- Some d
 
 
 
