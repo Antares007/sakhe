@@ -12,8 +12,8 @@
     <Compile Include="time.fs" />
     <Compile Include="time-io.fs" />
     <Compile Include="sink.fs" />
-    <Compile Include="new.fs" />
     <Compile Include="stream.fs" />
+    <Compile Include="new.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

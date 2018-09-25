@@ -25,11 +25,14 @@ let private mappend l r = IO.return' <| fun i o ->
     IO.run i o r
 
 let run now (Scheduler io) =
-    let o = O.return' (fun map (delay, io) ->
-                        map |> match Map.tryFind delay map with
-                                | Some io2 -> Map.add delay (mappend io io2)
-                                | None -> Map.add delay io
-                        ) Map.empty
+    let o =
+        O.return'
+        <| fun map (delay, io) ->
+            map
+            |> match Map.tryFind delay map with
+                | Some io2 -> Map.add delay (mappend io io2)
+                | None -> Map.add delay io
+        <| Map.empty
 
     let rec go io = IO.run now o (IO.pmap ring io)
     and ring p o = p <| function
@@ -39,8 +42,7 @@ let run now (Scheduler io) =
             else o <| (Time.add delay now, io)
 
     go io
-    let timeline = o.Value |> Map.toSeq |> Seq.sortBy fst |> ResizeArray
-    timeline
+    o.Value |> Map.toSeq |> Seq.sortBy fst |> ResizeArray
 
 open Fable.Core.JsInterop
 type private List<'a> with
@@ -76,6 +78,7 @@ let see = return' <| fun t o ->
         o << O.delay 11 <| fun t o ->
             ()
     ()
+
 let rez = run Time.zero see
 printfn "%A" rez
 
