@@ -4,6 +4,7 @@ open Fable.Core
 open Fable.Import
 open Sakhe
 open System.Collections.Generic
+open System.Collections.Generic
 
 type [<Erase>] T = private Scheduler of IO.T<Time.T, O, unit>
 and O =
@@ -26,21 +27,16 @@ let private mappend l r = IO.return' <| fun i o ->
 
 let run now (Scheduler io) =
     let o =
-        O.return'
-        <| fun map (delay, io) ->
-            map
-            |> match Map.tryFind delay map with
-                | Some io2 -> Map.add delay (mappend io io2)
-                | None -> Map.add delay io
-        <| Map.empty
-
+        Map.empty |> O.return' (fun (map) (delay, io) ->
+            map |> match Map.tryFind delay map with
+                    | Some io2 -> Map.add delay (mappend io io2)
+                    | None -> Map.add delay io)
     let rec go io = IO.run now o (IO.pmap ring io)
     and ring p o = p <| function
         | Now (Scheduler io) -> go io
         | Delay (delay, (Scheduler io)) ->
             if delay = Time.Delay.zero then go io
             else o <| (Time.add delay now, io)
-
     go io
     o.Value |> Map.toSeq |> Seq.sortBy fst |> ResizeArray
 

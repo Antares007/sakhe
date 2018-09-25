@@ -24,8 +24,6 @@ var _Util = require("./fable-core.2.0.0-beta-005/Util");
 
 var _Seq = require("./fable-core.2.0.0-beta-005/Seq");
 
-var _Array = require("./fable-core.2.0.0-beta-005/Array");
-
 var _disposable = require("./disposable");
 
 var _String = require("./fable-core.2.0.0-beta-005/String");
@@ -58,7 +56,7 @@ function mappend(l, r) {
 function run(now, _arg1) {
   var projection;
   const io = _arg1;
-  const o$$2 = (0, _o.return$0027)(function (map, tupledArg) {
+  const o$$2 = (0, _o.return$0027)(function f$$6(map, tupledArg) {
     var matchValue, io2;
     return (matchValue = (0, _Map.tryFind)(tupledArg[0], map), matchValue == null ? function (table$$1) {
       return (0, _Map.add)(tupledArg[0], tupledArg[1], table$$1);
@@ -83,7 +81,7 @@ function run(now, _arg1) {
           if ((0, _Util.equals)(delay$$2, _time.DelayModule$$$zero)) {
             go(io$$4);
           } else {
-            o$$3([delay$$2, io$$4]);
+            o$$3([(0, _time.add)(delay$$2, now), io$$4]);
           }
         } else {
           const io$$3 = _arg2.fields[0];
@@ -94,40 +92,43 @@ function run(now, _arg1) {
   };
 
   go(io);
-  const timeline = (0, _Array.ofSeq)((projection = function projection(tuple) {
+  return Array.from((projection = function projection(tuple) {
     return tuple[0];
   }, function (source) {
     return (0, _Seq.sortWith)(function (x, y) {
       return (0, _Util.compare)(projection(x), projection(y));
     }, source);
-  })((0, _Map.toSeq)((0, _o.T$00602$$get_Value)(o$$2))), Array);
-  return timeline;
+  })((0, _Map.toSeq)((0, _o.T$00602$$get_Value)(o$$2))));
+}
+
+function setTask(delay$$3, task) {
+  const token = setTimeout(task, (0, _time.DelayModule$$$unbox)(delay$$3));
+  return (0, _disposable.return$0027)(function () {
+    clearTimeout(token);
+  });
 }
 
 function run2(now$$1, io$$5) {
-  const timeline$$1 = run(now$$1, io$$5);
-  const matchValue$$1 = (0, _Array.tryHead)(timeline$$1);
+  const timeline = run(now$$1, io$$5);
 
-  if (matchValue$$1 != null) {
-    const t = matchValue$$1[0];
-    const io$$6 = matchValue$$1[1];
+  if ((0, _Util.equals)(timeline.length, 0)) {
     return _disposable.empty;
   } else {
-    return _disposable.empty;
+    const patternInput = timeline.splice(0, 1)[0];
+    const delay$$4 = (0, _time.DelayModule$$$fromTo)(now$$1, patternInput[0]);
+    return setTask(delay$$4, function () {});
   }
 }
 
-const see = return$0027(function (t$$1, o$$4) {
-  o$$4(OModule$$$delay(0, function (t$$2, o$$5) {
-    o$$5(OModule$$$delay(10, function (t$$3, o$$6) {}));
+const see = return$0027(function (t, o$$4) {
+  o$$4(OModule$$$delay(0, function (t$$1, o$$5) {
+    o$$5(OModule$$$delay(10, function (t$$2, o$$6) {}));
   }));
-  o$$4(OModule$$$now(function (t$$4, o$$7) {
-    o$$7(OModule$$$delay(11, function (t$$5, o$$8) {}));
+  o$$4(OModule$$$now(function (t$$3, o$$7) {
+    o$$7(OModule$$$delay(11, function (t$$4, o$$8) {}));
   }));
 });
 exports.see = see;
 const rez = run(_time.zero, see);
 exports.rez = rez;
-(0, _String.toConsole)((0, _String.printf)("%A"))((0, _Array.map)(function mapping(tuple$$1) {
-  return tuple$$1[0];
-}, rez, Array));
+(0, _String.toConsole)((0, _String.printf)("%A"))(rez);
