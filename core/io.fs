@@ -3,8 +3,7 @@ open Fable.Core
 
 type [<Erase>] T<'i, 'o, 'b> =
     | IO of ('i -> Pith.T<'o, 'b>)
-    static member inline (+) ((IO l), (IO r)) = IO <| fun i ->
-        Pith.append (l i) (r i)
+    static member inline (+) ((IO l), (IO r)) = IO <| fun i -> l i + r i
 
 let return' f = IO <| (Pith.return' << f)
 

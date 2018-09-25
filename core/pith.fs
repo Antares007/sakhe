@@ -2,7 +2,10 @@
 module Sakhe.Pith
 open Fable.Core
 
-type [<Erase>] T<'a, 'b> = Pith of (('a -> unit) -> 'b)
+type [<Erase>] T<'a, 'b> =
+    private
+    | Pith of (('a -> unit) -> 'b)
+    static member inline (+) ((Pith l), (Pith r)) = Pith <| fun o -> l o + r o
 
 let return' f =
     Pith f
