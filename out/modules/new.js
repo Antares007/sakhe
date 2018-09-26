@@ -9,7 +9,6 @@ exports.OModule$$$delay = OModule$$$delay;
 exports.TimeLine$$$return$0027 = TimeLine$$$return$0027;
 exports.TimeLine$$$nextArrival = TimeLine$$$nextArrival;
 exports.run = run;
-exports.run2 = run2;
 exports.rez = exports.see = exports.TimeLine$002ET$00602 = exports.O = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-005/Types");
@@ -200,7 +199,7 @@ function run(now, _arg1$$1) {
     return (matchValue$$1 = (0, _Map.tryFind)(tupledArg[0], map$$1), matchValue$$1 == null ? function (table$$2) {
       return (0, _Map.add)(tupledArg[0], tupledArg[1], table$$2);
     } : (l$$9 = matchValue$$1, function (table$$1) {
-      return (0, _Map.add)(tupledArg[0], mappend(l$$9, tupledArg[1]), table$$1);
+      return (0, _Map.add)(tupledArg[0], l$$9 + tupledArg[1], table$$1);
     }))(map$$1);
   }, (0, _Map.empty)({
     Compare: _Util.compare
@@ -216,7 +215,7 @@ function run(now, _arg1$$1) {
         if (_arg2.tag === 1) {
           const io$$3 = _arg2.fields[1];
           const delay$$1 = _arg2.fields[0];
-          const now$$1 = (0, _time.add)(delay$$1, now);
+          const now$$1 = delay$$1 + now;
           o$$3([now$$1, (0, _io.contraMap)(function g() {
             return now$$1;
           }, io$$3)]);
@@ -230,18 +229,6 @@ function run(now, _arg1$$1) {
 
   go$$1(io);
   return TimeLine$$$return$0027((0, _o.T$00602$$get_Value)(o$$2));
-}
-
-function run2(tf$$1, io$$5) {
-  const now$$2 = _time.zero;
-  const offSet = now$$2 - tf$$1();
-
-  const localTime = function localTime() {
-    return tf$$1() + offSet;
-  };
-
-  let timeline = run(now$$2, io$$5);
-  return timeline;
 }
 
 const see = return$0027(function (t, o$$4) {

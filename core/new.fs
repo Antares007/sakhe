@@ -99,27 +99,44 @@ module TimeLine =
 
 let run now (Scheduler io) =
     let o =
-        Map.empty |> O.return' (fun (map) (time, r) ->
+        Map.empty |> O.return' (fun map (time, r) ->
             map |> match Map.tryFind time map with
-                    | Some l -> Map.add time (mappend l r)
+                    | Some l -> Map.add time (l + r)
                     | None -> Map.add time r)
     let rec go io = IO.run now o (IO.pmap ring io)
     and ring p o = p <| function
         | Now (Scheduler io) -> go io
         | Delay (delay, (Scheduler io)) ->
-            let now = Time.add delay now
+            let now = delay + now
             o <| (now, io |> IO.contraMap (fun () -> now))
     go io
     TimeLine.return' o.Value
 
-let run2 tf io =
+let inline run2 tf timer io =
     let now = Time.zero
     let offSet = now - tf()
     let localTime () = tf() + offSet
     let mutable timeline = run now io
-    timeline
+    let mutable scheduledDalay: (Time.Delay * IDisposable) option = None
+    let inline onDelay delay =
+        let now = localTime ()
+        let rez = TimeLine.remove now
+        ()
+    let scheduleNextDelay delay =
+        match scheduledDalay with
+        | None -> scheduledDalay <- Some (delay, timer delay (fun () -> onDelay delay))
+        | Some (scheduledDelay, d) when scheduledDelay <= delay -> ()
+        | Some (scheduledDelay, d) ->
+            Disposable.dispose d
+            scheduledDalay <- Some (delay, timer delay (fun () -> onDelay delay))
+        Disposable.empty
 
-
+    match TimeLine.nextArrival timeline with
+    | None -> Disposable.empty
+    | Some nextArrival ->
+        let now = localTime ()
+        let delay = Time.Delay.fromTo now nextArrival
+        scheduleNextDelay delay
 
 let see = return' <| fun t o ->
 
