@@ -6,13 +6,16 @@ Object.defineProperty(exports, "__esModule", {
 exports.return$0027 = return$0027;
 exports.empty = empty;
 exports.map = map;
+exports.run = run;
+exports.contraMap = contraMap;
 exports.pmap = pmap;
 exports.bind = bind;
-exports.run = run;
 
 var _Util = require("./fable-core.2.0.0-beta-005/Util");
 
 var _pith = require("./pith");
+
+var _o = require("./o");
 
 function return$0027(f) {
   return function ($arg$$1) {
@@ -31,24 +34,30 @@ function map(f$$3, _arg1$$1) {
   };
 }
 
-function pmap(f$$4) {
+function run(i, o, _arg1$$2) {
+  const io$$1 = _arg1$$2;
+  return (0, _pith.run)(o, io$$1(i));
+}
+
+function contraMap(g, io$$2) {
+  return return$0027(function (i$$1, o$$1) {
+    return run(g(i$$1), (0, _o.proxy)(o$$1), io$$2);
+  });
+}
+
+function pmap(f$$5) {
   return function (arg10$0040) {
     return map(function (arg10$0040$$1) {
-      return (0, _pith.pmap)(f$$4, arg10$0040$$1);
+      return (0, _pith.pmap)(f$$5, arg10$0040$$1);
     }, arg10$0040);
   };
 }
 
-function bind(g, _arg1$$2) {
-  const io$$1 = _arg1$$2;
-  return function (i) {
-    const p = io$$1(i);
-    const io$$2 = g(p);
-    return io$$2(i);
-  };
-}
-
-function run(i$$1, o, _arg1$$3) {
+function bind(g$$1, _arg1$$3) {
   const io$$3 = _arg1$$3;
-  return (0, _pith.run)(o, io$$3(i$$1));
+  return function (i$$2) {
+    const p = io$$3(i$$2);
+    const io$$4 = g$$1(p);
+    return io$$4(i$$2);
+  };
 }

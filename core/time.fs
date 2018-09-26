@@ -3,7 +3,17 @@ open Fable.Core
 
 type [<Erase>] Offset = private Offset of float
 type [<Erase>] Delay = private Delay of int
-type [<Erase>] T = private Time of float
+type [<Erase>] T =
+    private
+    | Time of float
+    static member inline (-) ((Time l), (Time r)) =
+        Offset (l - r)
+    static member inline (+) ((Time t), (Offset o)) =
+        Time (t + o)
+    static member inline (+) ((Time t), (Delay d)) =
+        Time (t + float d)
+    static member inline (+) ((Delay d), (Time t)) =
+        Time (t + float d)
 
 let return' (t) =
     assert (t >= 0.0)
