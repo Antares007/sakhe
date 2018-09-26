@@ -5,8 +5,12 @@ open Fable.Import
 open Sakhe
 open System.Collections.Generic
 open System.Collections.Generic
+open Sakhe
 
-type [<Erase>] T = private Scheduler of IO.T<Time.T, O, unit>
+type [<Erase>] T =
+    private
+    | Scheduler of IO.T<Time.T, O, unit>
+    static member inline (+) ((Scheduler l), (Scheduler r)) = Scheduler <| l + r
 and O =
     private
     | Now of T
@@ -26,9 +30,9 @@ let private mappend l r = IO.return' <| fun i o ->
     IO.run i o r
 
 module TimeLine =
-    type T<'a, 'b when 'a: comparison> =
+    type T =
         private
-        | TimeLine of ('a [] * Map<'a, 'b>)
+        | TimeLine of (Time.T [] * Map<Time.T, IO.T<Time.T,O,unit>>)
 
     let return' map =
         TimeLine
@@ -80,48 +84,67 @@ module TimeLine =
             else l - 1
         go 0 (Array.length array)
 
+    let private add time io = io |> IO.contraMap (fun () -> time)
+
+    let private runTaskRing io = IO.return' <| fun now o ->
+        let o = O.proxy o
+        let rec go io = IO.run now o (IO.pmap ring io)
+        and ring p o = p <| function
+            | Now (Scheduler io) -> go io
+            | Delay (delay, (Scheduler io)) -> o <| (delay + now, io)
+        go io
+
     let inline remove a tl =
         let (TimeLine (as', m)) = tl
         match findAppendPosition a as' with
         | -1 -> (None, tl)
         | i ->
-            let k0 = as'.[0]
+            let now = as'.[0]
             let (b, m) =
                 as'
                 |> Seq.skip 1
                 |> Seq.take i
                 |> Seq.fold
-                    (fun (l, m: Map<_, _>) key -> (l + m.[key], Map.remove key m))
-                    (m.[k0], Map.remove k0 m)
+                    (fun (l, m: Map<_, _>) now ->
+                        (l + (add now << runTaskRing <| m.[now])
+                        , Map.remove now m))
+                    (add now << runTaskRing <| m.[now], Map.remove now m)
             Some b, (TimeLine (as' |> Seq.skip 1 |> Seq.toArray, m))
 
+    let inline get now io =
+        let o =
+            Map.empty |> O.return' (fun map (time, r) ->
+                map |> match Map.tryFind time map with
+                        | Some l -> Map.add time (l + r)
+                        | None -> Map.add time r)
+        IO.run now o (runTaskRing io)
+        return' o.Value
 
+    let get2 now io =
+        let o =
+            Map.empty |> O.return' (fun map (time, r) ->
+                map |> match Map.tryFind time map with
+                        | Some l -> Map.add time (l + r)
+                        | None -> Map.add time r)
+        IO.run now o io
+        return' o.Value
 
-let run now (Scheduler io) =
-    let o =
-        Map.empty |> O.return' (fun map (time, r) ->
-            map |> match Map.tryFind time map with
-                    | Some l -> Map.add time (l + r)
-                    | None -> Map.add time r)
-    let rec go io = IO.run now o (IO.pmap ring io)
-    and ring p o = p <| function
-        | Now (Scheduler io) -> go io
-        | Delay (delay, (Scheduler io)) ->
-            let now = delay + now
-            o <| (now, io |> IO.contraMap (fun () -> now))
-    go io
-    TimeLine.return' o.Value
-
-let inline run2 tf timer io =
+let inline run2 tf timer (Scheduler io) =
     let now = Time.zero
     let offSet = now - tf()
     let localTime () = tf() + offSet
-    let mutable timeline = run now io
+    let mutable timeline = TimeLine.get now io
     let mutable scheduledDalay: (Time.Delay * IDisposable) option = None
+
     let inline onDelay delay =
         let now = localTime ()
-        let rez = TimeLine.remove now
-        ()
+        match TimeLine.remove now timeline with
+        | (None, t) ->
+            scheduledDalay <- None
+        | (Some io, ltl) ->
+            let rtl = TimeLine.get2 () io
+            timeline <- TimeLine.merge ltl rtl
+
     let scheduleNextDelay delay =
         match scheduledDalay with
         | None -> scheduledDalay <- Some (delay, timer delay (fun () -> onDelay delay))
@@ -158,8 +181,6 @@ let private setTask delay task =
 let private tf () = Time.return' <| Fable.Import.Browser.performance.now ()
 
 
-let rez = run Time.zero see
-printfn "%A" rez
 
 
 

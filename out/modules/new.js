@@ -8,8 +8,8 @@ exports.OModule$$$now = OModule$$$now;
 exports.OModule$$$delay = OModule$$$delay;
 exports.TimeLine$$$return$0027 = TimeLine$$$return$0027;
 exports.TimeLine$$$nextArrival = TimeLine$$$nextArrival;
-exports.run = run;
-exports.rez = exports.see = exports.TimeLine$002ET$00602 = exports.O = void 0;
+exports.TimeLine$$$get2 = TimeLine$$$get2;
+exports.see = exports.TimeLine$002ET = exports.O = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-005/Types");
 
@@ -30,8 +30,6 @@ var _Array = require("./fable-core.2.0.0-beta-005/Array");
 var _Option = require("./fable-core.2.0.0-beta-005/Option");
 
 var _disposable = require("./disposable");
-
-var _String = require("./fable-core.2.0.0-beta-005/String");
 
 const O = (0, _Types.declare)(function O(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -58,13 +56,13 @@ function mappend(l, r) {
   });
 }
 
-const TimeLine$002ET$00602 = (0, _Types.declare)(function TimeLine$002ET$00602(tag, name, ...fields) {
+const TimeLine$002ET = (0, _Types.declare)(function TimeLine$002ET(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
-exports.TimeLine$002ET$00602 = TimeLine$002ET$00602;
+exports.TimeLine$002ET = TimeLine$002ET;
 
 function TimeLine$$$return$0027(map) {
-  return new TimeLine$002ET$00602(0, "TimeLine", [(0, _Array.ofSeq)((0, _Seq.sortWith)(_Util.compare, (0, _Seq.map)(function mapping(tuple) {
+  return new TimeLine$002ET(0, "TimeLine", [(0, _Array.ofSeq)((0, _Seq.sortWith)(_Util.compare, (0, _Seq.map)(function mapping(tuple) {
     return tuple[0];
   }, (0, _Map.toSeq)(map))), Array), map]);
 }
@@ -142,7 +140,7 @@ function TimeLine$$$mergea(l$$1, r$$1) {
 
                       case 1:
                         {
-                          throw new _Types.MatchFailureException("C:/code/sakhe/core/new.fs", 47, 22);
+                          throw new _Types.MatchFailureException("C:/code/sakhe/core/new.fs", 51, 22);
                         }
                     }
                   }
@@ -192,9 +190,41 @@ function TimeLine$$$findAppendPosition(a$$1, array) {
   return go(0, array.length) | 0;
 }
 
-function run(now, _arg1$$1) {
-  const io = _arg1$$1;
-  const o$$2 = (0, _o.return$0027)(function f$$6(map$$1, tupledArg) {
+function TimeLine$$$add(time, io) {
+  return (0, _io.contraMap)(function g() {
+    return time;
+  }, io);
+}
+
+function TimeLine$$$runTaskRing(io$$2) {
+  return (0, _io.return$0027)(function (now, o$$2) {
+    const o$$3 = (0, _o.proxy)(o$$2);
+
+    const go$$1 = function go$$1(io$$3) {
+      (0, _io.run)(now, o$$3, (0, _io.pmap)((0, _Util.uncurry)(2, ring))(io$$3));
+    };
+
+    const ring = function ring(p) {
+      return function (o$$4) {
+        p(function (_arg1$$1) {
+          if (_arg1$$1.tag === 1) {
+            const io$$5 = _arg1$$1.fields[1];
+            const delay$$1 = _arg1$$1.fields[0];
+            o$$4([delay$$1 + now, io$$5]);
+          } else {
+            const io$$4 = _arg1$$1.fields[0];
+            go$$1(io$$4);
+          }
+        });
+      };
+    };
+
+    go$$1(io$$2);
+  });
+}
+
+function TimeLine$$$get2(now$$1, io$$6) {
+  const o$$5 = (0, _o.return$0027)(function f$$7(map$$1, tupledArg) {
     var matchValue$$1, l$$9;
     return (matchValue$$1 = (0, _Map.tryFind)(tupledArg[0], map$$1), matchValue$$1 == null ? function (table$$2) {
       return (0, _Map.add)(tupledArg[0], tupledArg[1], table$$2);
@@ -204,39 +234,16 @@ function run(now, _arg1$$1) {
   }, (0, _Map.empty)({
     Compare: _Util.compare
   }));
-
-  const go$$1 = function go$$1(io$$1) {
-    (0, _io.run)(now, o$$2, (0, _io.pmap)((0, _Util.uncurry)(2, ring))(io$$1));
-  };
-
-  const ring = function ring(p) {
-    return function (o$$3) {
-      p(function (_arg2) {
-        if (_arg2.tag === 1) {
-          const io$$3 = _arg2.fields[1];
-          const delay$$1 = _arg2.fields[0];
-          const now$$1 = delay$$1 + now;
-          o$$3([now$$1, (0, _io.contraMap)(function g() {
-            return now$$1;
-          }, io$$3)]);
-        } else {
-          const io$$2 = _arg2.fields[0];
-          go$$1(io$$2);
-        }
-      });
-    };
-  };
-
-  go$$1(io);
-  return TimeLine$$$return$0027((0, _o.T$00602$$get_Value)(o$$2));
+  (0, _io.run)(now$$1, o$$5, io$$6);
+  return TimeLine$$$return$0027((0, _o.T$00602$$get_Value)(o$$5));
 }
 
-const see = return$0027(function (t, o$$4) {
-  o$$4(OModule$$$delay(0, function (t$$1, o$$5) {
-    o$$5(OModule$$$delay(10, function (t$$2, o$$6) {}));
+const see = return$0027(function (t, o$$6) {
+  o$$6(OModule$$$delay(0, function (t$$1, o$$7) {
+    o$$7(OModule$$$delay(10, function (t$$2, o$$8) {}));
   }));
-  o$$4(OModule$$$now(function (t$$3, o$$7) {
-    o$$7(OModule$$$delay(11, function (t$$4, o$$8) {}));
+  o$$6(OModule$$$now(function (t$$3, o$$9) {
+    o$$9(OModule$$$delay(11, function (t$$4, o$$10) {}));
   }));
 });
 exports.see = see;
@@ -251,7 +258,3 @@ function setTask(delay$$5, task) {
 function tf() {
   return (0, _time.return$0027)(performance.now());
 }
-
-const rez = run(_time.zero, see);
-exports.rez = rez;
-(0, _String.toConsole)((0, _String.printf)("%A"))(rez);
