@@ -29,6 +29,7 @@ module TimeLine =
     type T<'a, 'b when 'a: comparison> =
         private
         | TimeLine of ('a [] * Map<'a, 'b>)
+
     let return' map =
         TimeLine
             ( map |> Map.toSeq |> Seq.map fst |> Seq.sort |> Seq.toArray
@@ -54,19 +55,47 @@ module TimeLine =
 
     let inline private mergem l r =
         seq {
-            yield!
-                Map.toSeq l
+            yield! l |> Map.toSeq
                 |> Seq.map (fun (lk, lv) ->
                             match Map.tryFind lk r with
                             | None -> (lk, lv)
                             | Some rv -> (lk, lv + rv))
-            yield! Map.toSeq r
+            yield! r |> Map.toSeq
                 |> Seq.filter (fun (k, _) -> not (l |> Map.containsKey k))
         } |> Map.ofSeq
-    let merge (TimeLine (la, lm)) (TimeLine (ra, rm)) =
+
+    let inline merge (TimeLine (la, lm)) (TimeLine (ra, rm)) =
             TimeLine
                 ( (mergea la ra)
                 , (mergem lm rm) )
+
+    let nextArrival (TimeLine (a, _)) = Array.tryHead a
+
+    let private findAppendPosition (a: 'a) (array: 'a[]) =
+        let rec go l r =
+            if l < r then
+                let m = (l + r) / 2
+                if array.[m] > a then go l m
+                else go (m + 1) r
+            else l - 1
+        go 0 (Array.length array)
+
+    let inline remove a tl =
+        let (TimeLine (as', m)) = tl
+        match findAppendPosition a as' with
+        | -1 -> (None, tl)
+        | i ->
+            let k0 = as'.[0]
+            let (b, m) =
+                as'
+                |> Seq.skip 1
+                |> Seq.take i
+                |> Seq.fold
+                    (fun (l, m: Map<_, _>) key -> (l + m.[key], Map.remove key m))
+                    (m.[k0], Map.remove k0 m)
+            Some b, (TimeLine (as' |> Seq.skip 1 |> Seq.toArray, m))
+
+
 
 let run now (Scheduler io) =
     let o =
