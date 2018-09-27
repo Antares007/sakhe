@@ -10,6 +10,8 @@ type [<Erase>] T =
         Offset (l - r)
     static member inline (+) ((Time t), (Offset o)) =
         Time (t + o)
+    static member inline (+) ((Offset o), (Time t)) =
+        Time (t + o)
     static member inline (+) ((Time t), (Delay d)) =
         Time (t + float d)
     static member inline (+) ((Delay d), (Time t)) =
