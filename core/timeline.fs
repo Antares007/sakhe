@@ -47,7 +47,7 @@ let private mergea l r =
             | Some l, Some _ -> yield l
     } |> Seq.toArray
 
-let inline private mergem mappend l r =
+let private mergem mappend l r =
     seq {
         yield! l |> Map.toSeq
             |> Seq.map (fun (lk, lv) ->
@@ -58,5 +58,5 @@ let inline private mergem mappend l r =
             |> Seq.filter (fun (k, _) -> not (l |> Map.containsKey k))
     } |> Map.ofSeq
 
-let inline merge mappend (TimeLine (la, lm)) (TimeLine (ra, rm)) =
+let merge mappend (TimeLine (la, lm)) (TimeLine (ra, rm)) =
     TimeLine (mergea la ra, mergem mappend lm rm)

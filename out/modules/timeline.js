@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.return$0027 = return$0027;
 exports.nextArrival = nextArrival;
 exports.foldUntil = foldUntil;
+exports.merge = merge;
 exports.T$00602 = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-005/Types");
@@ -173,4 +174,33 @@ function mergea(l$$1, r$$1) {
       }
     }, (0, _Seq.rangeNumber)(0, 1, to$0027));
   }), Array);
+}
+
+function mergem(mappend, l$$8, r$$7) {
+  return (0, _Map.ofSeq)((0, _Seq.delay)(function () {
+    return (0, _Seq.append)((0, _Seq.map)(function mapping$$3(tupledArg) {
+      const matchValue$$2 = (0, _Map.tryFind)(tupledArg[0], r$$7);
+
+      if (matchValue$$2 != null) {
+        const rv = (0, _Option.value)(matchValue$$2);
+        return [tupledArg[0], mappend(tupledArg[1], rv)];
+      } else {
+        return [tupledArg[0], tupledArg[1]];
+      }
+    }, (0, _Map.toSeq)(l$$8)), (0, _Seq.delay)(function () {
+      return (0, _Seq.filter)(function predicate(tupledArg$$1) {
+        return !(0, _Map.containsKey)(tupledArg$$1[0], l$$8);
+      }, (0, _Map.toSeq)(r$$7));
+    }));
+  }), {
+    Compare: _Util.compare
+  });
+}
+
+function merge(mappend$$1, _arg2, _arg1$$2) {
+  const lm = _arg2.fields[0][1];
+  const la = _arg2.fields[0][0];
+  const rm = _arg1$$2.fields[0][1];
+  const ra = _arg1$$2.fields[0][0];
+  return new T$00602(0, "TimeLine", [mergea(la, ra), mergem(mappend$$1, lm, rm)]);
 }
