@@ -3,9 +3,6 @@ open System
 open Fable.Core
 open Fable.Import
 open Sakhe
-open System.Collections.Generic
-open System.Collections.Generic
-open Sakhe
 
 type [<Erase>] T =
     private
@@ -22,19 +19,11 @@ let return' f = Scheduler << IO.return' <| f
 module O =
     let now f = Now << return' <| f
     let delay delay f = Delay (Time.Delay.return' delay, return' f)
-    //let periodic delay f = Periodic (Time.Delay.return' delay, return' f)
-
-let private mappend l r = IO.return' <| fun i o ->
-    let o = O.proxy o
-    IO.run i o l
-    IO.run i o r
 
 module TimeLine =
-    type T =
-        private
-        | TimeLine of (Time.T [] * Map<Time.T, IO.T<Time.T,O,unit>>)
+    type T = private | TimeLine of (Time.T [] * Map<Time.T, IO.T<Time.T,O,unit>>)
 
-    let return' map =
+    let private return' map =
         TimeLine
             ( map |> Map.toSeq |> Seq.map fst |> Seq.sort |> Seq.toArray
             , map)
@@ -45,9 +34,9 @@ module TimeLine =
         if ll = 0 then r
         else if rl = 0 then l
         else
-        let rezl = Math.Max (ll, rl)
+        let to' = Math.Max (ll, rl) - 1
         seq {
-            for i = 0 to rezl - 1 do
+            for i = 0 to to' do
                 match (if i < ll then Some (l.[i]) else None), if i < rl then Some (r.[i]) else None with
                 | None, None -> ()
                 | Some l, None -> yield l
@@ -73,7 +62,9 @@ module TimeLine =
                 ( (mergea la ra)
                 , (mergem lm rm) )
 
-    let nextArrival (TimeLine (a, _)) = Array.tryHead a
+    let inline length (TimeLine (a, _)) = Array.length a
+
+    let inline nextArrival (TimeLine (a, _)) = Array.head a
 
     let private findAppendPosition (a: 'a) (array: 'a[]) =
         let rec go l r =
@@ -86,7 +77,7 @@ module TimeLine =
 
     let private add time io = io |> IO.contraMap (fun () -> time)
 
-    let private runTaskRing io = IO.return' <| fun now o ->
+    let private toFlatTimeLineIORing io = IO.return' <| fun now o ->
         let o = O.proxy o
         let rec go io = IO.run now o (IO.pmap ring io)
         and ring p o = p <| function
@@ -94,33 +85,7 @@ module TimeLine =
             | Delay (delay, (Scheduler io)) -> o <| (delay + now, io)
         go io
 
-    let inline remove a tl =
-        let (TimeLine (as', m)) = tl
-        match findAppendPosition a as' with
-        | -1 -> (None, tl)
-        | i ->
-            let now = as'.[0]
-            let (b, m) =
-                as'
-                |> Seq.skip 1
-                |> Seq.take i
-                |> Seq.fold
-                    (fun (l, m: Map<_, _>) now ->
-                        (l + (add now << runTaskRing <| m.[now])
-                        , Map.remove now m))
-                    (add now << runTaskRing <| m.[now], Map.remove now m)
-            Some b, (TimeLine (as' |> Seq.skip 1 |> Seq.toArray, m))
-
-    let inline get now io =
-        let o =
-            Map.empty |> O.return' (fun map (time, r) ->
-                map |> match Map.tryFind time map with
-                        | Some l -> Map.add time (l + r)
-                        | None -> Map.add time r)
-        IO.run now o (runTaskRing io)
-        return' o.Value
-
-    let get2 now io =
+    let private runFlatTimeLineIO now io =
         let o =
             Map.empty |> O.return' (fun map (time, r) ->
                 map |> match Map.tryFind time map with
@@ -129,37 +94,55 @@ module TimeLine =
         IO.run now o io
         return' o.Value
 
-let inline run2 tf timer (Scheduler io) =
+    let inline runTo a tl =
+        let (TimeLine (time, m)) = tl
+        match findAppendPosition a time with
+        | -1 -> Some tl
+        | i ->
+            let now = time.[0]
+            let (b, m) =
+                time
+                |> Seq.skip 1
+                |> Seq.take i
+                |> Seq.fold
+                    (fun (l, m: Map<_, _>) now ->
+                        (l + (add now << toFlatTimeLineIORing <| m.[now])
+                        , Map.remove now m))
+                    (add now << toFlatTimeLineIORing <| m.[now], Map.remove now m)
+            let l = TimeLine (time |> Seq.skip 1 |> Seq.toArray, m)
+            let r = runFlatTimeLineIO () b
+            let tl = merge l r
+            if length tl = 0 then None else Some tl
+
+
+    let inline from now (Scheduler io) =
+        let o =
+            Map.empty |> O.return' (fun map (time, r) ->
+                map |> match Map.tryFind time map with
+                        | Some l -> Map.add time (l + r)
+                        | None -> Map.add time r)
+        IO.run now o (toFlatTimeLineIORing io)
+        let tl = return' o.Value
+        if length tl = 0 then None else Some tl
+
+let inline run tf timer io =
     let now = Time.zero
     let offSet = now - tf()
     let localTime () = tf() + offSet
-    let mutable timeline = TimeLine.get now io
-    let mutable scheduledDalay: (Time.Delay * IDisposable) option = None
+    let settable = new Disposable.SettableDisposable()
 
-    let inline onDelay delay =
-        let now = localTime ()
-        match TimeLine.remove now timeline with
-        | (None, t) ->
-            scheduledDalay <- None
-        | (Some io, ltl) ->
-            let rtl = TimeLine.get2 () io
-            timeline <- TimeLine.merge ltl rtl
+    let rec nextRun now = function
+        | None -> ()
+        | Some timeline ->
+            let nextArrival = TimeLine.nextArrival timeline
+            let delay = Time.Delay.fromTo now nextArrival
+            settable.Set << timer delay <| fun () ->
+                let now = localTime ()
+                let timeline = TimeLine.runTo now timeline
+                nextRun now timeline
 
-    let scheduleNextDelay delay =
-        match scheduledDalay with
-        | None -> scheduledDalay <- Some (delay, timer delay (fun () -> onDelay delay))
-        | Some (scheduledDelay, d) when scheduledDelay <= delay -> ()
-        | Some (scheduledDelay, d) ->
-            Disposable.dispose d
-            scheduledDalay <- Some (delay, timer delay (fun () -> onDelay delay))
-        Disposable.empty
-
-    match TimeLine.nextArrival timeline with
-    | None -> Disposable.empty
-    | Some nextArrival ->
-        let now = localTime ()
-        let delay = Time.Delay.fromTo now nextArrival
-        scheduleNextDelay delay
+    nextRun now <| TimeLine.from now io
+    settable
 
 let see = return' <| fun t o ->
 

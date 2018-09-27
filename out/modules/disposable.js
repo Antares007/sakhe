@@ -37,7 +37,7 @@ AnonymousDisposable.prototype.Dispose = function () {
 const SettableDisposable = (0, _Types.declare)(function SettableDisposable() {
   const $this$$2 = this;
   $this$$2.disposed = false;
-  $this$$2.disposable = null;
+  $this$$2.setted = null;
 });
 exports.SettableDisposable = SettableDisposable;
 
@@ -49,11 +49,11 @@ function SettableDisposable$$Set$$Z5A296901(__$$1, d) {
   if (__$$1.disposed) {
     d.Dispose();
   } else {
-    if (__$$1.disposable != null) {
-      __$$1.disposable.Dispose();
+    if (__$$1.setted != null) {
+      __$$1.setted.Dispose();
     }
 
-    __$$1.disposable = d;
+    __$$1.setted = d;
   }
 }
 
@@ -63,8 +63,8 @@ SettableDisposable.prototype.Dispose = function () {
   if (__$$2.disposed) {} else {
     __$$2.disposed = true;
 
-    if (__$$2.disposable != null) {
-      __$$2.disposable.Dispose();
+    if (__$$2.setted != null) {
+      __$$2.setted.Dispose();
     }
   }
 };

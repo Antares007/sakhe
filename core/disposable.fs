@@ -12,22 +12,19 @@ type AnonymousDisposable(f) =
             f ()
 type SettableDisposable() =
     let mutable disposed = false
-    let mutable disposable: IDisposable option = None
+    let mutable setted: IDisposable option = None
     interface IDisposable with
         member __.Dispose () =
             if disposed then ()
             else
             disposed <- true
-            if disposable.IsSome then disposable.Value.Dispose()
-    member inline this.Dispose () = (this :> IDisposable).Dispose()
-
+            if setted.IsSome then setted.Value.Dispose()
     member __.Set (d: IDisposable) =
-        if disposed then
-            d.Dispose()
+        if disposed then d.Dispose()
         else
-            if disposable.IsSome then disposable.Value.Dispose()
-            disposable <- Some d
-
+        if setted.IsSome then setted.Value.Dispose()
+        setted <- Some d
+    member inline this.Dispose () = (this :> IDisposable).Dispose()
 
 
 let empty = new AnonymousDisposable(ignore) :> IDisposable
