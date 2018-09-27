@@ -4,52 +4,60 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.T$00602$$get_Value = T$00602$$get_Value;
-exports.T$00602$$Put$$2B595 = T$00602$$Put$$2B595;
 exports.return$0027 = return$0027;
 exports.proxy = proxy;
 exports.map = map;
 exports.filter = filter;
 exports.contraMap = contraMap;
+exports.T$00602 = void 0;
+
+var _Types = require("./fable-core.2.0.0-beta-005/Types");
+
+const T$00602 = (0, _Types.declare)(function T$00602(tag, name, ...fields) {
+  _Types.Union.call(this, tag, name, ...fields);
+}, _Types.Union);
+exports.T$00602 = T$00602;
 
 function T$00602$$get_Value(o) {
-  const get$$1 = o[1];
+  const get$$1 = o.fields[0][1];
   return get$$1();
 }
 
-function T$00602$$Put$$2B595(o$$1, a) {
-  const put$$1 = o$$1[0];
-  put$$1(a);
-}
-
 function return$0027(f, ua) {
-  let a$$1 = ua;
-  return [function (b) {
-    a$$1 = f(a$$1, b);
+  let a = ua;
+  return new T$00602(0, "O", [function (b) {
+    a = f(a, b);
   }, function () {
-    return a$$1;
-  }];
+    return a;
+  }]);
 }
 
 function proxy(p) {
-  return [p, function () {}];
+  return new T$00602(0, "O", [p, function () {}]);
 }
 
 function map(f$$1, _arg1) {
-  return [_arg1[0], function () {
-    return f$$1(_arg1[1]());
-  }];
+  const put$$1 = _arg1.fields[0][0];
+  const get$$2 = _arg1.fields[0][1];
+  return new T$00602(0, "O", [put$$1, function () {
+    return f$$1(get$$2());
+  }]);
 }
 
 function filter(f$$2, _arg1$$1) {
-  return [function (a$$2) {
-    if (f$$2(a$$2)) {
-      _arg1$$1[0](a$$2);
+  const put$$2 = _arg1$$1.fields[0][0];
+  const get$$3 = _arg1$$1.fields[0][1];
+  return new T$00602(0, "O", [function (a$$1) {
+    if (f$$2(a$$1)) {
+      put$$2(a$$1);
     }
-  }, _arg1$$1[1]];
+  }, get$$3]);
 }
 
 function contraMap(g, _arg1$$2) {
-  return [function ($arg$$2) {
-    _arg1$$2[0](g($arg$$2));
-  }, _arg1$$2[1]];
+  const put$$3 = _arg1$$2.fields[0][0];
+  const get$$4 = _arg1$$2.fields[0][1];
+  return new T$00602(0, "O", [function ($arg$$2) {
+    put$$3(g($arg$$2));
+  }, get$$4]);
 }

@@ -13,6 +13,7 @@
     <Compile Include="time-io.fs" />
     <Compile Include="sink.fs" />
     <Compile Include="stream.fs" />
+    <Compile Include="timeline.fs" />
     <Compile Include="new.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>

@@ -1,20 +1,18 @@
 ﻿[<RequireQualifiedAccess>]
 module Sakhe.Pith
-open Fable.Core
 
-type [<Erase>] T<'a, 'b> =
+type T<'a, 'b> =
     private
     | Pith of (('a -> unit) -> 'b)
-    static member inline (+) (((Pith l)), ((Pith r))) =
-        Pith <| fun o -> (l o) + (r o)
-    static member inline (+) (((Pith l): T<'a, unit>), ((Pith r):T<'a, unit>)): T<'a, unit> =
-        Pith <| fun o -> l o; r o; ()
 
 let return' f =
     Pith f
 
 let empty<'a> =
     Pith <| fun (o: 'a -> unit) -> ()
+
+let mappend mappend (Pith l) (Pith r) =
+    Pith <| fun o -> mappend (l o) (r o)
 
 let run o (Pith p) =
     p (fun a -> O.put a o)

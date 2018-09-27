@@ -1,12 +1,10 @@
 [<RequireQualifiedAccess>]
 module Sakhe.O
-open Fable.Core
 
-type [<Erase>] T<'b, 'a> =
+type T<'b, 'a> =
     private
     | O of (('b -> unit) * (unit -> 'a))
     member o.Value = let (O (_, get)) = o in get ()
-    member o.Put a = let (O (put, _)) = o in put a
 
 let inline get (O (_, get)) = get ()
 
