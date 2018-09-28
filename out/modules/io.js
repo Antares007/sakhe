@@ -11,7 +11,6 @@ exports.run = run;
 exports.contraMap = contraMap;
 exports.pmap = pmap;
 exports.bind = bind;
-exports.extend = extend;
 exports.T$00603 = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-005/Types");
@@ -79,17 +78,5 @@ function bind(g$$1, _arg1$$4) {
     const p = io$$3(i$$3);
     const io$$4 = g$$1(p).fields[0];
     return io$$4(i$$3);
-  });
-}
-
-function extend(_arg1$$5, _arg2$$1) {
-  const l$$1 = _arg1$$5.fields[0];
-  const r$$1 = _arg2$$1.fields[0];
-  return new T$00603(0, "IO", function (i$$4) {
-    return (0, _pith.return$0027)(function (o$$2) {
-      const pl = (0, _pith.unbox)(l$$1(i$$4));
-      const pr = (0, _pith.unbox)(r$$1(i$$4));
-      return pl(o$$2) + pr(o$$2) | 0;
-    });
   });
 }
