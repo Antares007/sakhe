@@ -29,6 +29,8 @@ var _timeline = require("./timeline");
 
 var _option = require("./option");
 
+var _Seq = require("./fable-core.2.0.0-beta-005/Seq");
+
 var _disposable = require("./disposable");
 
 var _String = require("./fable-core.2.0.0-beta-005/String");
@@ -104,22 +106,40 @@ function from(now$$1, io$$4) {
 }
 
 function runTo(now$$2, l$$2) {
-  const patternInput = (0, _timeline.foldUntil)(now$$2, function f$$7(l$$3, tupledArg$$1) {
-    return (0, _io.mappend)(function (arg00$0040$$1, arg10$0040$$1) {
-      (0, _unit.mappend)(null, null);
-    }, l$$3, toFlatTimeLineIO(tupledArg$$1[0], tupledArg$$1[1]));
-  }, (0, _io.empty)(), l$$2);
-  const r$$3 = runFlatTimeLineIO(patternInput[0]);
-  return (0, _option.mappend)(function (arg10$0040$$2, arg20$0040) {
-    return (0, _timeline.mappend)(mappend, arg10$0040$$2, arg20$0040);
-  }, patternInput[1], r$$3);
+  const patternInput = (0, _timeline.takeUntil)(now$$2, l$$2);
+  const io$$7 = (0, _Seq.fold)(function folder(l$$4, r$$2) {
+    return (0, _option.mappend)(function mappend$$1(arg10$0040$$1, arg20$0040) {
+      return (0, _io.mappend)(function (arg00$0040$$1, arg10$0040$$2) {
+        (0, _unit.mappend)(null, null);
+      }, arg10$0040$$1, arg20$0040);
+    }, l$$4, r$$2);
+  }, null, (0, _Seq.map)(function mapping(tupledArg$$1) {
+    return toFlatTimeLineIO(tupledArg$$1[0], tupledArg$$1[1]);
+  }, patternInput[0]));
+  const matchValue$$1 = [io$$7, patternInput[1]];
+
+  if (matchValue$$1[0] != null) {
+    if (matchValue$$1[1] != null) {
+      const io$$9 = matchValue$$1[0];
+      return (0, _option.mappend)(function (arg10$0040$$3, arg20$0040$$1) {
+        return (0, _timeline.mappend)(mappend, arg10$0040$$3, arg20$0040$$1);
+      }, patternInput[1], runFlatTimeLineIO(io$$9));
+    } else {
+      const io$$8 = matchValue$$1[0];
+      return runFlatTimeLineIO(io$$8);
+    }
+  } else if (matchValue$$1[1] != null) {
+    return patternInput[1];
+  } else {
+    return null;
+  }
 }
 
 function timeStamp(s$$1) {
   console.timeStamp(s$$1);
 }
 
-function run(tf, timer, io$$7) {
+function run(tf, timer, io$$10) {
   const now$$4 = _time.zero;
   const offSet = now$$4 - tf();
   const settable = (0, _disposable.SettableDisposable$$$$002Ector)();
@@ -136,6 +156,6 @@ function run(tf, timer, io$$7) {
     }
   };
 
-  nextRun(now$$4, from(now$$4, io$$7));
+  nextRun(now$$4, from(now$$4, io$$10));
   return settable;
 }

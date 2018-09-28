@@ -42,16 +42,18 @@ let private from now (io) =
     runFlatTimeLineIO <| toFlatTimeLineIO now io
 
 let private runTo now l =
-    let (io, l) =
-        l
-        |> TimeLine.foldUntil
-                now
-                (fun l (now, r) ->
-                    IO.mappend Unit.mappend l (toFlatTimeLineIO now r)
-                )
-                (IO.empty)
-    let r = runFlatTimeLineIO io
-    Option.mappend (TimeLine.mappend mappend) l r
+    let (s, l) = TimeLine.takeUntil now l
+    let io =
+        s
+        |> Seq.map (fun (now, io) -> Some <| toFlatTimeLineIO now io)
+        |> Seq.fold (Option.mappend (IO.mappend Unit.mappend)) None
+
+    match io, l with
+    | None, None -> None
+    | Some io, None -> runFlatTimeLineIO io
+    | None, Some _ -> l
+    | Some io, Some _ ->
+        Option.mappend (TimeLine.mappend mappend) l (runFlatTimeLineIO io)
 
 open Fable.Core.JsInterop
 let timeStamp (s: string): unit =
