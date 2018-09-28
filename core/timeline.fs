@@ -2,35 +2,13 @@ module Sakhe.TimeLine
 open System
 
 type T<'a, 'b when 'a: comparison> = private | TimeLine of ('a [] * Map<'a, 'b>)
+
 let return' map =
     let line = map |> Map.toSeq |> Seq.map fst |> Seq.sort |> Seq.toArray
     if Array.isEmpty line then None
     else Some <| TimeLine (line, map)
 
 let nextArrival (TimeLine (a, _)) = Array.head a
-
-let private findAppendPosition (a: 'a) (sortedArray: 'a[]) =
-    let rec go l r =
-        if l < r then
-            let m = (l + r) / 2
-            if sortedArray.[m] > a then go l m
-            else go (m + 1) r
-        else l - 1
-    go 0 (Array.length sortedArray)
-
-let takeUntil now tl =
-    let (TimeLine (timeLine, timeMap)) = tl
-    match findAppendPosition now timeLine with
-    | -1 -> (Seq.empty, Some tl)
-    | i ->
-        let iPlus1 = i + 1
-        let tl =
-            if iPlus1 = Array.length timeLine then None
-            else Some << TimeLine <| (
-                  timeLine |> Array.skip (iPlus1)
-                , timeLine |> Seq.skip (iPlus1) |> Seq.map (fun now -> (now, timeMap.[now])) |> Map.ofSeq)
-        let s = timeLine |> Seq.take (iPlus1) |> Seq.map (fun now -> (now, timeMap.[now]))
-        s, tl
 
 let private mergea l r =
     let ll = Array.length l
@@ -60,3 +38,26 @@ let private mergem mappend l r =
 
 let mappend mappend (TimeLine (la, lm)) (TimeLine (ra, rm)) =
     TimeLine (mergea la ra, mergem mappend lm rm)
+
+let private findAppendPosition (a: 'a) (sortedArray: 'a[]) =
+    let rec go l r =
+        if l < r then
+            let m = (l + r) / 2
+            if sortedArray.[m] > a then go l m
+            else go (m + 1) r
+        else l - 1
+    go 0 (Array.length sortedArray)
+
+let takeUntil now tl =
+    let (TimeLine (timeLine, timeMap)) = tl
+    match findAppendPosition now timeLine with
+    | -1 -> (Seq.empty, Some tl)
+    | i ->
+        let iPlus1 = i + 1
+        let tl =
+            if iPlus1 = Array.length timeLine then None
+            else Some << TimeLine <| (
+                  timeLine |> Array.skip (iPlus1)
+                , timeLine |> Seq.skip (iPlus1) |> Seq.map (fun now -> (now, timeMap.[now])) |> Map.ofSeq)
+        let s = timeLine |> Seq.take (iPlus1) |> Seq.map (fun now -> (now, timeMap.[now]))
+        s, tl
