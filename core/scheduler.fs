@@ -19,12 +19,11 @@ module O =
     let delay delay f = Delay (Time.Delay.return' delay, return' f)
 
 let private toFlatTimeLineIO now (Scheduler io) = IO.return' <| fun () o ->
-    let o = O.proxy o
-    let rec go io = IO.run now o (IO.pmap ring io)
-    and ring p o = p <| function
-        | Now (Scheduler io) -> go io
+    let o' = O.proxy o
+    let rec ring p o = p <| function
+        | Now (Scheduler io) -> IO.run now o' (IO.pmap ring io)
         | Delay (delay, io)  -> o <| (delay + now, io)
-    go io
+    IO.run now o' (IO.pmap ring io)
 
 let private runFlatTimeLineIO io =
     let o =

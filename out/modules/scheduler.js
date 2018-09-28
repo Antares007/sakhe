@@ -21,9 +21,9 @@ var _time = require("./time");
 
 var _o = require("./o");
 
-var _Util = require("./fable-core.2.0.0-beta-005/Util");
-
 var _Map = require("./fable-core.2.0.0-beta-005/Map");
+
+var _Util = require("./fable-core.2.0.0-beta-005/Util");
 
 var _timeline = require("./timeline");
 
@@ -65,33 +65,27 @@ function OModule$$$delay(delay, f$$4) {
 function toFlatTimeLineIO(now, _arg1$$1) {
   const io = _arg1$$1.fields[0];
   return (0, _io.return$0027)(function (unitVar0, o) {
-    const o$$1 = (0, _o.proxy)(o);
+    const o$0027 = (0, _o.proxy)(o);
 
-    const go = function go(io$$1) {
-      (0, _io.run)(now, o$$1, (0, _io.pmap)((0, _Util.uncurry)(2, ring))(io$$1));
+    const ring = function ring(p, o$$1) {
+      p(function (_arg2$$1) {
+        if (_arg2$$1.tag === 1) {
+          const io$$2 = _arg2$$1.fields[1];
+          const delay$$1 = _arg2$$1.fields[0];
+          o$$1([delay$$1 + now, io$$2]);
+        } else {
+          const io$$1 = _arg2$$1.fields[0].fields[0];
+          (0, _io.run)(now, o$0027, (0, _io.pmap)(ring)(io$$1));
+        }
+      });
     };
 
-    const ring = function ring(p) {
-      return function (o$$2) {
-        p(function (_arg2$$1) {
-          if (_arg2$$1.tag === 1) {
-            const io$$3 = _arg2$$1.fields[1];
-            const delay$$1 = _arg2$$1.fields[0];
-            o$$2([delay$$1 + now, io$$3]);
-          } else {
-            const io$$2 = _arg2$$1.fields[0].fields[0];
-            go(io$$2);
-          }
-        });
-      };
-    };
-
-    go(io);
+    (0, _io.run)(now, o$0027, (0, _io.pmap)(ring)(io));
   });
 }
 
-function runFlatTimeLineIO(io$$4) {
-  const o$$3 = (0, _o.return$0027)(function (map, tupledArg) {
+function runFlatTimeLineIO(io$$3) {
+  const o$$2 = (0, _o.return$0027)(function (map, tupledArg) {
     var matchValue, l$$1;
     return (matchValue = (0, _Map.tryFind)(tupledArg[0], map), matchValue == null ? function (table$$1) {
       return (0, _Map.add)(tupledArg[0], tupledArg[1], table$$1);
@@ -101,12 +95,12 @@ function runFlatTimeLineIO(io$$4) {
   }, (0, _Map.empty)({
     Compare: _Util.compare
   }));
-  (0, _io.run)(null, o$$3, io$$4);
-  return (0, _timeline.return$0027)((0, _o.T$00602$$get_Value)(o$$3));
+  (0, _io.run)(null, o$$2, io$$3);
+  return (0, _timeline.return$0027)((0, _o.T$00602$$get_Value)(o$$2));
 }
 
-function from(now$$1, io$$5) {
-  return runFlatTimeLineIO(toFlatTimeLineIO(now$$1, io$$5));
+function from(now$$1, io$$4) {
+  return runFlatTimeLineIO(toFlatTimeLineIO(now$$1, io$$4));
 }
 
 function runTo(now$$2, l$$2) {
@@ -125,7 +119,7 @@ function timeStamp(s$$1) {
   console.timeStamp(s$$1);
 }
 
-function run(tf, timer, io$$8) {
+function run(tf, timer, io$$7) {
   const now$$4 = _time.zero;
   const offSet = now$$4 - tf();
   const settable = (0, _disposable.SettableDisposable$$$$002Ector)();
@@ -142,6 +136,6 @@ function run(tf, timer, io$$8) {
     }
   };
 
-  nextRun(now$$4, from(now$$4, io$$8));
+  nextRun(now$$4, from(now$$4, io$$7));
   return settable;
 }

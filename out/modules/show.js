@@ -21,25 +21,27 @@ exports.d = d;
 
 function see(n) {
   return (0, _scheduler.return$0027)(function (t, o) {
-    (0, _String.toConsole)((0, _String.printf)("root: %A"))(t);
+    (0, _String.toConsole)((0, _String.printf)("%A"))(t);
 
     if (n === 7) {
       d.Dispose();
     }
 
+    o(new _scheduler.O(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
+
     for (let i = 0; i <= 2; i++) {
       o((0, _scheduler.OModule$$$delay)(i * 100, function (t$$1, o$$1) {
-        (0, _String.toConsole)((0, _String.printf)("%d delay %A"))(i)(t$$1);
+        (0, _String.toConsole)((0, _String.printf)("%A"))(t$$1);
       }));
 
       for (let j = 0; j <= 9; j++) {
         o((0, _scheduler.OModule$$$delay)(j * 100, function (t$$2, o$$2) {
-          (0, _String.toConsole)((0, _String.printf)("%d.%d delay %A"))(i)(j)(t$$2);
+          (0, _String.toConsole)((0, _String.printf)("%A"))(t$$2);
         }));
 
         for (let k = 0; k <= 9; k++) {
           o((0, _scheduler.OModule$$$delay)(k * 100, function (t$$3, o$$3) {
-            (0, _String.toConsole)((0, _String.printf)("%d.%d.%d delay %A"))(i)(j)(k)(t$$3);
+            (0, _String.toConsole)((0, _String.printf)("%A"))(t$$3);
           }));
         }
       }
