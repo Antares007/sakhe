@@ -12,38 +12,43 @@ var _disposable = require("./disposable");
 
 var _String = require("./fable-core.2.0.0-beta-005/String");
 
-var _time = require("./time");
-
 var _scheduler = require("./scheduler");
+
+var _time = require("./time");
 
 const d = (0, _disposable.SettableDisposable$$$$002Ector)();
 exports.d = d;
 
 function see(n) {
   return (0, _scheduler.return$0027)(function (t, o) {
-    (0, _String.toConsole)((0, _String.printf)("1.A: %A"))(t);
+    (0, _String.toConsole)((0, _String.printf)("root: %A"))(t);
 
     if (n === 7) {
       d.Dispose();
     }
 
-    o((0, _scheduler.OModule$$$now)(function (t$$1, o$$1) {
-      (0, _String.toConsole)((0, _String.printf)("2.now %A"))(t$$1);
-      const r = ~~Math.floor(Math.random() * 1000) | 0;
-      const $arg$$2 = [(0, _time.DelayModule$$$return$0027)(r + 1000), see(n + 1)];
-      o$$1(new _scheduler.O(1, "Delay", $arg$$2[0], $arg$$2[1]));
-    }));
-    o((0, _scheduler.OModule$$$now)(function (t$$2, o$$2) {
-      (0, _String.toConsole)((0, _String.printf)("3.now: %A"))(t$$2);
-      const r$$1 = ~~Math.floor(Math.random() * 1000) | 0;
-      const $arg$$4 = [(0, _time.DelayModule$$$return$0027)(r$$1 + 1000), see(n + 1)];
-      o$$2(new _scheduler.O(1, "Delay", $arg$$4[0], $arg$$4[1]));
-    }));
+    for (let i = 0; i <= 2; i++) {
+      o((0, _scheduler.OModule$$$delay)(i * 100, function (t$$1, o$$1) {
+        (0, _String.toConsole)((0, _String.printf)("%d delay %A"))(i)(t$$1);
+      }));
+
+      for (let j = 0; j <= 9; j++) {
+        o((0, _scheduler.OModule$$$delay)(j * 100, function (t$$2, o$$2) {
+          (0, _String.toConsole)((0, _String.printf)("%d.%d delay %A"))(i)(j)(t$$2);
+        }));
+
+        for (let k = 0; k <= 9; k++) {
+          o((0, _scheduler.OModule$$$delay)(k * 100, function (t$$3, o$$3) {
+            (0, _String.toConsole)((0, _String.printf)("%d.%d.%d delay %A"))(i)(j)(k)(t$$3);
+          }));
+        }
+      }
+    }
   });
 }
 
-function timer(delay, task) {
-  const token = setTimeout(task, (0, _time.DelayModule$$$unbox)(delay));
+function timer(delay$$3, task) {
+  const token = setTimeout(task, (0, _time.DelayModule$$$unbox)(delay$$3));
   return (0, _disposable.return$0027)(function () {
     clearTimeout(token);
   });

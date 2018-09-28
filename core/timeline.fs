@@ -58,5 +58,5 @@ let private mergem mappend l r =
             |> Seq.filter (fun (k, _) -> not (l |> Map.containsKey k))
     } |> Map.ofSeq
 
-let merge mappend (TimeLine (la, lm)) (TimeLine (ra, rm)) =
+let mappend mappend (TimeLine (la, lm)) (TimeLine (ra, rm)) =
     TimeLine (mergea la ra, mergem mappend lm rm)

@@ -12,7 +12,7 @@ and O =
 let return' f = Scheduler << IO.return' <| f
 
 let mappend (Scheduler l) (Scheduler r) =
-    Scheduler <| IO.mappend (fun () () -> ()) l r
+    Scheduler <| IO.mappend Unit.mappend l r
 
 module O =
     let now f = Now << return' <| f
@@ -23,7 +23,7 @@ let private toFlatTimeLineIO now (Scheduler io) = IO.return' <| fun () o ->
     let rec go io = IO.run now o (IO.pmap ring io)
     and ring p o = p <| function
         | Now (Scheduler io) -> go io
-        | Delay (delay, io) -> o <| (delay + now, io)
+        | Delay (delay, io)  -> o <| (delay + now, io)
     go io
 
 let private runFlatTimeLineIO io =
@@ -40,13 +40,13 @@ let private from now (io) =
 
 let private runTo now l =
     let (io, l) = l |> TimeLine.foldUntil now (fun l (now, r) ->
-        IO.mappend (fun () () -> ()) l (toFlatTimeLineIO now r)) (IO.empty)
+        IO.mappend Unit.mappend l (toFlatTimeLineIO now r)) (IO.empty)
     let r = runFlatTimeLineIO io
-    match l, r with
-    | None, None -> None
-    | Some l, None -> Some l
-    | None, Some r -> Some r
-    | Some l, Some r -> Some <| TimeLine.merge mappend l r
+    Option.mappend (TimeLine.mappend mappend) l r
+
+open Fable.Core.JsInterop
+let timeStamp (s: string): unit =
+    Fable.Import.JS.console?timeStamp(s)
 
 let run tf timer io =
     let now = Time.zero
@@ -56,10 +56,12 @@ let run tf timer io =
     let rec nextRun now = function
         | None -> ()
         | Some timeline ->
-            printfn "setTimeOut %A" now
+
+            timeStamp <| sprintf "setTimeOut %A" now
             settable.Set << timer (Time.Delay.fromTo now (TimeLine.nextArrival timeline)) <| fun () ->
                 let now = offSet + tf()
-                printfn "timeOut %A" now
+
+                timeStamp <| sprintf "timeOut %A" now
                 nextRun now (runTo now timeline)
 
     nextRun now <| from now io

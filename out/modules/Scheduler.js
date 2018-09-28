@@ -7,12 +7,15 @@ exports.return$0027 = return$0027;
 exports.mappend = mappend;
 exports.OModule$$$now = OModule$$$now;
 exports.OModule$$$delay = OModule$$$delay;
+exports.timeStamp = timeStamp;
 exports.run = run;
 exports.O = exports.T = void 0;
 
 var _Types = require("./fable-core.2.0.0-beta-005/Types");
 
 var _io = require("./io");
+
+var _unit = require("./unit");
 
 var _time = require("./time");
 
@@ -23,6 +26,8 @@ var _Util = require("./fable-core.2.0.0-beta-005/Util");
 var _Map = require("./fable-core.2.0.0-beta-005/Map");
 
 var _timeline = require("./timeline");
+
+var _option = require("./option");
 
 var _disposable = require("./disposable");
 
@@ -44,7 +49,9 @@ function return$0027(f) {
 function mappend(_arg2, _arg1) {
   const l = _arg2.fields[0];
   const r = _arg1.fields[0];
-  return new T(0, "Scheduler", (0, _io.mappend)(function (unitVar0, unitVar1) {}, l, r));
+  return new T(0, "Scheduler", (0, _io.mappend)(function (arg00$0040, arg10$0040) {
+    (0, _unit.mappend)(null, null);
+  }, l, r));
 }
 
 function OModule$$$now(f$$2) {
@@ -57,7 +64,7 @@ function OModule$$$delay(delay, f$$4) {
 
 function toFlatTimeLineIO(now, _arg1$$1) {
   const io = _arg1$$1.fields[0];
-  return (0, _io.return$0027)(function (unitVar0$$1, o) {
+  return (0, _io.return$0027)(function (unitVar0, o) {
     const o$$1 = (0, _o.proxy)(o);
 
     const go = function go(io$$1) {
@@ -104,26 +111,18 @@ function from(now$$1, io$$5) {
 
 function runTo(now$$2, l$$2) {
   const patternInput = (0, _timeline.foldUntil)(now$$2, function f$$7(l$$3, tupledArg$$1) {
-    return (0, _io.mappend)(function (unitVar0$$2, unitVar1$$1) {}, l$$3, toFlatTimeLineIO(tupledArg$$1[0], tupledArg$$1[1]));
+    return (0, _io.mappend)(function (arg00$0040$$1, arg10$0040$$1) {
+      (0, _unit.mappend)(null, null);
+    }, l$$3, toFlatTimeLineIO(tupledArg$$1[0], tupledArg$$1[1]));
   }, (0, _io.empty)(), l$$2);
   const r$$3 = runFlatTimeLineIO(patternInput[0]);
-  const matchValue$$1 = [patternInput[1], r$$3];
+  return (0, _option.mappend)(function (arg10$0040$$2, arg20$0040) {
+    return (0, _timeline.mappend)(mappend, arg10$0040$$2, arg20$0040);
+  }, patternInput[1], r$$3);
+}
 
-  if (matchValue$$1[0] != null) {
-    if (matchValue$$1[1] != null) {
-      const l$$6 = matchValue$$1[0];
-      const r$$5 = matchValue$$1[1];
-      return (0, _timeline.merge)(mappend, l$$6, r$$5);
-    } else {
-      const l$$5 = matchValue$$1[0];
-      return l$$5;
-    }
-  } else if (matchValue$$1[1] != null) {
-    const r$$4 = matchValue$$1[1];
-    return r$$4;
-  } else {
-    return null;
-  }
+function timeStamp(s$$1) {
+  console.timeStamp(s$$1);
 }
 
 function run(tf, timer, io$$8) {
@@ -134,10 +133,10 @@ function run(tf, timer, io$$8) {
   const nextRun = function nextRun(now$$5, _arg1$$2) {
     if (_arg1$$2 != null) {
       const timeline = _arg1$$2;
-      (0, _String.toConsole)((0, _String.printf)("setTimeOut %A"))(now$$5);
+      timeStamp((0, _String.toText)((0, _String.printf)("setTimeOut %A"))(now$$5));
       (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer((0, _time.DelayModule$$$fromTo)(now$$5, (0, _timeline.nextArrival)(timeline)), function () {
         const now$$6 = offSet + tf();
-        (0, _String.toConsole)((0, _String.printf)("timeOut %A"))(now$$6);
+        timeStamp((0, _String.toText)((0, _String.printf)("timeOut %A"))(now$$6));
         nextRun(now$$6, runTo(now$$6, timeline));
       }));
     }

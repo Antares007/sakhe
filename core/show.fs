@@ -2,20 +2,17 @@ module Sakhe.Show
 
 let d = new Disposable.SettableDisposable()
 let rec see n = Scheduler.return' <| fun t o ->
-    printfn "1.A: %A" t
+    printfn "root: %A" t
     if n = 7 then d.Dispose()
-    o << Scheduler.O.now <| fun t o ->
-        printfn "2.now %A" t
-
-        let r = int <| System.Math.Floor (Fable.Import.JS.Math.random() * 1000.0)
-        o << Scheduler.Delay <| ((Time.Delay.return' (r + 1000)), see (n + 1))
-
-    o << Scheduler.O.now <| fun t o ->
-        printfn "3.now: %A" t
-        let r = int <| System.Math.Floor (Fable.Import.JS.Math.random() * 1000.0)
-        o << Scheduler.Delay <| ((Time.Delay.return' (r + 1000)), see (n + 1))
-
-
+    for i = 0 to 2 do
+        o << Scheduler.O.delay (i * 100) <| fun t o ->
+            printfn "%d delay %A" i t
+        for j = 0 to 9 do
+            o << Scheduler.O.delay (j * 100) <| fun t o ->
+                printfn "%d.%d delay %A" i j t
+            for k = 0 to 9 do
+                o << Scheduler.O.delay (k * 100) <| fun t o ->
+                    printfn "%d.%d.%d delay %A" i j k t
 
 let timer delay task =
     let token = Fable.Import.JS.setTimeout task (Time.Delay.unbox delay)

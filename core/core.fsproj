@@ -11,6 +11,8 @@
     <Compile Include="task-io.fs" />
     <Compile Include="time.fs" />
     <Compile Include="timeline.fs" />
+    <Compile Include="option.fs" />
+    <Compile Include="unit.fs" />
     <Compile Include="scheduler.fs" />
     <Compile Include="sink.fs" />
     <Compile Include="stream.fs" />
