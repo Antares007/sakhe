@@ -1,5 +1,6 @@
 ﻿[<RequireQualifiedAccess>]
 module Sakhe.Pith
+open Fable.Core
 
 type T<'a, 'b> =
     private
@@ -7,12 +8,40 @@ type T<'a, 'b> =
 
 let return' f =
     Pith f
+let unbox (Pith p) = p
 
 let empty<'a> =
     Pith <| fun (o: 'a -> unit) -> ()
 
 let mappend mappend (Pith l) (Pith r) =
     Pith <| fun o -> mappend (l o) (r o)
+
+let extend2 mappend (Pith l) (Pith r) =
+    Pith <| fun o ->
+        mappend
+            (l <| function
+                | U2.Case1 a -> o <| U3.Case1 a
+                | U2.Case2 a -> o <| U3.Case2 a)
+            (r <| (o << U3.Case3))
+
+let extend3 mappend (Pith l) (Pith r) =
+    Pith <| fun o ->
+        mappend
+            (l <| function
+                | U3.Case1 a -> o <| U4.Case1 a
+                | U3.Case2 a -> o <| U4.Case2 a
+                | U3.Case3 a -> o <| U4.Case3 a)
+            (r <| (o << U4.Case4))
+
+let extend4 mappend (Pith l) (Pith r) =
+    Pith <| fun o ->
+        mappend
+            (l <| function
+                | U4.Case1 a -> o <| U5.Case1 a
+                | U4.Case2 a -> o <| U5.Case2 a
+                | U4.Case3 a -> o <| U5.Case3 a
+                | U4.Case4 a -> o <| U5.Case4 a)
+            (r <| (o << U5.Case5))
 
 let run o (Pith p) =
     p (fun a -> O.put a o)

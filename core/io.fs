@@ -29,3 +29,9 @@ let bind g (IO io) =
         let p = io i
         let (IO io) = g p
         io i
+
+let extend (IO l, IO r) =
+    IO <| fun i -> Pith.return' <| fun o ->
+        let pl = Pith.unbox (l i)
+        let pr = Pith.unbox (r i)
+        pl o + pr o
