@@ -21,36 +21,42 @@ exports.d = d;
 
 function see(n) {
   return (0, _scheduler.return$0027)(function (t, o) {
-    (0, _String.toConsole)((0, _String.printf)("%A"))(t);
+    const delay$$1 = function delay$$1(label, delay, f$$1) {
+      return (0, _scheduler.OModule$$$delay)(delay, function (now, o$$1) {
+        (0, _String.toConsole)((0, _String.printf)("now(%A) %s"))(now)(label);
+        f$$1(now, o$$1);
+      });
+    };
 
-    if (n === 7) {
-      d.Dispose();
-    }
-
-    o(new _scheduler.O(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
-
-    for (let i = 0; i <= 2; i++) {
-      o((0, _scheduler.OModule$$$delay)(i * 100, function (t$$1, o$$1) {
-        (0, _String.toConsole)((0, _String.printf)("%A"))(t$$1);
-      }));
-
-      for (let j = 0; j <= 9; j++) {
-        o((0, _scheduler.OModule$$$delay)(j * 100, function (t$$2, o$$2) {
-          (0, _String.toConsole)((0, _String.printf)("%A"))(t$$2);
-        }));
-
-        for (let k = 0; k <= 9; k++) {
-          o((0, _scheduler.OModule$$$delay)(k * 100, function (t$$3, o$$3) {
-            (0, _String.toConsole)((0, _String.printf)("%A"))(t$$3);
+    const tree = function tree(l) {
+      return (0, _scheduler.OModule$$$now)(function (now$$1, o$$2) {
+        for (let i = 1; i <= 2; i++) {
+          o$$2(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i), 10, function (now$$2, o$$3) {
+            for (let j = 1; j <= 3; j++) {
+              o$$3(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i)(j), 10, function (now$$3, o$$4) {
+                for (let k = 1; k <= 3; k++) {
+                  o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i)(j)(k), 10, function (now$$4, o$$5) {}));
+                }
+              }));
+            }
           }));
         }
-      }
-    }
+      });
+    };
+
+    o(delay$$1("A", 10, function (now$$5, o$$6) {
+      o$$6(delay$$1("B", 10, function (now$$6, o$$7) {
+        o$$7(delay$$1("C", 10, function (now$$7, o$$8) {
+          o$$8(tree("Tb"));
+        }));
+      }));
+    }));
+    o(tree("Ta"));
   });
 }
 
-function timer(delay$$3, task) {
-  const token = setTimeout(task, (0, _time.DelayModule$$$unbox)(delay$$3));
+function timer(delay$$2, task) {
+  const token = setTimeout(task, (0, _time.DelayModule$$$unbox)(delay$$2));
   return (0, _disposable.return$0027)(function () {
     clearTimeout(token);
   });

@@ -58,6 +58,7 @@ let private runTo now l =
 open Fable.Core.JsInterop
 let timeStamp (s: string): unit =
     Fable.Import.JS.console?timeStamp(s)
+    // Fable.Import.JS.console.log s
 
 let run tf timer io =
     let now = Time.zero
