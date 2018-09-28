@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.return$0027 = return$0027;
 exports.nextArrival = nextArrival;
-exports.foldUntil = foldUntil;
+exports.takeUntil = takeUntil;
 exports.mappend = mappend;
 exports.T$00602 = void 0;
 
@@ -67,13 +67,13 @@ function findAppendPosition(a$$1, sortedArray) {
   return go(0, sortedArray.length) | 0;
 }
 
-function foldUntil(now, f, s, tl) {
+function takeUntil(now, tl) {
   const timeMap = tl.fields[0][1];
   const timeLine = tl.fields[0][0];
   const matchValue = findAppendPosition(now, timeLine) | 0;
 
   if (matchValue === -1) {
-    return [s, tl];
+    return [(0, _Seq.empty)(), tl];
   } else {
     const i = matchValue | 0;
     const iPlus1 = i + 1 | 0;
@@ -82,10 +82,10 @@ function foldUntil(now, f, s, tl) {
     }, (0, _Seq.skip)(iPlus1, timeLine)), {
       Compare: _Util.compare
     })]);
-    const s$$1 = (0, _Seq.fold)(f, s, (0, _Seq.map)(function mapping$$2(now$$2) {
+    const s = (0, _Seq.map)(function mapping$$2(now$$2) {
       return [now$$2, (0, _Map.FSharpMap$$get_Item$$2B595)(timeMap, now$$2)];
-    }, (0, _Seq.take)(iPlus1, timeLine)));
-    return [s$$1, tl$$1];
+    }, (0, _Seq.take)(iPlus1, timeLine));
+    return [s, tl$$1];
   }
 }
 
@@ -107,25 +107,25 @@ function mergea(l$$1, r$$1) {
               return (0, _Seq.singleton)(r$$4);
             }));
           } else {
-            var $target$$6, l$$6, r$$6;
+            var $target$$2, l$$6, r$$6;
 
             if (matchValue$$1[0] != null) {
               if (matchValue$$1[1] != null) {
                 if (r$$5 = (0, _Option.value)(matchValue$$1[1]), (l$$5 = (0, _Option.value)(matchValue$$1[0]), (0, _Util.compare)(l$$5, r$$5) > 0)) {
-                  $target$$6 = 0;
+                  $target$$2 = 0;
                   l$$6 = (0, _Option.value)(matchValue$$1[0]);
                   r$$6 = (0, _Option.value)(matchValue$$1[1]);
                 } else {
-                  $target$$6 = 1;
+                  $target$$2 = 1;
                 }
               } else {
-                $target$$6 = 1;
+                $target$$2 = 1;
               }
             } else {
-              $target$$6 = 1;
+              $target$$2 = 1;
             }
 
-            switch ($target$$6) {
+            switch ($target$$2) {
               case 0:
                 {
                   return (0, _Seq.append)((0, _Seq.singleton)(r$$6), (0, _Seq.delay)(function () {
@@ -135,20 +135,20 @@ function mergea(l$$1, r$$1) {
 
               case 1:
                 {
-                  var $target$$7, l$$7;
+                  var $target$$3, l$$7;
 
                   if (matchValue$$1[0] != null) {
                     if (matchValue$$1[1] != null) {
-                      $target$$7 = 0;
+                      $target$$3 = 0;
                       l$$7 = (0, _Option.value)(matchValue$$1[0]);
                     } else {
-                      $target$$7 = 1;
+                      $target$$3 = 1;
                     }
                   } else {
-                    $target$$7 = 1;
+                    $target$$3 = 1;
                   }
 
-                  switch ($target$$7) {
+                  switch ($target$$3) {
                     case 0:
                       {
                         return (0, _Seq.singleton)(l$$7);

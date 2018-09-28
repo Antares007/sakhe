@@ -18,10 +18,10 @@ let private findAppendPosition (a: 'a) (sortedArray: 'a[]) =
         else l - 1
     go 0 (Array.length sortedArray)
 
-let foldUntil now f s tl =
+let takeUntil now tl =
     let (TimeLine (timeLine, timeMap)) = tl
     match findAppendPosition now timeLine with
-    | -1 -> (s, Some tl)
+    | -1 -> (Seq.empty, Some tl)
     | i ->
         let iPlus1 = i + 1
         let tl =
@@ -29,7 +29,7 @@ let foldUntil now f s tl =
             else Some << TimeLine <| (
                   timeLine |> Array.skip (iPlus1)
                 , timeLine |> Seq.skip (iPlus1) |> Seq.map (fun now -> (now, timeMap.[now])) |> Map.ofSeq)
-        let s = timeLine |> Seq.take (iPlus1) |> Seq.map (fun now -> (now, timeMap.[now])) |> Seq.fold f s
+        let s = timeLine |> Seq.take (iPlus1) |> Seq.map (fun now -> (now, timeMap.[now]))
         s, tl
 
 let private mergea l r =

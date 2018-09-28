@@ -42,8 +42,14 @@ let private from now (io) =
     runFlatTimeLineIO <| toFlatTimeLineIO now io
 
 let private runTo now l =
-    let (io, l) = l |> TimeLine.foldUntil now (fun l (now, r) ->
-        IO.mappend Unit.mappend l (toFlatTimeLineIO now r)) (IO.empty)
+    let (io, l) =
+        l
+        |> TimeLine.foldUntil
+                now
+                (fun l (now, r) ->
+                    IO.mappend Unit.mappend l (toFlatTimeLineIO now r)
+                )
+                (IO.empty)
     let r = runFlatTimeLineIO io
     Option.mappend (TimeLine.mappend mappend) l r
 
