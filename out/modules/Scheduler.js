@@ -23,13 +23,13 @@ var _o = require("./o");
 
 var _Util = require("./fable-core.2.0.0-beta-005/Util");
 
-var _Map = require("./fable-core.2.0.0-beta-005/Map");
-
-var _timeline = require("./timeline");
+var _disposable = require("./disposable");
 
 var _option = require("./option");
 
-var _disposable = require("./disposable");
+var _Map = require("./fable-core.2.0.0-beta-005/Map");
+
+var _timeline = require("./timeline");
 
 var _String = require("./fable-core.2.0.0-beta-005/String");
 
@@ -74,13 +74,27 @@ function toFlatTimeLineIO(now, _arg1$$1) {
     const ring = function ring(p) {
       return function (o$$2) {
         p(function (_arg2$$1) {
-          if (_arg2$$1.tag === 1) {
-            const io$$3 = _arg2$$1.fields[1];
-            const delay$$1 = _arg2$$1.fields[0];
-            o$$2([delay$$1 + now, io$$3]);
-          } else {
-            const io$$2 = _arg2$$1.fields[0].fields[0];
-            go(io$$2);
+          switch (_arg2$$1.tag) {
+            case 1:
+              {
+                const io$$3 = _arg2$$1.fields[1];
+                const delay$$1 = _arg2$$1.fields[0];
+                o$$2([delay$$1 + now, io$$3]);
+                break;
+              }
+
+            case 2:
+              {
+                const d = _arg2$$1.fields[0];
+                o$$2(d);
+                break;
+              }
+
+            default:
+              {
+                const io$$2 = _arg2$$1.fields[0].fields[0];
+                go(io$$2);
+              }
           }
         });
       };
@@ -91,34 +105,42 @@ function toFlatTimeLineIO(now, _arg1$$1) {
 }
 
 function runFlatTimeLineIO(io$$4) {
-  const o$$3 = (0, _o.return$0027)(function f$$6(map, tupledArg) {
+  const o$$3 = (0, _o.return$0027)(function f$$6(tupledArg, _arg1$$2) {
     var matchValue, l$$1;
-    return (matchValue = (0, _Map.tryFind)(tupledArg[0], map), matchValue == null ? function (table$$1) {
-      return (0, _Map.add)(tupledArg[0], tupledArg[1], table$$1);
-    } : (l$$1 = matchValue, function (table) {
-      return (0, _Map.add)(tupledArg[0], mappend(l$$1, tupledArg[1]), table);
-    }))(map);
-  }, (0, _Map.empty)({
+
+    if ((0, _Util.isDisposable)(_arg1$$2)) {
+      const l$$2 = _arg1$$2;
+      return [(0, _option.mappend)(_disposable.append, l$$2, tupledArg[0]), tupledArg[1]];
+    } else {
+      const map$$1 = (matchValue = (0, _Map.tryFind)(_arg1$$2[0], tupledArg[1]), matchValue == null ? function (table$$1) {
+        return (0, _Map.add)(_arg1$$2[0], _arg1$$2[1], table$$1);
+      } : (l$$1 = matchValue, function (table) {
+        return (0, _Map.add)(_arg1$$2[0], mappend(l$$1, _arg1$$2[1]), table);
+      }))(tupledArg[1]);
+      return [tupledArg[0], map$$1];
+    }
+  }, [null, (0, _Map.empty)({
     Compare: _Util.compare
-  }));
+  })]);
   (0, _io.run)(null, o$$3, io$$4);
-  return (0, _timeline.return$0027)((0, _o.T$00602$$get_Value)(o$$3));
+  const patternInput = (0, _o.T$00602$$get_Value)(o$$3);
+  return [patternInput[0], (0, _timeline.return$0027)(patternInput[1])];
 }
 
 function from(now$$1, io$$5) {
   return runFlatTimeLineIO(toFlatTimeLineIO(now$$1, io$$5));
 }
 
-function runTo(now$$2, l$$2) {
-  const patternInput = (0, _timeline.foldUntil)(now$$2, function f$$7(l$$3, tupledArg$$1) {
+function runTo(now$$2, l$$4) {
+  const patternInput$$1 = (0, _timeline.foldUntil)(now$$2, function f$$7(l$$5, tupledArg$$1) {
     return (0, _io.mappend)(function (arg00$0040$$1, arg10$0040$$1) {
       (0, _unit.mappend)(null, null);
-    }, l$$3, toFlatTimeLineIO(tupledArg$$1[0], tupledArg$$1[1]));
-  }, (0, _io.empty)(), l$$2);
-  const r$$3 = runFlatTimeLineIO(patternInput[0]);
-  return (0, _option.mappend)(function (arg10$0040$$2, arg20$0040) {
+    }, l$$5, toFlatTimeLineIO(tupledArg$$1[0], tupledArg$$1[1]));
+  }, (0, _io.empty)(), l$$4);
+  const patternInput$$2 = runFlatTimeLineIO(patternInput$$1[0]);
+  return [patternInput$$2[0], (0, _option.mappend)(function (arg10$0040$$2, arg20$0040) {
     return (0, _timeline.mappend)(mappend, arg10$0040$$2, arg20$0040);
-  }, patternInput[1], r$$3);
+  }, patternInput$$1[1], patternInput$$2[1])];
 }
 
 function timeStamp(s$$1) {
@@ -130,18 +152,20 @@ function run(tf, timer, io$$8) {
   const offSet = now$$4 - tf();
   const settable = (0, _disposable.SettableDisposable$$$$002Ector)();
 
-  const nextRun = function nextRun(now$$5, _arg1$$2) {
-    if (_arg1$$2 != null) {
-      const timeline = _arg1$$2;
+  const nextRun = function nextRun(now$$5, _arg1$$3) {
+    if (_arg1$$3 != null) {
+      const timeline = _arg1$$3;
       timeStamp((0, _String.toText)((0, _String.printf)("setTimeOut %A"))(now$$5));
       (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer((0, _time.DelayModule$$$fromTo)(now$$5, (0, _timeline.nextArrival)(timeline)), function () {
         const now$$6 = offSet + tf();
         timeStamp((0, _String.toText)((0, _String.printf)("timeOut %A"))(now$$6));
-        nextRun(now$$6, runTo(now$$6, timeline));
+        const patternInput$$3 = runTo(now$$6, timeline);
+        nextRun(now$$6, patternInput$$3[1]);
       }));
     }
   };
 
-  nextRun(now$$4, from(now$$4, io$$8));
+  const patternInput$$4 = from(now$$4, io$$8);
+  nextRun(now$$4, patternInput$$4[1]);
   return settable;
 }
