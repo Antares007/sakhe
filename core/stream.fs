@@ -16,6 +16,11 @@ let now a = (Stream << IO.return') <| fun sink o ->
         with err ->
             Sink.Send.error now err sink)
 
+let toSchedulerIO sink (Stream (io: IO.T<Sink.T<'a>, O, unit>)) =
+    let ring io = Scheduler.return' <| fun now o ->
+
+        failwith ""
+    failwith ""
 
 let rec run tf timer io =
 

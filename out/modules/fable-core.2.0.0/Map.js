@@ -105,8 +105,6 @@ var _Types = require("./Types");
 
 var _Option = require("./Option");
 
-var _List = require("./List");
-
 var _Seq = require("./Seq");
 
 var _String = require("./String");
@@ -971,7 +969,7 @@ function MapTreeModule$$$toList(m$$20) {
 }
 
 function MapTreeModule$$$ofList(comparer$$13, l$$20) {
-  return (0, _List.fold)(function (acc$$9, tupledArg) {
+  return (0, _Seq.fold)(function (acc$$9, tupledArg) {
     return MapTreeModule$$$add(comparer$$13, tupledArg[0], tupledArg[1], acc$$9);
   }, MapTreeModule$$$empty(), l$$20);
 }

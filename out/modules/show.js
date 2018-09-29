@@ -10,7 +10,7 @@ exports.d = void 0;
 
 var _disposable = require("./disposable");
 
-var _String = require("./fable-core.2.0.0-beta-005/String");
+var _String = require("./fable-core.2.0.0/String");
 
 var _scheduler = require("./scheduler");
 

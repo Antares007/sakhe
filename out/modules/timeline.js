@@ -9,17 +9,17 @@ exports.mappend = mappend;
 exports.takeUntil = takeUntil;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-core.2.0.0-beta-005/Types");
+var _Types = require("./fable-core.2.0.0/Types");
 
-var _Util = require("./fable-core.2.0.0-beta-005/Util");
+var _Util = require("./fable-core.2.0.0/Util");
 
-var _Map = require("./fable-core.2.0.0-beta-005/Map");
+var _Map = require("./fable-core.2.0.0/Map");
 
-var _Seq = require("./fable-core.2.0.0-beta-005/Seq");
+var _Seq = require("./fable-core.2.0.0/Seq");
 
-var _Array = require("./fable-core.2.0.0-beta-005/Array");
+var _Array = require("./fable-core.2.0.0/Array");
 
-var _Option = require("./fable-core.2.0.0-beta-005/Option");
+var _Option = require("./fable-core.2.0.0/Option");
 
 const T$00602 = (0, _Types.declare)(function T$00602(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);

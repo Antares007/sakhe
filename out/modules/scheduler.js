@@ -11,7 +11,7 @@ exports.timeStamp = timeStamp;
 exports.run = run;
 exports.O = exports.T = void 0;
 
-var _Types = require("./fable-core.2.0.0-beta-005/Types");
+var _Types = require("./fable-core.2.0.0/Types");
 
 var _io = require("./io");
 
@@ -21,19 +21,19 @@ var _time = require("./time");
 
 var _o = require("./o");
 
-var _Map = require("./fable-core.2.0.0-beta-005/Map");
+var _Map = require("./fable-core.2.0.0/Map");
 
-var _Util = require("./fable-core.2.0.0-beta-005/Util");
+var _Util = require("./fable-core.2.0.0/Util");
 
 var _timeline = require("./timeline");
 
 var _option = require("./option");
 
-var _Seq = require("./fable-core.2.0.0-beta-005/Seq");
+var _Seq = require("./fable-core.2.0.0/Seq");
 
 var _disposable = require("./disposable");
 
-var _String = require("./fable-core.2.0.0-beta-005/String");
+var _String = require("./fable-core.2.0.0/String");
 
 const T = (0, _Types.declare)(function T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);

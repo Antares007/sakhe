@@ -117,8 +117,6 @@ var _Option = require("./Option");
 
 var _Util = require("./Util");
 
-var _Array = require("./Array");
-
 var _Map = require("./Map");
 
 var _Seq = require("./Seq");
@@ -327,7 +325,7 @@ function truncate(count$$4, array$$11) {
 }
 
 function concat(arrays, cons$$9) {
-  const arrays$$1 = (0, _Array.ofSeq)(arrays, Array);
+  const arrays$$1 = Array.from(arrays);
   const matchValue$$2 = arrays$$1.length | 0;
 
   switch (matchValue$$2) {
