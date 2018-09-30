@@ -28,6 +28,10 @@ function see(n) {
       });
     };
 
+    if (n < 4) {
+      o(new _scheduler.O(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
+    }
+
     const tree = function tree(l) {
       return (0, _scheduler.OModule$$$now)(function (now$$1, o$$2) {
         for (let i = 1; i <= 2; i++) {

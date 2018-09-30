@@ -7,6 +7,9 @@ let rec see n = Scheduler.return' <| fun t o ->
         printfn "now(%A) %s" now label
         f now o
 
+    if n < 4
+    then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
+
     let tree l = Scheduler.O.now <| fun now o ->
         for i = 1 to 2 do
             o << delay (sprintf "%s %d" l i) 10 <| fun now o ->

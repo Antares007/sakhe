@@ -4,26 +4,26 @@ open Sakhe
 
 type T =
     private
-    | Scheduler of IO.T<Time.T, O, unit>
+    | Scheduler of Abo.T<Time.T, unit, O>
 and O =
     | Now of T
     | Delay of Time.Delay * T
 
-let return' f = Scheduler << IO.return' <| f
+let return' f = Scheduler << Abo.return' <| f
 
 let mappend (Scheduler l) (Scheduler r) =
-    Scheduler <| IO.mappend Unit.mappend l r
+    Scheduler <| Abo.mappend Unit.mappend l r
 
 module O =
     let now f = Now << return' <| f
     let delay delay f = Delay (Time.Delay.return' delay, return' f)
 
-let private toFlatTimeLineIO now (Scheduler io) = IO.return' <| fun () o ->
+let private toFlatTimeLineIO now (Scheduler io) = Abo.return' <| fun () o ->
     let o' = O.proxy o
     let rec ring p o = p <| function
-        | Now (Scheduler io) -> IO.run now o' (IO.pmap ring io)
+        | Now (Scheduler io) -> Abo.run now o' (Abo.pmap ring io)
         | Delay (delay, io)  -> o <| (delay + now, io)
-    IO.run now o' (IO.pmap ring io)
+    Abo.run now o' (Abo.pmap ring io)
 
 let private runFlatTimeLineIO io =
     let o =
@@ -34,7 +34,7 @@ let private runFlatTimeLineIO io =
                     | None -> Map.add time r
         |> O.return' <| Map.empty
 
-    IO.run () o io
+    Abo.run () o io
 
     TimeLine.return' o.Value
 
@@ -46,7 +46,7 @@ let private runTo now l =
     let io =
         s
         |> Seq.map (fun (now, io) -> Some <| toFlatTimeLineIO now io)
-        |> Seq.fold (Option.mappend (IO.mappend Unit.mappend)) None
+        |> Seq.fold (Option.mappend (Abo.mappend Unit.mappend)) None
 
     match io, l with
     | None, None -> None

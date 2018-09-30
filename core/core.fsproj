@@ -6,7 +6,7 @@
   <ItemGroup>
     <Compile Include="o.fs" />
     <Compile Include="pith.fs" />
-    <Compile Include="io.fs" />
+    <Compile Include="abo.fs" />
     <Compile Include="disposable.fs" />
     <Compile Include="task-io.fs" />
     <Compile Include="time.fs" />
