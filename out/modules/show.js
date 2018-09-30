@@ -12,6 +12,8 @@ var _disposable = require("./disposable");
 
 var _String = require("./fable-core.2.0.0/String");
 
+var _Seq = require("./fable-core.2.0.0/Seq");
+
 var _scheduler = require("./scheduler");
 
 var _time = require("./time");
@@ -22,24 +24,29 @@ exports.d = d;
 function see(n) {
   return (0, _scheduler.return$0027)(function (t, o) {
     const delay$$1 = function delay$$1(label, delay, f$$1) {
-      return (0, _scheduler.OModule$$$delay)(delay, function (now, o$$1) {
-        (0, _String.toConsole)((0, _String.printf)("now(%A) %s"))(now)(label);
-        f$$1(now, o$$1);
+      return (0, _scheduler.OModule$$$delay)(delay, function (tupledArg, o$$1) {
+        (0, _String.toConsole)((0, _String.printf)("now(%A) %s"))(tupledArg[0] - tupledArg[1])(label);
+        f$$1(tupledArg[0], o$$1);
+        (0, _Seq.sum)((0, _Seq.delay)(function () {
+          return (0, _Seq.map)(function (i) {
+            return i;
+          }, (0, _Seq.rangeNumber)(0, 1, 1000000));
+        }));
       });
     };
 
-    if (n < 4) {
-      o(new _scheduler.O(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
+    if (n < 2) {
+      o(new _scheduler.O(1, "Delay", (0, _time.DelayModule$$$return$0027)(1000), see(n + 1)));
     }
 
     const tree = function tree(l) {
       return (0, _scheduler.OModule$$$now)(function (now$$1, o$$2) {
-        for (let i = 1; i <= 2; i++) {
-          o$$2(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i), 10, function (now$$2, o$$3) {
+        for (let i$$1 = 1; i$$1 <= 2; i$$1++) {
+          o$$2(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i$$1), 1001, function (now$$2, o$$3) {
             for (let j = 1; j <= 3; j++) {
-              o$$3(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i)(j), 10, function (now$$3, o$$4) {
+              o$$3(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i$$1)(j), 1002, function (now$$3, o$$4) {
                 for (let k = 1; k <= 3; k++) {
-                  o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i)(j)(k), 10, function (now$$4, o$$5) {}));
+                  o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i$$1)(j)(k), 1003, function (now$$4, o$$5) {}));
                 }
               }));
             }

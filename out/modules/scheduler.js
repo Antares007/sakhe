@@ -77,12 +77,12 @@ function toTimeLineIO(now, offSet, _arg1$$1) {
           o$$1([delay$$1 + (now - offSet), io$$2]);
         } else {
           const io$$1 = _arg2$$1.fields[0].fields[0];
-          (0, _abo.run)(now, o$0027, (0, _abo.pmap)(ring)(io$$1));
+          (0, _abo.run)([now, offSet], o$0027, (0, _abo.pmap)(ring)(io$$1));
         }
       });
     };
 
-    (0, _abo.run)(now, o$0027, (0, _abo.pmap)(ring)(io));
+    (0, _abo.run)([now, offSet], o$0027, (0, _abo.pmap)(ring)(io));
   });
 }
 
@@ -133,29 +133,87 @@ function runTo(now$$1, offSet$$1, l$$2) {
 
 function timeStamp(s$$1) {
   console.timeStamp(s$$1);
+  console.log(s$$1);
 }
 
 function run(tf, timer) {
   let timeline = null;
   let nextRun = null;
+  let nextRunDisposable = _disposable.empty;
   const settable = (0, _disposable.SettableDisposable$$$$002Ector)();
 
-  const scheduleNextRun = function scheduleNextRun(now$$2, offSet$$2) {
-    if (timeline != null) {
-      const tl = timeline;
-      timeStamp((0, _String.toText)((0, _String.printf)("setTimeOut %A"))(tf()));
-      (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer((0, _time.DelayModule$$$fromTo)(now$$2, (0, _timeline.nextArrival)(tl) + offSet$$2), function () {
-        const now$$3 = tf() + offSet$$2;
-        timeStamp((0, _String.toText)((0, _String.printf)("timeOut %A"))(tf()));
-        timeline = runTo(now$$3, offSet$$2, tl);
-        scheduleNextRun(now$$3, offSet$$2);
-      }));
+  const scheduleNextRun = function scheduleNextRun() {
+    var timeline$$1, nr;
+    const matchValue$$2 = [nextRun, timeline];
+
+    if (matchValue$$2[0] != null) {
+      if (matchValue$$2[1] != null) {
+        if (timeline$$1 = matchValue$$2[1], (nr = matchValue$$2[0], (0, _Util.compare)(nr, (0, _timeline.nextArrival)(timeline$$1)) <= 0)) {
+          const nr$$1 = matchValue$$2[0];
+          const timeline$$3 = matchValue$$2[1];
+        } else {
+          var $target$$12, nr$$2, timeline$$4;
+
+          if (matchValue$$2[0] != null) {
+            if (matchValue$$2[1] != null) {
+              $target$$12 = 0;
+              nr$$2 = matchValue$$2[0];
+              timeline$$4 = matchValue$$2[1];
+            } else {
+              $target$$12 = 1;
+            }
+          } else {
+            $target$$12 = 1;
+          }
+
+          switch ($target$$12) {
+            case 0:
+              {
+                const now$$3 = tf();
+                const delay$$3 = (0, _time.DelayModule$$$fromTo)(now$$3, (0, _timeline.nextArrival)(timeline$$4));
+                nextRun = now$$3 + delay$$3;
+                setTimeout(delay$$3)(timeline$$4);
+                break;
+              }
+
+            case 1:
+              {
+                throw new _Types.MatchFailureException("C:/code/sakhe/core/scheduler.fs", 68, 14);
+                break;
+              }
+          }
+        }
+      } else {
+        const nextRun$$1 = matchValue$$2[0];
+      }
+    } else if (matchValue$$2[1] != null) {
+      const timeline$$2 = matchValue$$2[1];
+      const now$$2 = tf();
+      const delay$$2 = (0, _time.DelayModule$$$fromTo)(now$$2, (0, _timeline.nextArrival)(timeline$$2));
+      nextRun = now$$2 + delay$$2;
+      setTimeout(delay$$2)(timeline$$2);
     }
   };
 
-  return function (now$$4) {
+  const setTimeout = function setTimeout(delay$$4) {
+    return function (tl) {
+      const now$$4 = tf();
+      timeStamp((0, _String.toText)((0, _String.printf)("setTimeOut %A"))(now$$4));
+      nextRun = now$$4;
+      (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer(delay$$4, function () {
+        var tupledArg$$2;
+        timeStamp((tupledArg$$2 = [tf(), nextRun], (0, _String.toText)((0, _String.printf)("timeOut %A"))([tupledArg$$2[0], tupledArg$$2[1]])));
+        nextRun = null;
+        const now$$5 = tf();
+        timeline = runTo(now$$5, (0, _time.OffsetModule$$$return$0027)(0), tl);
+        scheduleNextRun();
+      }));
+    };
+  };
+
+  return function (now$$6) {
     return function (io$$8) {
-      const offSet$$3 = now$$4 - tf();
+      const offSet$$2 = now$$6 - tf();
 
       const mappend$$3 = function mappend$$3(l$$5, r$$3) {
         return (0, _option.mappend)(function mappend$$2(arg10$0040$$5, arg20$0040$$2) {
@@ -163,8 +221,8 @@ function run(tf, timer) {
         }, l$$5, r$$3);
       };
 
-      timeline = mappend$$3(timeline, runTimeLineIO(toTimeLineIO(now$$4, offSet$$3, io$$8)));
-      scheduleNextRun(now$$4, offSet$$3);
+      timeline = mappend$$3(timeline, runTimeLineIO(toTimeLineIO(now$$6, offSet$$2, io$$8)));
+      scheduleNextRun();
       return settable;
     };
   };
