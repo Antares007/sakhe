@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "fable": "dotnet run -c Release -p ../fable/src/dotnet/Fable.Compiler",
-    "build": "yarn fable fable-splitter --args \"-c splitter.config.js\"",
-    "watch": "yarn fable fable-splitter --args \"-c splitter.config.js -w\"",
+    "build": "fable-splitter -c ./splitter.config.js",
+    "watch": "fable-splitter -w -c ./splitter.config.js ",
     "postinstall": "dotnet restore"
   },
   "author": "",
@@ -15,9 +15,7 @@
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/plugin-transform-modules-commonjs": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "fable-loader": "2.0.0-beta-001",
-    "fable-splitter": "2.0.0-beta-002"
+    "@babel/preset-env": "^7.0.0"
   },
   "dependencies": {},
   "prettier": {

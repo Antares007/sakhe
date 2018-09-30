@@ -13,7 +13,7 @@ exports.O = exports.T = void 0;
 
 var _Types = require("./fable-core.2.0.0/Types");
 
-var _io = require("./io");
+var _abo = require("./abo");
 
 var _unit = require("./unit");
 
@@ -45,13 +45,13 @@ const O = (0, _Types.declare)(function O(tag, name, ...fields) {
 exports.O = O;
 
 function return$0027(f) {
-  return new T(0, "Scheduler", (0, _io.return$0027)(f));
+  return new T(0, "Scheduler", (0, _abo.return$0027)(f));
 }
 
 function mappend(_arg2, _arg1) {
   const l = _arg2.fields[0];
   const r = _arg1.fields[0];
-  return new T(0, "Scheduler", (0, _io.mappend)(function (arg00$0040, arg10$0040) {
+  return new T(0, "Scheduler", (0, _abo.mappend)(function (arg00$0040, arg10$0040) {
     (0, _unit.mappend)(null, null);
   }, l, r));
 }
@@ -66,7 +66,7 @@ function OModule$$$delay(delay, f$$4) {
 
 function toFlatTimeLineIO(now, _arg1$$1) {
   const io = _arg1$$1.fields[0];
-  return (0, _io.return$0027)(function (unitVar0, o) {
+  return (0, _abo.return$0027)(function (unitVar0, o) {
     const o$0027 = (0, _o.proxy)(o);
 
     const ring = function ring(p, o$$1) {
@@ -77,12 +77,12 @@ function toFlatTimeLineIO(now, _arg1$$1) {
           o$$1([delay$$1 + now, io$$2]);
         } else {
           const io$$1 = _arg2$$1.fields[0].fields[0];
-          (0, _io.run)(now, o$0027, (0, _io.pmap)(ring)(io$$1));
+          (0, _abo.run)(now, o$0027, (0, _abo.pmap)(ring)(io$$1));
         }
       });
     };
 
-    (0, _io.run)(now, o$0027, (0, _io.pmap)(ring)(io));
+    (0, _abo.run)(now, o$0027, (0, _abo.pmap)(ring)(io));
   });
 }
 
@@ -97,7 +97,7 @@ function runFlatTimeLineIO(io$$3) {
   }, (0, _Map.empty)({
     Compare: _Util.compare
   }));
-  (0, _io.run)(null, o$$2, io$$3);
+  (0, _abo.run)(null, o$$2, io$$3);
   return (0, _timeline.return$0027)((0, _o.T$00602$$get_Value)(o$$2));
 }
 
@@ -109,7 +109,7 @@ function runTo(now$$2, l$$2) {
   const patternInput = (0, _timeline.takeUntil)(now$$2, l$$2);
   const io$$7 = (0, _Seq.fold)(function folder(l$$4, r$$2) {
     return (0, _option.mappend)(function mappend$$1(arg10$0040$$1, arg20$0040) {
-      return (0, _io.mappend)(function (arg00$0040$$1, arg10$0040$$2) {
+      return (0, _abo.mappend)(function (arg00$0040$$1, arg10$0040$$2) {
         (0, _unit.mappend)(null, null);
       }, arg10$0040$$1, arg20$0040);
     }, l$$4, r$$2);

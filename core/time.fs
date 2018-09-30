@@ -6,15 +6,15 @@ type [<Erase>] Delay = private Delay of int
 type [<Erase>] T =
     private
     | Time of float
-    static member inline (-) ((Time l), (Time r)) =
+    static member (-) ((Time l), (Time r)) =
         Offset (l - r)
-    static member inline (+) ((Time t), (Offset o)) =
+    static member (+) ((Time t), (Offset o)) =
         Time (t + o)
-    static member inline (+) ((Offset o), (Time t)) =
+    static member (+) ((Offset o), (Time t)) =
         Time (t + o)
-    static member inline (+) ((Time t), (Delay d)) =
+    static member (+) ((Time t), (Delay d)) =
         Time (t + float d)
-    static member inline (+) ((Delay d), (Time t)) =
+    static member (+) ((Delay d), (Time t)) =
         Time (t + float d)
 
 let return' (t) =

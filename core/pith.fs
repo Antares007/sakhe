@@ -35,9 +35,6 @@ let map f (Pith p) =
 let pmap f (Pith p) =
     Pith (f p)
 
-let inline append (Pith l) (Pith r) =
-    Pith <| fun o -> (l o) + (r o)
-
 let bind f (Pith p) =
     Pith <| fun o ->
         let a = p o

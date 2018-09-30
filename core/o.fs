@@ -6,9 +6,9 @@ type T<'b, 'a> =
     | O of (('b -> unit) * (unit -> 'a))
     member o.Value = let (O (_, get)) = o in get ()
 
-let inline get (O (_, get)) = get ()
+let get (O (_, get)) = get ()
 
-let inline put a (O (put, _)) = put a
+let put a (O (put, _)) = put a
 
 let return' f ua =
     let mutable a = ua
