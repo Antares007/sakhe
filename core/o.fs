@@ -14,6 +14,8 @@ let return' f ua =
     let mutable a = ua
     O ((fun b -> a <- f a b), (fun () -> a))
 
+let makeListO () = return' (fun l (a) -> a::l) []
+
 let proxy p = O <| (p, ignore)
 
 let map f (O (put, get)) =

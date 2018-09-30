@@ -72,4 +72,4 @@ function tf() {
 
 (0, _disposable.SettableDisposable$$Set$$Z5A296901)(d, (0, _scheduler.run)(function () {
   return tf();
-}, timer, see(0)));
+}, timer)(_time.zero)(see(0)));

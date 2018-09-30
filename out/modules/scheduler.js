@@ -64,7 +64,7 @@ function OModule$$$delay(delay, f$$4) {
   return new O(1, "Delay", (0, _time.DelayModule$$$return$0027)(delay), return$0027(f$$4));
 }
 
-function toFlatTimeLineIO(now, _arg1$$1) {
+function toTimeLineIO(now, offSet, _arg1$$1) {
   const io = _arg1$$1.fields[0];
   return (0, _abo.return$0027)(function (unitVar0, o) {
     const o$0027 = (0, _o.proxy)(o);
@@ -74,7 +74,7 @@ function toFlatTimeLineIO(now, _arg1$$1) {
         if (_arg2$$1.tag === 1) {
           const io$$2 = _arg2$$1.fields[1];
           const delay$$1 = _arg2$$1.fields[0];
-          o$$1([delay$$1 + now, io$$2]);
+          o$$1([delay$$1 + (now - offSet), io$$2]);
         } else {
           const io$$1 = _arg2$$1.fields[0].fields[0];
           (0, _abo.run)(now, o$0027, (0, _abo.pmap)(ring)(io$$1));
@@ -86,7 +86,7 @@ function toFlatTimeLineIO(now, _arg1$$1) {
   });
 }
 
-function runFlatTimeLineIO(io$$3) {
+function runTimeLineIO(io$$3) {
   const o$$2 = (0, _o.return$0027)(function (map, tupledArg) {
     var matchValue, l$$1;
     return (matchValue = (0, _Map.tryFind)(tupledArg[0], map), matchValue == null ? function (table$$1) {
@@ -101,32 +101,28 @@ function runFlatTimeLineIO(io$$3) {
   return (0, _timeline.return$0027)((0, _o.T$00602$$get_Value)(o$$2));
 }
 
-function from(now$$1, io$$4) {
-  return runFlatTimeLineIO(toFlatTimeLineIO(now$$1, io$$4));
-}
-
-function runTo(now$$2, l$$2) {
-  const patternInput = (0, _timeline.takeUntil)(now$$2, l$$2);
-  const io$$7 = (0, _Seq.fold)(function folder(l$$4, r$$2) {
+function runTo(now$$1, offSet$$1, l$$2) {
+  const patternInput = (0, _timeline.takeUntil)(now$$1 - offSet$$1, l$$2);
+  const io$$5 = (0, _Seq.fold)(function folder(l$$4, r$$2) {
     return (0, _option.mappend)(function mappend$$1(arg10$0040$$1, arg20$0040) {
       return (0, _abo.mappend)(function (arg00$0040$$1, arg10$0040$$2) {
         (0, _unit.mappend)(null, null);
       }, arg10$0040$$1, arg20$0040);
     }, l$$4, r$$2);
   }, null, (0, _Seq.map)(function mapping(tupledArg$$1) {
-    return toFlatTimeLineIO(tupledArg$$1[0], tupledArg$$1[1]);
+    return toTimeLineIO(tupledArg$$1[0] + offSet$$1, offSet$$1, tupledArg$$1[1]);
   }, patternInput[0]));
-  const matchValue$$1 = [io$$7, patternInput[1]];
+  const matchValue$$1 = [io$$5, patternInput[1]];
 
   if (matchValue$$1[0] != null) {
     if (matchValue$$1[1] != null) {
-      const io$$9 = matchValue$$1[0];
+      const io$$7 = matchValue$$1[0];
       return (0, _option.mappend)(function (arg10$0040$$3, arg20$0040$$1) {
         return (0, _timeline.mappend)(mappend, arg10$0040$$3, arg20$0040$$1);
-      }, patternInput[1], runFlatTimeLineIO(io$$9));
+      }, patternInput[1], runTimeLineIO(io$$7));
     } else {
-      const io$$8 = matchValue$$1[0];
-      return runFlatTimeLineIO(io$$8);
+      const io$$6 = matchValue$$1[0];
+      return runTimeLineIO(io$$6);
     }
   } else if (matchValue$$1[1] != null) {
     return patternInput[1];
@@ -139,23 +135,37 @@ function timeStamp(s$$1) {
   console.timeStamp(s$$1);
 }
 
-function run(tf, timer, io$$10) {
-  const now$$4 = _time.zero;
-  const offSet = now$$4 - tf();
+function run(tf, timer) {
+  let timeline = null;
+  let nextRun = null;
   const settable = (0, _disposable.SettableDisposable$$$$002Ector)();
 
-  const nextRun = function nextRun(now$$5, _arg1$$2) {
-    if (_arg1$$2 != null) {
-      const timeline = _arg1$$2;
-      timeStamp((0, _String.toText)((0, _String.printf)("setTimeOut %A"))(now$$5));
-      (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer((0, _time.DelayModule$$$fromTo)(now$$5, (0, _timeline.nextArrival)(timeline)), function () {
-        const now$$6 = offSet + tf();
-        timeStamp((0, _String.toText)((0, _String.printf)("timeOut %A"))(now$$6));
-        nextRun(now$$6, runTo(now$$6, timeline));
+  const scheduleNextRun = function scheduleNextRun(now$$2, offSet$$2) {
+    if (timeline != null) {
+      const tl = timeline;
+      timeStamp((0, _String.toText)((0, _String.printf)("setTimeOut %A"))(tf()));
+      (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer((0, _time.DelayModule$$$fromTo)(now$$2, (0, _timeline.nextArrival)(tl) + offSet$$2), function () {
+        const now$$3 = tf() + offSet$$2;
+        timeStamp((0, _String.toText)((0, _String.printf)("timeOut %A"))(tf()));
+        timeline = runTo(now$$3, offSet$$2, tl);
+        scheduleNextRun(now$$3, offSet$$2);
       }));
     }
   };
 
-  nextRun(now$$4, from(now$$4, io$$10));
-  return settable;
+  return function (now$$4) {
+    return function (io$$8) {
+      const offSet$$3 = now$$4 - tf();
+
+      const mappend$$3 = function mappend$$3(l$$5, r$$3) {
+        return (0, _option.mappend)(function mappend$$2(arg10$0040$$5, arg20$0040$$2) {
+          return (0, _timeline.mappend)(mappend, arg10$0040$$5, arg20$0040$$2);
+        }, l$$5, r$$3);
+      };
+
+      timeline = mappend$$3(timeline, runTimeLineIO(toTimeLineIO(now$$4, offSet$$3, io$$8)));
+      scheduleNextRun(now$$4, offSet$$3);
+      return settable;
+    };
+  };
 }

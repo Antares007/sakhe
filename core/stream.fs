@@ -5,7 +5,28 @@ type T<'a> = Stream of Abo.T<Sink.T<'a>, unit, O>
 and O =
     | Now of Abo.T<Time.T, unit, O>
     | Delay of Time.Delay * Abo.T<Time.T, unit, O>
-    | Dispose of (unit -> Time.T) * IDisposable
+    | Dispose of ((unit -> Time.T) -> IDisposable)
+
+
+
+let run tf timer sink (Stream abo) =
+    fun now o ->
+        let o' = O.makeListO ()
+        abo |> Abo.run sink o'
+        ()
+    |> Scheduler.return'
+    |> (Scheduler.run tf timer) Time.zero
+    // let ring p o =
+    //     o << Scheduler.O.delay 10 <| fun a o -> ()
+
+    //     p <| function
+    //         | Now abo -> ()
+    //         | Delay (delay, abo) -> ()
+    //         | Dispose df -> ()
+
+
+
+    // abo |> Abo.pmap ring
 
 
 let now a = (Stream << Abo.return') <| fun sink o ->
@@ -21,10 +42,3 @@ let toSchedulerIO sink (Stream (io: Abo.T<Sink.T<'a>, unit, O>)) =
 
         failwith ""
     failwith ""
-
-let rec run tf timer io =
-
-    let disposable = Scheduler.run tf timer << Scheduler.return' <| fun i o ->
-        Abo.run i (O.proxy o) io
-
-    disposable

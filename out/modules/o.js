@@ -7,6 +7,7 @@ exports.T$00602$$get_Value = T$00602$$get_Value;
 exports.get = get;
 exports.put = put;
 exports.return$0027 = return$0027;
+exports.makeListO = makeListO;
 exports.proxy = proxy;
 exports.map = map;
 exports.filter = filter;
@@ -44,6 +45,12 @@ function return$0027(f, ua) {
   }]);
 }
 
+function makeListO() {
+  return return$0027(function (l, a$$2) {
+    return (0, _Types.L)(a$$2, l);
+  }, (0, _Types.L)());
+}
+
 function proxy(p) {
   return new T$00602(0, "O", [p, function () {}]);
 }
@@ -59,9 +66,9 @@ function map(f$$1, _arg1$$2) {
 function filter(f$$2, _arg1$$3) {
   const put$$3 = _arg1$$3.fields[0][0];
   const get$$4 = _arg1$$3.fields[0][1];
-  return new T$00602(0, "O", [function (a$$2) {
-    if (f$$2(a$$2)) {
-      put$$3(a$$2);
+  return new T$00602(0, "O", [function (a$$3) {
+    if (f$$2(a$$3)) {
+      put$$3(a$$3);
     }
   }, get$$4]);
 }

@@ -8,10 +8,14 @@ type [<Erase>] T =
     | Time of float
     static member (-) ((Time l), (Time r)) =
         Offset (l - r)
-    static member (+) ((Time t), (Offset o)) =
-        Time (t + o)
-    static member (+) ((Offset o), (Time t)) =
-        Time (t + o)
+    static member (+) ((Time l), (Offset r)) =
+        Time (l + r)
+    static member (+) ((Offset l), (Time r)) =
+        Time (l + r)
+    static member (-) ((Time l), (Offset r)) =
+        Time (l - r)
+    static member (-) ((Offset l), (Time r)) =
+        Time (l - r)
     static member (+) ((Time t), (Delay d)) =
         Time (t + float d)
     static member (+) ((Delay d), (Time t)) =

@@ -18,14 +18,14 @@ module O =
     let now f = Now << return' <| f
     let delay delay f = Delay (Time.Delay.return' delay, return' f)
 
-let private toFlatTimeLineIO now (Scheduler io) = Abo.return' <| fun () o ->
+let private toTimeLineIO now (offSet: Time.Offset) (Scheduler io) = Abo.return' <| fun () o ->
     let o' = O.proxy o
     let rec ring p o = p <| function
         | Now (Scheduler io) -> Abo.run now o' (Abo.pmap ring io)
-        | Delay (delay, io)  -> o <| (delay + now, io)
+        | Delay (delay, io)  -> o <| (delay + (now - offSet), io)
     Abo.run now o' (Abo.pmap ring io)
 
-let private runFlatTimeLineIO io =
+let private runTimeLineIO io =
     let o =
         fun map (time, r) ->
                 map |>
@@ -33,46 +33,50 @@ let private runFlatTimeLineIO io =
                     | Some l -> Map.add time (mappend l r)
                     | None -> Map.add time r
         |> O.return' <| Map.empty
-
     Abo.run () o io
-
     TimeLine.return' o.Value
 
-let private from now (io) =
-    runFlatTimeLineIO <| toFlatTimeLineIO now io
-
-let private runTo now l =
-    let (s, l) = TimeLine.takeUntil now l
+let private runTo now offSet l =
+    let (s, l) = TimeLine.takeUntil (now - offSet) l
     let io =
         s
-        |> Seq.map (fun (now, io) -> Some <| toFlatTimeLineIO now io)
+        |> Seq.map (fun (originNow, io) -> Some <| toTimeLineIO (originNow + offSet) offSet io)
         |> Seq.fold (Option.mappend (Abo.mappend Unit.mappend)) None
 
     match io, l with
     | None, None -> None
-    | Some io, None -> runFlatTimeLineIO io
+    | Some io, None -> runTimeLineIO io
     | None, Some _ -> l
     | Some io, Some _ ->
-        Option.mappend (TimeLine.mappend mappend) l (runFlatTimeLineIO io)
+        Option.mappend (TimeLine.mappend mappend) l (runTimeLineIO io)
 
 open Fable.Core.JsInterop
+open Sakhe
 let timeStamp (s: string): unit =
     Fable.Import.JS.console?timeStamp(s)
     // Fable.Import.JS.console.log s
 
-let run tf timer io =
-    let now = Time.zero
-    let offSet = now - tf()
+let run tf timer =
+    let mutable timeline = None
+    let mutable nextRun: Time.T option = None
     let settable = new Disposable.SettableDisposable()
 
-    let rec nextRun now = function
+    let rec scheduleNextRun now (offSet: Time.Offset) =
+        match timeline with
         | None -> ()
-        | Some timeline ->
-            timeStamp <| sprintf "setTimeOut %A" now
-            settable.Set << timer (Time.Delay.fromTo now (TimeLine.nextArrival timeline)) <| fun () ->
-                let now = offSet + tf()
-                timeStamp <| sprintf "timeOut %A" now
-                nextRun now (runTo now timeline)
+        | Some tl ->
+            tf () |> sprintf "setTimeOut %A" |> timeStamp
+            settable.Set << timer (Time.Delay.fromTo now (TimeLine.nextArrival tl + offSet)) <| fun () ->
+                let now = tf() + offSet
+                tf () |> sprintf "timeOut %A" |> timeStamp
+                timeline <- (runTo now offSet tl)
+                scheduleNextRun now offSet
 
-    nextRun now <| from now io
-    settable :> IDisposable
+    fun now io ->
+        let offSet = now - tf()
+        let mappend = Option.mappend (TimeLine.mappend mappend)
+        timeline <- mappend timeline (runTimeLineIO <| toTimeLineIO now offSet io)
+
+
+        scheduleNextRun now offSet
+        settable :> IDisposable

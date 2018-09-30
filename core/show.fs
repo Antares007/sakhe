@@ -29,7 +29,7 @@ let timer delay task =
     let token = Fable.Import.JS.setTimeout task (Time.Delay.unbox delay)
     Disposable.return' <| fun () -> Fable.Import.JS.clearTimeout token
 let tf () = Time.return' <| System.Math.Floor (Fable.Import.Browser.performance.now())
-d.Set <| Scheduler.run tf timer (see 0)
+d.Set <| Scheduler.run tf timer Time.zero (see 0)
 
 
 // let d = new Disposable.SettableDisposable()
