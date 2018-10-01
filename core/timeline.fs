@@ -7,72 +7,52 @@ type T<'a, 'b, 'c> =
     | TimeLine of ('a * ('b * 'c) list) list
     | Abo of Abo.T<unit, unit, (('a * 'b) * 'c)>
 
-let return' a io =
+let return' f =
     let o =
         fun m ((a, b), c) ->
             match Map.tryFind a m with
             | None -> m |> Map.add a [b, c]
             | Some o -> m |> Map.add a ((b, c)::o)
         |> O.return' <| Map.empty
-    Abo.run a o io
+    Abo.run () o (Abo.return' f)
     if o.Value.Count = 0
     then None
     else Some<<TimeLine<<(Seq.fold (fun l a -> a::l) [])<<Seq.sortBy fst<<Map.toSeq<|o.Value
 
 let private toAbo = function
     | TimeLine l ->
-        let see = Abo.return' <| fun () ->
-            let mutable g = ignore
+        Abo << Abo.return' <| fun () ->
+            let mutable pith = ignore
             fun (a, l) ->
                 fun (b, c) ->
-                    let f = g
-                    g <- fun o ->
-                        o ((a, b),c)
-                        f o
+                    let f = pith
+                    pith <- fun o -> o ((a, b),c); f o
                 |> List.iter <| l
             |> List.iter <| l
-            g
-        see
-    | Abo abo -> abo
+            pith
+    | Abo _ as io -> io
 
-
-let takeUntil now = function
-    | TimeLine tl ->
-        let mutable g = ignore
-        let mutable tail = None
-        let rec go = function
-            | [] -> ()
-            | (a, l)::t ->
-                if a < now then
-                    fun (b, c) ->
-                        let f = g
-                        g <- fun o ->
-                            o ((a,b),c)
-                            f o
-                    |> List.iter <| l
-                    go t
-                else
-                    tail <- Some << TimeLine <| (a, l)::t
-        go tl
-        (Abo.return' <| fun () o -> g o), tail
+let rec takeUntil now = function
+    | TimeLine _ as tl -> takeUntil now (toAbo tl)
     | Abo abo ->
         let o =
-            fun (l, r) b ->
+            fun (ph, pt) b ->
                 if fst (fst b) < now
                 then
-                    (fun o -> l o; o b), r
+                    (fun o -> ph o; o b), pt
                 else
-                    l, (fun o -> r o; o b)
+                    ph, (fun o -> pt o; o b)
             |> O.return' <| (ignore, ignore)
         Abo.run () o abo
-        let (f, g) = o.Value
-        let tail = (return' () << Abo.return'<| fun () o -> g o)
-        (Abo.return' <| fun () o -> f o;()), tail
+        let (hPith, tPith) = o.Value
+        let head = Abo.return' <| fun () -> hPith
+        let tail = return' <| fun () -> tPith
+        head, tail
 
 let rec mappend l r =
     match l, r with
-    | TimeLine _, Abo _ -> mappend (Abo <| toAbo l) r
-    | Abo _, TimeLine _ -> mappend l (Abo <| toAbo r)
+    | TimeLine _, Abo _ -> mappend (toAbo l) r
+    | Abo _, TimeLine _ -> mappend l (toAbo r)
     | Abo l, Abo r -> Abo <| Abo.mappend Unit.mappend l r
     | TimeLine l, TimeLine r ->
         let rec go o l r =
