@@ -11,6 +11,8 @@ and O =
 
 let return' f = Scheduler << Abo.return' <| f
 
+let contraMap g (Scheduler abo) = Scheduler <| Abo.contraMap g abo
+
 let mappend (Scheduler l) (Scheduler r) =
     Scheduler <| Abo.mappend Unit.mappend l r
 
@@ -18,13 +20,17 @@ module O =
     let now f = Now << return' <| f
     let delay delay f = Delay (Time.Delay.return' delay, return' f)
 
-let private toTimeLineIO now (offSet: Time.Offset) (Scheduler io) =
+
+
+let rec private toTimeLineIO (now, offset:Time.Offset) (Scheduler io) =
     fun () o ->
         let o' = O.proxy o
         let rec ring p o = p <| function
-            | Now (Scheduler io) -> Abo.run (now, offSet) o' (Abo.pmap ring io)
-            | Delay (delay, io)  -> o <| (delay + (now - offSet), io)
-        Abo.run (now, offSet) o' (Abo.pmap ring io)
+            | Now (Scheduler io) -> Abo.run (now, offset) o' (Abo.pmap ring io)
+            | Delay (delay, Scheduler io)  ->
+                o <| ( delay + (now - offset)
+                     , return' <| fun (rnow, roffset) o -> Abo.run ((rnow - roffset) + offset, offset) (O.proxy o) io)
+        Abo.run (now, offset) o' (Abo.pmap ring io)
     |> Abo.return'
 
 let private runTimeLineIO io =
@@ -38,19 +44,17 @@ let private runTimeLineIO io =
     Abo.run () o io
     TimeLine.return' o.Value
 
-let private runTo now offSet l =
-    let (s, l) = TimeLine.takeUntil (now - offSet) l
-    let io =
-        s
-        |> Seq.map (fun (originNow, io) -> Some <| toTimeLineIO (originNow + offSet) offSet io)
-        |> Seq.fold (Option.mappend (Abo.mappend Unit.mappend)) None
+let mappendTimeLine (l:TimeLine.T<Time.T, Abo.T<unit,unit, (Time.T * Abo.T<unit,unit,O>)>>) (r:TimeLine.T<Time.T, Abo.T<unit,unit, (Time.T * Abo.T<unit,unit,O>)>>) =
+    TimeLine.mappend (Abo.mappend Unit.mappend)
 
-    match io, l with
-    | None, None -> None
-    | Some io, None -> runTimeLineIO io
-    | None, Some _ -> l
-    | Some io, Some _ ->
-        Option.mappend (TimeLine.mappend mappend) l (runTimeLineIO io)
+let private runTo now (l) =
+    let (s, l) = TimeLine.takeUntil now l
+    let r =
+        s
+        |> Seq.map (fun (originNow, io) -> runTimeLineIO <| toTimeLineIO (originNow, Time.Offset.return' 0.0) io)
+        |> Seq.fold (Option.mappend (TimeLine.mappend mappend)) None
+
+    Option.mappend (TimeLine.mappend mappend) l r
 
 open Fable.Core.JsInterop
 let timeStamp (s: string): unit =
@@ -71,13 +75,11 @@ let run tf timer =
         | None, Some timeline ->
             let now = tf()
             let delay = Time.Delay.fromTo now (TimeLine.nextArrival timeline)
-            nextRun <- Some (now + delay)
             setTimeout delay timeline
         | Some nr, Some timeline when nr <= TimeLine.nextArrival timeline -> ()
         | Some nr, Some timeline ->
             let now = tf()
             let delay = Time.Delay.fromTo now (TimeLine.nextArrival timeline)
-            nextRun <- Some (now + delay)
             setTimeout delay timeline
 
     and setTimeout delay tl =
@@ -88,14 +90,13 @@ let run tf timer =
             (tf (), nextRun) |> sprintf "timeOut %A" |> timeStamp
             nextRun <- None
             let now = tf()
-            timeline <- runTo now (Time.Offset.return' 0.0) tl
+            timeline <- runTo now tl
             scheduleNextRun ()
 
     fun now io ->
         let offSet = now - tf()
         let mappend = Option.mappend (TimeLine.mappend mappend)
-
-        timeline <- mappend timeline (runTimeLineIO <| toTimeLineIO now offSet io)
+        timeline <- mappend timeline (runTimeLineIO <| toTimeLineIO (now, offSet) io)
         scheduleNextRun ()
 
         settable :> IDisposable

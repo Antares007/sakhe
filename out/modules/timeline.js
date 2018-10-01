@@ -9,17 +9,17 @@ exports.mappend = mappend;
 exports.takeUntil = takeUntil;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-core.2.0.0/Types");
+var _Types = require("./fable-core.2.0.1/Types");
 
-var _Util = require("./fable-core.2.0.0/Util");
+var _Util = require("./fable-core.2.0.1/Util");
 
-var _Map = require("./fable-core.2.0.0/Map");
+var _Map = require("./fable-core.2.0.1/Map");
 
-var _Seq = require("./fable-core.2.0.0/Seq");
+var _Seq = require("./fable-core.2.0.1/Seq");
 
-var _Array = require("./fable-core.2.0.0/Array");
+var _Array = require("./fable-core.2.0.1/Array");
 
-var _Option = require("./fable-core.2.0.0/Option");
+var _Option = require("./fable-core.2.0.1/Option");
 
 const T$00602 = (0, _Types.declare)(function T$00602(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -193,14 +193,14 @@ function takeUntil(now, tl) {
   } else {
     const i$$1 = matchValue$$2 | 0;
     const iPlus1 = i$$1 + 1 | 0;
-    const tl$$1 = iPlus1 === timeLine.length ? null : new T$00602(0, "TimeLine", [(0, _Array.skip)(iPlus1, timeLine, Array), (0, _Map.ofSeq)((0, _Seq.map)(function mapping$$2(now$$1) {
-      return [now$$1, (0, _Map.FSharpMap$$get_Item$$2B595)(timeMap, now$$1)];
+    const tl$$1 = iPlus1 === timeLine.length ? null : new T$00602(0, "TimeLine", [(0, _Array.skip)(iPlus1, timeLine, Array), (0, _Map.ofSeq)((0, _Seq.map)(function mapping$$2(t) {
+      return [t, (0, _Map.FSharpMap$$get_Item$$2B595)(timeMap, t)];
     }, (0, _Seq.skip)(iPlus1, timeLine)), {
       Compare: _Util.compare
     })]);
-    const s = (0, _Seq.map)(function mapping$$3(now$$2) {
-      return [now$$2, (0, _Map.FSharpMap$$get_Item$$2B595)(timeMap, now$$2)];
+    const see = (0, _Seq.map)(function mapping$$3(t$$1) {
+      return [t$$1, (0, _Map.FSharpMap$$get_Item$$2B595)(timeMap, t$$1)];
     }, (0, _Seq.take)(iPlus1, timeLine));
-    return [s, tl$$1];
+    return [see, tl$$1];
   }
 }

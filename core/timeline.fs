@@ -58,6 +58,7 @@ let takeUntil now tl =
             if iPlus1 = Array.length timeLine then None
             else Some << TimeLine <| (
                   timeLine |> Array.skip (iPlus1)
-                , timeLine |> Seq.skip (iPlus1) |> Seq.map (fun now -> (now, timeMap.[now])) |> Map.ofSeq)
-        let s = timeLine |> Seq.take (iPlus1) |> Seq.map (fun now -> (now, timeMap.[now]))
-        s, tl
+                , timeLine |> Seq.skip (iPlus1) |> Seq.map (fun t -> (t, timeMap.[t])) |> Map.ofSeq)
+
+        let see = timeLine |> Seq.take (iPlus1) |> Seq.map (fun t -> (t, timeMap.[t]))
+        see, tl

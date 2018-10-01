@@ -13,11 +13,11 @@ exports.pmap = pmap;
 exports.bind = bind;
 exports.T$00603 = void 0;
 
-var _Types = require("./fable-core.2.0.0/Types");
+var _Types = require("./fable-core.2.0.1/Types");
 
 var _pith = require("./pith");
 
-var _Util = require("./fable-core.2.0.0/Util");
+var _Util = require("./fable-core.2.0.1/Util");
 
 var _o = require("./o");
 
