@@ -25,7 +25,7 @@ function see(n) {
   return (0, _scheduler.return$0027)(function (t, o) {
     const delay$$1 = function delay$$1(label, delay, f$$1) {
       return (0, _scheduler.OModule$$$delay)(delay, function (tupledArg, o$$1) {
-        (0, _String.toConsole)((0, _String.printf)("now(%A) %s"))(tupledArg[0] - tupledArg[1])(label);
+        (0, _String.toConsole)((0, _String.printf)("now(%A) %s"))([tupledArg[0], tupledArg[1]])(label);
         f$$1(tupledArg[0], o$$1);
         (0, _Seq.sum)((0, _Seq.delay)(function () {
           return (0, _Seq.map)(function (i) {
@@ -41,11 +41,11 @@ function see(n) {
 
     const tree = function tree(l) {
       return (0, _scheduler.OModule$$$now)(function (now$$1, o$$2) {
-        for (let i$$1 = 1; i$$1 <= 2; i$$1++) {
+        for (let i$$1 = 1; i$$1 <= 1; i$$1++) {
           o$$2(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i$$1), 1001, function (now$$2, o$$3) {
-            for (let j = 1; j <= 3; j++) {
+            for (let j = 1; j <= 1; j++) {
               o$$3(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i$$1)(j), 1002, function (now$$3, o$$4) {
-                for (let k = 1; k <= 3; k++) {
+                for (let k = 1; k <= 1; k++) {
                   o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i$$1)(j)(k), 1003, function (now$$4, o$$5) {}));
                 }
               }));

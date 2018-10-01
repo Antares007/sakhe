@@ -28,7 +28,7 @@ let rec private toTimeLineIO (now, offset:Time.Offset) (Scheduler io) =
         let rec ring p o = p <| function
             | Now (Scheduler io) -> Abo.run (now, offset) o' (Abo.pmap ring io)
             | Delay (delay, Scheduler io)  ->
-                o <| ( delay + (now - offset)
+                o <| ( (delay + (now - offset))
                      , return' <| fun (rnow, roffset) o -> Abo.run ((rnow - roffset) + offset, offset) (O.proxy o) io)
         Abo.run (now, offset) o' (Abo.pmap ring io)
     |> Abo.return'
