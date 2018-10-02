@@ -1,10 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>Sakhe Core Library</Description>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>0.0.1</Version>
-    <PackageVersion>0.0.1</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="o.fs" />
@@ -16,8 +12,8 @@
     <Compile Include="option.fs" />
     <Compile Include="unit.fs" />
     <Compile Include="timeline.fs" />
-    <Compile Include="scheduler.fs" />
     <Compile Include="sink.fs" />
+    <Compile Include="scheduler.fs" />
     <Compile Include="stream.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
