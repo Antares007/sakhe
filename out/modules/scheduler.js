@@ -66,7 +66,7 @@ function runAllNows(_arg1$$1, _arg2) {
         if (_arg3.tag === 1) {
           const io$$2 = _arg3.fields[1];
           const delay$$1 = _arg3.fields[0];
-          o$$1([[delay$$1 + _arg1$$1[0] - _arg1$$1[1], _arg1$$1[1]], contraMap(function (tupledArg) {
+          o$$1([[delay$$1 + _arg1$$1[0], _arg1$$1[1]], contraMap(function (tupledArg) {
             return [tupledArg[0] + tupledArg[1], tupledArg[1]];
           }, io$$2)]);
         } else {
@@ -88,11 +88,11 @@ function run(tf, timer) {
     return function (timeline) {
       var tl, nr, tl$$2, nr$$2;
       nextRun = nextRun != null ? (tl = nextRun[1], (nr = nextRun[0], (0, _Util.compare)(nr, nextArrival) <= 0)) ? [nextRun[0], (0, _timeline.mappend)(nextRun[1], timeline)] : nextRun != null ? (tl$$2 = nextRun[1], (nr$$2 = nextRun[0], [nextArrival, (0, _timeline.mappend)(tl$$2, timeline)])) : (() => {
-        throw new _Types.MatchFailureException("C:/code/sakhe/core/scheduler.fs", 49, 18);
+        throw new _Types.MatchFailureException("C:/code/sakhe/core/scheduler.fs", 45, 18);
       })() : [nextArrival, timeline];
-      (0, _String.toConsole)((0, _String.printf)("set <- %A"))(tf());
+      (0, _String.toConsole)((0, _String.printf)("<-"));
       (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer((0, _time.DelayModule$$$fromTo)(tf(), nextArrival), function () {
-        (0, _String.toConsole)((0, _String.printf)("run <- %A"))(tf());
+        (0, _String.toConsole)((0, _String.printf)("->"));
         const patternInput = nextRun;
         nextRun = null;
         const patternInput$$1 = (0, _timeline.takeUntil)(tf(), patternInput[1]);
@@ -118,9 +118,10 @@ function run(tf, timer) {
     }
   };
 
-  return function (now$$2) {
+  return function (localNow) {
     return function (io$$3) {
-      const offSet = now$$2 - tf();
+      const offSet = localNow - tf();
+      const now$$2 = tf();
       const timeline$$2 = runAllNows([now$$2, offSet], io$$3);
       add(timeline$$2);
       return settable;

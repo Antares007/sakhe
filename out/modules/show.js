@@ -28,11 +28,30 @@ function see(n) {
       });
     };
 
-    o(delay$$1("A", 10, function (now$$1, o$$2) {
-      o$$2(delay$$1("B", 10, function (now$$2, o$$3) {
-        o$$3(delay$$1("C", 10, function (now$$3, o$$4) {}));
+    const tree = function tree(l) {
+      return (0, _scheduler.OModule$$$now)(function (now$$1, o$$2) {
+        for (let i = 1; i <= 1; i++) {
+          o$$2(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i), 100, function (now$$2, o$$3) {
+            for (let j = 1; j <= 2; j++) {
+              o$$3(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i)(j), 200, function (now$$3, o$$4) {
+                for (let k = 1; k <= 3; k++) {
+                  o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i)(j)(k), 300, function (now$$4, o$$5) {}));
+                }
+              }));
+            }
+          }));
+        }
+      });
+    };
+
+    o(delay$$1("A", 10, function (now$$5, o$$6) {
+      o$$6(delay$$1("B", 10, function (now$$6, o$$7) {
+        o$$7(delay$$1("C", 10, function (now$$7, o$$8) {
+          o$$8(tree("Ta"));
+        }));
       }));
     }));
+    o(tree("Ta"));
   });
 }
 

@@ -39,7 +39,6 @@ let nextArrival
     (TimeLine tl)
     = fst <| List.last tl
 
-
 let takeUntil
     now (tl) =
     let abo = value tl
