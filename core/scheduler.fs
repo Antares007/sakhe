@@ -22,8 +22,16 @@ module O =
     let delay
         delay f = Delay (Time.Delay.return' delay, return' f)
 
-let rec private
-    runAllNows
+let map offset abo =
+    fun p o ->
+        p <| function
+        | Now (Scheduler abo) ->
+            o (-1, abo |> Abo.contraMap (fun t -> (t + offset, offset)) )
+        | Delay (delay, Scheduler abo) -> ()
+    |> Abo.pmap
+    <| abo
+
+let rec private runAllNows
     ((now, offset), Scheduler io) =
     fun () o ->
         let o' = O.proxy o
