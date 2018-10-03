@@ -10,7 +10,7 @@ exports.OModule$$$delay = OModule$$$delay;
 exports.run = run;
 exports.O = exports.T = void 0;
 
-var _Types = require("./fable-core.2.0.1/Types");
+var _Types = require("./fable-core.2.0.2/Types");
 
 var _abo = require("./abo");
 
@@ -22,13 +22,13 @@ var _timeline = require("./timeline");
 
 var _disposable = require("./disposable");
 
-var _Util = require("./fable-core.2.0.1/Util");
+var _Util = require("./fable-core.2.0.2/Util");
 
-var _String = require("./fable-core.2.0.1/String");
+var _String = require("./fable-core.2.0.2/String");
 
 var _option = require("./option");
 
-var _Option = require("./fable-core.2.0.1/Option");
+var _Option = require("./fable-core.2.0.2/Option");
 
 const T = (0, _Types.declare)(function T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);

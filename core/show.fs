@@ -6,29 +6,29 @@ let rec see n = Scheduler.return' <| fun t o ->
     let delay label delay f = Scheduler.O.delay delay <| fun (now, offset) o ->
         printfn "now(%A) %s" (now,offset) label
         f now o
-        seq {
-            for i = 0 to 100000 do
-                yield i
-        } |> Seq.sum |> ignore
+        // seq {
+        //     for i = 0 to 100 do
+        //         yield i
+        // } |> Seq.sum |> ignore
 
 
-    if n < 3
-    then o <| Scheduler.O.Delay (Time.Delay.return' 1000, see (n + 1))
+    // if n < 7
+    // then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
 
-    let tree l = Scheduler.O.now <| fun now o ->
-        for i = 1 to 1 do
-            o << delay (sprintf "%s %d" l i) 1000 <| fun now o ->
-                for j = 1 to 2 do
-                    o << delay (sprintf "%s %d.%d" l i j) 1000 <| fun now o ->
-                    for k = 1 to 3 do
-                        o << delay (sprintf "%s %d.%d.%d" l i j k) 1000 <| fun now o ->
-                        ()
+    // let tree l = Scheduler.O.now <| fun now o ->
+    //     for i = 1 to 1 do
+    //         o << delay (sprintf "%s %d" l i) 10 <| fun now o ->
+    //             for j = 1 to 2 do
+    //                 o << delay (sprintf "%s %d.%d" l i j) 10 <| fun now o ->
+    //                 for k = 1 to 3 do
+    //                     o << delay (sprintf "%s %d.%d.%d" l i j k) 10 <| fun now o ->
+    //                     ()
 
     o << delay "A" 10 <| fun now o ->
         o << delay "B" 10 <| fun now o ->
             o << delay "C" 10 <| fun now o ->
-                o <| tree "Tb"
-    o <| tree "Ta"
+                ()
+    // o <| tree "Ta"
 
 let timer delay task =
     let token = Fable.Import.JS.setTimeout task (Time.Delay.unbox delay)

@@ -1549,7 +1549,9 @@ function SetTreeModule$$$ofSeq(comparer$$20, c$$11) {
   try {
     return SetTreeModule$$$mkFromEnumerator(comparer$$20, new SetTree$00601(0, "SetEmpty"), ie);
   } finally {
-    ie.Dispose();
+    if ((0, _Util.isDisposable)(ie)) {
+      ie.Dispose();
+    }
   }
 }
 

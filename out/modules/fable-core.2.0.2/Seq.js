@@ -189,22 +189,22 @@ function append(xs, ys) {
   });
 }
 
-function average(xs) {
-  let count = 1;
-  const sum = reduce((acc, x) => {
+function average(xs, averager) {
+  let count = 0;
+  const total = fold((acc, x) => {
     count++;
-    return acc + x;
-  }, xs);
-  return sum / count;
+    return averager.Add(acc, x);
+  }, averager.GetZero(), xs);
+  return averager.DivideByInt(total, count);
 }
 
-function averageBy(f, xs) {
-  let count = 1;
-  const sum = reduce((acc, x) => {
+function averageBy(f, xs, averager) {
+  let count = 0;
+  const total = fold((acc, x) => {
     count++;
-    return (count === 2 ? f(acc) : acc) + f(x);
-  }, xs);
-  return sum / count;
+    return averager.Add(acc, f(x));
+  }, averager.GetZero(), xs);
+  return averager.DivideByInt(total, count);
 }
 
 function concat(xs) {
@@ -809,12 +809,12 @@ function sortWith(f, xs) {
   return ofArray(ys.sort(f));
 }
 
-function sum(xs) {
-  return fold((acc, x) => acc + x, 0, xs);
+function sum(xs, adder) {
+  return fold((acc, x) => adder.Add(acc, x), adder.GetZero(), xs);
 }
 
-function sumBy(f, xs) {
-  return fold((acc, x) => acc + f(x), 0, xs);
+function sumBy(f, xs, adder) {
+  return fold((acc, x) => adder.Add(acc, f(x)), adder.GetZero(), xs);
 }
 
 function tail(xs) {

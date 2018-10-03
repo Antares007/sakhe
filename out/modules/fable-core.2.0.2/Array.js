@@ -400,8 +400,8 @@ function countBy(projection, array$$15, eq) {
 
 function distinctBy(projection$$1, array$$16, eq$$1) {
   const hashSet = (0, _Set.createMutable)([], (0, _Util.comparerFromEqualityComparer)(eq$$1));
-  return filter(function predicate$$2($arg$$1) {
-    return (0, _Util.addToSet)(projection$$1($arg$$1), hashSet);
+  return filter(function predicate$$2($arg$$3) {
+    return (0, _Util.addToSet)(projection$$1($arg$$3), hashSet);
   }, array$$16);
 }
 
@@ -1232,20 +1232,20 @@ function forAll2(predicate$$23, array1$$12, array2$$12) {
   }, true, array1$$12, array2$$12);
 }
 
-function existsOffset($arg$$162, $arg$$163, $arg$$164) {
+function existsOffset($arg$$164, $arg$$165, $arg$$166) {
   existsOffset: while (true) {
-    const predicate$$24 = $arg$$162,
-          array$$98 = $arg$$163,
-          index$$7 = $arg$$164;
+    const predicate$$24 = $arg$$164,
+          array$$98 = $arg$$165,
+          index$$7 = $arg$$166;
 
     if (index$$7 === array$$98.length) {
       return false;
     } else if (predicate$$24(array$$98[index$$7])) {
       return true;
     } else {
-      $arg$$162 = predicate$$24;
-      $arg$$163 = array$$98;
-      $arg$$164 = index$$7 + 1;
+      $arg$$164 = predicate$$24;
+      $arg$$165 = array$$98;
+      $arg$$166 = index$$7 + 1;
       continue existsOffset;
     }
   }
@@ -1255,22 +1255,22 @@ function exists(predicate$$25, array$$99) {
   return existsOffset(predicate$$25, array$$99, 0);
 }
 
-function existsOffset2($arg$$167, $arg$$168, $arg$$169, $arg$$170) {
+function existsOffset2($arg$$169, $arg$$170, $arg$$171, $arg$$172) {
   existsOffset2: while (true) {
-    const predicate$$26 = $arg$$167,
-          array1$$13 = $arg$$168,
-          array2$$13 = $arg$$169,
-          index$$8 = $arg$$170;
+    const predicate$$26 = $arg$$169,
+          array1$$13 = $arg$$170,
+          array2$$13 = $arg$$171,
+          index$$8 = $arg$$172;
 
     if (index$$8 === array1$$13.length) {
       return false;
     } else if (predicate$$26(array1$$13[index$$8], array2$$13[index$$8])) {
       return true;
     } else {
-      $arg$$167 = predicate$$26;
-      $arg$$168 = array1$$13;
-      $arg$$169 = array2$$13;
-      $arg$$170 = index$$8 + 1;
+      $arg$$169 = predicate$$26;
+      $arg$$170 = array1$$13;
+      $arg$$171 = array2$$13;
+      $arg$$172 = index$$8 + 1;
       continue existsOffset2;
     }
   }
@@ -1284,21 +1284,21 @@ function exists2(predicate$$27, array1$$14, array2$$14) {
   return existsOffset2(predicate$$27, array1$$14, array2$$14, 0);
 }
 
-function sum(array$$100) {
-  let acc$$11 = 0;
+function sum(array$$100, adder) {
+  let acc$$11 = adder.GetZero();
 
   for (let i$$46 = 0; i$$46 <= array$$100.length - 1; i$$46++) {
-    acc$$11 = acc$$11 + array$$100[i$$46];
+    acc$$11 = adder.Add(acc$$11, array$$100[i$$46]);
   }
 
   return acc$$11;
 }
 
-function sumBy(projection$$6, array$$101) {
-  let acc$$12 = 0;
+function sumBy(projection$$6, array$$101, adder$$1) {
+  let acc$$12 = adder$$1.GetZero();
 
   for (let i$$47 = 0; i$$47 <= array$$101.length - 1; i$$47++) {
-    acc$$12 = acc$$12 + projection$$6(array$$101[i$$47]);
+    acc$$12 = adder$$1.Add(acc$$12, projection$$6(array$$101[i$$47]));
   }
 
   return acc$$12;
@@ -1328,22 +1328,32 @@ function min(xs$$15, comparer$$17) {
   }, xs$$15);
 }
 
-function average(array$$102) {
+function average(array$$102, averager) {
   if (array$$102.length === 0) {
     throw new Error("The input array was empty" + "\\nParameter name: " + "array");
   }
 
-  const total = sum(array$$102);
-  return total / array$$102.length;
+  let total = averager.GetZero();
+
+  for (let i$$48 = 0; i$$48 <= array$$102.length - 1; i$$48++) {
+    total = averager.Add(total, array$$102[i$$48]);
+  }
+
+  return averager.DivideByInt(total, array$$102.length);
 }
 
-function averageBy(projection$$9, array$$103) {
+function averageBy(projection$$9, array$$103, averager$$1) {
   if (array$$103.length === 0) {
     throw new Error("The input array was empty" + "\\nParameter name: " + "array");
   }
 
-  const total$$1 = sumBy(projection$$9, array$$103);
-  return total$$1 / array$$103.length;
+  let total$$1 = averager$$1.GetZero();
+
+  for (let i$$49 = 0; i$$49 <= array$$103.length - 1; i$$49++) {
+    total$$1 = averager$$1.Add(total$$1, projection$$9(array$$103[i$$49]));
+  }
+
+  return averager$$1.DivideByInt(total$$1, array$$103.length);
 }
 
 function ofSeq(source$$8, cons$$31) {
@@ -1358,8 +1368,8 @@ function toList(source$$10) {
   const len$$20 = source$$10.length | 0;
   let target$$7 = (0, _Types.L)();
 
-  for (let i$$48 = len$$20 - 1; i$$48 >= 0; i$$48--) {
-    target$$7 = (0, _Types.L)(source$$10[i$$48], target$$7);
+  for (let i$$50 = len$$20 - 1; i$$50 >= 0; i$$50--) {
+    target$$7 = (0, _Types.L)(source$$10[i$$50], target$$7);
   }
 
   return target$$7;

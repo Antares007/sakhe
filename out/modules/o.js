@@ -14,7 +14,7 @@ exports.filter = filter;
 exports.contraMap = contraMap;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-core.2.0.1/Types");
+var _Types = require("./fable-core.2.0.2/Types");
 
 const T$00602 = (0, _Types.declare)(function T$00602(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);

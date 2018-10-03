@@ -64,7 +64,6 @@ let run
                     o.Value
                 |> Option.bind <| l
             add (Option.mappend TimeLine.mappend l r)
-
     and add = function
         | None -> ()
         | Some timeline ->

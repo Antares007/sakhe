@@ -107,9 +107,9 @@ var _Option = require("./Option");
 
 var _Seq = require("./Seq");
 
-var _String = require("./String");
-
 var _Util = require("./Util");
+
+var _String = require("./String");
 
 const MapTree$00602 = (0, _Types.declare)(function MapTree$00602(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -1006,7 +1006,9 @@ function MapTreeModule$$$ofSeq(comparer$$16, c$$9) {
   try {
     return MapTreeModule$$$mkFromEnumerator(comparer$$16, MapTreeModule$$$empty(), ie);
   } finally {
-    ie.Dispose();
+    if ((0, _Util.isDisposable)(ie)) {
+      ie.Dispose();
+    }
   }
 }
 
@@ -1257,9 +1259,9 @@ FSharpMap.prototype.GetHashCode = function () {
   const e$$1 = MapTreeModule$$$mkIEnumerator(FSharpMap$$get_Tree(this$$$1));
 
   while (e$$1.MoveNext()) {
-    const activePatternResult2445 = e$$1.Current;
-    res$$3 = combineHash(res$$3, (0, _Util.structuralHash)(activePatternResult2445[0]));
-    res$$3 = combineHash(res$$3, (0, _Util.structuralHash)(activePatternResult2445[1]));
+    const activePatternResult2465 = e$$1.Current;
+    res$$3 = combineHash(res$$3, (0, _Util.structuralHash)(activePatternResult2465[0]));
+    res$$3 = combineHash(res$$3, (0, _Util.structuralHash)(activePatternResult2465[1]));
   }
 
   return Math.abs(res$$3) | 0;
@@ -1308,10 +1310,14 @@ FSharpMap.prototype.CompareTo = function (obj) {
 
       return res$$4 | 0;
     } finally {
-      e2.Dispose();
+      if ((0, _Util.isDisposable)(e2)) {
+        e2.Dispose();
+      }
     }
   } finally {
-    e1.Dispose();
+    if ((0, _Util.isDisposable)(e1)) {
+      e1.Dispose();
+    }
   }
 };
 

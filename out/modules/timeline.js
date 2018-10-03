@@ -10,19 +10,19 @@ exports.takeUntil = takeUntil;
 exports.mappend = mappend;
 exports.T$00603 = void 0;
 
-var _Types = require("./fable-core.2.0.1/Types");
+var _Types = require("./fable-core.2.0.2/Types");
 
-var _Map = require("./fable-core.2.0.1/Map");
+var _Map = require("./fable-core.2.0.2/Map");
 
-var _Util = require("./fable-core.2.0.1/Util");
+var _Util = require("./fable-core.2.0.2/Util");
 
 var _o = require("./o");
 
 var _abo = require("./abo");
 
-var _Seq = require("./fable-core.2.0.1/Seq");
+var _Seq = require("./fable-core.2.0.2/Seq");
 
-var _List = require("./fable-core.2.0.1/List");
+var _List = require("./fable-core.2.0.2/List");
 
 const T$00603 = (0, _Types.declare)(function T$00603(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);

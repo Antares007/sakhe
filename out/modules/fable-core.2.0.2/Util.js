@@ -330,17 +330,7 @@ function int32ToString(i, radix) {
 }
 
 function toString(obj, quoteStrings = false) {
-  if (obj == null) {
-    return String(obj);
-  }
-
   switch (typeof obj) {
-    case "number":
-    case "boolean":
-    case "symbol":
-    case "undefined":
-      return String(obj);
-
     case "string":
       return quoteStrings ? JSON.stringify(obj) : obj;
 
@@ -348,9 +338,6 @@ function toString(obj, quoteStrings = false) {
       return obj.name;
 
     case "object":
-      // if (typeof obj.ToString === "function") {
-      //   return obj.ToString();
-      // }
       // TODO: Print some elements of iterables?
       if (isPlainObject(obj) || Array.isArray(obj)) {
         try {
@@ -373,6 +360,10 @@ function toString(obj, quoteStrings = false) {
         return obj instanceof Date ? dateToString(obj) : String(obj);
       }
 
+    // number|boolean|symbol|null|undefined:
+
+    default:
+      return String(obj);
   }
 }
 
@@ -534,6 +525,8 @@ function equals(x, y) {
     return true;
   } else if (x == null) {
     return y == null;
+  } else if (y == null) {
+    return false;
   } else if (typeof x !== "object") {
     return false;
   } else if (typeof x.Equals === "function") {
@@ -635,6 +628,8 @@ function compare(x, y) {
     return 0;
   } else if (x == null) {
     return y == null ? 0 : -1;
+  } else if (y == null) {
+    return 1;
   } else if (typeof x !== "object") {
     return x < y ? -1 : 1;
   } else if (typeof x.CompareTo === "function") {
