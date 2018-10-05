@@ -68,7 +68,11 @@ let run
             let (l, r) = TimeLine.takeUntil now tl
             let l =
                 fun l ->
-                    let o = O.contraMap runAllNows <| O.return' (Pith.mappend Unit.mappend)  Pith.empty
+                    let o =
+                        fun (now, io) ->
+                            runAllNows (now, io)
+                        |> O.contraMap
+                        <| O.return' (Pith.mappend Unit.mappend)  Pith.empty
                     Pith.run o (TimeLine.toPith l)
                     TimeLine.fromPith mappend o.Value
                 |> Option.bind <| l
@@ -80,8 +84,7 @@ let run
     fun io ->
         let now = tf()
         let io = map (Time.zero - now) io
-        let timeline = runAllNows (now, io) |> TimeLine.fromPith mappend
-
+        let timeline = TimeLine.fromPith mappend (runAllNows (now, io))
         match timeline with
         | None -> ()
         | Some timeline ->
