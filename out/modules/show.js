@@ -30,11 +30,11 @@ function see(n) {
 
     o((0, _scheduler.O$$$nowOrigin)(function (now$$1, o$$2) {
       (0, _String.toConsole)((0, _String.printf)("Origin ------> %A"))(now$$1);
-
-      if (n < 3) {
-        o$$2(new _scheduler.O$00601(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
-      }
     }));
+
+    if (n < 3) {
+      o(new _scheduler.O$00601(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
+    }
 
     const tree = function tree(l) {
       return (0, _scheduler.O$$$now)(function (now$$2, o$$3) {

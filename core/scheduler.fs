@@ -61,9 +61,7 @@ let run
             | Some (nr, tl) when nr <= nextArrival -> (nr, TimeLine.mappend mappend tl timeline)
             | Some (nr, tl) -> (nextArrival, TimeLine.mappend mappend tl timeline)
             |> Some
-        printfn "<-"
         settable.Set << timer (Time.Delay.fromTo (now) nextArrival) <| fun () ->
-            printfn "->"
             let now = tf()
             let (nr, tl) = nextRun.Value
             nextRun <- None

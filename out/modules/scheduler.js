@@ -29,8 +29,6 @@ var _unit = require("./unit");
 
 var _timeline = require("./timeline");
 
-var _String = require("./fable-core.2.0.3/String");
-
 var _Option = require("./fable-core.2.0.3/Option");
 
 var _option = require("./option");
@@ -143,9 +141,7 @@ function run(tf, timer) {
     }, tl$$2, timeline)])) : (() => {
       throw new _Types.MatchFailureException("C:/code/sakhe/core/scheduler.fs", 59, 18);
     })() : [nextArrival, timeline];
-    (0, _String.toConsole)((0, _String.printf)("<-"));
     (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer((0, _time.DelayModule$$$fromTo)(now$$3, nextArrival), function () {
-      (0, _String.toConsole)((0, _String.printf)("->"));
       const now$$4 = tf();
       const patternInput = nextRun;
       nextRun = null;

@@ -11,8 +11,8 @@ let rec see n = Scheduler.return' <| fun t o ->
     // then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
     o << Scheduler.O.nowOrigin <| fun now o ->
         printfn "Origin ------> %A" now
-        if n < 3
-        then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
+    if n < 3
+    then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
 
     let tree l = Scheduler.O.now <| fun now o ->
         for i = 1 to 1 do
