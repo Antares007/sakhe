@@ -12,6 +12,8 @@ var _disposable = require("./disposable");
 
 var _String = require("./fable-core.2.0.3/String");
 
+var _pith = require("./pith");
+
 var _scheduler = require("./scheduler");
 
 var _time = require("./time");
@@ -20,43 +22,51 @@ const d = (0, _disposable.SettableDisposable$$$$002Ector)();
 exports.d = d;
 
 function see(n) {
-  return (0, _scheduler.return$0027)(function (t, o) {
-    const delay$$1 = function delay$$1(label, delay, f$$1) {
-      return (0, _scheduler.O$$$delay)(delay, function (tupledArg, o$$1) {
-        (0, _String.toConsole)((0, _String.printf)("now(%A) %s"))([tupledArg[0], tupledArg[1]])(label);
-        f$$1(tupledArg[0], o$$1);
-      });
-    };
+  return (0, _scheduler.return$0027)(function (t) {
+    return (0, _pith.return$0027)(function (o) {
+      const delay$$1 = function delay$$1(label, delay, f$$2) {
+        return (0, _scheduler.O$$$delay)(delay, function (tupledArg) {
+          return (0, _pith.return$0027)(function (o$$1) {
+            (0, _String.toConsole)((0, _String.printf)("now(%A) %s"))([tupledArg[0], tupledArg[1]])(label);
+            f$$2(tupledArg[0], o$$1);
+          });
+        });
+      };
 
-    o((0, _scheduler.O$$$nowOrigin)(function (now$$1, o$$2) {
-      (0, _String.toConsole)((0, _String.printf)("Origin ------> %A"))(now$$1);
-    }));
+      o((0, _scheduler.O$$$nowOrigin)(function (now$$1) {
+        return (0, _pith.return$0027)(function (o$$2) {
+          (0, _String.toConsole)((0, _String.printf)("Origin ------> %A"))(now$$1);
+        });
+      }));
 
-    if (n < 3) {
-      o(new _scheduler.O$00601(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
-    }
+      if (n < 3) {
+        o(new _scheduler.O$00601(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
+      }
 
-    const tree = function tree(l) {
-      return (0, _scheduler.O$$$now)(function (now$$2, o$$3) {
-        for (let i = 1; i <= 1; i++) {
-          o$$3(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i), 100, function (now$$3, o$$4) {
-            for (let j = 1; j <= 2; j++) {
-              o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i)(j), 200, function (now$$4, o$$5) {
-                for (let k = 1; k <= 3; k++) {
-                  o$$5(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i)(j)(k), 300, function (now$$5, o$$6) {}));
+      const tree = function tree(l) {
+        return (0, _scheduler.O$$$now)(function (now$$2) {
+          return (0, _pith.return$0027)(function (o$$3) {
+            for (let i = 1; i <= 1; i++) {
+              o$$3(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i), 100, function (now$$3, o$$4) {
+                for (let j = 1; j <= 2; j++) {
+                  o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i)(j), 200, function (now$$4, o$$5) {
+                    for (let k = 1; k <= 3; k++) {
+                      o$$5(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i)(j)(k), 300, function (now$$5, o$$6) {}));
+                    }
+                  }));
                 }
               }));
             }
-          }));
-        }
-      });
-    };
+          });
+        });
+      };
 
-    o(delay$$1("A", 10, function (now$$6, o$$7) {
-      o$$7(delay$$1("B", 10, function (now$$7, o$$8) {
-        o$$8(delay$$1("C", 10, function (now$$8, o$$9) {}));
+      o(delay$$1("A", 10, function (now$$6, o$$7) {
+        o$$7(delay$$1("B", 10, function (now$$7, o$$8) {
+          o$$8(delay$$1("C", 10, function (now$$8, o$$9) {}));
+        }));
       }));
-    }));
+    });
   });
 }
 

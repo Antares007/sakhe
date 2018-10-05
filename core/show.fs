@@ -2,19 +2,19 @@ module Sakhe.Show
 
 let d = new Disposable.SettableDisposable()
 
-let rec see n = Scheduler.return' <| fun t o ->
-    let delay label delay f = Scheduler.O.delay delay <| fun (now, offset) o ->
+let rec see n = Scheduler.return' <| fun t -> Pith.return' <| fun o ->
+    let delay label delay f = Scheduler.O.delay delay <| fun (now, offset) -> Pith.return' <| fun o ->
         printfn "now(%A) %s" (now,offset) label
         f now o
 
     // if n < 3
     // then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
-    o << Scheduler.O.nowOrigin <| fun now o ->
+    o << Scheduler.O.nowOrigin <| fun now -> Pith.return' <| fun o ->
         printfn "Origin ------> %A" now
     if n < 3
     then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
 
-    let tree l = Scheduler.O.now <| fun now o ->
+    let tree l = Scheduler.O.now <| fun now -> Pith.return' <| fun o ->
         for i = 1 to 1 do
             o << delay (sprintf "%s %d" l i) 100 <| fun now o ->
                 for j = 1 to 2 do

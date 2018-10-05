@@ -17,10 +17,6 @@ var _Types = require("./fable-core.2.0.3/Types");
 
 var _pith = require("./pith");
 
-var _Util = require("./fable-core.2.0.3/Util");
-
-var _o = require("./o");
-
 const T$00603 = (0, _Types.declare)(function T$00603(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
@@ -35,9 +31,7 @@ function mappend(mappend$$1, _arg2, _arg1) {
 }
 
 function return$0027(f) {
-  return new T$00603(0, "Abo", function ($arg$$1) {
-    return (0, _pith.return$0027)((0, _Util.partialApply)(1, f, [$arg$$1]));
-  });
+  return new T$00603(0, "Abo", f);
 }
 
 function empty() {
@@ -46,10 +40,10 @@ function empty() {
   });
 }
 
-function map(f$$2, _arg1$$2) {
+function map(f$$1, _arg1$$2) {
   const io = _arg1$$2.fields[0];
-  return new T$00603(0, "Abo", function ($arg$$2) {
-    return f$$2(io($arg$$2));
+  return new T$00603(0, "Abo", function ($arg$$1) {
+    return f$$1(io($arg$$1));
   });
 }
 
@@ -59,15 +53,15 @@ function run(i$$1, _arg1$$3) {
 }
 
 function contraMap(g, io$$2) {
-  return return$0027(function (i$$2, o) {
-    return (0, _pith.run)((0, _o.proxy)(o), run(g(i$$2), io$$2));
+  return new T$00603(0, "Abo", function (i$$2) {
+    return run(g(i$$2), io$$2);
   });
 }
 
-function pmap(f$$4, _arg1$$4) {
+function pmap(f$$2, _arg1$$4) {
   const io$$3 = _arg1$$4.fields[0];
   return new T$00603(0, "Abo", function (i$$3) {
-    return (0, _pith.pmap)(f$$4, io$$3(i$$3));
+    return (0, _pith.pmap)(f$$2, io$$3(i$$3));
   });
 }
 

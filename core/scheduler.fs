@@ -39,8 +39,7 @@ module private Private =
         | Local io  ->
             OriginT << Abo.pmap (ring offset) << Abo.contraMap (fun now -> (now + offset, offset)) <| io
         | Origin io ->
-            OriginT << Abo.return' <| fun now o ->
-                Pith.run (O.proxy o) << Abo.run now << Abo.pmap (ring (Time.zero - now)) <| io
+            OriginT << Abo.return' <| fun now -> Abo.run now << Abo.pmap (ring (Time.zero - now)) <| io
 
     let inline mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
 
