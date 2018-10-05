@@ -43,7 +43,7 @@ module private Private =
     let inline mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
 
     let rec runAllNows
-        (now, OriginT io) = Abo.return' <| fun () o ->
+        (now, OriginT io) = Pith.return' <| fun o ->
         let o' = O.proxy o
         let rec ring p o = p <| function
             | Now (OriginT io)  -> Abo.run now o' << Abo.pmap ring <| io
@@ -70,9 +70,9 @@ let run
             let (l, r) = TimeLine.takeUntil now tl
             let l =
                 fun l ->
-                    let o = O.contraMap runAllNows <| O.return' (Abo.mappend Unit.mappend) Abo.empty
-                    Abo.run () o (TimeLine.toAbo l)
-                    TimeLine.fromAbo mappend o.Value
+                    let o = O.contraMap runAllNows <| O.return' (Pith.mappend Unit.mappend)  Pith.empty
+                    Pith.run o (TimeLine.toPith l)
+                    TimeLine.fromPith mappend o.Value
                 |> Option.bind <| l
             match (Option.mappend (TimeLine.mappend mappend) l r) with
             | None -> ()
@@ -82,7 +82,7 @@ let run
     fun io ->
         let now = tf()
         let io = map (Time.zero - now) io
-        let timeline = runAllNows (now, io) |> TimeLine.fromAbo mappend
+        let timeline = runAllNows (now, io) |> TimeLine.fromPith mappend
 
         match timeline with
         | None -> ()

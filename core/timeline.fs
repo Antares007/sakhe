@@ -6,7 +6,7 @@ type T<'a, 'b when 'a: comparison> =
     private
     | TimeLine of ('a [] * Map<'a, 'b>)
 
-let fromAbo mappend
+let fromPith mappend
     f =
     let o =
         fun m (a, b) ->
@@ -14,14 +14,14 @@ let fromAbo mappend
             | None -> m |> Map.add a b
             | Some o -> m |> Map.add a (mappend o b)
         |> O.return' <| Map.empty
-    Abo.run () o f
+    Pith.run o f
     let line = o.Value |> Map.toSeq |> Seq.map fst |> Seq.sort |> Seq.toArray
     if Array.isEmpty line then None else Some<<TimeLine<| (line, o.Value)
 
-let toAbo
+let toPith
     (TimeLine (line, map))
     =
-    Abo.return' <| fun () o -> Array.iter (fun a -> o (a, map.[a])) line
+    Pith.return' <| fun o -> Array.iter (fun a -> o (a, map.[a])) line
 
 let nextArrival
     (TimeLine (line, _))
