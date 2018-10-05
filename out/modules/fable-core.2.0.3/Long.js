@@ -337,14 +337,14 @@ var pow_dbl = Math.pow; // Used 4 times (4*8 to 15+4)
  */
 
 function fromString(str, unsigned, radix) {
-  const a = (0, _Int.isValid)(str, radix);
+  const res = (0, _Int.isValid)(str, radix);
 
-  if (a === null) {
+  if (res === null) {
     throw new Error("Input string was not in a correct format.");
   }
 
-  str = a[0][3];
-  radix = a[1];
+  str = res.sign + res.digits;
+  radix = res.radix;
   if (str.length === 0) throw Error("empty string");
   if (str === "NaN" || str === "Infinity" || str === "+Infinity" || str === "-Infinity") return ZERO;
 
@@ -357,8 +357,8 @@ function fromString(str, unsigned, radix) {
 
   radix = radix || 10;
   if (radix < 2 || 36 < radix) throw RangeError("radix");
-  var p;
-  if ((p = str.indexOf("-")) > 0) throw Error("interior hyphen");else if (p === 0) {
+  var p = str.indexOf("-");
+  if (p > 0) throw Error("interior hyphen");else if (p === 0) {
     return op_UnaryNegation(fromString(str.substring(1), unsigned, radix));
   } // Do several (8) digits each time through the loop, so as to
   // minimize the calls to the very expensive emulated div.

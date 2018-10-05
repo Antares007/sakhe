@@ -10,7 +10,7 @@ exports.d = void 0;
 
 var _disposable = require("./disposable");
 
-var _String = require("./fable-core.2.0.2/String");
+var _String = require("./fable-core.2.0.3/String");
 
 var _scheduler = require("./scheduler");
 
@@ -22,24 +22,28 @@ exports.d = d;
 function see(n) {
   return (0, _scheduler.return$0027)(function (t, o) {
     const delay$$1 = function delay$$1(label, delay, f$$1) {
-      return (0, _scheduler.OModule$$$delay)(delay, function (tupledArg, o$$1) {
+      return (0, _scheduler.O$$$delay)(delay, function (tupledArg, o$$1) {
         (0, _String.toConsole)((0, _String.printf)("now(%A) %s"))([tupledArg[0], tupledArg[1]])(label);
         f$$1(tupledArg[0], o$$1);
       });
     };
 
-    if (n < 3) {
-      o(new _scheduler.O(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
-    }
+    o((0, _scheduler.O$$$nowOrigin)(function (now$$1, o$$2) {
+      if (n < 3) {
+        o$$2(new _scheduler.O$00601(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
+      }
+
+      (0, _String.toConsole)((0, _String.printf)("Origin ------> %A"))(now$$1);
+    }));
 
     const tree = function tree(l) {
-      return (0, _scheduler.OModule$$$now)(function (now$$1, o$$2) {
+      return (0, _scheduler.O$$$now)(function (now$$2, o$$3) {
         for (let i = 1; i <= 1; i++) {
-          o$$2(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i), 100, function (now$$2, o$$3) {
+          o$$3(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i), 100, function (now$$3, o$$4) {
             for (let j = 1; j <= 2; j++) {
-              o$$3(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i)(j), 200, function (now$$3, o$$4) {
+              o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i)(j), 200, function (now$$4, o$$5) {
                 for (let k = 1; k <= 3; k++) {
-                  o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i)(j)(k), 300, function (now$$4, o$$5) {}));
+                  o$$5(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i)(j)(k), 300, function (now$$5, o$$6) {}));
                 }
               }));
             }
@@ -48,10 +52,10 @@ function see(n) {
       });
     };
 
-    o(delay$$1("A", 10, function (now$$5, o$$6) {
-      o$$6(delay$$1("B", 10, function (now$$6, o$$7) {
-        o$$7(delay$$1("C", 10, function (now$$7, o$$8) {
-          o$$8(tree("Ta"));
+    o(delay$$1("A", 10, function (now$$6, o$$7) {
+      o$$7(delay$$1("B", 10, function (now$$7, o$$8) {
+        o$$8(delay$$1("C", 10, function (now$$8, o$$9) {
+          o$$9(tree("Ta"));
         }));
       }));
     }));
@@ -72,4 +76,4 @@ function tf() {
 
 (0, _disposable.SettableDisposable$$Set$$Z5A296901)(d, (0, _scheduler.run)(function () {
   return tf();
-}, timer)(_time.zero)(see(0)));
+}, timer)(see(0)));

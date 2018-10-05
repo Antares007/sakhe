@@ -12,9 +12,10 @@ exports.proxy = proxy;
 exports.map = map;
 exports.filter = filter;
 exports.contraMap = contraMap;
+exports.omap = omap;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-core.2.0.2/Types");
+var _Types = require("./fable-core.2.0.3/Types");
 
 const T$00602 = (0, _Types.declare)(function T$00602(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -79,4 +80,12 @@ function contraMap(g, _arg1$$4) {
   return new T$00602(0, "O", [function ($arg$$2) {
     put$$4(g($arg$$2));
   }, get$$5]);
+}
+
+function omap(f$$3, _arg1$$5) {
+  const put$$5 = _arg1$$5.fields[0][0];
+  const get$$6 = _arg1$$5.fields[0][1];
+  return new T$00602(0, "O", [function (v) {
+    f$$3(put$$5, v);
+  }, get$$6]);
 }

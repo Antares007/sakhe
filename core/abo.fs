@@ -19,9 +19,11 @@ let map f (Abo io) =
 let run i o (Abo io) =
     Pith.run o (io i)
 
+let run2 i (Abo io) = (io i)
+
 let contraMap g (io) = return' <| fun i o -> run (g i) (O.proxy o) io
 
-let pmap f = map << Pith.pmap <| f
+let pmap f (Abo io) = Abo <| fun i -> Pith.pmap f (io i)
 
 let bind g (Abo io) =
     Abo <| fun i ->

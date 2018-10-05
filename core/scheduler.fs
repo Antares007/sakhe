@@ -5,44 +5,51 @@ open Sakhe.Sink
 
 type T =
     private
-    | Scheduler of Abo.T<Time.T * Time.Offset, unit, O>
-and O =
-    | Now of T
-    | Delay of Time.Delay * T
+    | Local of Abo.T<Time.T * Time.Offset, unit, O<T>>
+    | Origin of Abo.T<Time.T, unit, O<T>>
+and O<'a> =
+    | Now of 'a
+    | Delay of Time.Delay * 'a
+
 
 let return'
-    f = Scheduler << Abo.return' <| f
-
-let contraMap
-    g (Scheduler abo) = Scheduler <| Abo.contraMap g abo
+    f = Local << Abo.return' <| f
 
 module O =
     let now
         f = Now << return' <| f
+    let nowOrigin
+        f = Now << Origin << Abo.return' <| f
+
     let delay
         delay f = Delay (Time.Delay.return' delay, return' f)
+    let delayOrigin
+        delay f = Delay (Time.Delay.return' delay, Origin << Abo.return' <| f)
 
-let map offset abo =
-    fun p o ->
-        p <| function
-        | Now (Scheduler abo) ->
-            o (-1, abo |> Abo.contraMap (fun t -> (t + offset, offset)) )
-        | Delay (delay, Scheduler abo) -> ()
-    |> Abo.pmap
-    <| abo
+
+
+type OriginT = OriginT of Abo.T<Time.T, unit, O<OriginT>>
+
+let rec ring offset p o = p <| function
+    | Now io            -> o << O.Now   <|         map offset io
+    | Delay (delay, io) -> o << O.Delay <| (delay, map offset io)
+
+and map offset = function
+    | Local io  -> OriginT << Abo.pmap (ring offset) << Abo.contraMap (fun now -> (now + offset, offset)) <| io
+    | Origin io -> OriginT << Abo.pmap (ring offset) <| io
+
+let mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
 
 let rec private runAllNows
-    ((now, offset), Scheduler io) =
+    (now, OriginT io) =
     fun () o ->
         let o' = O.proxy o
         let rec ring p o = p <| function
-            | Now (Scheduler io) -> Abo.run (now, offset) o' (Abo.pmap ring io)
-            | Delay (delay, io)  ->
-                o <|( (delay + now, offset)
-                    , (fun (now, offset) -> now + offset, offset) |> contraMap <| io)
-        Abo.run (now, offset) o' (Abo.pmap ring io)
+            | Now (OriginT io)  -> Abo.run now o' << Abo.pmap ring <| io
+            | Delay (delay, io) -> o <| (delay + now, io)
+        Abo.run now o' (Abo.pmap ring io)
     |> Abo.return'
-    |> TimeLine.return'
+    |> TimeLine.return' mappend
 
 let run
     tf timer =
@@ -52,8 +59,8 @@ let run
         nextRun <-
             match nextRun with
             | None -> (nextArrival, timeline)
-            | Some (nr, tl) when nr <= nextArrival -> (nr, TimeLine.mappend tl timeline)
-            | Some (nr, tl) -> (nextArrival, TimeLine.mappend tl timeline)
+            | Some (nr, tl) when nr <= nextArrival -> (nr, TimeLine.mappend mappend tl timeline)
+            | Some (nr, tl) -> (nextArrival, TimeLine.mappend mappend tl timeline)
             |> Some
         printfn "<-"
         settable.Set << timer (Time.Delay.fromTo (tf()) nextArrival) <| fun () ->
@@ -63,19 +70,24 @@ let run
             let (l, r) = TimeLine.takeUntil (tf()) tl
             let l =
                 fun l ->
-                    let o = O.contraMap runAllNows <| O.return' (Option.mappend TimeLine.mappend) None
+                    let o = O.contraMap runAllNows <| O.return' (Option.mappend (TimeLine.mappend mappend)) None
                     Abo.run () o (TimeLine.value l)
                     o.Value
                 |> Option.bind <| l
-            add (Option.mappend TimeLine.mappend l r)
-    and add = function
+            match (Option.mappend (TimeLine.mappend mappend) l r) with
+            | None -> ()
+            | Some timeline ->
+                let nextArrival = TimeLine.nextArrival timeline
+                delay nextArrival timeline
+    fun io ->
+        let now = tf()
+        let io = map (Time.zero - now) io
+        let timeline = runAllNows (now, io)
+
+        match timeline with
         | None -> ()
         | Some timeline ->
             let nextArrival = TimeLine.nextArrival timeline
             delay nextArrival timeline
-    fun localNow io ->
-        let offSet = localNow - tf()
-        let now = tf()
-        let timeline = runAllNows ((now, offSet), io)
-        add timeline
+
         settable :> IDisposable

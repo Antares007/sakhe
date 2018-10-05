@@ -15,7 +15,7 @@ let run tf timer sink (Stream abo) =
         abo |> Abo.run sink o'
         ()
     |> Scheduler.return'
-    |> (Scheduler.run tf timer) Time.zero
+    |> Scheduler.run tf timer
     // let ring p o =
     //     o << Scheduler.O.delay 10 <| fun a o -> ()
 

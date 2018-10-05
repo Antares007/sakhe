@@ -12,8 +12,10 @@ let rec see n = Scheduler.return' <| fun t o ->
         f now o
 
 
-    if n < 3
-    then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
+    o << Scheduler.O.nowOrigin <| fun now o ->
+        if n < 3
+        then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
+        printfn "Origin ------> %A" now
 
     let tree l = Scheduler.O.now <| fun now o ->
         for i = 1 to 1 do
@@ -35,7 +37,7 @@ let timer delay task =
     let token = Fable.Import.JS.setTimeout task (Time.Delay.unbox delay)
     Disposable.return' <| fun () -> Fable.Import.JS.clearTimeout token
 let tf () = Time.return' <| System.Math.Floor (Fable.Import.Browser.performance.now())
-d.Set <| Scheduler.run tf timer Time.zero (see 0)
+d.Set <| Scheduler.run tf timer (see 0)
 
 
 // let d = new Disposable.SettableDisposable()

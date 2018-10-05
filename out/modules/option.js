@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.mappend = mappend;
 
-var _Option = require("./fable-core.2.0.2/Option");
+var _Option = require("./fable-core.2.0.3/Option");
 
 function mappend(mappend$$1, l, r) {
   const matchValue = [l, r];
