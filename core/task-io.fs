@@ -17,10 +17,10 @@ let lift io = TaskIO <| io
 let run a (TaskIO io) =
     let o = O.return' Disposable.append Disposable.empty
     try
-        Abo.run (Try (a)) o io
+        Pith.run o << Abo.run (Try (a)) <| io
     with err ->
         try
-            Abo.run (Catch (a, err)) o io
+            Pith.run o << Abo.run (Catch (a, err)) <| io
         with err ->
             try o.Value.Dispose() with err -> ()
             raise err

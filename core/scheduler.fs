@@ -29,16 +29,18 @@ module O =
 module private Private =
     type OriginT = OriginT of Abo.T<Time.T, unit, O<OriginT>>
 
+    let pair a b = a, b
+
     let rec ring offset p o = p <| function
-        | Now io            -> o << O.Now   <|         map offset io
-        | Delay (delay, io) -> o << O.Delay <| (delay, map offset io)
+        | Now io            -> o << O.Now << map offset <| io
+        | Delay (delay, io) -> o << O.Delay << pair delay << map offset <| io
 
     and map offset = function
         | Local io  ->
             OriginT << Abo.pmap (ring offset) << Abo.contraMap (fun now -> (now + offset, offset)) <| io
         | Origin io ->
             OriginT << Abo.return' <| fun now o ->
-                Abo.run now (O.proxy o) (Abo.pmap (ring (Time.zero - now)) io)
+                Pith.run (O.proxy o) << Abo.run now << Abo.pmap (ring (Time.zero - now)) <| io
 
     let inline mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
 
@@ -46,9 +48,9 @@ module private Private =
         (now, OriginT io) = Pith.return' <| fun o ->
         let o' = O.proxy o
         let rec ring p o = p <| function
-            | Now (OriginT io)  -> Abo.run now o' << Abo.pmap ring <| io
+            | Now (OriginT io)  -> Pith.run o' << Abo.run now << Abo.pmap ring <| io
             | Delay (delay, io) -> o <| (delay + now, io)
-        Abo.run now o' (Abo.pmap ring io)
+        Pith.run o' << Abo.run now << Abo.pmap ring <| io
 
 let run
     tf timer =

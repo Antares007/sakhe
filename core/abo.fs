@@ -4,29 +4,21 @@ type T<'a, 'b, 'o> =
     private
     | Abo of ('a -> Pith.T<'o, 'b>)
 
-let mappend mappend (Abo l) (Abo r) =
-    Abo <| fun i -> Pith.mappend mappend (l i) (r i)
+let mappend mappend (Abo l) (Abo r) = Abo <| fun i -> Pith.mappend mappend (l i) (r i)
 
-let return' f =
-    Abo <| (Pith.return' << f)
+let return' f = Abo <| (Pith.return' << f)
 
-let empty<'i, 'o> =
-    Abo <| fun (_: 'i) -> (Pith.empty: Pith.T<'o, unit>)
+let empty<'i, 'o> = Abo <| fun (_: 'i) -> (Pith.empty: Pith.T<'o, unit>)
 
-let map f (Abo io) =
-    Abo <| (f << io)
+let map f (Abo io) = Abo <| (f << io)
 
-let run i o (Abo io) =
-    Pith.run o (io i)
+let run i (Abo io) = io i
 
-let run2 i (Abo io) = (io i)
-
-let contraMap g (io) = return' <| fun i o -> run (g i) (O.proxy o) io
+let contraMap g io = return' <| fun i o -> Pith.run (O.proxy o) (run (g i) io )
 
 let pmap f (Abo io) = Abo <| fun i -> Pith.pmap f (io i)
 
-let bind g (Abo io) =
-    Abo <| fun i ->
-        let p = io i
-        let (Abo io) = g p
-        io i
+let bind g (Abo io) = Abo <| fun i ->
+    let p = io i
+    let (Abo io) = g p
+    io i

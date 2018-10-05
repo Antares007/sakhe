@@ -9,11 +9,10 @@ and O =
 
 
 
-let run tf timer sink (Stream abo) =
+let run tf timer sink (Stream io) =
     fun now o ->
         let o' = O.makeListO ()
-        abo |> Abo.run sink o'
-        ()
+        Pith.run o' << Abo.run sink <| io
     |> Scheduler.return'
     |> Scheduler.run tf timer
     // let ring p o =
