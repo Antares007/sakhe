@@ -35,8 +35,11 @@ let rec ring offset p o = p <| function
     | Delay (delay, io) -> o << O.Delay <| (delay, map offset io)
 
 and map offset = function
-    | Local io  -> OriginT << Abo.pmap (ring offset) << Abo.contraMap (fun now -> (now + offset, offset)) <| io
-    | Origin io -> OriginT << Abo.pmap (ring offset) <| io
+    | Local io  ->
+        OriginT << Abo.pmap (ring offset) << Abo.contraMap (fun now -> (now + offset, offset)) <| io
+    | Origin io ->
+        OriginT << Abo.return' <| fun now o ->
+            Abo.run now (O.proxy o) (Abo.pmap (ring (Time.zero - now)) io)
 
 let mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
 
