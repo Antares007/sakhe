@@ -8,7 +8,6 @@ type T<'a, 'b> =
 
 let return' f =
     Pith f
-let unbox (Pith p) = p
 
 let empty<'a> =
     Pith <| fun (o: 'a -> unit) -> ()
