@@ -11,7 +11,6 @@ and O<'a> =
     | Now of 'a
     | Delay of Time.Delay * 'a
 
-
 let return'
     f = Local << Abo.return' <| f
 
@@ -26,32 +25,30 @@ module O =
     let delayOrigin
         delay f = Delay (Time.Delay.return' delay, Origin << Abo.return' <| f)
 
+[<AutoOpen>]
+module private Private =
+    type OriginT = OriginT of Abo.T<Time.T, unit, O<OriginT>>
 
+    let rec ring offset p o = p <| function
+        | Now io            -> o << O.Now   <|         map offset io
+        | Delay (delay, io) -> o << O.Delay <| (delay, map offset io)
 
-type OriginT = OriginT of Abo.T<Time.T, unit, O<OriginT>>
+    and map offset = function
+        | Local io  ->
+            OriginT << Abo.pmap (ring offset) << Abo.contraMap (fun now -> (now + offset, offset)) <| io
+        | Origin io ->
+            OriginT << Abo.return' <| fun now o ->
+                Abo.run now (O.proxy o) (Abo.pmap (ring (Time.zero - now)) io)
 
-let rec ring offset p o = p <| function
-    | Now io            -> o << O.Now   <|         map offset io
-    | Delay (delay, io) -> o << O.Delay <| (delay, map offset io)
+    let inline mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
 
-and map offset = function
-    | Local io  ->
-        OriginT << Abo.pmap (ring offset) << Abo.contraMap (fun now -> (now + offset, offset)) <| io
-    | Origin io ->
-        OriginT << Abo.return' <| fun now o ->
-            Abo.run now (O.proxy o) (Abo.pmap (ring (Time.zero - now)) io)
-
-let mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
-
-let rec private runAllNows
-    (now, OriginT io) =
-    fun () o ->
+    let rec runAllNows
+        (now, OriginT io) = Abo.return' <| fun () o ->
         let o' = O.proxy o
         let rec ring p o = p <| function
             | Now (OriginT io)  -> Abo.run now o' << Abo.pmap ring <| io
             | Delay (delay, io) -> o <| (delay + now, io)
         Abo.run now o' (Abo.pmap ring io)
-    |> Abo.return'
 
 let run
     tf timer =
@@ -92,5 +89,4 @@ let run
         | Some timeline ->
             let nextArrival = TimeLine.nextArrival timeline
             delay now nextArrival timeline
-
         settable :> IDisposable
