@@ -52,13 +52,12 @@ let rec private runAllNows
             | Delay (delay, io) -> o <| (delay + now, io)
         Abo.run now o' (Abo.pmap ring io)
     |> Abo.return'
-    |> TimeLine.return' mappend
 
 let run
     tf timer =
     let mutable nextRun = None
     let settable = new Disposable.SettableDisposable()
-    let rec delay nextArrival timeline =
+    let rec delay now nextArrival timeline =
         nextRun <-
             match nextRun with
             | None -> (nextArrival, timeline)
@@ -66,31 +65,32 @@ let run
             | Some (nr, tl) -> (nextArrival, TimeLine.mappend mappend tl timeline)
             |> Some
         printfn "<-"
-        settable.Set << timer (Time.Delay.fromTo (tf()) nextArrival) <| fun () ->
+        settable.Set << timer (Time.Delay.fromTo (now) nextArrival) <| fun () ->
             printfn "->"
+            let now = tf()
             let (nr, tl) = nextRun.Value
             nextRun <- None
-            let (l, r) = TimeLine.takeUntil (tf()) tl
+            let (l, r) = TimeLine.takeUntil now tl
             let l =
                 fun l ->
-                    let o = O.contraMap runAllNows <| O.return' (Option.mappend (TimeLine.mappend mappend)) None
-                    Abo.run () o (TimeLine.value l)
-                    o.Value
+                    let o = O.contraMap runAllNows <| O.return' (Abo.mappend Unit.mappend) Abo.empty
+                    Abo.run () o (TimeLine.toAbo l)
+                    TimeLine.fromAbo mappend o.Value
                 |> Option.bind <| l
             match (Option.mappend (TimeLine.mappend mappend) l r) with
             | None -> ()
             | Some timeline ->
                 let nextArrival = TimeLine.nextArrival timeline
-                delay nextArrival timeline
+                delay now nextArrival timeline
     fun io ->
         let now = tf()
         let io = map (Time.zero - now) io
-        let timeline = runAllNows (now, io)
+        let timeline = runAllNows (now, io) |> TimeLine.fromAbo mappend
 
         match timeline with
         | None -> ()
         | Some timeline ->
             let nextArrival = TimeLine.nextArrival timeline
-            delay nextArrival timeline
+            delay now nextArrival timeline
 
         settable :> IDisposable

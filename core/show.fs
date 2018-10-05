@@ -5,17 +5,14 @@ let d = new Disposable.SettableDisposable()
 let rec see n = Scheduler.return' <| fun t o ->
     let delay label delay f = Scheduler.O.delay delay <| fun (now, offset) o ->
         printfn "now(%A) %s" (now,offset) label
-        // seq {
-        //     for i = 0 to 100 do
-        //         yield i
-        // } |> Seq.sum |> ignore
         f now o
 
-
+    // if n < 3
+    // then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
     o << Scheduler.O.nowOrigin <| fun now o ->
+        printfn "Origin ------> %A" now
         if n < 3
         then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
-        printfn "Origin ------> %A" now
 
     let tree l = Scheduler.O.now <| fun now o ->
         for i = 1 to 1 do
@@ -30,8 +27,8 @@ let rec see n = Scheduler.return' <| fun t o ->
         o << delay "B" 10 <| fun now o ->
             o << delay "C" 10 <| fun now o ->
                 ()
-                o <| tree "Ta"
-    o <| tree "Ta"
+    //             o <| tree "Ta"
+    // o <| tree "Ta"
 
 let timer delay task =
     let token = Fable.Import.JS.setTimeout task (Time.Delay.unbox delay)

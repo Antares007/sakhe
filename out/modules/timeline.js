@@ -3,8 +3,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.return$0027 = return$0027;
-exports.value = value;
+exports.fromAbo = fromAbo;
+exports.toAbo = toAbo;
 exports.nextArrival = nextArrival;
 exports.takeUntil = takeUntil;
 exports.mappend = mappend;
@@ -31,7 +31,7 @@ const T$00602 = (0, _Types.declare)(function T$00602(tag, name, ...fields) {
 }, _Types.Union);
 exports.T$00602 = T$00602;
 
-function return$0027(mappend$$1, f) {
+function fromAbo(mappend$$1, f) {
   const o$$1 = (0, _o.return$0027)(function (m, tupledArg) {
     const matchValue = (0, _Map.tryFind)(tupledArg[0], m);
 
@@ -56,7 +56,7 @@ function return$0027(mappend$$1, f) {
   }
 }
 
-function value(_arg1) {
+function toAbo(_arg1) {
   const map = _arg1.fields[0][1];
   const line$$1 = _arg1.fields[0][0];
   return (0, _abo.return$0027)(function (unitVar0, o$$2) {

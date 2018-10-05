@@ -29,11 +29,11 @@ function see(n) {
     };
 
     o((0, _scheduler.O$$$nowOrigin)(function (now$$1, o$$2) {
+      (0, _String.toConsole)((0, _String.printf)("Origin ------> %A"))(now$$1);
+
       if (n < 3) {
         o$$2(new _scheduler.O$00601(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
       }
-
-      (0, _String.toConsole)((0, _String.printf)("Origin ------> %A"))(now$$1);
     }));
 
     const tree = function tree(l) {
@@ -54,12 +54,9 @@ function see(n) {
 
     o(delay$$1("A", 10, function (now$$6, o$$7) {
       o$$7(delay$$1("B", 10, function (now$$7, o$$8) {
-        o$$8(delay$$1("C", 10, function (now$$8, o$$9) {
-          o$$9(tree("Ta"));
-        }));
+        o$$8(delay$$1("C", 10, function (now$$8, o$$9) {}));
       }));
     }));
-    o(tree("Ta"));
   });
 }
 
