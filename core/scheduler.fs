@@ -46,7 +46,7 @@ module private Private =
     let inline mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
 
     let rec runAllNows
-        now (OriginT io) = Pith.return' <| fun o ->
+        (now, (OriginT io)) = Pith.return' <| fun o ->
         let o' = O.proxy o
         let rec ring p o = p <| function
             | Now (OriginT io)  -> Pith.run o' << Abo.run now << Abo.pmap ring <| io
@@ -58,7 +58,8 @@ let run
     let mutable nextRun = None
     let mutable timerd = Disposable.empty
 
-    let rec delay nextArrival timeline =
+    let rec delay timeline =
+        let nextArrival = TimeLine.nextArrival timeline
         match nextRun with
         | None                                  ->
             nextRun <- Some (nextArrival, timeline)
@@ -77,29 +78,19 @@ let run
             let (nr, tl) = nextRun.Value
             nextRun <- None
             let (l, r) = TimeLine.takeUntil (tf()) tl
-            let l =
-                fun l ->
-                    let o =
-                        fun (now, io) ->
-                            runAllNows now io
-                        |> O.contraMap
-                        <| O.return' (Pith.mappend Unit.mappend)  Pith.empty
-                    Pith.run o (TimeLine.toPith l)
-                    TimeLine.fromPith mappend o.Value
-                |> Option.bind <| l
+            let l = l |> Option.bind (fun l ->
+                let o = O.return' (Pith.mappend Unit.mappend) Pith.empty |> O.contraMap runAllNows
+                Pith.run o (TimeLine.toPith l)
+                TimeLine.fromPith mappend o.Value)
             match (Option.mappend (TimeLine.mappend mappend) l r) with
             | None -> ()
-            | Some timeline ->
-                let nextArrival = TimeLine.nextArrival timeline
-                delay nextArrival timeline
+            | Some timeline -> delay timeline
     fun io ->
         let canceled = ref false
         let now = tf()
         let io = map (Time.zero - now) canceled io
-        let timeline = TimeLine.fromPith mappend <| runAllNows now io
+        let timeline = TimeLine.fromPith mappend <| runAllNows (now, io)
         match timeline with
         | None -> ()
-        | Some timeline ->
-            let nextArrival = TimeLine.nextArrival timeline
-            delay nextArrival timeline
+        | Some timeline -> delay timeline
         Disposable.return' <| fun () -> canceled.Value <- true
