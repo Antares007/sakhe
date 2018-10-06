@@ -122,107 +122,64 @@ function takeUntil(now, tl) {
 }
 
 function mergea(l$$1, r$$1) {
-  const ll = l$$1.length | 0;
-  const rl = r$$1.length | 0;
-  const to$0027 = (0, _Util.max)(_Util.comparePrimitives, ll, rl) - 1 | 0;
   return (0, _Array.ofSeq)((0, _Seq.delay)(function () {
-    return (0, _Seq.collect)(function (i$$3) {
-      var r$$2, l$$2, r$$5, l$$5;
-      const matchValue$$2 = [i$$3 < ll ? (0, _Option.some)(l$$1[i$$3]) : null, i$$3 < rl ? (0, _Option.some)(r$$1[i$$3]) : null];
-
-      if (matchValue$$2[0] != null) {
-        if (matchValue$$2[1] != null) {
-          if (r$$2 = (0, _Option.value)(matchValue$$2[1]), (l$$2 = (0, _Option.value)(matchValue$$2[0]), (0, _Util.compare)(l$$2, r$$2) < 0)) {
-            const l$$4 = (0, _Option.value)(matchValue$$2[0]);
-            const r$$4 = (0, _Option.value)(matchValue$$2[1]);
-            return (0, _Seq.append)((0, _Seq.singleton)(l$$4), (0, _Seq.delay)(function () {
-              return (0, _Seq.singleton)(r$$4);
-            }));
-          } else {
-            var $target$$18, l$$6, r$$6;
-
-            if (matchValue$$2[0] != null) {
-              if (matchValue$$2[1] != null) {
-                if (r$$5 = (0, _Option.value)(matchValue$$2[1]), (l$$5 = (0, _Option.value)(matchValue$$2[0]), (0, _Util.compare)(l$$5, r$$5) > 0)) {
-                  $target$$18 = 0;
-                  l$$6 = (0, _Option.value)(matchValue$$2[0]);
-                  r$$6 = (0, _Option.value)(matchValue$$2[1]);
-                } else {
-                  $target$$18 = 1;
-                }
-              } else {
-                $target$$18 = 1;
-              }
-            } else {
-              $target$$18 = 1;
-            }
-
-            switch ($target$$18) {
-              case 0:
-                {
-                  return (0, _Seq.append)((0, _Seq.singleton)(r$$6), (0, _Seq.delay)(function () {
-                    return (0, _Seq.singleton)(l$$6);
-                  }));
-                }
-
-              case 1:
-                {
-                  var $target$$19, l$$7;
-
-                  if (matchValue$$2[0] != null) {
-                    if (matchValue$$2[1] != null) {
-                      $target$$19 = 0;
-                      l$$7 = (0, _Option.value)(matchValue$$2[0]);
-                    } else {
-                      $target$$19 = 1;
-                    }
-                  } else {
-                    $target$$19 = 1;
-                  }
-
-                  switch ($target$$19) {
-                    case 0:
-                      {
-                        return (0, _Seq.singleton)(l$$7);
-                      }
-
-                    case 1:
-                      {
-                        throw new _Types.MatchFailureException("C:/code/sakhe/core/timeline.fs", 64, 18);
-                      }
-                  }
-                }
-            }
-          }
-        } else {
-          const l$$3 = (0, _Option.value)(matchValue$$2[0]);
-          return (0, _Seq.singleton)(l$$3);
-        }
-      } else if (matchValue$$2[1] != null) {
-        const r$$3 = (0, _Option.value)(matchValue$$2[1]);
-        return (0, _Seq.singleton)(r$$3);
-      } else {
+    const lLen = l$$1.length | 0;
+    const rLen = r$$1.length | 0;
+    let i$$3 = 0;
+    let j = 0;
+    return (0, _Seq.append)((0, _Seq.enumerateWhile)(function () {
+      return i$$3 < lLen ? j < rLen : false;
+    }, (0, _Seq.delay)(function () {
+      const li = l$$1[i$$3];
+      const ri = r$$1[j];
+      return (0, _Util.compare)(li, ri) < 0 ? (0, _Seq.append)((0, _Seq.singleton)(li), (0, _Seq.delay)(function () {
+        i$$3 = i$$3 + 1;
         return (0, _Seq.empty)();
-      }
-    }, (0, _Seq.rangeNumber)(0, 1, to$0027));
+      })) : (0, _Util.compare)(li, ri) > 0 ? (0, _Seq.append)((0, _Seq.singleton)(ri), (0, _Seq.delay)(function () {
+        j = j + 1;
+        return (0, _Seq.empty)();
+      })) : (0, _Seq.append)((0, _Seq.singleton)(li), (0, _Seq.delay)(function () {
+        i$$3 = i$$3 + 1;
+        j = j + 1;
+        return (0, _Seq.empty)();
+      }));
+    })), (0, _Seq.delay)(function () {
+      return (0, _Seq.append)((0, _Seq.enumerateWhile)(function () {
+        return i$$3 < lLen;
+      }, (0, _Seq.delay)(function () {
+        return (0, _Seq.append)((0, _Seq.singleton)(l$$1[i$$3]), (0, _Seq.delay)(function () {
+          i$$3 = i$$3 + 1;
+          return (0, _Seq.empty)();
+        }));
+      })), (0, _Seq.delay)(function () {
+        return (0, _Seq.enumerateWhile)(function () {
+          return j < rLen;
+        }, (0, _Seq.delay)(function () {
+          return (0, _Seq.append)((0, _Seq.singleton)(r$$1[j]), (0, _Seq.delay)(function () {
+            j = j + 1;
+            return (0, _Seq.empty)();
+          }));
+        }));
+      }));
+    }));
   }), Array);
 }
 
-function mergem(mappend$$2, l$$8, r$$7) {
+function mergem(mappend$$2, l$$2, r$$2) {
   return (0, _Map.ofSeq)((0, _Seq.delay)(function () {
     return (0, _Seq.append)((0, _Seq.map)(function mapping$$3(tupledArg$$1) {
-      const matchValue$$3 = (0, _Map.tryFind)(tupledArg$$1[0], r$$7);
+      const matchValue$$2 = (0, _Map.tryFind)(tupledArg$$1[0], r$$2);
 
-      if (matchValue$$3 != null) {
-        const rv = (0, _Option.value)(matchValue$$3);
+      if (matchValue$$2 != null) {
+        const rv = (0, _Option.value)(matchValue$$2);
         return [tupledArg$$1[0], mappend$$2(tupledArg$$1[1], rv)];
       } else {
         return [tupledArg$$1[0], tupledArg$$1[1]];
       }
-    }, (0, _Map.toSeq)(l$$8)), (0, _Seq.delay)(function () {
+    }, (0, _Map.toSeq)(l$$2)), (0, _Seq.delay)(function () {
       return (0, _Seq.filter)(function predicate(tupledArg$$2) {
-        return !(0, _Map.containsKey)(tupledArg$$2[0], l$$8);
-      }, (0, _Map.toSeq)(r$$7));
+        return !(0, _Map.containsKey)(tupledArg$$2[0], l$$2);
+      }, (0, _Map.toSeq)(r$$2));
     }));
   }), {
     Compare: _Util.compare

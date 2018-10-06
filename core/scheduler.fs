@@ -44,7 +44,7 @@ module private Private =
     let inline mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
 
     let rec runAllNows
-        (now, OriginT io) = Pith.return' <| fun o ->
+        now (OriginT io) = Pith.return' <| fun o ->
         let o' = O.proxy o
         let rec ring p o = p <| function
             | Now (OriginT io)  -> Pith.run o' << Abo.run now << Abo.pmap ring <| io
@@ -55,23 +55,28 @@ let run
     tf timer =
     let mutable nextRun = None
     let settable = new Disposable.SettableDisposable()
-    let rec delay now nextArrival timeline =
-        nextRun <-
-            match nextRun with
-            | None -> (nextArrival, timeline)
-            | Some (nr, tl) when nr <= nextArrival -> (nr, TimeLine.mappend mappend tl timeline)
-            | Some (nr, tl) -> (nextArrival, TimeLine.mappend mappend tl timeline)
-            |> Some
-        settable.Set << timer (Time.Delay.fromTo (now) nextArrival) <| fun () ->
-            let now = tf()
+    let rec delay nextArrival timeline =
+        match nextRun with
+        | None                                  ->
+            nextRun <- Some (nextArrival, timeline)
+            setTimer nextArrival
+        | Some (nr, tl) when nr > nextArrival  ->
+            nextRun <- Some (nextArrival, TimeLine.mappend mappend tl timeline)
+            setTimer nextArrival
+        | Some (nr, tl)                         ->
+            nextRun <- Some (nr, TimeLine.mappend mappend tl timeline)
+        printfn "<-"
+    and setTimer nextArrival =
+        settable.Set << timer (Time.Delay.fromTo (tf()) nextArrival) <| fun () ->
+            printfn "->"
             let (nr, tl) = nextRun.Value
             nextRun <- None
-            let (l, r) = TimeLine.takeUntil now tl
+            let (l, r) = TimeLine.takeUntil (tf()) tl
             let l =
                 fun l ->
                     let o =
                         fun (now, io) ->
-                            runAllNows (now, io)
+                            runAllNows now io
                         |> O.contraMap
                         <| O.return' (Pith.mappend Unit.mappend)  Pith.empty
                     Pith.run o (TimeLine.toPith l)
@@ -81,14 +86,15 @@ let run
             | None -> ()
             | Some timeline ->
                 let nextArrival = TimeLine.nextArrival timeline
-                delay now nextArrival timeline
+                delay nextArrival timeline
     fun io ->
         let now = tf()
         let io = map (Time.zero - now) io
-        let timeline = TimeLine.fromPith mappend (runAllNows (now, io))
+        let timeline =
+            TimeLine.fromPith mappend <| runAllNows now io
         match timeline with
         | None -> ()
         | Some timeline ->
             let nextArrival = TimeLine.nextArrival timeline
-            delay now nextArrival timeline
+            delay nextArrival timeline
         settable :> IDisposable

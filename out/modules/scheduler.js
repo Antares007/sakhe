@@ -29,6 +29,8 @@ var _unit = require("./unit");
 
 var _timeline = require("./timeline");
 
+var _String = require("./fable-core.2.0.3/String");
+
 var _Option = require("./fable-core.2.0.3/Option");
 
 var _option = require("./option");
@@ -128,28 +130,50 @@ function run(tf, timer) {
   let nextRun = null;
   const settable = (0, _disposable.SettableDisposable$$$$002Ector)();
 
-  const delay$$4 = function delay$$4(now$$3, nextArrival, timeline) {
-    var tl, nr, tl$$2, nr$$2;
-    nextRun = nextRun != null ? (tl = nextRun[1], (nr = nextRun[0], (0, _Util.compare)(nr, nextArrival) <= 0)) ? [nextRun[0], (0, _timeline.mappend)(function (arg00$0040, arg10$0040$$9) {
-      const l = arg00$0040.fields[0];
-      const r = arg10$0040$$9.fields[0];
-      return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040$$1, arg10$0040$$10) {
-        (0, _unit.mappend)(null, null);
-      }, l, r));
-    }, nextRun[1], timeline)] : nextRun != null ? (tl$$2 = nextRun[1], (nr$$2 = nextRun[0], [nextArrival, (0, _timeline.mappend)(function (arg00$0040$$2, arg10$0040$$11) {
-      const l$$1 = arg00$0040$$2.fields[0];
-      const r$$1 = arg10$0040$$11.fields[0];
-      return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040$$3, arg10$0040$$12) {
-        (0, _unit.mappend)(null, null);
-      }, l$$1, r$$1));
-    }, tl$$2, timeline)])) : (() => {
-      throw new _Types.MatchFailureException("C:/code/sakhe/core/scheduler.fs", 60, 18);
-    })() : [nextArrival, timeline];
-    (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer((0, _time.DelayModule$$$fromTo)(now$$3, nextArrival), function () {
-      const now$$4 = tf();
+  const delay$$4 = function delay$$4(nextArrival) {
+    return function (timeline) {
+      var tl, nr;
+
+      if (nextRun != null) {
+        if (tl = nextRun[1], (nr = nextRun[0], (0, _Util.compare)(nr, nextArrival) > 0)) {
+          nextRun = [nextArrival, (0, _timeline.mappend)(function (arg00$0040, arg10$0040$$9) {
+            const l = arg00$0040.fields[0];
+            const r = arg10$0040$$9.fields[0];
+            return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040$$1, arg10$0040$$10) {
+              (0, _unit.mappend)(null, null);
+            }, l, r));
+          }, nextRun[1], timeline)];
+          setTimer(nextArrival);
+        } else {
+          if (nextRun != null) {
+            const tl$$2 = nextRun[1];
+            const nr$$2 = nextRun[0];
+            nextRun = [nr$$2, (0, _timeline.mappend)(function (arg00$0040$$2, arg10$0040$$11) {
+              const l$$1 = arg00$0040$$2.fields[0];
+              const r$$1 = arg10$0040$$11.fields[0];
+              return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040$$3, arg10$0040$$12) {
+                (0, _unit.mappend)(null, null);
+              }, l$$1, r$$1));
+            }, tl$$2, timeline)];
+          } else {
+            throw new _Types.MatchFailureException("C:/code/sakhe/core/scheduler.fs", 59, 14);
+          }
+        }
+      } else {
+        nextRun = [nextArrival, timeline];
+        setTimer(nextArrival);
+      }
+
+      (0, _String.toConsole)((0, _String.printf)("<-"));
+    };
+  };
+
+  const setTimer = function setTimer(nextArrival$$1) {
+    (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer((0, _time.DelayModule$$$fromTo)(tf(), nextArrival$$1), function () {
+      (0, _String.toConsole)((0, _String.printf)("->"));
       const patternInput = nextRun;
       nextRun = null;
-      const patternInput$$1 = (0, _timeline.takeUntil)(now$$4, patternInput[1]);
+      const patternInput$$1 = (0, _timeline.takeUntil)(tf(), patternInput[1]);
       const l$$5 = (0, _Option.defaultArg)(patternInput$$1[0], null, function (l$$3) {
         const o$$5 = (0, _o.contraMap)(function (tupledArg$$1) {
           return Private$$$runAllNows(tupledArg$$1[0], tupledArg$$1[1]);
@@ -179,27 +203,27 @@ function run(tf, timer) {
 
       if (matchValue != null) {
         const timeline$$1 = matchValue;
-        const nextArrival$$1 = (0, _timeline.nextArrival)(timeline$$1);
-        delay$$4(now$$4, nextArrival$$1, timeline$$1);
+        const nextArrival$$2 = (0, _timeline.nextArrival)(timeline$$1);
+        delay$$4(nextArrival$$2)(timeline$$1);
       }
     }));
   };
 
   return function (io$$9) {
-    const now$$6 = tf();
-    const io$$10 = Private$$$map(_time.zero - now$$6, io$$9);
+    const now$$4 = tf();
+    const io$$10 = Private$$$map(_time.zero - now$$4, io$$9);
     const timeline$$2 = (0, _timeline.fromPith)(function (arg00$0040$$9, arg10$0040$$21) {
       const l$$7 = arg00$0040$$9.fields[0];
       const r$$5 = arg10$0040$$21.fields[0];
       return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040$$10, arg10$0040$$22) {
         (0, _unit.mappend)(null, null);
       }, l$$7, r$$5));
-    }, Private$$$runAllNows(now$$6, io$$10));
+    }, Private$$$runAllNows(now$$4, io$$10));
 
     if (timeline$$2 != null) {
       const timeline$$3 = timeline$$2;
-      const nextArrival$$2 = (0, _timeline.nextArrival)(timeline$$3);
-      delay$$4(now$$6, nextArrival$$2, timeline$$3);
+      const nextArrival$$3 = (0, _timeline.nextArrival)(timeline$$3);
+      delay$$4(nextArrival$$3)(timeline$$3);
     }
 
     return settable;

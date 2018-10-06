@@ -56,19 +56,20 @@ let takeUntil
         )
 
 let private mergea l r =
-    let ll = Array.length l
-    let rl = Array.length r
-    let to' = Math.Max (ll, rl) - 1
-    seq {
-        for i = 0 to to' do
-            match (if i < ll then Some (l.[i]) else None), if i < rl then Some (r.[i]) else None with
-            | None, None -> ()
-            | Some l, None -> yield l
-            | None, Some r -> yield r
-            | Some l, Some r when l < r -> yield l; yield r
-            | Some l, Some r when l > r -> yield r; yield l
-            | Some l, Some _ -> yield l
-    } |> Seq.toArray
+    Array.ofSeq <| seq {
+        let lLen = Array.length l
+        let rLen = Array.length r
+        let mutable i = 0;
+        let mutable j = 0;
+        while (i < lLen && j < rLen) do
+            let li = l.[i]
+            let ri = r.[j]
+            if (li < ri) then yield li; i <- i + 1
+            else if (li > ri) then yield ri; j <- j + 1
+            else yield li; i <- i + 1; j <- j + 1
+        while (i < lLen) do yield l.[i]; i <- i + 1
+        while (j < rLen) do yield r.[j]; j <- j + 1
+    }
 
 let private mergem mappend l r =
     seq {
