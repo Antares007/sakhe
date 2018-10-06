@@ -31,15 +31,17 @@ module private Private =
 
     let pair a b = a, b
 
-    let rec ring offset p o = p <| function
-        | Now io            -> o << O.Now << map offset <| io
-        | Delay (delay, io) -> o << O.Delay << pair delay << map offset <| io
+    let rec ring offset (canceled: bool ref) p o = p <| function
+        | Now io            -> o << O.Now << map offset canceled <| io
+        | Delay (delay, io) -> o << O.Delay << pair delay << map offset canceled <| io
 
-    and map offset = function
-        | Local io  ->
-            OriginT << Abo.pmap (ring offset) << Abo.contraMap (fun now -> (now + offset, offset)) <| io
-        | Origin io ->
-            OriginT << Abo.return' <| fun now -> Abo.run now << Abo.pmap (ring (Time.zero - now)) <| io
+    and map offset (canceled: bool ref) io =
+        OriginT << Abo.return' <| fun now ->
+            if canceled.Value then Pith.empty
+            else
+            match io with
+            | Local io  -> Pith.pmap (ring offset canceled) << Abo.run (now + offset, offset) <| io
+            | Origin io -> Pith.pmap (ring (Time.zero - now) canceled) << Abo.run now <| io
 
     let inline mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
 
@@ -88,13 +90,13 @@ let run
                 let nextArrival = TimeLine.nextArrival timeline
                 delay nextArrival timeline
     fun io ->
+        let canceled = ref false
         let now = tf()
-        let io = map (Time.zero - now) io
-        let timeline =
-            TimeLine.fromPith mappend <| runAllNows now io
+        let io = map (Time.zero - now) canceled io
+        let timeline = TimeLine.fromPith mappend <| runAllNows now io
         match timeline with
         | None -> ()
         | Some timeline ->
             let nextArrival = TimeLine.nextArrival timeline
             delay nextArrival timeline
-        settable :> IDisposable
+        Disposable.return' <| fun () -> canceled.Value <- true
