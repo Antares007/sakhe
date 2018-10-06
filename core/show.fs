@@ -25,8 +25,9 @@ let rec see n = Scheduler.return' <| fun t -> Pith.return' <| fun o ->
     o << delay "A" 10 <| fun now o ->
         o << delay "B" 10 <| fun now o ->
             o << delay "C" 10 <| fun now o ->
-                o <| tree "Ta"
-    o <| tree "Ta"
+                ()
+    //             o <| tree "Ta"
+    // o <| tree "Ta"
 
 let timer delay task =
     let token = Fable.Import.JS.setTimeout task (Time.Delay.unbox delay)

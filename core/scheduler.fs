@@ -56,7 +56,8 @@ module private Private =
 let run
     tf timer =
     let mutable nextRun = None
-    let settable = new Disposable.SettableDisposable()
+    let mutable timerd = Disposable.empty
+
     let rec delay nextArrival timeline =
         match nextRun with
         | None                                  ->
@@ -68,8 +69,10 @@ let run
         | Some (nr, tl)                         ->
             nextRun <- Some (nr, TimeLine.mappend mappend tl timeline)
         printfn "<-"
+
     and setTimer nextArrival =
-        settable.Set << timer (Time.Delay.fromTo (tf()) nextArrival) <| fun () ->
+        timerd.Dispose()
+        timerd <- timer (Time.Delay.fromTo (tf()) nextArrival) <| fun () ->
             printfn "->"
             let (nr, tl) = nextRun.Value
             nextRun <- None

@@ -63,12 +63,9 @@ function see(n) {
 
       o(delay$$1("A", 10, function (now$$6, o$$7) {
         o$$7(delay$$1("B", 10, function (now$$7, o$$8) {
-          o$$8(delay$$1("C", 10, function (now$$8, o$$9) {
-            o$$9(tree("Ta"));
-          }));
+          o$$8(delay$$1("C", 10, function (now$$8, o$$9) {}));
         }));
       }));
-      o(tree("Ta"));
     });
   });
 }

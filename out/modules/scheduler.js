@@ -134,7 +134,7 @@ function Private$$$runAllNows(now$$1, _arg1$$1) {
 
 function run(tf, timer) {
   let nextRun = null;
-  const settable = (0, _disposable.SettableDisposable$$$$002Ector)();
+  let timerd = _disposable.empty;
 
   const delay$$4 = function delay$$4(nextArrival) {
     return function (timeline) {
@@ -162,7 +162,7 @@ function run(tf, timer) {
               }, l$$1, r$$1));
             }, tl$$2, timeline)];
           } else {
-            throw new _Types.MatchFailureException("C:/code/sakhe/core/scheduler.fs", 61, 14);
+            throw new _Types.MatchFailureException("C:/code/sakhe/core/scheduler.fs", 62, 14);
           }
         }
       } else {
@@ -175,7 +175,8 @@ function run(tf, timer) {
   };
 
   const setTimer = function setTimer(nextArrival$$1) {
-    (0, _disposable.SettableDisposable$$Set$$Z5A296901)(settable, timer((0, _time.DelayModule$$$fromTo)(tf(), nextArrival$$1), function () {
+    timerd.Dispose();
+    timerd = timer((0, _time.DelayModule$$$fromTo)(tf(), nextArrival$$1), function () {
       (0, _String.toConsole)((0, _String.printf)("->"));
       const patternInput = nextRun;
       nextRun = null;
@@ -212,7 +213,7 @@ function run(tf, timer) {
         const nextArrival$$2 = (0, _timeline.nextArrival)(timeline$$1);
         delay$$4(nextArrival$$2)(timeline$$1);
       }
-    }));
+    });
   };
 
   return function (io$$11) {
