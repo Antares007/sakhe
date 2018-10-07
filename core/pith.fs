@@ -21,15 +21,14 @@ let run o (Pith p) =
 let filter f (Pith p) =
     Pith <| fun o -> p (fun a -> if f a then o a)
 
-let filterMap f (Pith p) =
-    Pith <| fun o ->
-        p (fun a ->
-            match f a with
-            | None -> ()
-            | Some a -> o a)
+let map g f (Pith p) =
+    Pith (f << (fun o -> p (g >> o)))
 
-let map f (Pith p) =
+let fmap f (Pith p) =
     Pith (f << p)
+
+let omap f (Pith p) =
+    Pith (fun o -> p (f >> o))
 
 let pmap f (Pith p) =
     Pith (f p)

@@ -26,6 +26,3 @@ let filter f (O (put, get)) =
 
 let contraMap g (O (put, get)) =
     O (g >> put, get)
-
-let omap f (O (put, get)) =
-    O ((fun v -> f put v;()), get)

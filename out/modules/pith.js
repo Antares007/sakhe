@@ -8,8 +8,9 @@ exports.empty = empty;
 exports.mappend = mappend;
 exports.run = run;
 exports.filter = filter;
-exports.filterMap = filterMap;
 exports.map = map;
+exports.fmap = fmap;
+exports.omap = omap;
 exports.pmap = pmap;
 exports.bind = bind;
 exports.T$00602 = void 0;
@@ -17,8 +18,6 @@ exports.T$00602 = void 0;
 var _Types = require("./fable-core.2.0.3/Types");
 
 var _o = require("./o");
-
-var _Option = require("./fable-core.2.0.3/Option");
 
 var _Util = require("./fable-core.2.0.3/Util");
 
@@ -61,37 +60,41 @@ function filter(f$$1, _arg1$$2) {
   });
 }
 
-function filterMap(f$$2, _arg1$$3) {
+function map(g, f$$2, _arg1$$3) {
   const p$$2 = _arg1$$3.fields[0];
-  return new T$00602(0, "Pith", function (o$$4) {
-    return p$$2(function (a$$2) {
-      const matchValue = f$$2(a$$2);
+  return new T$00602(0, "Pith", function ($arg$$2) {
+    return f$$2(p$$2(function ($arg$$1) {
+      $arg$$2(g($arg$$1));
+    }));
+  });
+}
 
-      if (matchValue != null) {
-        const a$$3 = (0, _Option.value)(matchValue);
-        o$$4(a$$3);
-      }
+function fmap(f$$3, _arg1$$4) {
+  const p$$3 = _arg1$$4.fields[0];
+  return new T$00602(0, "Pith", function ($arg$$3) {
+    return f$$3(p$$3($arg$$3));
+  });
+}
+
+function omap(f$$4, _arg1$$5) {
+  const p$$4 = _arg1$$5.fields[0];
+  return new T$00602(0, "Pith", function (o$$5) {
+    return p$$4(function ($arg$$4) {
+      o$$5(f$$4($arg$$4));
     });
   });
 }
 
-function map(f$$3, _arg1$$4) {
-  const p$$3 = _arg1$$4.fields[0];
-  return new T$00602(0, "Pith", function ($arg$$1) {
-    return f$$3(p$$3($arg$$1));
-  });
-}
-
-function pmap(f$$4, _arg1$$5) {
-  const p$$4 = _arg1$$5.fields[0];
-  return new T$00602(0, "Pith", (0, _Util.partialApply)(1, f$$4, [p$$4]));
-}
-
-function bind(f$$5, _arg1$$6) {
+function pmap(f$$5, _arg1$$6) {
   const p$$5 = _arg1$$6.fields[0];
-  return new T$00602(0, "Pith", function (o$$5) {
-    const a$$4 = p$$5(o$$5);
-    const p$$6 = f$$5(a$$4).fields[0];
-    return p$$6(o$$5);
+  return new T$00602(0, "Pith", (0, _Util.partialApply)(1, f$$5, [p$$5]));
+}
+
+function bind(f$$6, _arg1$$7) {
+  const p$$6 = _arg1$$7.fields[0];
+  return new T$00602(0, "Pith", function (o$$6) {
+    const a$$2 = p$$6(o$$6);
+    const p$$7 = f$$6(a$$2).fields[0];
+    return p$$7(o$$6);
   });
 }

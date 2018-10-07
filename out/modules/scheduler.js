@@ -19,17 +19,17 @@ var _time = require("./time");
 
 var _pith = require("./pith");
 
+var _unit = require("./unit");
+
 var _o = require("./o");
 
 var _disposable = require("./disposable");
 
+var _String = require("./fable-core.2.0.3/String");
+
 var _timeline = require("./timeline");
 
 var _Util = require("./fable-core.2.0.3/Util");
-
-var _unit = require("./unit");
-
-var _String = require("./fable-core.2.0.3/String");
 
 var _Option = require("./fable-core.2.0.3/Option");
 
@@ -110,19 +110,27 @@ function Private$$$map(offset$$1, canceled$$1, io$$4) {
   }));
 }
 
-function Private$$$runAllNows(now$$1, _arg1$$1) {
-  const io$$7 = _arg1$$1.fields[0];
+function Private$$$mappend(_arg2, _arg1$$1) {
+  const l = _arg2.fields[0];
+  const r = _arg1$$1.fields[0];
+  return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040, arg10$0040$$4) {
+    (0, _unit.mappend)(null, null);
+  }, l, r));
+}
+
+function Private$$$runAllNows(now$$1, _arg1$$2) {
+  const io$$7 = _arg1$$2.fields[0];
   return (0, _pith.return$0027)(function (o$$3) {
     const o$0027 = (0, _o.proxy)(o$$3);
 
     const ring = function ring(p$$3, o$$4) {
-      p$$3(function (_arg2) {
-        if (_arg2.tag === 1) {
-          const io$$9 = _arg2.fields[1];
-          const delay$$3 = _arg2.fields[0];
+      p$$3(function (_arg2$$1) {
+        if (_arg2$$1.tag === 1) {
+          const io$$9 = _arg2$$1.fields[1];
+          const delay$$3 = _arg2$$1.fields[0];
           o$$4([delay$$3 + now$$1, io$$9]);
         } else {
-          const io$$8 = _arg2.fields[0].fields[0];
+          const io$$8 = _arg2$$1.fields[0].fields[0];
           (0, _pith.run)(o$0027, (0, _abo.run)(now$$1, (0, _abo.pmap)(ring, io$$8)));
         }
       });
@@ -138,39 +146,26 @@ function run(tf, timer) {
 
   const delay$$4 = function delay$$4(timeline) {
     var tl, nr;
+    (0, _String.toConsole)((0, _String.printf)("<-"));
     const nextArrival = (0, _timeline.nextArrival)(timeline);
 
     if (nextRun != null) {
       if (tl = nextRun[1], (nr = nextRun[0], (0, _Util.compare)(nr, nextArrival) > 0)) {
-        nextRun = [nextArrival, (0, _timeline.mappend)(function (arg00$0040, arg10$0040$$10) {
-          const l = arg00$0040.fields[0];
-          const r = arg10$0040$$10.fields[0];
-          return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040$$1, arg10$0040$$11) {
-            (0, _unit.mappend)(null, null);
-          }, l, r));
-        }, nextRun[1], timeline)];
+        nextRun = [nextArrival, (0, _timeline.mappend)(Private$$$mappend, nextRun[1], timeline)];
         setTimer(nextArrival);
       } else {
         if (nextRun != null) {
           const tl$$2 = nextRun[1];
           const nr$$2 = nextRun[0];
-          nextRun = [nr$$2, (0, _timeline.mappend)(function (arg00$0040$$2, arg10$0040$$12) {
-            const l$$1 = arg00$0040$$2.fields[0];
-            const r$$1 = arg10$0040$$12.fields[0];
-            return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040$$3, arg10$0040$$13) {
-              (0, _unit.mappend)(null, null);
-            }, l$$1, r$$1));
-          }, tl$$2, timeline)];
+          nextRun = [nr$$2, (0, _timeline.mappend)(Private$$$mappend, tl$$2, timeline)];
         } else {
-          throw new _Types.MatchFailureException("C:/code/sakhe/core/scheduler.fs", 63, 14);
+          throw new _Types.MatchFailureException("C:/code/sakhe/core/scheduler.fs", 64, 14);
         }
       }
     } else {
       nextRun = [nextArrival, timeline];
       setTimer(nextArrival);
     }
-
-    (0, _String.toConsole)((0, _String.printf)("<-"));
   };
 
   const setTimer = function setTimer(nextArrival$$1) {
@@ -180,32 +175,20 @@ function run(tf, timer) {
       const patternInput = nextRun;
       nextRun = null;
       const patternInput$$1 = (0, _timeline.takeUntil)((0, _time.max)(patternInput[0], tf()), patternInput[1]);
-      const l$$5 = (0, _Option.defaultArg)(patternInput$$1[0], null, function binder(l$$3) {
-        const o$$5 = (0, _o.contraMap)(function (tupledArg$$1) {
+      const l$$3 = (0, _Option.defaultArg)(patternInput$$1[0], null, function binder(l$$2) {
+        const o$$5 = (0, _o.return$0027)(function (arg10$0040$$13, arg20$0040) {
+          return (0, _pith.mappend)(function (arg00$0040$$3, arg10$0040$$14) {
+            (0, _unit.mappend)(null, null);
+          }, arg10$0040$$13, arg20$0040);
+        }, (0, _pith.empty)());
+        (0, _pith.run)(o$$5, (0, _pith.omap)(function (tupledArg$$1) {
           return Private$$$runAllNows(tupledArg$$1[0], tupledArg$$1[1]);
-        }, (0, _o.return$0027)(function (arg10$0040$$14, arg20$0040) {
-          return (0, _pith.mappend)(function (arg00$0040$$4, arg10$0040$$15) {
-            (0, _unit.mappend)(null, null);
-          }, arg10$0040$$14, arg20$0040);
-        }, (0, _pith.empty)()));
-        (0, _pith.run)(o$$5, (0, _timeline.toPith)(l$$3));
-        return (0, _timeline.fromPith)(function (arg00$0040$$5, arg10$0040$$17) {
-          const l$$4 = arg00$0040$$5.fields[0];
-          const r$$3 = arg10$0040$$17.fields[0];
-          return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040$$6, arg10$0040$$18) {
-            (0, _unit.mappend)(null, null);
-          }, l$$4, r$$3));
-        }, (0, _o.T$00602$$get_Value)(o$$5));
+        }, (0, _timeline.toPith)(l$$2)));
+        return (0, _timeline.fromPith)(Private$$$mappend, (0, _o.T$00602$$get_Value)(o$$5));
       });
-      const matchValue = (0, _option.mappend)(function (arg10$0040$$19, arg20$0040$$1) {
-        return (0, _timeline.mappend)(function (arg00$0040$$7, arg10$0040$$20) {
-          const l$$6 = arg00$0040$$7.fields[0];
-          const r$$4 = arg10$0040$$20.fields[0];
-          return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040$$8, arg10$0040$$21) {
-            (0, _unit.mappend)(null, null);
-          }, l$$6, r$$4));
-        }, arg10$0040$$19, arg20$0040$$1);
-      }, l$$5, patternInput$$1[1]);
+      const matchValue = (0, _option.mappend)(function (arg10$0040$$18, arg20$0040$$1) {
+        return (0, _timeline.mappend)(Private$$$mappend, arg10$0040$$18, arg20$0040$$1);
+      }, l$$3, patternInput$$1[1]);
 
       if (matchValue != null) {
         const timeline$$1 = matchValue;
@@ -218,13 +201,7 @@ function run(tf, timer) {
     const canceled$$2 = new _Types.FSharpRef(false);
     const now$$3 = tf();
     const io$$11 = Private$$$map(_time.zero - now$$3, canceled$$2, io$$10);
-    const timeline$$2 = (0, _timeline.fromPith)(function (arg00$0040$$9, arg10$0040$$22) {
-      const l$$7 = arg00$0040$$9.fields[0];
-      const r$$5 = arg10$0040$$22.fields[0];
-      return new Private$002EOriginT(0, "OriginT", (0, _abo.mappend)(function (arg00$0040$$10, arg10$0040$$23) {
-        (0, _unit.mappend)(null, null);
-      }, l$$7, r$$5));
-    }, Private$$$runAllNows(now$$3, io$$11));
+    const timeline$$2 = (0, _timeline.fromPith)(Private$$$mappend, Private$$$runAllNows(now$$3, io$$11));
 
     if (timeline$$2 != null) {
       const timeline$$3 = timeline$$2;

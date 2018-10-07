@@ -43,7 +43,7 @@ module private Private =
             | Local io  -> Pith.pmap (ring offset canceled) << Abo.run (now + offset, offset) <| io
             | Origin io -> Pith.pmap (ring (Time.zero - now) canceled) << Abo.run now <| io
 
-    let inline mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
+    let mappend (OriginT l) (OriginT r) = OriginT <| Abo.mappend Unit.mappend l r
 
     let rec runAllNows
         (now, (OriginT io)) = Pith.return' <| fun o ->
@@ -59,6 +59,7 @@ let run
     let mutable timerd = Disposable.empty
 
     let rec delay timeline =
+        printfn "<-"
         let nextArrival = TimeLine.nextArrival timeline
         match nextRun with
         | None                                  ->
@@ -69,8 +70,6 @@ let run
             setTimer nextArrival
         | Some (nr, tl)                         ->
             nextRun <- Some (nr, TimeLine.mappend mappend tl timeline)
-        printfn "<-"
-
     and setTimer nextArrival =
         timerd.Dispose()
         timerd <- timer (Time.Delay.fromTo (tf()) nextArrival) <| fun () ->
@@ -79,8 +78,8 @@ let run
             nextRun <- None
             let (l, r) = TimeLine.takeUntil (Time.max nr (tf())) tl
             let l = l |> Option.bind (fun l ->
-                let o = O.return' (Pith.mappend Unit.mappend) Pith.empty |> O.contraMap runAllNows
-                Pith.run o (TimeLine.toPith l)
+                let o = O.return' (Pith.mappend Unit.mappend) Pith.empty
+                Pith.run o << Pith.omap runAllNows <| TimeLine.toPith l
                 TimeLine.fromPith mappend o.Value)
             match (Option.mappend (TimeLine.mappend mappend) l r) with
             | None -> ()
