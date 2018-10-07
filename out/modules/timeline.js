@@ -123,40 +123,40 @@ function takeUntil(now, tl) {
 
 function mergea(l$$1, r$$1) {
   return (0, _Array.ofSeq)((0, _Seq.delay)(function () {
-    const lLen = l$$1.length | 0;
-    const rLen = r$$1.length | 0;
-    let i$$3 = 0;
-    let j = 0;
+    const ll = l$$1.length | 0;
+    const rl = r$$1.length | 0;
+    let li = 0;
+    let ri = 0;
     return (0, _Seq.append)((0, _Seq.enumerateWhile)(function () {
-      return i$$3 < lLen ? j < rLen : false;
+      return li < ll ? ri < rl : false;
     }, (0, _Seq.delay)(function () {
-      const li = l$$1[i$$3];
-      const ri = r$$1[j];
-      return (0, _Util.compare)(li, ri) < 0 ? (0, _Seq.append)((0, _Seq.singleton)(li), (0, _Seq.delay)(function () {
-        i$$3 = i$$3 + 1;
+      const le = l$$1[li];
+      const re = r$$1[ri];
+      return (0, _Util.compare)(le, re) < 0 ? (0, _Seq.append)((0, _Seq.singleton)(le), (0, _Seq.delay)(function () {
+        li = li + 1;
         return (0, _Seq.empty)();
-      })) : (0, _Util.compare)(li, ri) > 0 ? (0, _Seq.append)((0, _Seq.singleton)(ri), (0, _Seq.delay)(function () {
-        j = j + 1;
+      })) : (0, _Util.compare)(le, re) > 0 ? (0, _Seq.append)((0, _Seq.singleton)(re), (0, _Seq.delay)(function () {
+        ri = ri + 1;
         return (0, _Seq.empty)();
-      })) : (0, _Seq.append)((0, _Seq.singleton)(li), (0, _Seq.delay)(function () {
-        i$$3 = i$$3 + 1;
-        j = j + 1;
+      })) : (0, _Seq.append)((0, _Seq.singleton)(le), (0, _Seq.delay)(function () {
+        li = li + 1;
+        ri = ri + 1;
         return (0, _Seq.empty)();
       }));
     })), (0, _Seq.delay)(function () {
       return (0, _Seq.append)((0, _Seq.enumerateWhile)(function () {
-        return i$$3 < lLen;
+        return li < ll;
       }, (0, _Seq.delay)(function () {
-        return (0, _Seq.append)((0, _Seq.singleton)(l$$1[i$$3]), (0, _Seq.delay)(function () {
-          i$$3 = i$$3 + 1;
+        return (0, _Seq.append)((0, _Seq.singleton)(l$$1[li]), (0, _Seq.delay)(function () {
+          li = li + 1;
           return (0, _Seq.empty)();
         }));
       })), (0, _Seq.delay)(function () {
         return (0, _Seq.enumerateWhile)(function () {
-          return j < rLen;
+          return ri < rl;
         }, (0, _Seq.delay)(function () {
-          return (0, _Seq.append)((0, _Seq.singleton)(r$$1[j]), (0, _Seq.delay)(function () {
-            j = j + 1;
+          return (0, _Seq.append)((0, _Seq.singleton)(r$$1[ri]), (0, _Seq.delay)(function () {
+            ri = ri + 1;
             return (0, _Seq.empty)();
           }));
         }));

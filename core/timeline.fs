@@ -57,18 +57,18 @@ let takeUntil
 
 let private mergea l r =
     Array.ofSeq <| seq {
-        let lLen = Array.length l
-        let rLen = Array.length r
-        let mutable i = 0;
-        let mutable j = 0;
-        while (i < lLen && j < rLen) do
-            let li = l.[i]
-            let ri = r.[j]
-            if (li < ri) then yield li; i <- i + 1
-            else if (li > ri) then yield ri; j <- j + 1
-            else yield li; i <- i + 1; j <- j + 1
-        while (i < lLen) do yield l.[i]; i <- i + 1
-        while (j < rLen) do yield r.[j]; j <- j + 1
+        let ll = Array.length l
+        let rl = Array.length r
+        let mutable li = 0;
+        let mutable ri = 0;
+        while (li < ll && ri < rl) do
+            let le = l.[li]
+            let re = r.[ri]
+            if (le < re) then yield le; li <- li + 1
+            else if (le > re) then yield re; ri <- ri + 1
+            else yield le; li <- li + 1; ri <- ri + 1
+        while (li < ll) do yield l.[li]; li <- li + 1
+        while (ri < rl) do yield r.[ri]; ri <- ri + 1
     }
 
 let private mergem mappend l r =
