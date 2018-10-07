@@ -32,6 +32,8 @@ let add (Delay delay) (Time t) = return' <| t + float delay
 
 let change (Offset offset) (Time t) = return' <| (t + offset)
 
+let max (Time l) (Time r) = return' <| System.Math.Max (l, r)
+
 module Delay =
     let return' i =
         assert (i >= 0)

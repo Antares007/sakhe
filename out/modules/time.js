@@ -13,6 +13,7 @@ exports.T$$$op_Addition$$Z3FF3231F = T$$$op_Addition$$Z3FF3231F;
 exports.return$0027 = return$0027;
 exports.add = add;
 exports.change = change;
+exports.max = max;
 exports.DelayModule$$$return$0027 = DelayModule$$$return$0027;
 exports.DelayModule$$$fromTo = DelayModule$$$fromTo;
 exports.DelayModule$$$unbox = DelayModule$$$unbox;
@@ -91,6 +92,12 @@ function change(_arg2$$2, _arg1$$2) {
   return return$0027(t$$5 + offset);
 }
 
+function max(_arg2$$3, _arg1$$3) {
+  const l$$5 = _arg2$$3;
+  const r$$5 = _arg1$$3;
+  return return$0027((0, _Util.max)(_Util.comparePrimitives, l$$5, r$$5));
+}
+
 function DelayModule$$$return$0027(i) {
   if (!(i >= 0)) {
     debugger;
@@ -102,14 +109,14 @@ function DelayModule$$$return$0027(i) {
 const DelayModule$$$zero = 0;
 exports.DelayModule$$$zero = DelayModule$$$zero;
 
-function DelayModule$$$fromTo(_arg2$$3, _arg1$$3) {
-  const from = _arg2$$3;
-  const to$0027 = _arg1$$3;
+function DelayModule$$$fromTo(_arg2$$4, _arg1$$4) {
+  const from = _arg2$$4;
+  const to$0027 = _arg1$$4;
   return (0, _Util.max)(_Util.comparePrimitives, 0, to$0027 - from);
 }
 
-function DelayModule$$$unbox(_arg1$$4) {
-  const v = _arg1$$4;
+function DelayModule$$$unbox(_arg1$$5) {
+  const v = _arg1$$5;
   return v | 0;
 }
 
@@ -117,8 +124,8 @@ function OffsetModule$$$return$0027(a) {
   return a;
 }
 
-function OffsetModule$$$from(_arg2$$4, _arg1$$5) {
-  const origin = _arg2$$4;
-  const local = _arg1$$5;
+function OffsetModule$$$from(_arg2$$5, _arg1$$6) {
+  const origin = _arg2$$5;
+  const local = _arg1$$6;
   return local - origin;
 }

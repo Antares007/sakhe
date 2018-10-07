@@ -77,7 +77,7 @@ let run
             printfn "->"
             let (nr, tl) = nextRun.Value
             nextRun <- None
-            let (l, r) = TimeLine.takeUntil (tf()) tl
+            let (l, r) = TimeLine.takeUntil (Time.max nr (tf())) tl
             let l = l |> Option.bind (fun l ->
                 let o = O.return' (Pith.mappend Unit.mappend) Pith.empty |> O.contraMap runAllNows
                 Pith.run o (TimeLine.toPith l)

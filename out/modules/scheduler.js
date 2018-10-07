@@ -179,7 +179,7 @@ function run(tf, timer) {
       (0, _String.toConsole)((0, _String.printf)("->"));
       const patternInput = nextRun;
       nextRun = null;
-      const patternInput$$1 = (0, _timeline.takeUntil)(tf(), patternInput[1]);
+      const patternInput$$1 = (0, _timeline.takeUntil)((0, _time.max)(patternInput[0], tf()), patternInput[1]);
       const l$$5 = (0, _Option.defaultArg)(patternInput$$1[0], null, function binder(l$$3) {
         const o$$5 = (0, _o.contraMap)(function (tupledArg$$1) {
           return Private$$$runAllNows(tupledArg$$1[0], tupledArg$$1[1]);
