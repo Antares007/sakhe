@@ -174,7 +174,7 @@ function run(tf, timer) {
       (0, _String.toConsole)((0, _String.printf)("->"));
       const patternInput = nextRun;
       nextRun = null;
-      const patternInput$$1 = (0, _timeline.takeUntil)((0, _time.max)(patternInput[0], tf()), patternInput[1]);
+      const patternInput$$1 = (0, _timeline.takeUntil)(tf(), patternInput[1]);
       const l$$3 = (0, _Option.defaultArg)(patternInput$$1[0], null, function binder(l$$2) {
         const o$$5 = (0, _o.return$0027)(function (arg10$0040$$13, arg20$0040) {
           return (0, _pith.mappend)(function (arg00$0040$$3, arg10$0040$$14) {

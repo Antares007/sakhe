@@ -18,6 +18,8 @@ var _scheduler = require("./scheduler");
 
 var _time = require("./time");
 
+var _Util = require("./fable-core.2.0.3/Util");
+
 const d = (0, _disposable.SettableDisposable$$$$002Ector)();
 exports.d = d;
 
@@ -74,10 +76,22 @@ function see(n) {
 }
 
 function timer(delay$$2, task) {
-  const token = setTimeout(task, (0, _time.DelayModule$$$unbox)(delay$$2));
-  return (0, _disposable.return$0027)(function () {
-    clearTimeout(token);
-  });
+  if ((0, _Util.equals)(delay$$2, _time.DelayModule$$$zero)) {
+    let canceled = false;
+    Promise.resolve(task).then(function (t$$1) {
+      if (!canceled) {
+        t$$1();
+      }
+    });
+    return (0, _disposable.return$0027)(function () {
+      canceled = true;
+    });
+  } else {
+    const token = setTimeout(task, (0, _time.DelayModule$$$unbox)(delay$$2));
+    return (0, _disposable.return$0027)(function () {
+      clearTimeout(token);
+    });
+  }
 }
 
 function tf() {

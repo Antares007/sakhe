@@ -1,4 +1,5 @@
 module Sakhe.Show
+open Fable.Import
 
 let d = new Disposable.SettableDisposable()
 
@@ -30,8 +31,13 @@ let rec see n = Scheduler.return' <| fun t -> Pith.return' <| fun o ->
     o <| tree "Ta"
 
 let timer delay task =
-    let token = Fable.Import.JS.setTimeout task (Time.Delay.unbox delay)
-    Disposable.return' <| fun () -> Fable.Import.JS.clearTimeout token
+    if delay = Time.Delay.zero then
+        let mutable canceled = false
+        JS.Promise.resolve(task).``then``(fun t -> if not canceled then t()) |> ignore
+        Disposable.return' (fun () -> canceled <- true)
+    else
+        let token = Fable.Import.JS.setTimeout task (Time.Delay.unbox delay)
+        Disposable.return' <| fun () -> Fable.Import.JS.clearTimeout token
 let tf () = Time.return' <| System.Math.Floor (Fable.Import.Browser.performance.now())
 d.Set <| Scheduler.run tf timer (see 0)
 
