@@ -1,6 +1,5 @@
 module Sakhe.Show
 open Fable.Import
-
 let d = new Disposable.SettableDisposable()
 
 let rec see n = Scheduler.return' <| fun t -> Pith.return' <| fun o ->

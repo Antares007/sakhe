@@ -45,26 +45,28 @@ function SettableDisposable$$$$002Ector() {
   return this != null ? SettableDisposable.call(this) : new SettableDisposable();
 }
 
-function SettableDisposable$$Set$$Z5A296901(__$$1, d) {
-  if (__$$1.disposed) {
+function SettableDisposable$$Set$$Z5A296901(this$, d) {
+  if (this$.disposed) {
     d.Dispose();
+    return this$;
   } else {
-    if (__$$1.setted != null) {
-      __$$1.setted.Dispose();
+    if (this$.setted != null) {
+      this$.setted.Dispose();
     }
 
-    __$$1.setted = d;
+    this$.setted = d;
+    return this$;
   }
 }
 
 SettableDisposable.prototype.Dispose = function () {
-  const __$$2 = this;
+  const __$$1 = this;
 
-  if (__$$2.disposed) {} else {
-    __$$2.disposed = true;
+  if (__$$1.disposed) {} else {
+    __$$1.disposed = true;
 
-    if (__$$2.setted != null) {
-      __$$2.setted.Dispose();
+    if (__$$1.setted != null) {
+      __$$1.setted.Dispose();
     }
   }
 };

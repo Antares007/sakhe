@@ -14,8 +14,8 @@
     <Compile Include="timeline.fs" />
     <Compile Include="sink.fs" />
     <Compile Include="scheduler.fs" />
-    <Compile Include="stream.fs" />
     <Compile Include="show.fs" />
+    <Compile Include="stream.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
