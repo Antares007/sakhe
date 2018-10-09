@@ -19,15 +19,11 @@ type SettableDisposable() =
             else
             disposed <- true
             if setted.IsSome then setted.Value.Dispose()
-    member this.Set (d: IDisposable)  =
-        if disposed then
-            d.Dispose()
-            this :> IDisposable
+    member __.Set (d: IDisposable)  =
+        if disposed then d.Dispose()
         else
-            if setted.IsSome then setted.Value.Dispose()
-
-            setted <- Some d
-            this :> IDisposable
+        if setted.IsSome then setted.Value.Dispose()
+        setted <- Some d
     member inline this.Dispose () = (this :> IDisposable).Dispose()
 
 
