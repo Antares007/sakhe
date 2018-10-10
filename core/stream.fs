@@ -59,24 +59,35 @@ let merge (Stream a) (Stream b) =
 let join (Stream ioOfStreams) =
     Of <| fun run s ->
         let mutable runningStreamCount = 1
-        let mutable disposable = Disposable.empty
+        let mutable disposablesMap = Map.empty
+        let mutable disposables = ResizeArray()
+
+        let mutable disposable = Disposable.return' <| fun () ->
+            let to' = disposables.Count - 1
+            for i = 0 to to' do Disposable.dispose disposables.[i]
+
         let end' t =
             runningStreamCount <- runningStreamCount - 1
             if runningStreamCount = 0 then s << End <| t
+
         let error' t err =
             disposable.Dispose()
             s << Error <| (t, err)
+
         let so = O.proxy <| function
             | O.Event ((onow, oofset), (Stream io)) ->
+
                 let so = O.proxy <| function
                     | O.Event ((inow,_), a) -> s << Event <| ((onow + inow, oofset), a)
                     | O.End (inow,_) -> end' (onow + inow, oofset)
                     | O.Error ((inow,_), err) -> error' (onow + inow, oofset) err
-                disposable <- Disposable.append disposable << Pith.run so <| Abo.run run io
+                disposables.Add <<  Disposable.append disposable << Pith.run so <| Abo.run run io
                 runningStreamCount <- runningStreamCount + 1
+
             | O.End t -> end' t
             | O.Error (t, err) -> error' t err
-        disposable <- Pith.run so <| Abo.run run ioOfStreams
+
+        disposables.Add << Pith.run so <| Abo.run run ioOfStreams
         disposable
 
 let bind f io = join << map f <| io
