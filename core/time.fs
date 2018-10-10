@@ -7,6 +7,8 @@ type [<Erase>] Delay = private Delay of int
 type [<Erase>] T =
     private
     | Time of float
+    static member (+) ((Time l), (Time r)) =
+        Time (l + r)
     static member (-) ((Time l), (Time r)) =
         Offset (l - r)
     static member (+) ((Time l), (Offset r)) =

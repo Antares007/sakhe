@@ -51,3 +51,28 @@ let merge (Stream a) (Stream b) =
         let db = Pith.run so <| Abo.run run b
         disposable <- Disposable.append da db
         disposable
+
+let join (Stream ioOfStreams) =
+    Of <| fun run s ->
+        let mutable runningStreamCount = 1
+        let mutable disposable = Disposable.empty
+        let end' t =
+            runningStreamCount <- runningStreamCount - 1
+            if runningStreamCount = 0 then s << End <| t
+        let error' t err =
+            disposable.Dispose()
+            s << Error <| (t, err)
+        let so = O.proxy <| function
+            | O.Event ((tb, ob), (Stream io)) ->
+                let so = O.proxy <| function
+                    | O.Event ((now,_), a) -> s << Event <| ((tb + now, ob), a)
+                    | O.End (now,_) -> end' (tb + now, ob)
+                    | O.Error (t, err) -> error' t err
+                disposable <- Disposable.append disposable << Pith.run so <| Abo.run run io
+                runningStreamCount <- runningStreamCount + 1
+            | O.End t -> end' t
+            | O.Error (t, err) -> error' t err
+        disposable <- Pith.run so <| Abo.run run ioOfStreams
+        disposable
+
+let bind f io = join << map f <| io
