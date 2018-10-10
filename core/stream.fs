@@ -18,13 +18,16 @@ module Scheduler =
 let Of f = Stream << Abo.return' <| fun run -> Pith.return' <| fun sinkO -> f run sinkO
 
 let unit =
-   Of <| fun run s ->
+   Stream << Abo.return' <| fun run -> Pith.return' <| fun s ->
         run << Scheduler.Of <| fun _ o ->
             o << Scheduler.delay 0 <| fun t _ ->
                 try
                     s <| Event (t, ())
                     s <| End (t)
                 with err -> s <| Error (t, err)
+
+let empty<'a> =
+   Stream << Abo.return' <| fun run -> Pith.return' <| fun (s: O<'a> -> unit) -> Disposable.empty
 
 let map f (Stream io) =
     Of <| fun run s ->
@@ -33,6 +36,7 @@ let map f (Stream io) =
             | O.End (t) -> s << End <| (t)
             | O.Error (t, err) -> s << Error <| (t, err)
         Pith.run so <| Abo.run run io
+
 
 let merge (Stream a) (Stream b) =
     Of <| fun run s ->
@@ -63,11 +67,11 @@ let join (Stream ioOfStreams) =
             disposable.Dispose()
             s << Error <| (t, err)
         let so = O.proxy <| function
-            | O.Event ((tb, ob), (Stream io)) ->
+            | O.Event ((onow, oofset), (Stream io)) ->
                 let so = O.proxy <| function
-                    | O.Event ((now,_), a) -> s << Event <| ((tb + now, ob), a)
-                    | O.End (now,_) -> end' (tb + now, ob)
-                    | O.Error (t, err) -> error' t err
+                    | O.Event ((inow,_), a) -> s << Event <| ((onow + inow, oofset), a)
+                    | O.End (inow,_) -> end' (onow + inow, oofset)
+                    | O.Error ((inow,_), err) -> error' (onow + inow, oofset) err
                 disposable <- Disposable.append disposable << Pith.run so <| Abo.run run io
                 runningStreamCount <- runningStreamCount + 1
             | O.End t -> end' t
