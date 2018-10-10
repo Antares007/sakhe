@@ -58,36 +58,29 @@ let merge (Stream a) (Stream b) =
 
 let join (Stream ioOfStreams) =
     Of <| fun run s ->
-        let mutable runningStreamCount = 1
-        let mutable disposablesMap = Map.empty
-        let mutable disposables = ResizeArray()
-
-        let mutable disposable = Disposable.return' <| fun () ->
-            let to' = disposables.Count - 1
-            for i = 0 to to' do Disposable.dispose disposables.[i]
-
-        let end' t =
-            runningStreamCount <- runningStreamCount - 1
-            if runningStreamCount = 0 then s << End <| t
-
+        let mutable i = 1
+        let index = 0
+        let mutable map = Map.empty
+        let mutable disposable =
+            Disposable.return' <| fun () -> Map.iter (fun _ d -> Disposable.dispose d) map
+        let end' t index =
+            map <- Map.remove index map
+            if map = Map.empty then s << End <| t
         let error' t err =
             disposable.Dispose()
             s << Error <| (t, err)
-
         let so = O.proxy <| function
             | O.Event ((onow, oofset), (Stream io)) ->
-
+                let index = i
+                i <- i + 1
                 let so = O.proxy <| function
                     | O.Event ((inow,_), a) -> s << Event <| ((onow + inow, oofset), a)
-                    | O.End (inow,_) -> end' (onow + inow, oofset)
+                    | O.End (inow,_) -> end' (onow + inow, oofset) index
                     | O.Error ((inow,_), err) -> error' (onow + inow, oofset) err
-                disposables.Add <<  Disposable.append disposable << Pith.run so <| Abo.run run io
-                runningStreamCount <- runningStreamCount + 1
-
-            | O.End t -> end' t
+                map <- Map.add index (Pith.run so (Abo.run run io)) map
+            | O.End t -> end' t index
             | O.Error (t, err) -> error' t err
-
-        disposables.Add << Pith.run so <| Abo.run run ioOfStreams
+        map <- Map.add index (Pith.run so (Abo.run run ioOfStreams)) map
         disposable
 
 let bind f io = join << map f <| io
