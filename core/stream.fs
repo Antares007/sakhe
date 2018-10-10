@@ -26,6 +26,14 @@ let unit =
                     s <| End (t)
                 with err -> s <| Error (t, err)
 
+let map f (Stream io) =
+    Of <| fun run s ->
+        let so = O.proxy <| function
+            | O.Event (t, a) -> s << Event <| (t, f a)
+            | O.End (t) -> s << End <| (t)
+            | O.Error (t, err) -> s << Error <| (t, err)
+        Pith.run so <| Abo.run run io
+
 let merge (Stream a) (Stream b) =
     Of <| fun run s ->
         let mutable disposable = Disposable.empty
