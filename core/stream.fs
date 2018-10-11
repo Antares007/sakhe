@@ -1,7 +1,9 @@
 module Sakhe.Stream
 open System
 
-type T<'a> = Stream of Abo.T<(Scheduler.T -> IDisposable), IDisposable, O<'a>>
+type T<'a> =
+    private
+    | Stream of Abo.T<(Scheduler.T -> IDisposable), IDisposable, O<'a>>
 and O<'a> =
     | Event of (Time.T * Time.Offset) * 'a
     | End   of (Time.T * Time.Offset)
@@ -30,7 +32,7 @@ let empty<'a> =
    Stream << Abo.return' <| fun run -> Pith.return' <| fun (s: O<'a> -> unit) -> Disposable.empty
 
 let map f (Stream io) =
-    Of <| fun run s ->
+    Stream << Abo.return' <| fun run -> Pith.return' <| fun s ->
         let so = O.proxy <| function
             | O.Event (t, a) -> s << Event <| (t, f a)
             | O.End (t) -> s << End <| (t)
@@ -39,7 +41,7 @@ let map f (Stream io) =
 
 
 let merge (Stream a) (Stream b) =
-    Of <| fun run s ->
+    Stream << Abo.return' <| fun run -> Pith.return' <| fun s ->
         let mutable disposable = Disposable.empty
         let mutable endCount = 0
         let so = O.proxy <| function
@@ -57,11 +59,11 @@ let merge (Stream a) (Stream b) =
         disposable
 
 let join (Stream ioOfStreams) =
-    Of <| fun run s ->
+    Stream << Abo.return' <| fun run -> Pith.return' <| fun s ->
         let mutable i = 1
         let index = 0
         let mutable map = Map.empty
-        let mutable disposable =
+        let disposable =
             Disposable.return' <| fun () -> Map.iter (fun _ d -> Disposable.dispose d) map
         let end' t index =
             map <- Map.remove index map
@@ -84,3 +86,18 @@ let join (Stream ioOfStreams) =
         disposable
 
 let bind f io = join << map f <| io
+
+let mappend (Stream l) (Stream r) =
+    Stream << Abo.return' <| fun run -> Pith.return' <| fun s ->
+        let mutable disposable = Disposable.empty
+        let so = O.proxy <| function
+            | O.Event (t, a) -> s << Event <| (t, a)
+            | O.Error (t, err) -> disposable.Dispose(); s << Error <| (t, err)
+            | O.End (onow, oofset) ->
+                let so = O.proxy <| function
+                    | O.Event ((inow,_), a) -> s << Event <| ((onow + inow, oofset), a)
+                    | O.Error (t, err) -> disposable.Dispose(); s << Error <| (t, err)
+                    | O.End (inow,_) -> s << End <| (onow + inow, oofset)
+                disposable <- Pith.run so (Abo.run run r)
+        disposable <- Pith.run so (Abo.run run l)
+        disposable
