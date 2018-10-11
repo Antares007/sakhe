@@ -6,7 +6,9 @@
   "scripts": {
     "fable": "dotnet run -c Release -p ../fable/src/dotnet/Fable.Compiler",
     "build": "fable-splitter -c ./splitter.config.js",
+    "build-fable": "fable-splitter -c ./splitter.fable.config.js",
     "watch": "fable-splitter -w -c ./splitter.config.js ",
+
     "postinstall": "dotnet restore"
   },
   "author": "",
