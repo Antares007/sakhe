@@ -72,13 +72,13 @@ let join (Stream ioOfStreams) =
             disposable.Dispose()
             s << Error <| (t, err)
         let so = O.proxy <| function
-            | O.Event ((onow, oofset), (Stream io)) ->
+            | O.Event ((ot, offset), (Stream io)) ->
                 let index = i
                 i <- i + 1
                 let so = O.proxy <| function
-                    | O.Event ((inow,_), a) -> s << Event <| ((onow + inow, oofset), a)
-                    | O.End (inow,_) -> end' (onow + inow, oofset) index
-                    | O.Error ((inow,_), err) -> error' (onow + inow, oofset) err
+                    | O.Event ((it,_), a) -> s << Event <| ((ot + it, offset), a)
+                    | O.End (it,_) -> end' (ot + it, offset) index
+                    | O.Error ((it,_), err) -> error' (ot + it, offset) err
                 map <- Map.add index (Pith.run so (Abo.run run io)) map
             | O.End t -> end' t index
             | O.Error (t, err) -> error' t err
@@ -93,11 +93,11 @@ let mappend (Stream l) (Stream r) =
         let so = O.proxy <| function
             | O.Event (t, a) -> s << Event <| (t, a)
             | O.Error (t, err) -> disposable.Dispose(); s << Error <| (t, err)
-            | O.End (onow, oofset) ->
+            | O.End (ot, offset) ->
                 let so = O.proxy <| function
-                    | O.Event ((inow,_), a) -> s << Event <| ((onow + inow, oofset), a)
-                    | O.Error (t, err) -> disposable.Dispose(); s << Error <| (t, err)
-                    | O.End (inow,_) -> s << End <| (onow + inow, oofset)
+                    | O.Event ((it,_), a) -> s << Event <| ((ot + it, offset), a)
+                    | O.Error ((it,_), err) -> disposable.Dispose(); s << Error <| ((ot + it, offset), err)
+                    | O.End (it,_) -> s << End <| (ot + it, offset)
                 disposable <- Pith.run so (Abo.run run r)
         disposable <- Pith.run so (Abo.run run l)
         disposable
