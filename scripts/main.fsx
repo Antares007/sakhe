@@ -2,8 +2,10 @@
 #load "dllrefs.fsx"
 #load "parsec.fsx"
 
-let f = Compiler.init ()
+// let f = Compiler.init ()
 
+
+/// Tokenize a single line of F# code
 [<AutoOpen>]
 module Priv =
     open Fable.Core.JsInterop
@@ -12,9 +14,10 @@ module Priv =
     let readFileSync (path: string): IBuffer = Fable.Core.JsInterop.importMember "fs"
     let toString (b:IBuffer) = b?toString()
 
-let checker = f.CreateChecker (Dllrefs.references, unbox << readFileSync << sprintf "../out/metadata2/%s.txt")
+// let checker = f.CreateChecker (Dllrefs.references, unbox << readFileSync << sprintf "../out/metadata2/%s.txt")
 let load path =
     let source = readFileSync path
+
 
     1
 open Parsec
