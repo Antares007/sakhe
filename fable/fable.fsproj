@@ -10,6 +10,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../../fable/src/dotnet/Fable.Compiler/Global/Fable.Core.fs" />
+    <Compile Include="../core/o.fs" />
+    <Compile Include="../core/pith.fs" />
+    <Compile Include="../core/abo.fs" />
+    <Compile Include="../core/disposable.fs" />
+    <Compile Include="../core/task-io.fs" />
+    <Compile Include="../core/time.fs" />
+    <Compile Include="../core/option.fs" />
+    <Compile Include="../core/unit.fs" />
+    <Compile Include="../core/timeline.fs" />
+    <Compile Include="../core/sink.fs" />
+    <Compile Include="../core/scheduler.fs" />
+    <Compile Include="../core/stream.fs" />
     <Compile Include="../../fable/src/dotnet/Fable.Compiler/Global/Prelude.fs" />
     <Compile Include="../../fable/src/dotnet/Fable.Compiler/Global/Compiler.fs" />
     <Compile Include="../../fable/src/dotnet/Fable.Compiler/AST/AST.Common.fs" />
