@@ -10,7 +10,7 @@ exports.d = void 0;
 
 var _disposable = require("./disposable");
 
-var _String = require("./fable-core.2.0.3/String");
+var _String = require("./fable-core.2.0.6/String");
 
 var _pith = require("./pith");
 
@@ -18,7 +18,7 @@ var _scheduler = require("./scheduler");
 
 var _time = require("./time");
 
-var _Util = require("./fable-core.2.0.3/Util");
+var _Util = require("./fable-core.2.0.6/Util");
 
 const d = (0, _disposable.SettableDisposable$$$$002Ector)();
 exports.d = d;

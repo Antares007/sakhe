@@ -11,7 +11,7 @@ exports.append = append;
 exports.appendArray = appendArray;
 exports.empty = exports.SettableDisposable = exports.AnonymousDisposable = void 0;
 
-var _Types = require("./fable-core.2.0.3/Types");
+var _Types = require("./fable-core.2.0.6/Types");
 
 const AnonymousDisposable = (0, _Types.declare)(function AnonymousDisposable(f) {
   const $this$$1 = this;
