@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.see = see;
 exports.timer = timer;
 exports.tf = tf;
-exports.d = void 0;
+exports.disposable = exports.o = exports.see2 = exports.run = exports.d = void 0;
 
 var _disposable = require("./disposable");
 
@@ -20,40 +20,44 @@ var _time = require("./time");
 
 var _Util = require("./fable-core.2.0.6/Util");
 
+var _stream = require("./stream");
+
+var _o = require("./o");
+
 const d = (0, _disposable.SettableDisposable$$$$002Ector)();
 exports.d = d;
 
 function see(n) {
   return (0, _scheduler.return$0027)(function (t) {
-    return (0, _pith.return$0027)(function (o) {
+    return (0, _pith.return$0027)(function (o$$1) {
       const delay$$1 = function delay$$1(label, delay, f$$2) {
         return (0, _scheduler.O$$$delay)(delay, function (tupledArg) {
-          return (0, _pith.return$0027)(function (o$$1) {
+          return (0, _pith.return$0027)(function (o$$2) {
             (0, _String.toConsole)((0, _String.printf)("now(%A) %s"))([tupledArg[0], tupledArg[1]])(label);
-            f$$2(tupledArg[0], o$$1);
+            f$$2(tupledArg[0], o$$2);
           });
         });
       };
 
-      o((0, _scheduler.O$$$nowOrigin)(function (now$$1) {
-        return (0, _pith.return$0027)(function (o$$2) {
+      o$$1((0, _scheduler.O$$$nowOrigin)(function (now$$1) {
+        return (0, _pith.return$0027)(function (o$$3) {
           (0, _String.toConsole)((0, _String.printf)("Origin ------> %A"))(now$$1);
         });
       }));
 
       if (n < 3) {
-        o(new _scheduler.O$00601(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
+        o$$1(new _scheduler.O$00601(1, "Delay", (0, _time.DelayModule$$$return$0027)(100), see(n + 1)));
       }
 
       const tree = function tree(l) {
         return (0, _scheduler.O$$$now)(function (now$$2) {
-          return (0, _pith.return$0027)(function (o$$3) {
+          return (0, _pith.return$0027)(function (o$$4) {
             for (let i = 1; i <= 1; i++) {
-              o$$3(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i), 100, function (now$$3, o$$4) {
+              o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d"))(l)(i), 100, function (now$$3, o$$5) {
                 for (let j = 1; j <= 2; j++) {
-                  o$$4(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i)(j), 200, function (now$$4, o$$5) {
+                  o$$5(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d"))(l)(i)(j), 200, function (now$$4, o$$6) {
                     for (let k = 1; k <= 3; k++) {
-                      o$$5(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i)(j)(k), 300, function (now$$5, o$$6) {}));
+                      o$$6(delay$$1((0, _String.toText)((0, _String.printf)("%s %d.%d.%d"))(l)(i)(j)(k), 300, function (now$$5, o$$7) {}));
                     }
                   }));
                 }
@@ -63,14 +67,14 @@ function see(n) {
         });
       };
 
-      o(delay$$1("A", 10, function (now$$6, o$$7) {
-        o$$7(delay$$1("B", 10, function (now$$7, o$$8) {
-          o$$8(delay$$1("C", 10, function (now$$8, o$$9) {
-            o$$9(tree("Ta"));
+      o$$1(delay$$1("A", 10, function (now$$6, o$$8) {
+        o$$8(delay$$1("B", 10, function (now$$7, o$$9) {
+          o$$9(delay$$1("C", 10, function (now$$8, o$$10) {
+            o$$10(tree("Ta"));
           }));
         }));
       }));
-      o(tree("Ta"));
+      o$$1(tree("Ta"));
     });
   });
 }
@@ -98,6 +102,16 @@ function tf() {
   return (0, _time.return$0027)(Math.floor(performance.now()));
 }
 
-(0, _disposable.SettableDisposable$$Set$$Z5A296901)(d, (0, _scheduler.run)(function () {
+const run = (0, _scheduler.run)(function () {
   return tf();
-}, timer)(see(0)));
+}, timer);
+exports.run = run;
+const see2 = (0, _stream.run)(_stream.unit);
+exports.see2 = see2;
+const o = (0, _o.contraMap)(function g(x) {
+  (0, _String.toConsole)((0, _String.printf)("%A"))(x);
+  return x;
+}, (0, _o.makeListO)());
+exports.o = o;
+const disposable = (0, _pith.run)(o, see2);
+exports.disposable = disposable;

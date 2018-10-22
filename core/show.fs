@@ -38,8 +38,13 @@ let timer delay task =
         let token = Fable.Import.JS.setTimeout task (Time.Delay.unbox delay)
         Disposable.return' <| fun () -> Fable.Import.JS.clearTimeout token
 let tf () = Time.return' <| System.Math.Floor (Fable.Import.Browser.performance.now())
-d.Set <| Scheduler.run tf timer (see 0)
-
+let run = Scheduler.run tf timer
+// d.Set << run <| see 0
+let see2 = Stream.run Stream.unit
+let o =
+    O.makeListO ()
+    |> O.contraMap (fun x -> printfn "%A" x;x)
+let disposable = Pith.run o see2
 
 // let d = new Disposable.SettableDisposable()
 
