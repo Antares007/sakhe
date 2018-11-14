@@ -42,13 +42,15 @@ exports.filter = filter;
 
 var _Date = require("./Date");
 
+var _Decimal = _interopRequireDefault(require("./Decimal"));
+
 var _Long = _interopRequireWildcard(require("./Long"));
 
 var _RegExp = require("./RegExp");
 
-var _Util = require("./Util");
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const fsFormatRegExp = /(^|[^%])%([0+ ]*)(-?\d+)?(?:\.(\d+))?(\w)/;
 const formatRegExp = /\{(\d+)(,-?\d+)?(?:\:(.+?))?\}/g; // From https://stackoverflow.com/a/13653180/3922220
@@ -236,11 +238,8 @@ function formatOnce(str2, rep) {
         break;
 
       case "O":
-        rep = (0, _Util.toString)(rep);
-        break;
-
       case "A":
-        rep = (0, _Util.toString)(rep, true);
+        rep = String(rep);
         break;
 
       case "x":
@@ -295,7 +294,7 @@ function format(str, ...args) {
     let rep = args[idx];
     let padSymbol = " ";
 
-    if (typeof rep === "number" || rep instanceof _Long.default) {
+    if (typeof rep === "number" || rep instanceof _Long.default || rep instanceof _Decimal.default) {
       switch ((pattern || "").substring(0, 1)) {
         case "f":
         case "F":
@@ -653,5 +652,5 @@ function trimEnd(str, ...chars) {
 }
 
 function filter(pred, x) {
-  return x.split("").filter(pred).join("");
+  return x.split("").filter(c => pred(c)).join("");
 }

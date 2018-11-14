@@ -10,21 +10,21 @@ exports.takeUntil = takeUntil;
 exports.mappend = mappend;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-core.2.0.6/Types");
+var _Types = require("./fable-core.2.0.10/Types");
 
-var _Map = require("./fable-core.2.0.6/Map");
+var _Map = require("./fable-core.2.0.10/Map");
 
-var _Option = require("./fable-core.2.0.6/Option");
+var _Option = require("./fable-core.2.0.10/Option");
 
-var _Util = require("./fable-core.2.0.6/Util");
+var _Util = require("./fable-core.2.0.10/Util");
 
 var _o = require("./o");
 
 var _pith = require("./pith");
 
-var _Seq = require("./fable-core.2.0.6/Seq");
+var _Seq = require("./fable-core.2.0.10/Seq");
 
-var _Array = require("./fable-core.2.0.6/Array");
+var _Array = require("./fable-core.2.0.10/Array");
 
 const T$00602 = (0, _Types.declare)(function T$00602(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -78,17 +78,21 @@ function findAppendPosition(a$$2, sortedArray) {
         const m$$1 = ~~((l + r) / 2) | 0;
 
         if ((0, _Util.compare)(sortedArray[m$$1], a$$2) > 0) {
-          l = l;
+          const $l$$16 = l;
+          l = $l$$16;
           r = m$$1;
           continue go;
         } else {
+          const $r$$17 = r;
           l = m$$1 + 1;
-          r = r;
+          r = $r$$17;
           continue go;
         }
       } else {
         return l - 1 | 0;
       }
+
+      break;
     }
   };
 

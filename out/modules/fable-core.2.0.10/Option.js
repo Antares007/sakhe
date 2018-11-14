@@ -39,7 +39,7 @@ class Some {
 
 
   toString() {
-    return (0, _Util.toString)(this.value);
+    return String(this.value);
   }
 
   toJSON() {

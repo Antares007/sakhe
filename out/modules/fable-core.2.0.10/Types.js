@@ -47,7 +47,7 @@ function declare(cons, superClass) {
 function SystemObject() {}
 
 SystemObject.prototype.toString = function () {
-  return "{" + Object.keys(this).map(k => k + " = " + (0, _Util.toString)(this[k])).join(";\n ") + "}";
+  return "{" + Object.keys(this).map(k => k + " = " + String(this[k])).join(";\n ") + "}";
 };
 
 SystemObject.prototype.GetHashCode = function () {
@@ -91,7 +91,7 @@ function List(head, tail) {
 }
 
 List.prototype.toString = function () {
-  return "[" + Array.from(this).map(x => (0, _Util.toString)(x)).join("; ") + "]";
+  return "[" + Array.from(this).map(x => String(x)).join("; ") + "]";
 };
 
 List.prototype.toJSON = function () {
@@ -141,9 +141,9 @@ Union.prototype.toString = function () {
   if (len === 0) {
     return this.name;
   } else if (len === 1) {
-    return this.name + " " + (0, _Util.toString)(this.fields[0]);
+    return this.name + " " + String(this.fields[0]);
   } else {
-    return this.name + " (" + this.fields.map(_Util.toString).join(",") + ")";
+    return this.name + " (" + this.fields.map(x => String(x)).join(",") + ")";
   }
 };
 
@@ -152,7 +152,7 @@ Union.prototype.toJSON = function () {
 };
 
 Union.prototype.GetHashCode = function () {
-  let hashes = this.fields.map(_Util.structuralHash);
+  let hashes = this.fields.map(x => (0, _Util.structuralHash)(x));
   hashes.splice(0, 0, (0, _Util.numberHash)(this.tag));
   return (0, _Util.combineHashCodes)(hashes);
 };
@@ -225,7 +225,7 @@ function recordCompare(self, other, getFieldNames) {
 function Record() {}
 
 Record.prototype.toString = function () {
-  return "{" + Object.keys(this).map(k => k + " = " + (0, _Util.toString)(this[k])).join(";\n ") + "}";
+  return "{" + Object.keys(this).map(k => k + " = " + String(this[k])).join(";\n ") + "}";
 };
 
 Record.prototype.toJSON = function () {

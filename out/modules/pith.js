@@ -15,11 +15,11 @@ exports.pmap = pmap;
 exports.bind = bind;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-core.2.0.6/Types");
+var _Types = require("./fable-core.2.0.10/Types");
 
 var _o = require("./o");
 
-var _Util = require("./fable-core.2.0.6/Util");
+var _Util = require("./fable-core.2.0.10/Util");
 
 const T$00602 = (0, _Types.declare)(function T$00602(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);

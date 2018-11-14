@@ -40,11 +40,11 @@ let timer delay task =
 let tf () = Time.return' <| System.Math.Floor (Fable.Import.Browser.performance.now())
 let run = Scheduler.run tf timer
 // d.Set << run <| see 0
-let see2 = Stream.run Stream.unit
+
 let o =
     O.makeListO ()
     |> O.contraMap (fun x -> printfn "%A" x;x)
-let disposable = Pith.run o see2
+let disposable = Stream.run o Stream.unit
 
 // let d = new Disposable.SettableDisposable()
 

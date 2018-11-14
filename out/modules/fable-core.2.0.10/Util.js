@@ -14,12 +14,8 @@ exports.assertNotEqual = assertNotEqual;
 exports.lazyFromValue = lazyFromValue;
 exports.padWithZeros = padWithZeros;
 exports.dateOffset = dateOffset;
-exports.dateOffsetToString = dateOffsetToString;
-exports.dateToHalfUTCString = dateToHalfUTCString;
-exports.dateToString = dateToString;
 exports.int16ToString = int16ToString;
 exports.int32ToString = int32ToString;
-exports.toString = toString;
 exports.stringHash = stringHash;
 exports.numberHash = numberHash;
 exports.combineHashCodes = combineHashCodes;
@@ -27,7 +23,6 @@ exports.identityHash = identityHash;
 exports.structuralHash = structuralHash;
 exports.isArray = isArray;
 exports.isIterable = isIterable;
-exports.isPlainObject = isPlainObject;
 exports.equalArraysWith = equalArraysWith;
 exports.equalArrays = equalArrays;
 exports.equals = equals;
@@ -185,140 +180,6 @@ function dateOffset(date) {
   ? 0 : date.getTimezoneOffset() * -60000;
 }
 
-function dateOffsetToString(offset) {
-  const isMinus = offset < 0;
-  offset = Math.abs(offset);
-  const hours = ~~(offset / 3600000);
-  const minutes = offset % 3600000 / 60000;
-  return (isMinus ? "-" : "+") + padWithZeros(hours, 2) + ":" + padWithZeros(minutes, 2);
-}
-
-function dateToHalfUTCString(date, half) {
-  const str = date.toISOString();
-  return half === "first" ? str.substring(0, str.indexOf("T")) : str.substring(str.indexOf("T") + 1, str.length - 1);
-}
-
-function dateToISOString(d, utc) {
-  if (utc) {
-    return d.toISOString();
-  } else {
-    // JS Date is always local
-    const printOffset = d.kind == null ? true : d.kind === 2
-    /* Local */
-    ;
-    return padWithZeros(d.getFullYear(), 4) + "-" + padWithZeros(d.getMonth() + 1, 2) + "-" + padWithZeros(d.getDate(), 2) + "T" + padWithZeros(d.getHours(), 2) + ":" + padWithZeros(d.getMinutes(), 2) + ":" + padWithZeros(d.getSeconds(), 2) + "." + padWithZeros(d.getMilliseconds(), 3) + (printOffset ? dateOffsetToString(d.getTimezoneOffset() * -60000) : "");
-  }
-}
-
-function dateToISOStringWithOffset(dateWithOffset, offset) {
-  const str = dateWithOffset.toISOString();
-  return str.substring(0, str.length - 1) + dateOffsetToString(offset);
-}
-
-function dateToStringWithCustomFormat(date, format, utc) {
-  return format.replace(/(\w)\1*/g, match => {
-    let rep = match;
-
-    switch (match.substring(0, 1)) {
-      case "y":
-        const y = utc ? date.getUTCFullYear() : date.getFullYear();
-        rep = match.length < 4 ? y % 100 : y;
-        break;
-
-      case "M":
-        rep = (utc ? date.getUTCMonth() : date.getMonth()) + 1;
-        break;
-
-      case "d":
-        rep = utc ? date.getUTCDate() : date.getDate();
-        break;
-
-      case "H":
-        rep = utc ? date.getUTCHours() : date.getHours();
-        break;
-
-      case "h":
-        const h = utc ? date.getUTCHours() : date.getHours();
-        rep = h > 12 ? h % 12 : h;
-        break;
-
-      case "m":
-        rep = utc ? date.getUTCMinutes() : date.getMinutes();
-        break;
-
-      case "s":
-        rep = utc ? date.getUTCSeconds() : date.getSeconds();
-        break;
-    }
-
-    if (rep !== match && rep < 10 && match.length > 1) {
-      rep = "0" + rep;
-    }
-
-    return rep;
-  });
-}
-
-function dateToStringWithOffset(date, format) {
-  const d = new Date(date.getTime() + date.offset);
-
-  if (typeof format !== "string") {
-    return d.toISOString().replace(/\.\d+/, "").replace(/[A-Z]|\.\d+/g, " ") + dateOffsetToString(date.offset);
-  } else if (format.length === 1) {
-    switch (format) {
-      case "D":
-      case "d":
-        return dateToHalfUTCString(d, "first");
-
-      case "T":
-      case "t":
-        return dateToHalfUTCString(d, "second");
-
-      case "O":
-      case "o":
-        return dateToISOStringWithOffset(d, date.offset);
-
-      default:
-        throw new Error("Unrecognized Date print format");
-    }
-  } else {
-    return dateToStringWithCustomFormat(d, format, true);
-  }
-}
-
-function dateToStringWithKind(date, format) {
-  const utc = date.kind === 1
-  /* UTC */
-  ;
-
-  if (typeof format !== "string") {
-    return utc ? date.toUTCString() : date.toLocaleString();
-  } else if (format.length === 1) {
-    switch (format) {
-      case "D":
-      case "d":
-        return utc ? dateToHalfUTCString(date, "first") : date.toLocaleDateString();
-
-      case "T":
-      case "t":
-        return utc ? dateToHalfUTCString(date, "second") : date.toLocaleTimeString();
-
-      case "O":
-      case "o":
-        return dateToISOString(date, utc);
-
-      default:
-        throw new Error("Unrecognized Date print format");
-    }
-  } else {
-    return dateToStringWithCustomFormat(date, format, utc);
-  }
-}
-
-function dateToString(date, format) {
-  return date.offset != null ? dateToStringWithOffset(date, format) : dateToStringWithKind(date, format);
-}
-
 function int16ToString(i, radix) {
   i = i < 0 && radix != null && radix !== 10 ? 0xFFFF + i + 1 : i;
   return i.toString(radix);
@@ -327,44 +188,6 @@ function int16ToString(i, radix) {
 function int32ToString(i, radix) {
   i = i < 0 && radix != null && radix !== 10 ? 0xFFFFFFFF + i + 1 : i;
   return i.toString(radix);
-}
-
-function toString(obj, quoteStrings = false) {
-  switch (typeof obj) {
-    case "string":
-      return quoteStrings ? JSON.stringify(obj) : obj;
-
-    case "function":
-      return obj.name;
-
-    case "object":
-      // TODO: Print some elements of iterables?
-      if (isPlainObject(obj) || Array.isArray(obj)) {
-        try {
-          return JSON.stringify(obj, (k, v) => {
-            if (v != null) {
-              if (v instanceof Date) {
-                return dateToString(v);
-              } else if (isIterable(v) && !Array.isArray(v) && typeof v !== "string") {
-                return Array.from(v);
-              }
-            }
-
-            return String(v);
-          });
-        } catch (err) {
-          // Fallback for objects with circular references
-          return "{" + Object.keys(obj).map(k => k + ": " + String(obj[k])).join(", ") + "}";
-        }
-      } else {
-        return obj instanceof Date ? dateToString(obj) : String(obj);
-      }
-
-    // number|boolean|symbol|null|undefined:
-
-    default:
-      return String(obj);
-  }
 }
 
 class ObjectRef {
@@ -459,7 +282,7 @@ function structuralHash(x) {
 
           return combineHashCodes(hashes);
         } else {
-          return stringHash(toString(x));
+          return stringHash(String(x));
         }
       }
   }
@@ -471,10 +294,6 @@ function isArray(x) {
 
 function isIterable(x) {
   return x != null && typeof x === "object" && Symbol.iterator in x;
-}
-
-function isPlainObject(x) {
-  return x != null && Object.getPrototypeOf(x).constructor === Object;
 }
 
 function equalArraysWith(x, y, eq) {
@@ -681,7 +500,7 @@ function changeCase(str, caseRule) {
 
 function createObj(fields, caseRule = CaseRules.None) {
   function fail(kvPair) {
-    throw new Error("Cannot infer key and value of " + toString(kvPair));
+    throw new Error("Cannot infer key and value of " + String(kvPair));
   }
 
   const o = {};

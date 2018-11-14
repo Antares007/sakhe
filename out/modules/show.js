@@ -6,11 +6,11 @@ Object.defineProperty(exports, "__esModule", {
 exports.see = see;
 exports.timer = timer;
 exports.tf = tf;
-exports.disposable = exports.o = exports.see2 = exports.run = exports.d = void 0;
+exports.disposable = exports.o = exports.run = exports.d = void 0;
 
 var _disposable = require("./disposable");
 
-var _String = require("./fable-core.2.0.6/String");
+var _String = require("./fable-core.2.0.10/String");
 
 var _pith = require("./pith");
 
@@ -18,11 +18,11 @@ var _scheduler = require("./scheduler");
 
 var _time = require("./time");
 
-var _Util = require("./fable-core.2.0.6/Util");
-
-var _stream = require("./stream");
+var _Util = require("./fable-core.2.0.10/Util");
 
 var _o = require("./o");
+
+var _stream = require("./stream");
 
 const d = (0, _disposable.SettableDisposable$$$$002Ector)();
 exports.d = d;
@@ -106,12 +106,10 @@ const run = (0, _scheduler.run)(function () {
   return tf();
 }, timer);
 exports.run = run;
-const see2 = (0, _stream.run)(_stream.unit);
-exports.see2 = see2;
 const o = (0, _o.contraMap)(function g(x) {
   (0, _String.toConsole)((0, _String.printf)("%A"))(x);
   return x;
 }, (0, _o.makeListO)());
 exports.o = o;
-const disposable = (0, _pith.run)(o, see2);
+const disposable = (0, _stream.run)(o, _stream.unit);
 exports.disposable = disposable;

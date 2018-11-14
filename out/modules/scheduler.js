@@ -11,7 +11,7 @@ exports.O$$$delayOrigin = O$$$delayOrigin;
 exports.run = run;
 exports.O$00601 = exports.T = void 0;
 
-var _Types = require("./fable-core.2.0.6/Types");
+var _Types = require("./fable-core.2.0.10/Types");
 
 var _abo = require("./abo");
 
@@ -25,13 +25,13 @@ var _o = require("./o");
 
 var _disposable = require("./disposable");
 
-var _String = require("./fable-core.2.0.6/String");
+var _String = require("./fable-core.2.0.10/String");
 
 var _timeline = require("./timeline");
 
-var _Util = require("./fable-core.2.0.6/Util");
+var _Util = require("./fable-core.2.0.10/Util");
 
-var _Option = require("./fable-core.2.0.6/Option");
+var _Option = require("./fable-core.2.0.10/Option");
 
 var _option = require("./option");
 

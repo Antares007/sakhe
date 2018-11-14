@@ -22,7 +22,7 @@ exports.OffsetModule$$$return$0027 = OffsetModule$$$return$0027;
 exports.OffsetModule$$$from = OffsetModule$$$from;
 exports.DelayModule$$$zero = exports.zero = void 0;
 
-var _Util = require("./fable-core.2.0.6/Util");
+var _Util = require("./fable-core.2.0.10/Util");
 
 function T$$$op_Addition$$Z3104FA00(_arg1, _arg2) {
   const l = _arg1;

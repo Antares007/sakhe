@@ -2,7 +2,9 @@ type ParseStream<'T> = int * list<'T>
 type Parser<'R> = Parser of (ParseStream<char> -> option<ParseStream<char> * 'R>)
 
 /// Returned by the `slot` function to create a parser slot that is filled later
-type ParserSetter<'R> =
+ty
+
+pe ParserSetter<'R> =
   { Set : Parser<'R> -> unit }
 
 /// Ignore the result of the parser

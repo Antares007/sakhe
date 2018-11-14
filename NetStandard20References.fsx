@@ -1,4 +1,3 @@
-#r @"C:\Users\abolk\.nuget\packages\fable.core\2.0.0\lib\netstandard2.0\Fable.Core.dll"
 #r @"C:\Users\abolk\.nuget\packages\netstandard.library\2.0.3\build\netstandard2.0\ref\Microsoft.Win32.Primitives.dll"
 #r @"C:\Users\abolk\.nuget\packages\netstandard.library\2.0.3\build\netstandard2.0\ref\System.AppContext.dll"
 #r @"C:\Users\abolk\.nuget\packages\netstandard.library\2.0.3\build\netstandard2.0\ref\System.Collections.Concurrent.dll"
@@ -111,4 +110,5 @@
 #r @"C:\Users\abolk\.nuget\packages\netstandard.library\2.0.3\build\netstandard2.0\ref\System.Xml.dll"
 #r @"C:\Users\abolk\.nuget\packages\netstandard.library\2.0.3\build\netstandard2.0\ref\System.dll"
 #r @"C:\Users\abolk\.nuget\packages\netstandard.library\2.0.3\build\netstandard2.0\ref\netstandard.dll"
-#r @"C:\Users\abolk\.nuget\packages\fsharp.compiler.service\25.0.1\lib\netstandard2.0\FSharp.Compiler.Service.dll"
+// #load @"c:\code\sakhe\NetStandard20\obj\Debug\netstandard2.0\NetStandard20.AssemblyInfo.fs"
+// #load @"c:\code\sakhe\NetStandard20\Library.fs"

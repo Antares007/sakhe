@@ -34,7 +34,7 @@ let timer delay task =
 
 let tf() =
     Time.return' <| System.Math.Floor(Fable.Import.Browser.performance.now())
-let run (Stream io) = Abo.run (Scheduler.run tf timer) io
+let run o (Stream io) = Pith.run o << Abo.run (Scheduler.run tf timer) <| io
 let Of f =
     Stream << Abo.return' <| fun run -> Pith.return' <| fun sinkO -> f run sinkO
 

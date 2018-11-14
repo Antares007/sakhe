@@ -14,7 +14,6 @@ exports.tryParse = tryParse;
 exports.fromValue = fromValue;
 exports.toInt = toInt;
 exports.toNumber = toNumber;
-exports.toIntNumber = toIntNumber;
 exports.toString = toString;
 exports.getHighBits = getHighBits;
 exports.getHighBitsUnsigned = getHighBitsUnsigned;
@@ -530,16 +529,6 @@ function toInt($this) {
 function toNumber($this) {
   if ($this.unsigned) return ($this.high >>> 0) * TWO_PWR_32_DBL + ($this.low >>> 0);
   return $this.high * TWO_PWR_32_DBL + ($this.low >>> 0);
-}
-
-;
-/**
- * Converts the Long to a 32 bit integer.
- * @returns {number}
- */
-
-function toIntNumber($this) {
-  return $this.low >>> 0;
 }
 
 ;

@@ -18,7 +18,7 @@ exports.bind = bind;
 exports.mappend = mappend;
 exports.unit = exports.O$00601 = exports.T$00601 = void 0;
 
-var _Types = require("./fable-core.2.0.6/Types");
+var _Types = require("./fable-core.2.0.10/Types");
 
 var _time = require("./time");
 
@@ -26,7 +26,7 @@ var _pith = require("./pith");
 
 var _scheduler = require("./scheduler");
 
-var _Util = require("./fable-core.2.0.6/Util");
+var _Util = require("./fable-core.2.0.10/Util");
 
 var _disposable = require("./disposable");
 
@@ -34,7 +34,7 @@ var _abo = require("./abo");
 
 var _o = require("./o");
 
-var _Map = require("./fable-core.2.0.6/Map");
+var _Map = require("./fable-core.2.0.10/Map");
 
 const T$00601 = (0, _Types.declare)(function T$00601(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -93,11 +93,11 @@ function tf() {
   return (0, _time.return$0027)(Math.floor(performance.now()));
 }
 
-function run(_arg1) {
+function run(o$$3, _arg1) {
   const io = _arg1.fields[0];
-  return (0, _abo.run)((0, _scheduler.run)(function () {
+  return (0, _pith.run)(o$$3, (0, _abo.run)((0, _scheduler.run)(function () {
     return tf();
-  }, timer), io);
+  }, timer), io));
 }
 
 function Of(f$$10) {
@@ -110,8 +110,8 @@ function Of(f$$10) {
 
 const unit = new T$00601(0, "Stream", (0, _abo.return$0027)(function (run$$2) {
   return (0, _pith.return$0027)(function (s) {
-    return run$$2(Scheduler$$$Of(function (_arg2, o$$3) {
-      o$$3(Scheduler$$$delay(0, function (t$$2, _arg1$$1) {
+    return run$$2(Scheduler$$$Of(function (_arg2, o$$4) {
+      o$$4(Scheduler$$$delay(0, function (t$$2, _arg1$$1) {
         try {
           s(new O$00601(0, "Event", t$$2, null));
           s(new O$00601(1, "End", t$$2));
@@ -157,8 +157,8 @@ function map(f$$19, _arg1$$2) {
             {
               const t$$3 = _arg2$$1.fields[0];
               const a$$2 = _arg2$$1.fields[1];
-              const $arg$$10 = [t$$3, f$$19(a$$2)];
-              s$$2(new O$00601(0, "Event", $arg$$10[0], $arg$$10[1]));
+              const $arg$$11 = [t$$3, f$$19(a$$2)];
+              s$$2(new O$00601(0, "Event", $arg$$11[0], $arg$$11[1]));
             }
         }
       });
@@ -216,7 +216,7 @@ function join(_arg1$$4) {
   const ioOfStreams = _arg1$$4.fields[0];
   return new T$00601(0, "Stream", (0, _abo.return$0027)(function (run$$6) {
     return (0, _pith.return$0027)(function (s$$4) {
-      let i$$3 = 1;
+      let i$$4 = 1;
       const index = 0;
       let map$$1 = (0, _Map.empty)({
         Compare: _Util.comparePrimitives
@@ -264,8 +264,8 @@ function join(_arg1$$4) {
               const ot = _arg2$$3.fields[0][0];
               const offset = _arg2$$3.fields[0][1];
               const io$$2 = _arg2$$3.fields[1].fields[0];
-              const index$$2 = i$$3 | 0;
-              i$$3 = i$$3 + 1;
+              const index$$2 = i$$4 | 0;
+              i$$4 = i$$4 + 1;
               const so$$2 = (0, _o.proxy)(function (_arg3$$1) {
                 switch (_arg3$$1.tag) {
                   case 1:
@@ -287,8 +287,8 @@ function join(_arg1$$4) {
                     {
                       const it = _arg3$$1.fields[0][0];
                       const a$$6 = _arg3$$1.fields[1];
-                      const $arg$$24 = [[ot + it, offset], a$$6];
-                      s$$4(new O$00601(0, "Event", $arg$$24[0], $arg$$24[1]));
+                      const $arg$$25 = [[ot + it, offset], a$$6];
+                      s$$4(new O$00601(0, "Event", $arg$$25[0], $arg$$25[1]));
                     }
                 }
               });
@@ -334,8 +334,8 @@ function mappend(_arg2$$4, _arg1$$6) {
                       const it$$4 = _arg4.fields[0][0];
                       const err$$6 = _arg4.fields[1];
                       disposable$$2.Dispose();
-                      const $arg$$30 = [[ot$$1 + it$$4, offset$$1], err$$6];
-                      s$$5(new O$00601(2, "Error", $arg$$30[0], $arg$$30[1]));
+                      const $arg$$31 = [[ot$$1 + it$$4, offset$$1], err$$6];
+                      s$$5(new O$00601(2, "Error", $arg$$31[0], $arg$$31[1]));
                       break;
                     }
 
@@ -350,8 +350,8 @@ function mappend(_arg2$$4, _arg1$$6) {
                     {
                       const it$$3 = _arg4.fields[0][0];
                       const a$$8 = _arg4.fields[1];
-                      const $arg$$29 = [[ot$$1 + it$$3, offset$$1], a$$8];
-                      s$$5(new O$00601(0, "Event", $arg$$29[0], $arg$$29[1]));
+                      const $arg$$30 = [[ot$$1 + it$$3, offset$$1], a$$8];
+                      s$$5(new O$00601(0, "Event", $arg$$30[0], $arg$$30[1]));
                     }
                 }
               });
