@@ -10,7 +10,7 @@ exports.disposable = exports.o = exports.run = exports.d = void 0;
 
 var _disposable = require("./disposable");
 
-var _String = require("./fable-core.2.0.10/String");
+var _String = require("./fable-library.2.1.2/String");
 
 var _pith = require("./pith");
 
@@ -18,7 +18,7 @@ var _scheduler = require("./scheduler");
 
 var _time = require("./time");
 
-var _Util = require("./fable-core.2.0.10/Util");
+var _Util = require("./fable-library.2.1.2/Util");
 
 var _o = require("./o");
 

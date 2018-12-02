@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.T$00602$reflection = T$00602$reflection;
 exports.T$00602$$get_Value = T$00602$$get_Value;
 exports.get = get;
 exports.put = put;
@@ -14,12 +15,18 @@ exports.filter = filter;
 exports.contraMap = contraMap;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-core.2.0.10/Types");
+var _Types = require("./fable-library.2.1.2/Types");
 
-const T$00602 = (0, _Types.declare)(function T$00602(tag, name, ...fields) {
+var _Reflection = require("./fable-library.2.1.2/Reflection");
+
+const T$00602 = (0, _Types.declare)(function Sakhe_O_T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
 exports.T$00602 = T$00602;
+
+function T$00602$reflection($gen$$3, $gen$$4) {
+  return (0, _Reflection.union)("Sakhe.O.T`2", [$gen$$3, $gen$$4], T$00602, () => [["O", [(0, _Reflection.tuple)((0, _Reflection.lambda)($gen$$3, _Reflection.unit), (0, _Reflection.lambda)(_Reflection.unit, $gen$$4))]]]);
+}
 
 function T$00602$$get_Value(o) {
   const get$$1 = o.fields[0][1];
@@ -47,8 +54,8 @@ function return$0027(f, ua) {
 
 function makeListO() {
   return return$0027(function (l, a$$2) {
-    return (0, _Types.L)(a$$2, l);
-  }, (0, _Types.L)());
+    return new _Types.List(a$$2, l);
+  }, new _Types.List());
 }
 
 function proxy(p) {

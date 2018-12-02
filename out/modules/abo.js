@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.T$00603$reflection = T$00603$reflection;
 exports.mappend = mappend;
 exports.return$0027 = return$0027;
 exports.empty = empty;
@@ -13,14 +14,20 @@ exports.pmap = pmap;
 exports.bind = bind;
 exports.T$00603 = void 0;
 
-var _Types = require("./fable-core.2.0.10/Types");
+var _Types = require("./fable-library.2.1.2/Types");
 
 var _pith = require("./pith");
 
-const T$00603 = (0, _Types.declare)(function T$00603(tag, name, ...fields) {
+var _Reflection = require("./fable-library.2.1.2/Reflection");
+
+const T$00603 = (0, _Types.declare)(function Sakhe_Abo_T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
 exports.T$00603 = T$00603;
+
+function T$00603$reflection($gen$$2, $gen$$3, $gen$$4) {
+  return (0, _Reflection.union)("Sakhe.Abo.T`3", [$gen$$2, $gen$$3, $gen$$4], T$00603, () => [["Abo", [(0, _Reflection.lambda)($gen$$2, (0, _pith.T$00602$reflection)($gen$$4, $gen$$3))]]]);
+}
 
 function mappend(mappend$$1, _arg2, _arg1) {
   const l = _arg2.fields[0];

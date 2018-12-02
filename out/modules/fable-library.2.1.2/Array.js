@@ -164,7 +164,7 @@ function getSubArray(array$$3, start$$1, count$$2) {
 
 function last(array$$5) {
   if (array$$5.length === 0) {
-    throw new Error("The input array was empty" + "\\nParameter name: " + "array");
+    throw new Error("The input array was empty\\nParameter name: array");
   }
 
   return array$$5[array$$5.length - 1];
@@ -483,7 +483,7 @@ function singleton(value$$5, cons$$14) {
 
 function initialize(count$$8, initializer, cons$$15) {
   if (count$$8 < 0) {
-    throw new Error("The input must be non-negative" + "\\nParameter name: " + "count");
+    throw new Error("The input must be non-negative\\nParameter name: count");
   }
 
   const result$$6 = new cons$$15(count$$8);
@@ -512,7 +512,7 @@ function pairwise(array$$27) {
 
 function replicate(count$$10, initial, cons$$16) {
   if (count$$10 < 0) {
-    throw new Error("The input must be non-negative" + "\\nParameter name: " + "count");
+    throw new Error("The input must be non-negative\\nParameter name: count");
   }
 
   const result$$8 = new cons$$16(count$$10);
@@ -556,7 +556,7 @@ function scanBack(folder$$1, array$$35, state$$3, cons$$20) {
 
 function skip(count$$11, array$$36, cons$$21) {
   if (count$$11 > array$$36.length) {
-    throw new Error("count is greater than array length" + "\\nParameter name: " + "count");
+    throw new Error("count is greater than array length\\nParameter name: count");
   }
 
   if (count$$11 === array$$36.length) {
@@ -583,11 +583,11 @@ function skipWhile(predicate$$7, array$$38, cons$$23) {
 
 function take(count$$16, array$$40, cons$$25) {
   if (count$$16 < 0) {
-    throw new Error("The input must be non-negative" + "\\nParameter name: " + "count");
+    throw new Error("The input must be non-negative\\nParameter name: count");
   }
 
   if (count$$16 > array$$40.length) {
-    throw new Error("count is greater than array length" + "\\nParameter name: " + "count");
+    throw new Error("count is greater than array length\\nParameter name: count");
   }
 
   if (count$$16 === 0) {
@@ -1072,7 +1072,7 @@ function zip3(array1$$5, array2$$5, array3) {
 
 function chunkBySize(chunkSize, array$$79) {
   if (chunkSize < 1) {
-    throw new Error("The input must be positive." + "\\nParameter name: " + "size");
+    throw new Error("The input must be positive.\\nParameter name: size");
   }
 
   if (array$$79.length === 0) {
@@ -1092,11 +1092,11 @@ function chunkBySize(chunkSize, array$$79) {
 
 function splitAt(index$$4, array$$82) {
   if (index$$4 < 0) {
-    throw new Error("The input must be non-negative" + "\\nParameter name: " + "index");
+    throw new Error("The input must be non-negative\\nParameter name: index");
   }
 
   if (index$$4 > array$$82.length) {
-    throw new Error("The input sequence has an insufficient number of elements." + "\\nParameter name: " + "index");
+    throw new Error("The input sequence has an insufficient number of elements.\\nParameter name: index");
   }
 
   return [array$$82.slice(0, 0 + index$$4), array$$82.slice(index$$4)];
@@ -1140,15 +1140,15 @@ function exactlyOne(array$$85) {
   if (array$$85.length === 1) {
     return array$$85[0];
   } else if (array$$85.length === 0) {
-    throw new Error("The input sequence was empty" + "\\nParameter name: " + "array");
+    throw new Error("The input sequence was empty\\nParameter name: array");
   } else {
-    throw new Error("Input array too long" + "\\nParameter name: " + "array");
+    throw new Error("Input array too long\\nParameter name: array");
   }
 }
 
 function head(array$$86) {
   if (array$$86.length === 0) {
-    throw new Error("The input array was empty" + "\\nParameter name: " + "array");
+    throw new Error("The input array was empty\\nParameter name: array");
   } else {
     return array$$86[0];
   }
@@ -1164,7 +1164,7 @@ function tryHead(array$$87) {
 
 function tail(array$$88) {
   if (array$$88.length === 0) {
-    throw new Error("Not enough elements" + "\\nParameter name: " + "array");
+    throw new Error("Not enough elements\\nParameter name: array");
   }
 
   return array$$88.slice(1);
@@ -1360,7 +1360,7 @@ function min(xs$$15, comparer$$17) {
 
 function average(array$$104, averager) {
   if (array$$104.length === 0) {
-    throw new Error("The input array was empty" + "\\nParameter name: " + "array");
+    throw new Error("The input array was empty\\nParameter name: array");
   }
 
   let total = averager.GetZero();
@@ -1374,7 +1374,7 @@ function average(array$$104, averager) {
 
 function averageBy(projection$$9, array$$105, averager$$1) {
   if (array$$105.length === 0) {
-    throw new Error("The input array was empty" + "\\nParameter name: " + "array");
+    throw new Error("The input array was empty\\nParameter name: array");
   }
 
   let total$$1 = averager$$1.GetZero();
@@ -1396,10 +1396,10 @@ function ofList(source$$9, cons$$32) {
 
 function toList(source$$10) {
   const len$$20 = source$$10.length | 0;
-  let target$$7 = (0, _Types.L)();
+  let target$$7 = new _Types.List();
 
   for (let i$$50 = len$$20 - 1; i$$50 >= 0; i$$50--) {
-    target$$7 = (0, _Types.L)(source$$10[i$$50], target$$7);
+    target$$7 = new _Types.List(source$$10[i$$50], target$$7);
   }
 
   return target$$7;

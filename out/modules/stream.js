@@ -3,6 +3,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.T$00601$reflection = T$00601$reflection;
+exports.O$00601$reflection = O$00601$reflection;
 exports.Scheduler$$$delay = Scheduler$$$delay;
 exports.Scheduler$$$now = Scheduler$$$now;
 exports.Scheduler$$$Of = Scheduler$$$Of;
@@ -18,32 +20,43 @@ exports.bind = bind;
 exports.mappend = mappend;
 exports.unit = exports.O$00601 = exports.T$00601 = void 0;
 
-var _Types = require("./fable-core.2.0.10/Types");
+var _Types = require("./fable-library.2.1.2/Types");
+
+var _scheduler = require("./scheduler");
+
+var _Reflection = require("./fable-library.2.1.2/Reflection");
+
+var _abo = require("./abo");
 
 var _time = require("./time");
 
 var _pith = require("./pith");
 
-var _scheduler = require("./scheduler");
-
-var _Util = require("./fable-core.2.0.10/Util");
+var _Util = require("./fable-library.2.1.2/Util");
 
 var _disposable = require("./disposable");
 
-var _abo = require("./abo");
-
 var _o = require("./o");
 
-var _Map = require("./fable-core.2.0.10/Map");
+var _Map = require("./fable-library.2.1.2/Map");
 
-const T$00601 = (0, _Types.declare)(function T$00601(tag, name, ...fields) {
+const T$00601 = (0, _Types.declare)(function Sakhe_Stream_T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
 exports.T$00601 = T$00601;
-const O$00601 = (0, _Types.declare)(function O$00601(tag, name, ...fields) {
+
+function T$00601$reflection($gen$$33) {
+  return (0, _Reflection.union)("Sakhe.Stream.T`1", [$gen$$33], T$00601, () => [["Stream", [(0, _abo.T$00603$reflection)((0, _Reflection.lambda)((0, _scheduler.T$reflection)(), (0, _Reflection.type)("System.IDisposable")), (0, _Reflection.type)("System.IDisposable"), O$00601$reflection($gen$$33))]]]);
+}
+
+const O$00601 = (0, _Types.declare)(function Sakhe_Stream_O(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
 exports.O$00601 = O$00601;
+
+function O$00601$reflection($gen$$34) {
+  return (0, _Reflection.union)("Sakhe.Stream.O`1", [$gen$$34], O$00601, () => [["Event", [(0, _Reflection.tuple)(_Reflection.obj, _Reflection.obj), $gen$$34]], ["End", [(0, _Reflection.tuple)(_Reflection.obj, _Reflection.obj)]], ["Error", [(0, _Reflection.tuple)(_Reflection.obj, _Reflection.obj), (0, _Reflection.type)("System.Exception")]]]);
+}
 
 function Scheduler$$$delay(d, f) {
   const tupledArg = [(0, _time.DelayModule$$$return$0027)(d), (0, _scheduler.return$0027)(function (i) {

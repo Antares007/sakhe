@@ -14,5 +14,9 @@ module.exports = {
   outDir: resolve("out/modules"),
   port: 61225, // Fable daemon port (61225 by default)
   babel,
-  fable: { define: ["DEBUG"] }
+  fable: { define: ["DEBUG"] },
+  cli: {
+    // This should be the path to your local clone of Fable
+    path: "../Fable/src/dotnet/Fable.Compiler"
+  }
 }

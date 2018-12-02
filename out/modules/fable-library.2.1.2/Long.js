@@ -9,8 +9,8 @@ exports.fromNumber = fromNumber;
 exports.fromInteger = fromInteger;
 exports.fromBits = fromBits;
 exports.fromString = fromString;
-exports.parse = parse;
 exports.tryParse = tryParse;
+exports.parse = parse;
 exports.fromValue = fromValue;
 exports.toInt = toInt;
 exports.toNumber = toNumber;
@@ -336,14 +336,6 @@ var pow_dbl = Math.pow; // Used 4 times (4*8 to 15+4)
  */
 
 function fromString(str, unsigned, radix) {
-  const res = (0, _Int.isValid)(str, radix);
-
-  if (res === null) {
-    throw new Error("Input string was not in a correct format.");
-  }
-
-  str = res.sign + res.digits;
-  radix = res.radix;
   if (str.length === 0) throw Error("empty string");
   if (str === "NaN" || str === "Infinity" || str === "+Infinity" || str === "-Infinity") return ZERO;
 
@@ -380,18 +372,73 @@ function fromString(str, unsigned, radix) {
 
   result.unsigned = unsigned;
   return result;
-} // For compatibility with Int32 module
-
-
-function parse(str, radix) {
-  return fromString(str, false, radix);
 }
 
-function tryParse(str, radix, defaultValue) {
+function getMaxValue(unsigned, radix, isNegative) {
+  if (unsigned) {
+    switch (radix) {
+      case 2:
+        return "1111111111111111111111111111111111111111111111111111111111111111";
+
+      case 8:
+        return "1777777777777777777777";
+
+      case 10:
+        return "18446744073709551615";
+
+      case 16:
+        return "FFFFFFFFFFFFFFFF";
+
+      default:
+        throw new Error("Invalid radix.");
+    }
+  } else {
+    switch (radix) {
+      case 2:
+        return isNegative ? "1000000000000000000000000000000000000000000000000000000000000000" : "111111111111111111111111111111111111111111111111111111111111111";
+
+      case 8:
+        return isNegative ? "1000000000000000000000" : "777777777777777777777";
+
+      case 10:
+        return isNegative ? "9223372036854775808" : "9223372036854775807";
+
+      case 16:
+        return isNegative ? "8000000000000000" : "7FFFFFFFFFFFFFFF";
+
+      default:
+        throw new Error("Invalid radix.");
+    }
+  }
+}
+
+function tryParse(str, style, unsigned, bitsize, radix) {
   try {
-    return [true, fromString(str, false, radix)];
-  } catch (_a) {
-    return [false, defaultValue];
+    const res = (0, _Int.isValid)(str, style, radix);
+
+    if (res != null) {
+      const isNegative = res.sign === "-";
+      const maxValue = getMaxValue(unsigned, res.radix, isNegative);
+      const len = Math.max(res.digits.length, maxValue.length);
+
+      if (res.digits.padStart(len, "0") <= maxValue.padStart(len, "0")) {
+        str = isNegative ? res.sign + res.digits : res.digits;
+        return [true, fromString(str, unsigned, res.radix)];
+      }
+    }
+  } catch (_a) {// supress error
+  }
+
+  return [false, ZERO];
+}
+
+function parse(str, style, unsigned, bitsize, radix) {
+  const [ok, value] = tryParse(str, style, unsigned, bitsize, radix);
+
+  if (ok) {
+    return value;
+  } else {
+    throw new Error("Input string was not in a correct format.");
   }
 }
 /**

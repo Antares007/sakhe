@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.MapTree$00602$reflection = MapTree$00602$reflection;
 exports.MapTreeModule$$$sizeAux = MapTreeModule$$$sizeAux;
 exports.MapTreeModule$$$size = MapTreeModule$$$size;
 exports.MapTreeModule$$$empty = MapTreeModule$$$empty;
@@ -39,15 +40,18 @@ exports.MapTreeModule$$$mkFromEnumerator = MapTreeModule$$$mkFromEnumerator;
 exports.MapTreeModule$$$ofArray = MapTreeModule$$$ofArray;
 exports.MapTreeModule$$$ofSeq = MapTreeModule$$$ofSeq;
 exports.MapTreeModule$$$copyToArray = MapTreeModule$$$copyToArray;
+exports.MapTreeModule$002EMapIterator$00602$reflection = MapTreeModule$002EMapIterator$00602$reflection;
 exports.MapTreeModule$$$collapseLHS = MapTreeModule$$$collapseLHS;
 exports.MapTreeModule$$$mkIterator = MapTreeModule$$$mkIterator;
 exports.MapTreeModule$$$notStarted = MapTreeModule$$$notStarted;
 exports.MapTreeModule$$$alreadyFinished = MapTreeModule$$$alreadyFinished;
 exports.MapTreeModule$$$current = MapTreeModule$$$current;
 exports.MapTreeModule$$$moveNext = MapTreeModule$$$moveNext;
+exports.MapTreeModule$002EmkIEnumerator$0027$00602$reflection = MapTreeModule$002EmkIEnumerator$0027$00602$reflection;
 exports.MapTreeModule$002EmkIEnumerator$0027$00602$$$$002Ector$$Z26BC498C = MapTreeModule$002EmkIEnumerator$0027$00602$$$$002Ector$$Z26BC498C;
 exports.MapTreeModule$$$mkIEnumerator = MapTreeModule$$$mkIEnumerator;
 exports.MapTreeModule$$$toSeq = MapTreeModule$$$toSeq;
+exports.FSharpMap$reflection = FSharpMap$reflection;
 exports.FSharpMap$$$$002Ector$$58ADD115 = FSharpMap$$$$002Ector$$58ADD115;
 exports.FSharpMap$$get_Comparer = FSharpMap$$get_Comparer;
 exports.FSharpMap$$get_Tree = FSharpMap$$get_Tree;
@@ -103,6 +107,8 @@ exports.FSharpMap = exports.MapTreeModule$002EmkIEnumerator$0027$00602 = exports
 
 var _Types = require("./Types");
 
+var _Reflection = require("./Reflection");
+
 var _Option = require("./Option");
 
 var _Seq = require("./Seq");
@@ -111,10 +117,14 @@ var _Util = require("./Util");
 
 var _String = require("./String");
 
-const MapTree$00602 = (0, _Types.declare)(function MapTree$00602(tag, name, ...fields) {
+const MapTree$00602 = (0, _Types.declare)(function Map_MapTree(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
 exports.MapTree$00602 = MapTree$00602;
+
+function MapTree$00602$reflection($gen$$3, $gen$$4) {
+  return (0, _Reflection.union)("Map.MapTree`2", [$gen$$3, $gen$$4], MapTree$00602, () => ["MapEmpty", ["MapOne", [$gen$$3, $gen$$4]], ["MapNode", [$gen$$3, $gen$$4, MapTree$00602$reflection($gen$$3, $gen$$4), MapTree$00602$reflection($gen$$3, $gen$$4), _Reflection.int32]]]);
+}
 
 function MapTreeModule$$$sizeAux(acc, m) {
   MapTreeModule$$$sizeAux: while (true) {
@@ -128,8 +138,8 @@ function MapTreeModule$$$sizeAux(acc, m) {
         {
           const r = m.fields[3];
           const l = m.fields[2];
-          const $acc$$3 = acc;
-          acc = MapTreeModule$$$sizeAux($acc$$3 + 1, l);
+          const $acc$$5 = acc;
+          acc = MapTreeModule$$$sizeAux($acc$$5 + 1, l);
           m = r;
           continue MapTreeModule$$$sizeAux;
         }
@@ -182,19 +192,19 @@ function MapTreeModule$$$isEmpty(m$$1) {
 
 function MapTreeModule$$$mk(l$$1, k, v, r$$1) {
   const matchValue = [l$$1, r$$1];
-  var $target$$4;
+  var $target$$6;
 
   if (matchValue[0].tag === 0) {
     if (matchValue[1].tag === 0) {
-      $target$$4 = 0;
+      $target$$6 = 0;
     } else {
-      $target$$4 = 1;
+      $target$$6 = 1;
     }
   } else {
-    $target$$4 = 1;
+    $target$$6 = 1;
   }
 
-  switch ($target$$4) {
+  switch ($target$$6) {
     case 0:
       {
         return new MapTree$00602(1, "MapOne", k, v);
@@ -331,19 +341,19 @@ function MapTreeModule$$$find(comparer$$1, k$$3, m$$4) {
           const c$$3 = comparer$$1.Compare(k$$3, k2$$3) | 0;
 
           if (c$$3 < 0) {
-            const $comparer$$1$$5 = comparer$$1;
-            const $k$$3$$6 = k$$3;
-            comparer$$1 = $comparer$$1$$5;
-            k$$3 = $k$$3$$6;
+            const $comparer$$1$$7 = comparer$$1;
+            const $k$$3$$8 = k$$3;
+            comparer$$1 = $comparer$$1$$7;
+            k$$3 = $k$$3$$8;
             m$$4 = l$$3;
             continue MapTreeModule$$$find;
           } else if (c$$3 === 0) {
             return v2$$2;
           } else {
-            const $comparer$$1$$7 = comparer$$1;
-            const $k$$3$$8 = k$$3;
-            comparer$$1 = $comparer$$1$$7;
-            k$$3 = $k$$3$$8;
+            const $comparer$$1$$9 = comparer$$1;
+            const $k$$3$$10 = k$$3;
+            comparer$$1 = $comparer$$1$$9;
+            k$$3 = $k$$3$$10;
             m$$4 = r$$3;
             continue MapTreeModule$$$find;
           }
@@ -384,19 +394,19 @@ function MapTreeModule$$$tryFind(comparer$$2, k$$4, m$$5) {
           const c$$5 = comparer$$2.Compare(k$$4, k2$$5) | 0;
 
           if (c$$5 < 0) {
-            const $comparer$$2$$9 = comparer$$2;
-            const $k$$4$$10 = k$$4;
-            comparer$$2 = $comparer$$2$$9;
-            k$$4 = $k$$4$$10;
+            const $comparer$$2$$11 = comparer$$2;
+            const $k$$4$$12 = k$$4;
+            comparer$$2 = $comparer$$2$$11;
+            k$$4 = $k$$4$$12;
             m$$5 = l$$4;
             continue MapTreeModule$$$tryFind;
           } else if (c$$5 === 0) {
             return (0, _Option.some)(v2$$4);
           } else {
-            const $comparer$$2$$11 = comparer$$2;
-            const $k$$4$$12 = k$$4;
-            comparer$$2 = $comparer$$2$$11;
-            k$$4 = $k$$4$$12;
+            const $comparer$$2$$13 = comparer$$2;
+            const $k$$4$$14 = k$$4;
+            comparer$$2 = $comparer$$2$$13;
+            k$$4 = $k$$4$$14;
             m$$5 = r$$4;
             continue MapTreeModule$$$tryFind;
           }
@@ -420,13 +430,13 @@ function MapTreeModule$$$partition1(comparer$$3, f, k$$5, v$$3, acc1, acc2) {
   }
 }
 
-function MapTreeModule$$$partitionAux($arg$$19, $arg$$20, $arg$$21, $arg$$22, $arg$$23) {
+function MapTreeModule$$$partitionAux($arg$$21, $arg$$22, $arg$$23, $arg$$24, $arg$$25) {
   MapTreeModule$$$partitionAux: while (true) {
-    const comparer$$4 = $arg$$19,
-          f$$1 = $arg$$20,
-          s = $arg$$21,
-          acc_0 = $arg$$22,
-          acc_1 = $arg$$23;
+    const comparer$$4 = $arg$$21,
+          f$$1 = $arg$$22,
+          s = $arg$$23,
+          acc_0 = $arg$$24,
+          acc_1 = $arg$$25;
     const acc$$1 = [acc_0, acc_1];
 
     switch (s.tag) {
@@ -445,11 +455,11 @@ function MapTreeModule$$$partitionAux($arg$$19, $arg$$20, $arg$$21, $arg$$22, $a
           const k$$7 = s.fields[0];
           const acc$$2 = MapTreeModule$$$partitionAux(comparer$$4, f$$1, r$$5, acc$$1[0], acc$$1[1]);
           const acc$$3 = MapTreeModule$$$partition1(comparer$$4, f$$1, k$$7, v$$5, acc$$2[0], acc$$2[1]);
-          $arg$$19 = comparer$$4;
-          $arg$$20 = f$$1;
-          $arg$$21 = l$$5;
-          $arg$$22 = acc$$3[0];
-          $arg$$23 = acc$$3[1];
+          $arg$$21 = comparer$$4;
+          $arg$$22 = f$$1;
+          $arg$$23 = l$$5;
+          $arg$$24 = acc$$3[0];
+          $arg$$25 = acc$$3[1];
           continue MapTreeModule$$$partitionAux;
         }
 
@@ -475,12 +485,12 @@ function MapTreeModule$$$filter1(comparer$$6, f$$3, k$$8, v$$6, acc$$4) {
   }
 }
 
-function MapTreeModule$$$filterAux($arg$$32, $arg$$33, $arg$$34, $arg$$35) {
+function MapTreeModule$$$filterAux($arg$$34, $arg$$35, $arg$$36, $arg$$37) {
   MapTreeModule$$$filterAux: while (true) {
-    const comparer$$7 = $arg$$32,
-          f$$4 = $arg$$33,
-          s$$2 = $arg$$34,
-          acc$$5 = $arg$$35;
+    const comparer$$7 = $arg$$34,
+          f$$4 = $arg$$35,
+          s$$2 = $arg$$36,
+          acc$$5 = $arg$$37;
 
     switch (s$$2.tag) {
       case 1:
@@ -498,10 +508,10 @@ function MapTreeModule$$$filterAux($arg$$32, $arg$$33, $arg$$34, $arg$$35) {
           const k$$10 = s$$2.fields[0];
           const acc$$6 = MapTreeModule$$$filterAux(comparer$$7, f$$4, l$$6, acc$$5);
           const acc$$7 = MapTreeModule$$$filter1(comparer$$7, f$$4, k$$10, v$$8, acc$$6);
-          $arg$$32 = comparer$$7;
-          $arg$$33 = f$$4;
-          $arg$$34 = r$$6;
-          $arg$$35 = acc$$7;
+          $arg$$34 = comparer$$7;
+          $arg$$35 = f$$4;
+          $arg$$36 = r$$6;
+          $arg$$37 = acc$$7;
           continue MapTreeModule$$$filterAux;
         }
 
@@ -614,19 +624,19 @@ function MapTreeModule$$$mem(comparer$$10, k$$12, m$$8) {
           const c$$8 = comparer$$10.Compare(k$$12, k2$$11) | 0;
 
           if (c$$8 < 0) {
-            const $comparer$$10$$39 = comparer$$10;
-            const $k$$12$$40 = k$$12;
-            comparer$$10 = $comparer$$10$$39;
-            k$$12 = $k$$12$$40;
+            const $comparer$$10$$41 = comparer$$10;
+            const $k$$12$$42 = k$$12;
+            comparer$$10 = $comparer$$10$$41;
+            k$$12 = $k$$12$$42;
             m$$8 = l$$9;
             continue MapTreeModule$$$mem;
           } else if (c$$8 === 0) {
             return true;
           } else {
-            const $comparer$$10$$41 = comparer$$10;
-            const $k$$12$$42 = k$$12;
-            comparer$$10 = $comparer$$10$$41;
-            k$$12 = $k$$12$$42;
+            const $comparer$$10$$43 = comparer$$10;
+            const $k$$12$$44 = k$$12;
+            comparer$$10 = $comparer$$10$$43;
+            k$$12 = $k$$12$$44;
             m$$8 = r$$9;
             continue MapTreeModule$$$mem;
           }
@@ -642,10 +652,10 @@ function MapTreeModule$$$mem(comparer$$10, k$$12, m$$8) {
   }
 }
 
-function MapTreeModule$$$iter($arg$$43, $arg$$44) {
+function MapTreeModule$$$iter($arg$$45, $arg$$46) {
   MapTreeModule$$$iter: while (true) {
-    const f$$6 = $arg$$43,
-          m$$9 = $arg$$44;
+    const f$$6 = $arg$$45,
+          m$$9 = $arg$$46;
 
     switch (m$$9.tag) {
       case 1:
@@ -664,8 +674,8 @@ function MapTreeModule$$$iter($arg$$43, $arg$$44) {
           const k2$$13 = m$$9.fields[0];
           MapTreeModule$$$iter(f$$6, l$$10);
           f$$6(k2$$13, v2$$9);
-          $arg$$43 = f$$6;
-          $arg$$44 = r$$10;
+          $arg$$45 = f$$6;
+          $arg$$46 = r$$10;
           continue MapTreeModule$$$iter;
           break;
         }
@@ -678,10 +688,10 @@ function MapTreeModule$$$iter($arg$$43, $arg$$44) {
   }
 }
 
-function MapTreeModule$$$tryPick($arg$$45, $arg$$46) {
+function MapTreeModule$$$tryPick($arg$$47, $arg$$48) {
   MapTreeModule$$$tryPick: while (true) {
-    const f$$7 = $arg$$45,
-          m$$10 = $arg$$46;
+    const f$$7 = $arg$$47,
+          m$$10 = $arg$$48;
 
     switch (m$$10.tag) {
       case 1:
@@ -703,8 +713,8 @@ function MapTreeModule$$$tryPick($arg$$45, $arg$$46) {
             const matchValue$$3 = f$$7(k2$$15, v2$$11);
 
             if (matchValue$$3 == null) {
-              $arg$$45 = f$$7;
-              $arg$$46 = r$$11;
+              $arg$$47 = f$$7;
+              $arg$$48 = r$$11;
               continue MapTreeModule$$$tryPick;
             } else {
               const res$$1 = matchValue$$3;
@@ -726,10 +736,10 @@ function MapTreeModule$$$tryPick($arg$$45, $arg$$46) {
   }
 }
 
-function MapTreeModule$$$exists($arg$$47, $arg$$48) {
+function MapTreeModule$$$exists($arg$$49, $arg$$50) {
   MapTreeModule$$$exists: while (true) {
-    const f$$8 = $arg$$47,
-          m$$11 = $arg$$48;
+    const f$$8 = $arg$$49,
+          m$$11 = $arg$$50;
 
     switch (m$$11.tag) {
       case 1:
@@ -749,8 +759,8 @@ function MapTreeModule$$$exists($arg$$47, $arg$$48) {
           if (MapTreeModule$$$exists(f$$8, l$$12) ? true : f$$8(k2$$17, v2$$13)) {
             return true;
           } else {
-            $arg$$47 = f$$8;
-            $arg$$48 = r$$12;
+            $arg$$49 = f$$8;
+            $arg$$50 = r$$12;
             continue MapTreeModule$$$exists;
           }
         }
@@ -765,10 +775,10 @@ function MapTreeModule$$$exists($arg$$47, $arg$$48) {
   }
 }
 
-function MapTreeModule$$$forall($arg$$49, $arg$$50) {
+function MapTreeModule$$$forall($arg$$51, $arg$$52) {
   MapTreeModule$$$forall: while (true) {
-    const f$$9 = $arg$$49,
-          m$$12 = $arg$$50;
+    const f$$9 = $arg$$51,
+          m$$12 = $arg$$52;
 
     switch (m$$12.tag) {
       case 1:
@@ -786,8 +796,8 @@ function MapTreeModule$$$forall($arg$$49, $arg$$50) {
           const k2$$19 = m$$12.fields[0];
 
           if (MapTreeModule$$$forall(f$$9, l$$13) ? f$$9(k2$$19, v2$$15) : false) {
-            $arg$$49 = f$$9;
-            $arg$$50 = r$$13;
+            $arg$$51 = f$$9;
+            $arg$$52 = r$$13;
             continue MapTreeModule$$$forall;
           } else {
             return false;
@@ -862,11 +872,11 @@ function MapTreeModule$$$mapi(f$$11, m$$14) {
   }
 }
 
-function MapTreeModule$$$foldBack($arg$$55, $arg$$56, $arg$$57) {
+function MapTreeModule$$$foldBack($arg$$57, $arg$$58, $arg$$59) {
   MapTreeModule$$$foldBack: while (true) {
-    const f$$12 = $arg$$55,
-          m$$15 = $arg$$56,
-          x$$1 = $arg$$57;
+    const f$$12 = $arg$$57,
+          m$$15 = $arg$$58,
+          x$$1 = $arg$$59;
 
     switch (m$$15.tag) {
       case 1:
@@ -884,9 +894,9 @@ function MapTreeModule$$$foldBack($arg$$55, $arg$$56, $arg$$57) {
           const k$$18 = m$$15.fields[0];
           const x$$2 = MapTreeModule$$$foldBack(f$$12, r$$16, x$$1);
           const x$$3 = f$$12(k$$18, v$$14, x$$2);
-          $arg$$55 = f$$12;
-          $arg$$56 = l$$16;
-          $arg$$57 = x$$3;
+          $arg$$57 = f$$12;
+          $arg$$58 = l$$16;
+          $arg$$59 = x$$3;
           continue MapTreeModule$$$foldBack;
         }
 
@@ -900,11 +910,11 @@ function MapTreeModule$$$foldBack($arg$$55, $arg$$56, $arg$$57) {
   }
 }
 
-function MapTreeModule$$$fold($arg$$58, $arg$$59, $arg$$60) {
+function MapTreeModule$$$fold($arg$$60, $arg$$61, $arg$$62) {
   MapTreeModule$$$fold: while (true) {
-    const f$$13 = $arg$$58,
-          x$$4 = $arg$$59,
-          m$$16 = $arg$$60;
+    const f$$13 = $arg$$60,
+          x$$4 = $arg$$61,
+          m$$16 = $arg$$62;
 
     switch (m$$16.tag) {
       case 1:
@@ -922,9 +932,9 @@ function MapTreeModule$$$fold($arg$$58, $arg$$59, $arg$$60) {
           const k$$20 = m$$16.fields[0];
           const x$$5 = MapTreeModule$$$fold(f$$13, x$$4, l$$17);
           const x$$6 = f$$13(x$$5, k$$20, v$$16);
-          $arg$$58 = f$$13;
-          $arg$$59 = x$$6;
-          $arg$$60 = r$$17;
+          $arg$$60 = f$$13;
+          $arg$$61 = x$$6;
+          $arg$$62 = r$$17;
           continue MapTreeModule$$$fold;
         }
 
@@ -986,7 +996,7 @@ function MapTreeModule$$$loop(m$$19, acc$$8) {
         {
           const v$$19 = m$$19.fields[1];
           const k$$23 = m$$19.fields[0];
-          return (0, _Types.L)([k$$23, v$$19], acc$$8);
+          return new _Types.List([k$$23, v$$19], acc$$8);
         }
 
       case 2:
@@ -995,9 +1005,9 @@ function MapTreeModule$$$loop(m$$19, acc$$8) {
           const r$$19 = m$$19.fields[3];
           const l$$19 = m$$19.fields[2];
           const k$$24 = m$$19.fields[0];
-          const $acc$$8$$73 = acc$$8;
+          const $acc$$8$$75 = acc$$8;
           m$$19 = l$$19;
-          acc$$8 = (0, _Types.L)([k$$24, v$$20], MapTreeModule$$$loop(r$$19, $acc$$8$$73));
+          acc$$8 = new _Types.List([k$$24, v$$20], MapTreeModule$$$loop(r$$19, $acc$$8$$75));
           continue MapTreeModule$$$loop;
         }
 
@@ -1012,7 +1022,7 @@ function MapTreeModule$$$loop(m$$19, acc$$8) {
 }
 
 function MapTreeModule$$$toList(m$$20) {
-  return MapTreeModule$$$loop(m$$20, (0, _Types.L)());
+  return MapTreeModule$$$loop(m$$20, new _Types.List());
 }
 
 function MapTreeModule$$$ofList(comparer$$13, l$$20) {
@@ -1025,12 +1035,12 @@ function MapTreeModule$$$mkFromEnumerator(comparer$$14, acc$$10, e) {
   MapTreeModule$$$mkFromEnumerator: while (true) {
     if (e.MoveNext()) {
       const patternInput$$2 = e.Current;
-      const $acc$$10$$75 = acc$$10;
-      const $comparer$$14$$74 = comparer$$14;
-      const $e$$76 = e;
-      comparer$$14 = $comparer$$14$$74;
-      acc$$10 = MapTreeModule$$$add($comparer$$14$$74, patternInput$$2[0], patternInput$$2[1], $acc$$10$$75);
-      e = $e$$76;
+      const $acc$$10$$77 = acc$$10;
+      const $comparer$$14$$76 = comparer$$14;
+      const $e$$78 = e;
+      comparer$$14 = $comparer$$14$$76;
+      acc$$10 = MapTreeModule$$$add($comparer$$14$$76, patternInput$$2[0], patternInput$$2[1], $acc$$10$$77);
+      e = $e$$78;
       continue MapTreeModule$$$mkFromEnumerator;
     } else {
       return acc$$10;
@@ -1071,11 +1081,15 @@ function MapTreeModule$$$copyToArray(s$$4, arr$$1, i$$1) {
   }, s$$4);
 }
 
-const MapTreeModule$002EMapIterator$00602 = (0, _Types.declare)(function MapTreeModule$002EMapIterator$00602(arg1, arg2) {
+const MapTreeModule$002EMapIterator$00602 = (0, _Types.declare)(function Map_MapTreeModule_MapIterator(arg1, arg2) {
   this.stack = arg1;
   this.started = arg2;
 }, _Types.Record);
 exports.MapTreeModule$002EMapIterator$00602 = MapTreeModule$002EMapIterator$00602;
+
+function MapTreeModule$002EMapIterator$00602$reflection($gen$$79, $gen$$80) {
+  return (0, _Reflection.record)("Map.MapTreeModule.MapIterator`2", [$gen$$79, $gen$$80], MapTreeModule$002EMapIterator$00602, () => [["stack", (0, _Reflection.list)(MapTree$00602$reflection($gen$$79, $gen$$80))], ["started", _Reflection.bool]]);
+}
 
 function MapTreeModule$$$collapseLHS(stack) {
   MapTreeModule$$$collapseLHS: while (true) {
@@ -1083,16 +1097,16 @@ function MapTreeModule$$$collapseLHS(stack) {
       if (stack.head.tag === 1) {
         return stack;
       } else if (stack.head.tag === 2) {
-        const $stack$$77 = stack;
-        stack = (0, _Types.L)($stack$$77.head.fields[2], (0, _Types.L)(new MapTree$00602(1, "MapOne", $stack$$77.head.fields[0], $stack$$77.head.fields[1]), (0, _Types.L)($stack$$77.head.fields[3], $stack$$77.tail)));
+        const $stack$$81 = stack;
+        stack = new _Types.List($stack$$81.head.fields[2], new _Types.List(new MapTree$00602(1, "MapOne", $stack$$81.head.fields[0], $stack$$81.head.fields[1]), new _Types.List($stack$$81.head.fields[3], $stack$$81.tail)));
         continue MapTreeModule$$$collapseLHS;
       } else {
-        const $stack$$78 = stack;
-        stack = $stack$$78.tail;
+        const $stack$$82 = stack;
+        stack = $stack$$82.tail;
         continue MapTreeModule$$$collapseLHS;
       }
     } else {
-      return (0, _Types.L)();
+      return new _Types.List();
     }
 
     break;
@@ -1100,7 +1114,7 @@ function MapTreeModule$$$collapseLHS(stack) {
 }
 
 function MapTreeModule$$$mkIterator(s$$5) {
-  return new MapTreeModule$002EMapIterator$00602(MapTreeModule$$$collapseLHS((0, _Types.L)(s$$5, (0, _Types.L)())), false);
+  return new MapTreeModule$002EMapIterator$00602(MapTreeModule$$$collapseLHS(new _Types.List(s$$5, new _Types.List())), false);
 }
 
 function MapTreeModule$$$notStarted() {
@@ -1145,12 +1159,16 @@ function MapTreeModule$$$moveNext(i$$3) {
   }
 }
 
-const MapTreeModule$002EmkIEnumerator$0027$00602 = (0, _Types.declare)(function MapTreeModule$002EmkIEnumerator$0027$00602(s$$6) {
+const MapTreeModule$002EmkIEnumerator$0027$00602 = (0, _Types.declare)(function Map_MapTreeModule_mkIEnumerator_(s$$6) {
   const $this$$1 = this;
   $this$$1.s = s$$6;
   $this$$1.i = MapTreeModule$$$mkIterator($this$$1.s);
 });
 exports.MapTreeModule$002EmkIEnumerator$0027$00602 = MapTreeModule$002EmkIEnumerator$0027$00602;
+
+function MapTreeModule$002EmkIEnumerator$0027$00602$reflection($gen$$83, $gen$$84) {
+  return (0, _Reflection.type)("Map.MapTreeModule.mkIEnumerator'`2", [$gen$$83, $gen$$84]);
+}
 
 function MapTreeModule$002EmkIEnumerator$0027$00602$$$$002Ector$$Z26BC498C(s$$6) {
   return this != null ? MapTreeModule$002EmkIEnumerator$0027$00602.call(this, s$$6) : new MapTreeModule$002EmkIEnumerator$0027$00602(s$$6);
@@ -1193,12 +1211,16 @@ function MapTreeModule$$$toSeq(s$$8) {
   }, en);
 }
 
-const FSharpMap = (0, _Types.declare)(function FSharpMap(comparer$$17, tree) {
+const FSharpMap = (0, _Types.declare)(function Map_Map(comparer$$17, tree) {
   const $this$$2 = this;
   $this$$2.comparer = comparer$$17;
   $this$$2.tree = tree;
 });
 exports.FSharpMap = FSharpMap;
+
+function FSharpMap$reflection($gen$$85, $gen$$86) {
+  return (0, _Reflection.type)("Map.FSharpMap", [$gen$$85, $gen$$86]);
+}
 
 function FSharpMap$$$$002Ector$$58ADD115(comparer$$17, tree) {
   return this != null ? FSharpMap.call(this, comparer$$17, tree) : new FSharpMap(comparer$$17, tree);

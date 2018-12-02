@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.declare = declare;
 exports.SystemObject = SystemObject;
 exports.List = List;
-exports.L = L;
 exports.Union = Union;
 exports.Record = Record;
 exports.isException = isException;
@@ -124,10 +123,6 @@ List.prototype.Equals = function (other) {
 List.prototype.CompareTo = function (other) {
   return compareList(this, other);
 };
-
-function L(h, t) {
-  return new List(h, t);
-}
 
 function Union(tag, name, ...fields) {
   this.tag = tag | 0;

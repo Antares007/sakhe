@@ -18,12 +18,12 @@ exports.op_Division = op_Division;
 exports.op_Multiply = op_Multiply;
 exports.op_UnaryNegation = op_UnaryNegation;
 exports.toString = toString;
-exports.parse = parse;
 exports.tryParse = tryParse;
+exports.parse = parse;
 exports.toNumber = toNumber;
 exports.getBytes = getBytes;
 exports.fromBytes = fromBytes;
-exports.get_One = exports.get_Zero = exports.default = void 0;
+exports.get_MinValue = exports.get_MaxValue = exports.get_MinusOne = exports.get_One = exports.get_Zero = exports.default = void 0;
 
 var _big = _interopRequireDefault(require("../lib/big"));
 
@@ -35,6 +35,12 @@ const get_Zero = new _big.default(0);
 exports.get_Zero = get_Zero;
 const get_One = new _big.default(1);
 exports.get_One = get_One;
+const get_MinusOne = new _big.default(-1);
+exports.get_MinusOne = get_MinusOne;
+const get_MaxValue = new _big.default("79228162514264337593543950335");
+exports.get_MaxValue = get_MaxValue;
+const get_MinValue = new _big.default("-79228162514264337593543950335");
+exports.get_MinValue = get_MinValue;
 
 function compare(x, y) {
   return x.cmp(y);
@@ -110,15 +116,21 @@ function toString(x) {
   return x.toString();
 }
 
-function parse(str) {
-  return new _big.default(str.trim());
-}
-
-function tryParse(str, defaultValue) {
+function tryParse(str) {
   try {
     return [true, new _big.default(str.trim())];
   } catch (_a) {
-    return [false, defaultValue];
+    return [false, get_Zero];
+  }
+}
+
+function parse(str) {
+  const [ok, value] = tryParse(str);
+
+  if (ok) {
+    return value;
+  } else {
+    throw new Error("Input string was not in a correct format.");
   }
 }
 

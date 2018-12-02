@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.T$00602$reflection = T$00602$reflection;
 exports.fromPith = fromPith;
 exports.toPith = toPith;
 exports.nextArrival = nextArrival;
@@ -10,26 +11,32 @@ exports.takeUntil = takeUntil;
 exports.mappend = mappend;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-core.2.0.10/Types");
+var _Types = require("./fable-library.2.1.2/Types");
 
-var _Map = require("./fable-core.2.0.10/Map");
+var _Reflection = require("./fable-library.2.1.2/Reflection");
 
-var _Option = require("./fable-core.2.0.10/Option");
+var _Map = require("./fable-library.2.1.2/Map");
 
-var _Util = require("./fable-core.2.0.10/Util");
+var _Option = require("./fable-library.2.1.2/Option");
+
+var _Util = require("./fable-library.2.1.2/Util");
 
 var _o = require("./o");
 
 var _pith = require("./pith");
 
-var _Seq = require("./fable-core.2.0.10/Seq");
+var _Seq = require("./fable-library.2.1.2/Seq");
 
-var _Array = require("./fable-core.2.0.10/Array");
+var _Array = require("./fable-library.2.1.2/Array");
 
-const T$00602 = (0, _Types.declare)(function T$00602(tag, name, ...fields) {
+const T$00602 = (0, _Types.declare)(function Sakhe_TimeLine_T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
 }, _Types.Union);
 exports.T$00602 = T$00602;
+
+function T$00602$reflection($gen$$14, $gen$$15) {
+  return (0, _Reflection.union)("Sakhe.TimeLine.T`2", [$gen$$14, $gen$$15], T$00602, () => [["TimeLine", [(0, _Reflection.tuple)((0, _Reflection.array)($gen$$14), (0, _Reflection.type)("Microsoft.FSharp.Collections.FSharpMap`2", [$gen$$14, $gen$$15]))]]]);
+}
 
 function fromPith(mappend$$1, f) {
   const o$$1 = (0, _o.return$0027)(function (m, tupledArg) {
@@ -78,14 +85,14 @@ function findAppendPosition(a$$2, sortedArray) {
         const m$$1 = ~~((l + r) / 2) | 0;
 
         if ((0, _Util.compare)(sortedArray[m$$1], a$$2) > 0) {
-          const $l$$16 = l;
-          l = $l$$16;
+          const $l$$18 = l;
+          l = $l$$18;
           r = m$$1;
           continue go;
         } else {
-          const $r$$17 = r;
+          const $r$$19 = r;
           l = m$$1 + 1;
-          r = $r$$17;
+          r = $r$$19;
           continue go;
         }
       } else {

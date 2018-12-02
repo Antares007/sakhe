@@ -3,7 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.AnonymousDisposable$reflection = AnonymousDisposable$reflection;
 exports.AnonymousDisposable$$$$002Ector$$3A5B6456 = AnonymousDisposable$$$$002Ector$$3A5B6456;
+exports.SettableDisposable$reflection = SettableDisposable$reflection;
 exports.SettableDisposable$$$$002Ector = SettableDisposable$$$$002Ector;
 exports.SettableDisposable$$Set$$Z5A296901 = SettableDisposable$$Set$$Z5A296901;
 exports.return$0027 = return$0027;
@@ -11,14 +13,20 @@ exports.append = append;
 exports.appendArray = appendArray;
 exports.empty = exports.SettableDisposable = exports.AnonymousDisposable = void 0;
 
-var _Types = require("./fable-core.2.0.10/Types");
+var _Types = require("./fable-library.2.1.2/Types");
 
-const AnonymousDisposable = (0, _Types.declare)(function AnonymousDisposable(f) {
+var _Reflection = require("./fable-library.2.1.2/Reflection");
+
+const AnonymousDisposable = (0, _Types.declare)(function Sakhe_Disposable_AnonymousDisposable(f) {
   const $this$$1 = this;
   $this$$1.f = f;
   $this$$1.disposed = false;
 });
 exports.AnonymousDisposable = AnonymousDisposable;
+
+function AnonymousDisposable$reflection() {
+  return (0, _Reflection.type)("Sakhe.Disposable.AnonymousDisposable");
+}
 
 function AnonymousDisposable$$$$002Ector$$3A5B6456(f) {
   return this != null ? AnonymousDisposable.call(this, f) : new AnonymousDisposable(f);
@@ -34,12 +42,16 @@ AnonymousDisposable.prototype.Dispose = function () {
   }
 };
 
-const SettableDisposable = (0, _Types.declare)(function SettableDisposable() {
+const SettableDisposable = (0, _Types.declare)(function Sakhe_Disposable_SettableDisposable() {
   const $this$$2 = this;
   $this$$2.disposed = false;
   $this$$2.setted = null;
 });
 exports.SettableDisposable = SettableDisposable;
+
+function SettableDisposable$reflection() {
+  return (0, _Reflection.type)("Sakhe.Disposable.SettableDisposable");
+}
 
 function SettableDisposable$$$$002Ector() {
   return this != null ? SettableDisposable.call(this) : new SettableDisposable();
