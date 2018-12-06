@@ -11,23 +11,23 @@ exports.takeUntil = takeUntil;
 exports.mappend = mappend;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-library.2.1.2/Types");
+var _Types = require("./fable-library.2.1.3/Types");
 
-var _Reflection = require("./fable-library.2.1.2/Reflection");
+var _Reflection = require("./fable-library.2.1.3/Reflection");
 
-var _Map = require("./fable-library.2.1.2/Map");
+var _Map = require("./fable-library.2.1.3/Map");
 
-var _Option = require("./fable-library.2.1.2/Option");
+var _Option = require("./fable-library.2.1.3/Option");
 
-var _Util = require("./fable-library.2.1.2/Util");
+var _Util = require("./fable-library.2.1.3/Util");
 
 var _o = require("./o");
 
 var _pith = require("./pith");
 
-var _Seq = require("./fable-library.2.1.2/Seq");
+var _Seq = require("./fable-library.2.1.3/Seq");
 
-var _Array = require("./fable-library.2.1.2/Array");
+var _Array = require("./fable-library.2.1.3/Array");
 
 const T$00602 = (0, _Types.declare)(function Sakhe_TimeLine_T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);

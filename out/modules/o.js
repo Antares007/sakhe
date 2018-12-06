@@ -15,9 +15,9 @@ exports.filter = filter;
 exports.contraMap = contraMap;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-library.2.1.2/Types");
+var _Types = require("./fable-library.2.1.3/Types");
 
-var _Reflection = require("./fable-library.2.1.2/Reflection");
+var _Reflection = require("./fable-library.2.1.3/Reflection");
 
 const T$00602 = (0, _Types.declare)(function Sakhe_O_T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);

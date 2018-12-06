@@ -13,7 +13,9 @@
     <Compile Include="unit.fs" />
     <Compile Include="timeline.fs" />
     <Compile Include="sink.fs" />
+    <Compile Include="scheduler.1.fs" />
     <Compile Include="scheduler.fs" />
+    <Compile Include="stream.1.fs" />
     <Compile Include="stream.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>

@@ -8,6 +8,7 @@ exports.return$0027 = return$0027;
 exports.empty = empty;
 exports.mappend = mappend;
 exports.run = run;
+exports.run2 = run2;
 exports.filter = filter;
 exports.map = map;
 exports.fmap = fmap;
@@ -16,13 +17,13 @@ exports.pmap = pmap;
 exports.bind = bind;
 exports.T$00602 = void 0;
 
-var _Types = require("./fable-library.2.1.2/Types");
+var _Types = require("./fable-library.2.1.3/Types");
 
-var _Reflection = require("./fable-library.2.1.2/Reflection");
+var _Reflection = require("./fable-library.2.1.3/Reflection");
 
 var _o = require("./o");
 
-var _Util = require("./fable-library.2.1.2/Util");
+var _Util = require("./fable-library.2.1.3/Util");
 
 const T$00602 = (0, _Types.declare)(function Sakhe_Pith_T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
@@ -56,52 +57,57 @@ function run(o$$2, _arg1$$1) {
   });
 }
 
-function filter(f$$1, _arg1$$2) {
+function run2(_arg1$$2, o$$3) {
   const p$$1 = _arg1$$2.fields[0];
-  return new T$00602(0, "Pith", function (o$$3) {
-    return p$$1(function (a$$1) {
+  return p$$1(o$$3);
+}
+
+function filter(f$$1, _arg1$$3) {
+  const p$$2 = _arg1$$3.fields[0];
+  return new T$00602(0, "Pith", function (o$$4) {
+    return p$$2(function (a$$1) {
       if (f$$1(a$$1)) {
-        o$$3(a$$1);
+        o$$4(a$$1);
       }
     });
   });
 }
 
-function map(g, f$$2, _arg1$$3) {
-  const p$$2 = _arg1$$3.fields[0];
+function map(g, f$$2, _arg1$$4) {
+  const p$$3 = _arg1$$4.fields[0];
   return new T$00602(0, "Pith", function ($arg$$2) {
-    return f$$2(p$$2(function ($arg$$1) {
+    return f$$2(p$$3(function ($arg$$1) {
       $arg$$2(g($arg$$1));
     }));
   });
 }
 
-function fmap(f$$3, _arg1$$4) {
-  const p$$3 = _arg1$$4.fields[0];
+function fmap(f$$3, _arg1$$5) {
+  const p$$4 = _arg1$$5.fields[0];
   return new T$00602(0, "Pith", function ($arg$$3) {
-    return f$$3(p$$3($arg$$3));
+    return f$$3(p$$4($arg$$3));
   });
 }
 
-function omap(f$$4, _arg1$$5) {
-  const p$$4 = _arg1$$5.fields[0];
-  return new T$00602(0, "Pith", function (o$$5) {
-    return p$$4(function ($arg$$4) {
-      o$$5(f$$4($arg$$4));
+function omap(f$$4, _arg1$$6) {
+  const p$$5 = _arg1$$6.fields[0];
+  return new T$00602(0, "Pith", function (o$$6) {
+    return p$$5(function ($arg$$4) {
+      o$$6(f$$4($arg$$4));
     });
   });
 }
 
-function pmap(f$$5, _arg1$$6) {
-  const p$$5 = _arg1$$6.fields[0];
-  return new T$00602(0, "Pith", (0, _Util.partialApply)(1, f$$5, [p$$5]));
+function pmap(f$$5, _arg1$$7) {
+  const p$$6 = _arg1$$7.fields[0];
+  return new T$00602(0, "Pith", (0, _Util.partialApply)(1, f$$5, [p$$6]));
 }
 
-function bind(f$$6, _arg1$$7) {
-  const p$$6 = _arg1$$7.fields[0];
-  return new T$00602(0, "Pith", function (o$$6) {
-    const a$$2 = p$$6(o$$6);
-    const p$$7 = f$$6(a$$2).fields[0];
-    return p$$7(o$$6);
+function bind(f$$6, _arg1$$8) {
+  const p$$7 = _arg1$$8.fields[0];
+  return new T$00602(0, "Pith", function (o$$7) {
+    const a$$2 = p$$7(o$$7);
+    const p$$8 = f$$6(a$$2).fields[0];
+    return p$$8(o$$7);
   });
 }

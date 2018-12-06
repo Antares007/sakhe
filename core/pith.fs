@@ -18,6 +18,8 @@ let mappend mappend (Pith l) (Pith r) =
 let run o (Pith p) =
     p (fun a -> O.put a o)
 
+let run2 (Pith p) o = p o
+
 let filter f (Pith p) =
     Pith <| fun o -> p (fun a -> if f a then o a)
 
