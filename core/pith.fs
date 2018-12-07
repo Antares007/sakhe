@@ -15,10 +15,7 @@ let empty<'a> =
 let mappend mappend (Pith l) (Pith r) =
     Pith <| fun o -> mappend (l o) (r o)
 
-let run o (Pith p) =
-    p (fun a -> O.put a o)
-
-let run2 (Pith p) o = p o
+let run o (Pith p) = p o
 
 let filter f (Pith p) =
     Pith <| fun o -> p (fun a -> if f a then o a)

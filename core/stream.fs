@@ -3,12 +3,12 @@ module Sakhe.Stream
 open System
 open Sakhe
 
-type T<'a> = private Stream of Abo.T<Scheduler.T -> IDisposable, IDisposable, O<'a>>
+type T<'a> = private Stream of ((Scheduler.T -> IDisposable) -> Pith.T<O<'a>, IDisposable>)
 
 and O<'a> =
-    | Event of (Time.T * Time.Offset) * 'a
-    | End of (Time.T * Time.Offset)
-    | Error of (Time.T * Time.Offset) * exn
+    | Event of Time.T * 'a
+    | End of Time.T
+    | Error of Time.T * exn
 
 let inline pair a b = (a, b)
 
@@ -34,12 +34,21 @@ let timer delay task =
 
 let tf() =
     Time.return' <| System.Math.Floor(Fable.Import.Browser.performance.now())
-let run o (Stream io) = Pith.run o << Abo.run (Scheduler.run tf timer) <| io
-let Of f =
-    Stream << Abo.return' <| fun run -> Pith.return' <| fun sinkO -> f run sinkO
+let run o (Stream io) = Pith.run o (io <| (Scheduler.run tf timer))
+
+let Of f = Stream <| fun run -> Pith.return' <| fun sinkO -> f run sinkO
+
+let now a =
+    Stream <| fun run -> Pith.return' <| fun oS ->
+        run << Scheduler.return' <| fun t -> Pith.return' <| fun o' ->
+            o' << Scheduler.O.delay 0 <| fun t -> Pith.return' <| fun _ ->
+                try
+                    oS <| Event(t, ())
+                    oS <| End(t)
+                with err -> oS <| Error(t, err)
 
 let unit =
-    Stream << Abo.return' <| fun run ->
+    Stream <| fun run ->
         Pith.return' <| fun s ->
             run << Scheduler.Of <| fun _ o ->
                 o << Scheduler.delay 0 <| fun t _ ->
@@ -47,44 +56,43 @@ let unit =
                         s <| Event(t, ())
                         s <| End(t)
                     with err -> s <| Error(t, err)
-
 let empty<'a> =
-    Stream << Abo.return'
+    Stream
     <| fun run -> Pith.return' <| fun (s : O<'a> -> unit) -> Disposable.empty
 
 let map f (Stream io) =
-    Stream << Abo.return' <| fun run ->
-        Pith.return' <| fun s ->
-            let so =
-                O.proxy <| function
-                | O.Event(t, a) -> s << Event <| (t, f a)
-                | O.End(t) -> s << End <| (t)
-                | O.Error(t, err) -> s << Error <| (t, err)
-            Pith.run so <| Abo.run run io
+    Stream <| fun run ->
+        Pith.return' <| fun o ->
+            Pith.run
+                <| function
+                    | O.Event(t, a) -> o << Event <| (t, f a)
+                    | O.End(t) -> o << End <| (t)
+                    | O.Error(t, err) -> o << Error <| (t, err)
+                <| (io run)
 
 let merge (Stream a) (Stream b) =
-    Stream << Abo.return' <| fun run ->
-        Pith.return' <| fun s ->
+    Stream <| fun run ->
+        Pith.return' <| fun o ->
             let mutable disposable = Disposable.empty
             let mutable endCount = 0
 
-            let so =
-                O.proxy <| function
+            let o' =
+                function
                 | O.End t ->
                     endCount <- endCount + 1
-                    if endCount = 2 then s << End <| t
+                    if endCount = 2 then o << End <| t
                 | O.Error(a, b) ->
                     disposable.Dispose()
-                    s << Error <| (a, b)
-                | O.Event(t, a) -> s << Event <| (t, a)
+                    o << Error <| (a, b)
+                | O.Event(t, a) -> o << Event <| (t, a)
 
-            let da = Pith.run so <| Abo.run run a
-            let db = Pith.run so <| Abo.run run b
+            let da = Pith.run o' (a run)
+            let db = Pith.run o' (b run)
             disposable <- Disposable.append da db
             disposable
 
 let join (Stream ioOfStreams) =
-    Stream << Abo.return' <| fun run ->
+    Stream <| fun run ->
         Pith.return' <| fun s ->
             let mutable i = 1
             let index = 0
@@ -101,46 +109,24 @@ let join (Stream ioOfStreams) =
                 disposable.Dispose()
                 s << Error <| (t, err)
 
-            let so =
-                O.proxy <| function
-                | O.Event((ot, offset), (Stream io)) ->
-                    let index = i
-                    i <- i + 1
-                    let so =
-                        O.proxy <| function
-                        | O.Event((it, _), a) ->
-                            s << Event <| ((ot + it, offset), a)
-                        | O.End(it, _) -> end' (ot + it, offset) index
-                        | O.Error((it, _), err) -> error' (ot + it, offset) err
-                    map <- Map.add index (Pith.run so (Abo.run run io)) map
-                | O.End t -> end' t index
-                | O.Error(t, err) -> error' t err
-
-            map <- Map.add index (Pith.run so (Abo.run run ioOfStreams)) map
+            let d =
+                Pith.run
+                    <| function
+                        | O.Event(ot, (Stream io)) ->
+                            let index = i
+                            i <- i + 1
+                            let d =
+                                Pith.run
+                                    <| function
+                                        | O.Event(it, a)   -> s << Event <| (ot + it, a)
+                                        | O.End  (it)      -> end' (ot + it) index
+                                        | O.Error(it, err) -> error' (ot + it) err
+                                    <| (io <| run)
+                            map <- Map.add index d map
+                        | O.End t -> end' t index
+                        | O.Error(t, err) -> error' t err
+                    <| (ioOfStreams run)
+            map <- Map.add index d map
             disposable
 
 let bind f io = join << map f <| io
-
-let mappend (Stream l) (Stream r) =
-    Stream << Abo.return' <| fun run ->
-        Pith.return' <| fun s ->
-            let mutable disposable = Disposable.empty
-
-            let so =
-                O.proxy <| function
-                | O.Event(t, a) -> s << Event <| (t, a)
-                | O.Error(t, err) ->
-                    disposable.Dispose()
-                    s << Error <| (t, err)
-                | O.End(ot, offset) ->
-                    let so =
-                        O.proxy <| function
-                        | O.Event((it, _), a) ->
-                            s << Event <| ((ot + it, offset), a)
-                        | O.Error((it, _), err) ->
-                            disposable.Dispose()
-                            s << Error <| ((ot + it, offset), err)
-                        | O.End(it, _) -> s << End <| (ot + it, offset)
-                    disposable <- Pith.run so (Abo.run run r)
-            disposable <- Pith.run so (Abo.run run l)
-            disposable

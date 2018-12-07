@@ -14,7 +14,7 @@ var _String = require("./fable-library.2.1.3/String");
 
 var _pith = require("./pith");
 
-var _scheduler = require("./scheduler.1");
+var _scheduler = require("./scheduler");
 
 var _time = require("./time");
 

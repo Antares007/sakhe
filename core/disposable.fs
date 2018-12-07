@@ -1,6 +1,5 @@
 module Sakhe.Disposable
 open System
-open Sakhe
 
 type AnonymousDisposable(f) =
     let mutable disposed = false

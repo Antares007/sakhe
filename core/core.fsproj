@@ -3,19 +3,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="o.fs" />
     <Compile Include="pith.fs" />
-    <Compile Include="abo.fs" />
     <Compile Include="disposable.fs" />
-    <Compile Include="task-io.fs" />
-    <Compile Include="time.fs" />
     <Compile Include="option.fs" />
     <Compile Include="unit.fs" />
+    <Compile Include="time.fs" />
     <Compile Include="timeline.fs" />
-    <Compile Include="sink.fs" />
-    <Compile Include="scheduler.1.fs" />
     <Compile Include="scheduler.fs" />
-    <Compile Include="stream.1.fs" />
     <Compile Include="stream.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
