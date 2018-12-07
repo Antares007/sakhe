@@ -61,7 +61,7 @@ function OModule$$$delay(delay, f$$3) {
   return new O(1, "Delay", (0, _time.DelayModule$$$return$0027)(delay), return$0027(f$$3));
 }
 
-function Private$$$map(canceled, _arg1) {
+function Private$$$map(canceled, offset, _arg1) {
   const io = _arg1.fields[0];
   return new T(0, "Local", function (now) {
     return canceled.contents ? (0, _pith.empty)() : (0, _pith.pmap)(function (p, o) {
@@ -69,13 +69,13 @@ function Private$$$map(canceled, _arg1) {
         if (_arg2.tag === 1) {
           const io$$2 = _arg2.fields[1];
           const delay$$1 = _arg2.fields[0];
-          o(new O(1, "Delay", delay$$1, Private$$$map(canceled, io$$2)));
+          o(new O(1, "Delay", delay$$1, Private$$$map(canceled, offset, io$$2)));
         } else {
           const io$$1 = _arg2.fields[0];
-          o(new O(0, "Now", Private$$$map(canceled, io$$1)));
+          o(new O(0, "Now", Private$$$map(canceled, offset, io$$1)));
         }
       });
-    }, io(now));
+    }, io(now + offset));
   });
 }
 
@@ -83,7 +83,7 @@ function Private$$$mappend(_arg2$$1, _arg1$$1) {
   const l = _arg2$$1.fields[0];
   const r = _arg1$$1.fields[0];
   return new T(0, "Local", function (t) {
-    return (0, _pith.mappend)(function (arg00$0040, arg10$0040$$2) {
+    return (0, _pith.mappend)(function (arg00$0040, arg10$0040$$1) {
       (0, _unit.mappend)(null, null);
     }, l(t), r(t));
   });
@@ -125,7 +125,7 @@ function run(tf, timer) {
         if (tl = nextRun[1], (nr = nextRun[0], (0, _Util.compare)(nr, patternInput[0]) > 0)) {
           nextRun = [patternInput[0], (0, _timeline.mappend)(Private$$$mappend, nextRun[1], timeline)];
           timerd.Dispose();
-          timerd = setTimer(patternInput[0]);
+          timerd = timer((0, _time.DelayModule$$$fromTo)(tf(), patternInput[0]), onTimer);
         } else {
           if (nextRun != null) {
             const tl$$2 = nextRun[1];
@@ -137,33 +137,32 @@ function run(tf, timer) {
         }
       } else {
         nextRun = [patternInput[0], timeline];
-        timerd = setTimer(patternInput[0]);
+        timerd = timer((0, _time.DelayModule$$$fromTo)(tf(), patternInput[0]), onTimer);
       }
     }
   };
 
-  const setTimer = function setTimer(nextArrival$$1) {
-    return timer((0, _time.DelayModule$$$fromTo)(tf(), nextArrival$$1), function () {
-      (0, _String.toConsole)((0, _String.printf)("->"));
-      const patternInput$$1 = nextRun;
-      nextRun = null;
-      let p$$2 = (0, _pith.empty)();
-      const r$$1 = (0, _pith.run)(function (tupledArg) {
-        p$$2 = (0, _pith.mappend)(function (arg00$0040$$3, arg10$0040$$8) {
-          (0, _unit.mappend)(null, null);
-        }, p$$2, Private$$$runAllNows(tupledArg[0], tupledArg[1]));
-      }, (0, _timeline.runTo)(tf(), patternInput$$1[1]));
-      const l$$1 = (0, _timeline.fromPith)(Private$$$mappend, p$$2);
-      schedule((0, _option.mappend)(function (l$$2, r$$2) {
-        return (0, _timeline.mappend)(Private$$$mappend, l$$2, r$$2);
-      }, l$$1, r$$1));
-    });
+  const onTimer = function onTimer() {
+    (0, _String.toConsole)((0, _String.printf)("->"));
+    const patternInput$$1 = nextRun;
+    nextRun = null;
+    let p$$2 = (0, _pith.empty)();
+    const r$$1 = (0, _pith.run)(function (tupledArg) {
+      p$$2 = (0, _pith.mappend)(function (arg00$0040$$3, arg10$0040$$7) {
+        (0, _unit.mappend)(null, null);
+      }, p$$2, Private$$$runAllNows(tupledArg[0], tupledArg[1]));
+    }, (0, _timeline.runTo)(tf(), patternInput$$1[1]));
+    const l$$1 = (0, _timeline.fromPith)(Private$$$mappend, p$$2);
+    schedule((0, _option.mappend)(function (l$$2, r$$2) {
+      return (0, _timeline.mappend)(Private$$$mappend, l$$2, r$$2);
+    }, l$$1, r$$1));
   };
 
   return function (io$$7) {
     const canceled$$1 = new _Types.FSharpRef(false);
-    const io$$8 = Private$$$map(canceled$$1, io$$7);
-    schedule((0, _timeline.fromPith)(Private$$$mappend, Private$$$runAllNows(tf(), io$$8)));
+    const now$$2 = tf();
+    const io$$8 = Private$$$map(canceled$$1, _time.zero - now$$2, io$$7);
+    schedule((0, _timeline.fromPith)(Private$$$mappend, Private$$$runAllNows(now$$2, io$$8)));
     return (0, _disposable.return$0027)(function () {
       canceled$$1.contents = true;
     });
