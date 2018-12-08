@@ -53,15 +53,15 @@ let run tf timer =
         let (nr, tl) = nextRun.Value
         nextRun <- None
         let mutable p = P.empty
-        let r =
+        let l =
             P.run
             <| fun tio -> p <- (P.mappend Unit.mappend) p (runAllNows tio)
             <| TimeLine.runTo (tf()) tl
-        let l = TimeLine.fromPith mappend p
-        schedule (Option.mappend (TimeLine.mappend mappend) l  r)
+        schedule <| Option.mappend (TimeLine.mappend mappend) l (TimeLine.fromPith mappend p)
     fun io ->
         let canceled = ref false
         let now = tf()
         let io = map canceled (Time.zero - now) io
-        schedule << TimeLine.fromPith mappend <| runAllNows (now, io)
+        let p = runAllNows (now, io)
+        schedule <| TimeLine.fromPith mappend p
         Disposable.return' <| fun () -> canceled.Value <- true
