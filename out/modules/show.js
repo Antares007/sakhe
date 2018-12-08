@@ -12,13 +12,13 @@ var _disposable = require("./disposable");
 
 var _pith = require("./pith");
 
-var _String = require("./fable-library.2.1.3/String");
+var _String = require("./fable-library.2.1.6/String");
 
 var _scheduler = require("./scheduler");
 
 var _time = require("./time");
 
-var _Util = require("./fable-library.2.1.3/Util");
+var _Util = require("./fable-library.2.1.6/Util");
 
 const d = (0, _disposable.SettableDisposable$$$$002Ector)();
 exports.d = d;

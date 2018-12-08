@@ -11,9 +11,9 @@ exports.OModule$$$delay = OModule$$$delay;
 exports.run = run;
 exports.O = exports.T = void 0;
 
-var _Types = require("./fable-library.2.1.3/Types");
+var _Types = require("./fable-library.2.1.6/Types");
 
-var _Reflection = require("./fable-library.2.1.3/Reflection");
+var _Reflection = require("./fable-library.2.1.6/Reflection");
 
 var _pith = require("./pith");
 
@@ -23,11 +23,11 @@ var _unit = require("./unit");
 
 var _disposable = require("./disposable");
 
-var _String = require("./fable-library.2.1.3/String");
+var _String = require("./fable-library.2.1.6/String");
 
 var _timeline = require("./timeline");
 
-var _Util = require("./fable-library.2.1.3/Util");
+var _Util = require("./fable-library.2.1.6/Util");
 
 var _option = require("./option");
 
@@ -147,22 +147,22 @@ function run(tf, timer) {
     const patternInput$$1 = nextRun;
     nextRun = null;
     let p$$2 = (0, _pith.P$$$empty)();
-    const r$$1 = (0, _pith.P$$$run)(function (tio) {
+    const l$$1 = (0, _pith.P$$$run)(function (tio) {
       p$$2 = (0, _pith.P$$$mappend)(function (arg00$0040$$3, arg10$0040$$7) {
         (0, _unit.mappend)(null, null);
       }, p$$2, Private$$$runAllNows(tio[0], tio[1]));
     }, (0, _timeline.runTo)(tf(), patternInput$$1[1]));
-    const l$$1 = (0, _timeline.fromPith)(Private$$$mappend, p$$2);
-    schedule((0, _option.mappend)(function (l$$2, r$$2) {
-      return (0, _timeline.mappend)(Private$$$mappend, l$$2, r$$2);
-    }, l$$1, r$$1));
+    schedule((0, _option.mappend)(function (l$$2, r$$1) {
+      return (0, _timeline.mappend)(Private$$$mappend, l$$2, r$$1);
+    }, l$$1, (0, _timeline.fromPith)(Private$$$mappend, p$$2)));
   };
 
   return function (io$$6) {
     const canceled$$1 = new _Types.FSharpRef(false);
     const now$$3 = tf();
     const io$$7 = Private$$$map(canceled$$1, _time.zero - now$$3, io$$6);
-    schedule((0, _timeline.fromPith)(Private$$$mappend, Private$$$runAllNows(now$$3, io$$7)));
+    const p$$3 = Private$$$runAllNows(now$$3, io$$7);
+    schedule((0, _timeline.fromPith)(Private$$$mappend, p$$3));
     return (0, _disposable.return$0027)(function () {
       canceled$$1.contents = true;
     });
