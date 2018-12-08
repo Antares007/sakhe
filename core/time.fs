@@ -1,40 +1,36 @@
 [<RequireQualifiedAccess>]
 module Sakhe.Time
+
 open Fable.Core
 
-type [<Erase>] Offset = private Offset of float
-type [<Erase>] Delay = private Delay of int
-type [<Erase>] T =
+[<Erase>]
+type Offset = private Offset of float
+
+[<Erase>]
+type Delay = private Delay of int
+
+[<Erase>]
+type T =
     private
     | Time of float
-    static member (+) ((Time l), (Time r)) =
-        Time (l + r)
-    static member (-) ((Time l), (Time r)) =
-        Offset (l - r)
-    static member (+) ((Time l), (Offset r)) =
-        Time (l + r)
-    static member (+) ((Offset l), (Time r)) =
-        Time (l + r)
-    static member (-) ((Time l), (Offset r)) =
-        Time (l - r)
-    static member (-) ((Offset l), (Time r)) =
-        Time (l - r)
-    static member (+) ((Time t), (Delay d)) =
-        Time (t + float d)
-    static member (+) ((Delay d), (Time t)) =
-        Time (t + float d)
+    static member (+) ((Time l), (Time r)) = Time(l + r)
+    static member (-) ((Time l), (Time r)) = Offset(l - r)
+    static member (+) ((Time l), (Offset r)) = Time(l + r)
+    static member (+) ((Offset l), (Time r)) = Time(l + r)
+    static member (-) ((Time l), (Offset r)) = Time(l - r)
+    static member (-) ((Offset l), (Time r)) = Time(l - r)
+    static member (+) ((Time t), (Delay d)) = Time(t + float d)
+    static member (+) ((Delay d), (Time t)) = Time(t + float d)
 
 let return' (t) =
     assert (t >= 0.0)
     assert (t = System.Math.Floor(t))
     Time <| t
+
 let zero = Time 0.0
-
 let add (Delay delay) (Time t) = return' <| t + float delay
-
 let change (Offset offset) (Time t) = return' <| (t + offset)
-
-let max (Time l) (Time r) = return' <| System.Math.Max (l, r)
+let max (Time l) (Time r) = return' <| System.Math.Max(l, r)
 
 module Delay =
     let return' i =
@@ -42,10 +38,8 @@ module Delay =
         Delay i
 
     let zero = Delay 0
-
     let fromTo (Time from) (Time to') =
-        Delay << unbox <| System.Math.Max (0., to' - from)
-
+        Delay << unbox <| System.Math.Max(0., to' - from)
     let unbox (Delay v) = v
 
 module Offset =

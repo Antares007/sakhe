@@ -1,39 +1,26 @@
-﻿[<RequireQualifiedAccess>]
-module Sakhe.Pith
-open Fable.Core
+﻿namespace Sakhe
+type Pith<'a, 'b> = private P of (('a -> unit) -> 'b)
 
-type T<'a, 'b> =
-    private
-    | Pith of (('a -> unit) -> 'b)
+[<RequireQualifiedAccess>]
+module P =
 
-let return' f =
-    Pith f
+    let return' f = P f
+    let empty<'a> = P <| fun (o : 'a -> unit) -> ()
+    let mappend mappend (P l) (P r) = P <| fun o -> mappend (l o) (r o)
+    let run o (P p) = p o
 
-let empty<'a> =
-    Pith <| fun (o: 'a -> unit) -> ()
+    let filter f (P p) =
+        P <| fun o ->
+            p (fun a ->
+                if f a then o a)
 
-let mappend mappend (Pith l) (Pith r) =
-    Pith <| fun o -> mappend (l o) (r o)
+    let map g f (P p) = P(f << (fun o -> p (g >> o)))
+    let fmap f (P p) = P(f << p)
+    let omap f (P p) = P(fun o -> p (f >> o))
+    let pmap f (P p) = P(f p)
 
-let run o (Pith p) = p o
-
-let filter f (Pith p) =
-    Pith <| fun o -> p (fun a -> if f a then o a)
-
-let map g f (Pith p) =
-    Pith (f << (fun o -> p (g >> o)))
-
-let fmap f (Pith p) =
-    Pith (f << p)
-
-let omap f (Pith p) =
-    Pith (fun o -> p (f >> o))
-
-let pmap f (Pith p) =
-    Pith (f p)
-
-let bind f (Pith p) =
-    Pith <| fun o ->
-        let a = p o
-        let (Pith p) = f a
-        p o
+    let bind f (P p) =
+        P <| fun o ->
+            let a = p o
+            let (P p) = f a
+            p o

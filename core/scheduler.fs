@@ -4,7 +4,7 @@ open Sakhe
 
 type T =
     private
-    | Local of (Time.T -> Pith.T<O, unit>)
+    | Local of (Time.T -> Pith<O, unit>)
 and O =
     | Now of T
     | Delay of Time.Delay * T
@@ -20,22 +20,22 @@ module O =
 module private Private =
     let rec map (canceled: bool ref) (offset: Time.Offset) (Local io) =
         Local <| fun now ->
-            if canceled.Value then Pith.empty
+            if canceled.Value then P.empty
             else
-            Pith.pmap
+            P.pmap
                 <| fun p o ->
                     p <| function
                         | Now io            -> o <| O.Now (map canceled offset io)
                         | Delay (delay, io) -> o <| O.Delay (delay, map canceled offset <| io)
                 <| io (now + offset)
-    let mappend (Local l) (Local r) = Local <| fun t -> Pith.mappend Unit.mappend (l t) (r t)
+    let mappend (Local l) (Local r) = Local <| fun t -> P.mappend Unit.mappend (l t) (r t)
     let rec runAllNows
-        (now, (Local io)) = Pith.return' <| fun o' ->
+        (now, (Local io)) = P.return' <| fun o' ->
         // let o' = O.proxy o
         let rec ring p o = p <| function
-            | Now (Local io)  -> Pith.run o' (Pith.pmap ring << io <| now)
+            | Now (Local io)  -> P.run o' (P.pmap ring << io <| now)
             | Delay (delay, io) -> o <| (delay + now, io)
-        Pith.run o' (Pith.pmap ring << io <| now)
+        P.run o' (P.pmap ring << io <| now)
 let run tf timer =
     let mutable nextRun = None
     let mutable timerd = Disposable.empty
@@ -58,10 +58,10 @@ let run tf timer =
         printfn "->"
         let (nr, tl) = nextRun.Value
         nextRun <- None
-        let mutable p = Pith.empty
+        let mutable p = P.empty
         let r =
-            Pith.run
-            <| fun (t, io) -> p <- (Pith.mappend Unit.mappend) p (runAllNows (t, io))
+            P.run
+            <| fun (t, io) -> p <- (P.mappend Unit.mappend) p (runAllNows (t, io))
             <| TimeLine.runTo (tf()) tl
         let l = TimeLine.fromPith mappend p
         schedule (Option.mappend (TimeLine.mappend mappend) l  r)

@@ -2,15 +2,15 @@ module Sakhe.Show
 open Fable.Import
 let d = new Disposable.SettableDisposable()
 
-let rec see n = Scheduler.return' <| fun t -> Pith.return' <| fun o ->
-    let delay label delay f = Scheduler.O.delay delay <| fun (now) -> Pith.return' <| fun o ->
+let rec see n = Scheduler.return' <| fun t -> P <| fun o ->
+    let delay label delay f = Scheduler.O.delay delay <| fun now -> P <| fun o ->
         printfn "now(%A) %s" (now) label
         f now o
 
     // if n < 3
     // then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
 
-    let tree l = Scheduler.O.now <| fun now -> Pith.return' <| fun o ->
+    let tree l = Scheduler.O.now <| fun now -> P <| fun o ->
         for i = 1 to 1 do
             o << delay (sprintf "%s %d" l i) 100 <| fun now o ->
                 for j = 1 to 2 do
