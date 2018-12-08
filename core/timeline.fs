@@ -1,8 +1,5 @@
 module Sakhe.TimeLine
 
-open Sakhe
-open System
-
 type T<'a, 'b when 'a : comparison> =
     private
     | T of ('a * 'b) []

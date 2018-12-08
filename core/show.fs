@@ -7,8 +7,8 @@ let rec see n = Scheduler.return' <| fun t -> P <| fun o ->
         printfn "now(%A) %s" (now) label
         f now o
 
-    // if n < 3
-    // then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
+    if n < 3
+    then o <| Scheduler.O.Delay (Time.Delay.return' 100, see (n + 1))
 
     let tree l = Scheduler.O.now <| fun now -> P <| fun o ->
         for i = 1 to 1 do
@@ -17,15 +17,13 @@ let rec see n = Scheduler.return' <| fun t -> P <| fun o ->
                     o << delay (sprintf "%s %d.%d" l i j) 200 <| fun now o ->
                     for k = 1 to 3 do
                         o << delay (sprintf "%s %d.%d.%d" l i j k) 300 <| fun now o ->
-                        ()
+                            ()
 
     o << delay "A" 10 <| fun now o ->
         o << delay "B" 10 <| fun now o ->
             o << delay "C" 10 <| fun now o ->
-                ()
-
-                // o <| tree "Ta"
-    // o <| tree "Ta"
+                o <| tree "Ta"
+    o <| tree "Ta"
 
 let timer delay task =
     if delay = Time.Delay.zero then

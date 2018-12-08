@@ -43,7 +43,7 @@ function fromPith(mappend$$1, f) {
   let s = (0, _Map.empty)({
     Compare: _Util.compare
   });
-  (0, _pith.run)(function (tupledArg) {
+  (0, _pith.P$$$run)(function (tupledArg) {
     const matchValue = (0, _Map.tryFind)(tupledArg[0], s);
 
     if (matchValue != null) {
@@ -72,12 +72,12 @@ function toPith(_arg1) {
   if (_arg1.tag === 1) {
     const r = _arg1.fields[1];
     const l = _arg1.fields[0];
-    return (0, _pith.mappend)(function (arg00$0040, arg10$0040$$1) {
+    return (0, _pith.P$$$mappend)(function (arg00$0040, arg10$0040$$1) {
       (0, _unit.mappend)(null, null);
     }, toPith(l), toPith(r));
   } else {
     const a$$1 = _arg1.fields[0];
-    return (0, _pith.return$0027)(function (o$$2) {
+    return (0, _pith.P$$$return$0027)(function (o$$2) {
       a$$1.forEach(o$$2);
     });
   }
@@ -103,7 +103,7 @@ function mappend(mappend$$2, l$$2, r$$2) {
   } else if ((0, _Util.compare)(patternInput$$1[1], patternInput[0]) < 0) {
     return new T$00602(1, "LR", r$$2, l$$2);
   } else {
-    const p = (0, _pith.mappend)(function (arg00$0040$$1, arg10$0040$$2) {
+    const p = (0, _pith.P$$$mappend)(function (arg00$0040$$1, arg10$0040$$2) {
       (0, _unit.mappend)(null, null);
     }, toPith(l$$2), toPith(r$$2));
     const o$$3 = fromPith(mappend$$2, p);
@@ -112,17 +112,17 @@ function mappend(mappend$$2, l$$2, r$$2) {
 }
 
 function runTo(now, tl) {
-  return (0, _pith.return$0027)(function (o$$4) {
+  return (0, _pith.P$$$return$0027)(function (o$$4) {
     if (tl.tag === 1) {
       const r$$3 = tl.fields[1];
       const l$$3 = tl.fields[0];
-      const matchValue$$1 = (0, _pith.run)(o$$4, runTo(now, l$$3));
+      const matchValue$$1 = (0, _pith.P$$$run)(o$$4, runTo(now, l$$3));
 
       if (matchValue$$1 != null) {
         const tl$$1 = matchValue$$1;
         return new T$00602(1, "LR", tl$$1, r$$3);
       } else {
-        return (0, _pith.run)(o$$4, runTo(now, r$$3));
+        return (0, _pith.P$$$run)(o$$4, runTo(now, r$$3));
       }
     } else {
       const a$$3 = tl.fields[0];

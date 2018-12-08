@@ -37,7 +37,7 @@ const T = (0, _Types.declare)(function Sakhe_Scheduler_T(tag, name, ...fields) {
 exports.T = T;
 
 function T$reflection() {
-  return (0, _Reflection.union)("Sakhe.Scheduler.T", [], T, () => [["Local", [(0, _Reflection.lambda)(_Reflection.obj, (0, _pith.T$00602$reflection)(O$reflection(), _Reflection.unit))]]]);
+  return (0, _Reflection.union)("Sakhe.Scheduler.T", [], T, () => [["Local", [(0, _Reflection.lambda)(_Reflection.obj, (0, _pith.Pith$00602$reflection)(O$reflection(), _Reflection.unit))]]]);
 }
 
 const O = (0, _Types.declare)(function Sakhe_Scheduler_O(tag, name, ...fields) {
@@ -64,7 +64,7 @@ function OModule$$$delay(delay, f$$3) {
 function Private$$$map(canceled, offset, _arg1) {
   const io = _arg1.fields[0];
   return new T(0, "Local", function (now) {
-    return canceled.contents ? (0, _pith.empty)() : (0, _pith.pmap)(function (p, o) {
+    return canceled.contents ? (0, _pith.P$$$empty)() : (0, _pith.P$$$pmap)(function (p, o) {
       p(function (_arg2) {
         if (_arg2.tag === 1) {
           const io$$2 = _arg2.fields[1];
@@ -83,7 +83,7 @@ function Private$$$mappend(_arg2$$1, _arg1$$1) {
   const l = _arg2$$1.fields[0];
   const r = _arg1$$1.fields[0];
   return new T(0, "Local", function (t) {
-    return (0, _pith.mappend)(function (arg00$0040, arg10$0040$$1) {
+    return (0, _pith.P$$$mappend)(function (arg00$0040, arg10$0040$$1) {
       (0, _unit.mappend)(null, null);
     }, l(t), r(t));
   });
@@ -91,7 +91,7 @@ function Private$$$mappend(_arg2$$1, _arg1$$1) {
 
 function Private$$$runAllNows(now$$1, _arg1$$2) {
   const io$$3 = _arg1$$2.fields[0];
-  return (0, _pith.return$0027)(function (o$0027) {
+  return (0, _pith.P$$$return$0027)(function (o$0027) {
     const ring = function ring(p$$1, o$$1) {
       p$$1(function (_arg2$$2) {
         if (_arg2$$2.tag === 1) {
@@ -100,12 +100,12 @@ function Private$$$runAllNows(now$$1, _arg1$$2) {
           o$$1([delay$$2 + now$$1, io$$5]);
         } else {
           const io$$4 = _arg2$$2.fields[0].fields[0];
-          (0, _pith.run)(o$0027, (0, _pith.pmap)(ring, io$$4(now$$1)));
+          (0, _pith.P$$$run)(o$0027, (0, _pith.P$$$pmap)(ring, io$$4(now$$1)));
         }
       });
     };
 
-    (0, _pith.run)(o$0027, (0, _pith.pmap)(ring, io$$3(now$$1)));
+    (0, _pith.P$$$run)(o$0027, (0, _pith.P$$$pmap)(ring, io$$3(now$$1)));
   });
 }
 
@@ -146,11 +146,11 @@ function run(tf, timer) {
     (0, _String.toConsole)((0, _String.printf)("->"));
     const patternInput$$1 = nextRun;
     nextRun = null;
-    let p$$2 = (0, _pith.empty)();
-    const r$$1 = (0, _pith.run)(function (tupledArg) {
-      p$$2 = (0, _pith.mappend)(function (arg00$0040$$3, arg10$0040$$7) {
+    let p$$2 = (0, _pith.P$$$empty)();
+    const r$$1 = (0, _pith.P$$$run)(function (tio) {
+      p$$2 = (0, _pith.P$$$mappend)(function (arg00$0040$$3, arg10$0040$$7) {
         (0, _unit.mappend)(null, null);
-      }, p$$2, Private$$$runAllNows(tupledArg[0], tupledArg[1]));
+      }, p$$2, Private$$$runAllNows(tio[0], tio[1]));
     }, (0, _timeline.runTo)(tf(), patternInput$$1[1]));
     const l$$1 = (0, _timeline.fromPith)(Private$$$mappend, p$$2);
     schedule((0, _option.mappend)(function (l$$2, r$$2) {
@@ -158,11 +158,11 @@ function run(tf, timer) {
     }, l$$1, r$$1));
   };
 
-  return function (io$$7) {
+  return function (io$$6) {
     const canceled$$1 = new _Types.FSharpRef(false);
-    const now$$2 = tf();
-    const io$$8 = Private$$$map(canceled$$1, _time.zero - now$$2, io$$7);
-    schedule((0, _timeline.fromPith)(Private$$$mappend, Private$$$runAllNows(now$$2, io$$8)));
+    const now$$3 = tf();
+    const io$$7 = Private$$$map(canceled$$1, _time.zero - now$$3, io$$6);
+    schedule((0, _timeline.fromPith)(Private$$$mappend, Private$$$runAllNows(now$$3, io$$7)));
     return (0, _disposable.return$0027)(function () {
       canceled$$1.contents = true;
     });

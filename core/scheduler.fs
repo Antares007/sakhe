@@ -1,6 +1,4 @@
 module Sakhe.Scheduler
-open System
-open Sakhe
 
 type T =
     private
@@ -13,7 +11,6 @@ let return' f = Local <| f
 
 module O =
     let now f = Now << return' <| f
-
     let delay delay f = Delay (Time.Delay.return' delay, return' f)
 
 [<AutoOpen>]
@@ -22,16 +19,13 @@ module private Private =
         Local <| fun now ->
             if canceled.Value then P.empty
             else
-            P.pmap
-                <| fun p o ->
-                    p <| function
-                        | Now io            -> o <| O.Now (map canceled offset io)
-                        | Delay (delay, io) -> o <| O.Delay (delay, map canceled offset <| io)
-                <| io (now + offset)
+            P.pmap <| fun p o ->
+                p <| function
+                    | Now io            -> o <| O.Now (map canceled offset io)
+                    | Delay (delay, io) -> o <| O.Delay (delay, map canceled offset <| io)
+            <| io (now + offset)
     let mappend (Local l) (Local r) = Local <| fun t -> P.mappend Unit.mappend (l t) (r t)
-    let rec runAllNows
-        (now, (Local io)) = P.return' <| fun o' ->
-        // let o' = O.proxy o
+    let rec runAllNows (now, (Local io)) = P.return' <| fun o' ->
         let rec ring p o = p <| function
             | Now (Local io)  -> P.run o' (P.pmap ring << io <| now)
             | Delay (delay, io) -> o <| (delay + now, io)
@@ -61,7 +55,7 @@ let run tf timer =
         let mutable p = P.empty
         let r =
             P.run
-            <| fun (t, io) -> p <- (P.mappend Unit.mappend) p (runAllNows (t, io))
+            <| fun tio -> p <- (P.mappend Unit.mappend) p (runAllNows tio)
             <| TimeLine.runTo (tf()) tl
         let l = TimeLine.fromPith mappend p
         schedule (Option.mappend (TimeLine.mappend mappend) l  r)

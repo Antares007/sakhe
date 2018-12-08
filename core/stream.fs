@@ -1,7 +1,6 @@
 module Sakhe.Stream
 
 open System
-open Sakhe
 
 type T<'a> = private Stream of ((Scheduler.T -> IDisposable) -> Pith<O<'a>, IDisposable>)
 
