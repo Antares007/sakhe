@@ -3,10 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getRadix = getRadix;
 exports.isValid = isValid;
-exports.tryParse = tryParse;
 exports.parse = parse;
+exports.tryParse = tryParse;
 exports.NumberStyles = void 0;
 var NumberStyles;
 exports.NumberStyles = NumberStyles;
@@ -104,7 +103,7 @@ function getRadix(prefix, style) {
 
 function isValid(str, style, radix) {
   const integerRegex = /^\s*([\+\-])?(0[xXoObB])?([0-9a-fA-F]+)\s*$/;
-  const res = integerRegex.exec(str);
+  const res = integerRegex.exec(str.replace("_", ""));
 
   if (res != null) {
     const [_all, sign, prefix, digits] = res;
@@ -119,30 +118,36 @@ function isValid(str, style, radix) {
   return null;
 }
 
-function tryParse(str, style, unsigned, bitsize, radix) {
-  try {
-    const res = isValid(str, style, radix);
+function parse(str, style, unsigned, bitsize, radix) {
+  const res = isValid(str, style, radix);
 
-    if (res != null) {
+  if (res != null) {
+    let v = Number.parseInt(res.sign + res.digits, res.radix);
+
+    if (!Number.isNaN(v)) {
+      const [umin, umax] = getRange(true, bitsize);
+
+      if (!unsigned && res.radix !== 10 && v >= umin && v <= umax) {
+        v = v << 32 - bitsize >> 32 - bitsize;
+      }
+
       const [min, max] = getRange(unsigned, bitsize);
-      const v = parseInt(res.sign + res.digits, res.radix);
 
-      if (!Number.isNaN(v) && v >= min && v <= max) {
-        return [true, v];
+      if (v >= min && v <= max) {
+        return v;
       }
     }
+  }
+
+  throw new Error("Input string was not in a correct format.");
+}
+
+function tryParse(str, style, unsigned, bitsize) {
+  try {
+    const v = parse(str, style, unsigned, bitsize);
+    return [true, v];
   } catch (_a) {// supress error
   }
 
   return [false, 0];
-}
-
-function parse(str, style, unsigned, bitsize, radix) {
-  const [ok, value] = tryParse(str, style, unsigned, bitsize, radix);
-
-  if (ok) {
-    return value;
-  } else {
-    throw new Error("Input string was not in a correct format.");
-  }
 }
