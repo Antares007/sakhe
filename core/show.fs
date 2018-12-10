@@ -2,14 +2,21 @@ module Sakhe.Show
 open Fable.Import
 
 let pair a b = (a, b)
-let local = S.Local << S.Schedule <| fun t -> P <| fun o ->
+open Scheduler
+open System.IO
+let local = Local <| fun t -> P <| fun o ->
     printfn "Local: %A" t
-    o << S.Origin << S.Schedule <| fun t -> P <| fun o ->
+    o << Origin <| fun t -> P <| fun o ->
         printfn "Origin: %A" t
-        o << S.Delay << pair 100. << S.Schedule <| fun t -> P <| fun o ->
+        o << Delay << pair 100. <| fun t -> P <| fun o ->
             printfn "Delay 100.: %A" t
-    o << S.Delay << pair 200. << S.Schedule <| fun t -> P <| fun o ->
+        o << Local <| fun t -> P <| fun o ->
+            printfn "Local2: %A" t
+
+    o << Delay << pair 200. <| fun t -> P <| fun o ->
         printfn "Delay 200.: %A" t
 
-let run = S.run Default.tf Default.timer
-let d = run local
+let run = run Default.tf Default.timer
+// let d = run local
+// let a a = Stream.at a 1111.
+let see = Stream.run run (printfn "%A") (Stream.merge (Stream.at "a" 1900.) (Stream.at "b" 2000.))

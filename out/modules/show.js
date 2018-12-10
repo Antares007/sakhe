@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.pair = pair;
-exports.d = exports.run = exports.local = void 0;
+exports.see = exports.run = exports.local = void 0;
 
 var _scheduler = require("./scheduler");
 
@@ -14,36 +14,45 @@ var _String = require("./fable-library.2.1.6/String");
 
 var _default = require("./default");
 
+var _stream = require("./stream");
+
 function pair(a, b) {
   return [a, b];
 }
 
-const local = new _scheduler.S$002EO(0, "Local", new _scheduler.S$002ET(0, "Schedule", function (t) {
+const local = new _scheduler.O(0, "Local", function (t) {
   return new _pith.Pith$00602(0, "P", function (o) {
     (0, _String.toConsole)((0, _String.printf)("Local: %A"))(t);
-    o(new _scheduler.S$002EO(1, "Origin", new _scheduler.S$002ET(0, "Schedule", function (t$$1) {
+    o(new _scheduler.O(1, "Origin", function (t$$1) {
       return new _pith.Pith$00602(0, "P", function (o$$1) {
         (0, _String.toConsole)((0, _String.printf)("Origin: %A"))(t$$1);
-        const $arg$$4 = pair(100, new _scheduler.S$002ET(0, "Schedule", function (t$$2) {
+        const $arg$$2 = pair(100, function (t$$2) {
           return new _pith.Pith$00602(0, "P", function (o$$2) {
             (0, _String.toConsole)((0, _String.printf)("Delay 100.: %A"))(t$$2);
           });
+        });
+        o$$1(new _scheduler.O(2, "Delay", $arg$$2[0], $arg$$2[1]));
+        o$$1(new _scheduler.O(0, "Local", function (t$$3) {
+          return new _pith.Pith$00602(0, "P", function (o$$3) {
+            (0, _String.toConsole)((0, _String.printf)("Local2: %A"))(t$$3);
+          });
         }));
-        o$$1(new _scheduler.S$002EO(2, "Delay", $arg$$4[0], $arg$$4[1]));
-      });
-    })));
-    const $arg$$7 = pair(200, new _scheduler.S$002ET(0, "Schedule", function (t$$3) {
-      return new _pith.Pith$00602(0, "P", function (o$$3) {
-        (0, _String.toConsole)((0, _String.printf)("Delay 200.: %A"))(t$$3);
       });
     }));
-    o(new _scheduler.S$002EO(2, "Delay", $arg$$7[0], $arg$$7[1]));
+    const $arg$$5 = pair(200, function (t$$4) {
+      return new _pith.Pith$00602(0, "P", function (o$$4) {
+        (0, _String.toConsole)((0, _String.printf)("Delay 200.: %A"))(t$$4);
+      });
+    });
+    o(new _scheduler.O(2, "Delay", $arg$$5[0], $arg$$5[1]));
   });
-}));
+});
 exports.local = local;
-const run = (0, _scheduler.S$$$run)(function () {
+const run = (0, _scheduler.run)(function () {
   return (0, _default.tf)();
 }, _default.timer);
 exports.run = run;
-const d = run(local);
-exports.d = d;
+const see = (0, _stream.run)(run, function (arg10$$5) {
+  (0, _String.toConsole)((0, _String.printf)("%A"))(arg10$$5);
+}, (0, _stream.merge)((0, _stream.at)("a", 1900), (0, _stream.at)("b", 2000)));
+exports.see = see;
