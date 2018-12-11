@@ -10,7 +10,7 @@ var _scheduler = require("./scheduler");
 
 var _pith = require("./pith");
 
-var _String = require("./fable-library.2.1.6/String");
+var _String = require("./fable-library.2.1.7/String");
 
 var _default = require("./default");
 

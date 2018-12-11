@@ -13,9 +13,9 @@ exports.append = append;
 exports.appendArray = appendArray;
 exports.empty = exports.SettableDisposable = exports.AnonymousDisposable = void 0;
 
-var _Types = require("./fable-library.2.1.6/Types");
+var _Types = require("./fable-library.2.1.7/Types");
 
-var _Reflection = require("./fable-library.2.1.6/Reflection");
+var _Reflection = require("./fable-library.2.1.7/Reflection");
 
 const AnonymousDisposable = (0, _Types.declare)(function Sakhe_Disposable_AnonymousDisposable(f) {
   const $this$$1 = this;

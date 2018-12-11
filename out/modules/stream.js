@@ -16,19 +16,19 @@ exports.join = join;
 exports.bind = bind;
 exports.O$00601 = exports.T$00601 = void 0;
 
-var _Types = require("./fable-library.2.1.6/Types");
+var _Types = require("./fable-library.2.1.7/Types");
 
 var _scheduler = require("./scheduler");
 
-var _Reflection = require("./fable-library.2.1.6/Reflection");
+var _Reflection = require("./fable-library.2.1.7/Reflection");
 
 var _pith = require("./pith");
 
 var _disposable = require("./disposable");
 
-var _Seq = require("./fable-library.2.1.6/Seq");
+var _Seq = require("./fable-library.2.1.7/Seq");
 
-var _Util = require("./fable-library.2.1.6/Util");
+var _Util = require("./fable-library.2.1.7/Util");
 
 const T$00601 = (0, _Types.declare)(function Sakhe_Stream_T(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);
