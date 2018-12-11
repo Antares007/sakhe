@@ -11,14 +11,23 @@ and O<'a> =
     | Error of float * exn
 let run run o (Stream io) = P.run o (io run)
 let pair a b = (a, b)
-let at a b = Stream <| fun run -> P <| fun o ->
-    run << Scheduler.Delay << pair b <| fun t -> P <| fun _ ->
+let at d a = Stream <| fun run -> P <| fun o ->
+    run << Scheduler.Delay << pair d <| fun t -> P <| fun _ ->
         try
             o <| Event(t, a)
             o <| End(t)
         with err ->
             o <| Error(t, err)
-let now a = at a 0.
+let now a = at 0. a
+let periodic period a = Stream <| fun run -> P <| fun o ->
+    let rec schedule = fun t -> P <| fun o' ->
+        o' << Scheduler.Origin <| fun t -> P <| fun _ ->
+            try
+                o <| Event(t, a)
+                o' << Scheduler.Delay <| (period, schedule)
+            with err ->
+                o <| Error(t, err)
+    run << Scheduler.Delay <| (0., schedule)
 let empty<'a> = Stream <| fun run -> P <| fun (s : O<'a> -> unit) -> Disposable.empty
 let map f (Stream io) = Stream <| fun run -> P <| fun o ->
     P.run <| function
@@ -26,6 +35,21 @@ let map f (Stream io) = Stream <| fun run -> P <| fun o ->
         | O.End(t) -> o << End <| (t)
         | O.Error(t, err) -> o << Error <| (t, err)
     <| (io run)
+let take n (Stream io) = Stream <| fun run -> P <| fun o ->
+    let mutable i = 0
+    let mutable d = Disposable.empty
+    d <- P.run <| function
+        | O.Event(t, a) ->
+            if i < n then
+                o << Event <| (t, a)
+            i <- i + 1
+            if i = n then
+                d.Dispose()
+                o << End <| (t)
+        | O.End(t) -> o << End <| (t)
+        | O.Error(t, err) -> o << Error <| (t, err)
+    <| (io run)
+    d
 let merge (Stream a) (Stream b) = Stream <| fun run -> P <| fun o ->
     let map = new Dictionary<int, IDisposable>()
     let disposable = Disposable.return' <| fun () -> for key in map.Keys do map.[key].Dispose()
@@ -38,8 +62,12 @@ let merge (Stream a) (Stream b) = Stream <| fun run -> P <| fun o ->
         | O.Error(a, b) ->
             disposable.Dispose()
             o << Error <| (a, b)
-    map.Add(0, P.run (o' 0) (a run))
-    map.Add(1, P.run (o' 1) (b run))
+    let ioa = (a run)
+    let oa = (o' 0)
+    let iob = (b run)
+    let ob = (o' 1)
+    map.Add(0, P.run oa ioa)
+    map.Add(1, P.run ob iob)
     disposable
 let join (Stream io) = Stream <| fun run -> P <| fun o ->
     let mutable i = 0

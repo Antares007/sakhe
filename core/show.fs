@@ -19,4 +19,10 @@ let local = Local <| fun t -> P <| fun o ->
 let run = run Default.tf Default.timer
 // let d = run local
 // let a a = Stream.at a 1111.
-let see = Stream.run run (printfn "%A") (Stream.merge (Stream.at "a" 1900.) (Stream.at "b" 2000.))
+let s =
+    Stream.merge
+        (Stream.periodic 100. "a")
+        (Stream.periodic 200. "b")
+    |> Stream.take 30
+
+let see = Stream.run run (printfn "%A") s

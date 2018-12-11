@@ -10,8 +10,8 @@
     <Compile Include="time.fs" />
     <Compile Include="timeline.fs" />
     <Compile Include="scheduler.fs" />
-    <Compile Include="stream.fs" />
     <Compile Include="default.fs" />
+    <Compile Include="stream.fs" />
     <Compile Include="show.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

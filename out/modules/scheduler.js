@@ -124,9 +124,9 @@ function run(tf, timer) {
 
     if (_arg1$$2 != null) {
       const timeline = _arg1$$2;
-      (0, _String.toConsole)((0, _String.printf)("<-"));
-      const patternInput = (0, _timeline.getBounds)(timeline);
       const now$$5 = tf();
+      (0, _String.toConsole)((0, _String.printf)("<- %A"))(now$$5);
+      const patternInput = (0, _timeline.getBounds)(timeline);
 
       if (nextRun != null) {
         if (tl = nextRun[1], (nr = nextRun[0], nr > patternInput[0])) {
@@ -158,11 +158,11 @@ function run(tf, timer) {
   };
 
   const onTimer = function onTimer() {
-    (0, _String.toConsole)((0, _String.printf)("->"));
+    const now$$6 = tf();
+    (0, _String.toConsole)((0, _String.printf)("-> %A"))(now$$6);
     const patternInput$$1 = nextRun;
     nextRun = null;
     let p$$2 = (0, _pith.P$$$empty)();
-    const now$$6 = tf();
     const l$$3 = (0, _pith.P$$$run)(function (tio) {
       p$$2 = (0, _pith.P$$$mappend)(function (arg00$0040$$1, arg10$0040$$6) {
         (0, _unit.mappend)(null, null);

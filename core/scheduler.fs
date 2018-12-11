@@ -28,9 +28,9 @@ let run (tf: unit -> float) timer =
     let rec schedule = function
         | None -> ()
         | Some timeline ->
-            printfn "<-"
-            let (nextArrival, _) = TimeLine.getBounds timeline
             let now = tf ()
+            printfn "<- %A" now
+            let (nextArrival, _) = TimeLine.getBounds timeline
             match nextRun with
             | None                                  ->
                 nextRun <- Some (nextArrival, timeline)
@@ -42,11 +42,11 @@ let run (tf: unit -> float) timer =
             | Some (nr, tl)                         ->
                 nextRun <- Some (nr, TimeLine.mappend mappend tl timeline)
     and onTimer () =
-        printfn "->"
+        let now = tf()
+        printfn "-> %A" now
         let (nr, tl) = nextRun.Value
         nextRun <- None
         let mutable p = P.empty
-        let now = tf()
         let l =
             P.run
             <| fun tio -> p <- (P.mappend Unit.mappend) p (runAllNows tio)
