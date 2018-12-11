@@ -3,7 +3,6 @@ open System
 open System.Collections.Generic
 
 type T<'a> =
-    private
     | Stream of ((Scheduler.O -> IDisposable) -> Pith<O<'a>, IDisposable>)
 and O<'a> =
     | Event of float * 'a
@@ -19,6 +18,17 @@ let at d a = Stream <| fun run -> P <| fun o ->
         with err ->
             o <| Error(t, err)
 let now a = at 0. a
+let on (event: string) (et: Fable.Import.Browser.EventTarget) = Stream <| fun schedule -> P <| fun o ->
+    let mutable d = Disposable.empty
+    let d' = schedule << Scheduler.Delay << pair 0. <| fun t -> P <| fun o' ->
+        let listener (e :Fable.Import.Browser.Event) =
+            schedule << Scheduler.Origin <| fun t -> P <| fun _ ->
+                o <| Event (t, e)
+            |> ignore
+        et.addEventListener (event, (Fable.Core.U2.Case1 listener))
+        d <- Disposable.return' <| fun () ->
+            et.removeEventListener (event, (Fable.Core.U2.Case1 listener))
+    Disposable.append d' (Disposable.return' <| fun () -> d.Dispose())
 let periodic period a = Stream <| fun run -> P <| fun o ->
     let rec schedule = fun t -> P <| fun o' ->
         o' << Scheduler.Origin <| fun t -> P <| fun _ ->

@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.pair = pair;
-exports.see = exports.s = exports.run = exports.local = void 0;
+exports.see = exports.onClick = exports.s = exports.run = exports.local = void 0;
 
 var _scheduler = require("./scheduler");
 
@@ -52,9 +52,15 @@ const run = (0, _scheduler.run)(function () {
   return (0, _default.tf)();
 }, _default.timer);
 exports.run = run;
-const s = (0, _stream.take)(30, (0, _stream.merge)((0, _stream.periodic)(100, "a"), (0, _stream.periodic)(200, "b")));
+const s = (0, _stream.merge)((0, _stream.periodic)(1000, "a"), (0, _stream.periodic)(2000, "b"));
 exports.s = s;
+const onClick = (0, _stream.map)(function f$$1(e$$1) {
+  return "clientX:" + e$$1.clientX.toString() + " clientY:" + e$$1.clientY.toString();
+}, (0, _stream.map)(function f(e) {
+  return e;
+}, (0, _stream.merge)((0, _stream.on)("click", window), (0, _stream.on)("mousemove", window))));
+exports.onClick = onClick;
 const see = (0, _stream.run)(run, function (arg10$$5) {
   (0, _String.toConsole)((0, _String.printf)("%A"))(arg10$$5);
-}, s);
+}, (0, _stream.merge)(onClick, s));
 exports.see = see;
