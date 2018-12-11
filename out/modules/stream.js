@@ -266,12 +266,8 @@ function merge(_arg2$$2, _arg1$$6) {
         }
       };
 
-      const ioa = a$$7(run$$7);
-      const oa = (0, _Util.partialApply)(1, o$0027$$2, [0]);
-      const iob = b$$3(run$$7);
-      const ob = (0, _Util.partialApply)(1, o$0027$$2, [1]);
-      map$$1.set(0, (0, _pith.P$$$run)(oa, ioa));
-      map$$1.set(1, (0, _pith.P$$$run)(ob, iob));
+      map$$1.set(0, (0, _pith.P$$$run)((0, _Util.partialApply)(1, o$0027$$2, [0]), a$$7(run$$7)));
+      map$$1.set(1, (0, _pith.P$$$run)((0, _Util.partialApply)(1, o$0027$$2, [1]), b$$3(run$$7)));
       return disposable;
     });
   });

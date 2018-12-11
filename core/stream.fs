@@ -72,12 +72,8 @@ let merge (Stream a) (Stream b) = Stream <| fun run -> P <| fun o ->
         | O.Error(a, b) ->
             disposable.Dispose()
             o << Error <| (a, b)
-    let ioa = (a run)
-    let oa = (o' 0)
-    let iob = (b run)
-    let ob = (o' 1)
-    map.Add(0, P.run oa ioa)
-    map.Add(1, P.run ob iob)
+    map.Add(0, P.run (o' 0) (a run))
+    map.Add(1, P.run (o' 1) (b run))
     disposable
 let join (Stream io) = Stream <| fun run -> P <| fun o ->
     let mutable i = 0
