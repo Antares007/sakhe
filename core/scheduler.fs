@@ -29,7 +29,7 @@ let run (tf: unit -> float) timer =
         | None -> ()
         | Some timeline ->
             let now = tf ()
-            printfn "<- %A" now
+            // printfn "<- %A" now
             let (nextArrival, _) = TimeLine.getBounds timeline
             match nextRun with
             | None                                  ->
@@ -43,7 +43,7 @@ let run (tf: unit -> float) timer =
                 nextRun <- Some (nr, TimeLine.mappend mappend tl timeline)
     and onTimer () =
         let now = tf()
-        printfn "-> %A" now
+        // printfn "-> %A" now
         let (nr, tl) = nextRun.Value
         nextRun <- None
         let mutable p = P.empty

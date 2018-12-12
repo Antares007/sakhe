@@ -20,10 +20,10 @@ let at d a = Stream <| fun run -> P <| fun o ->
 let now a = at 0. a
 let on (event: string) (et: Fable.Import.Browser.EventTarget) = Stream <| fun schedule -> P <| fun o ->
     let mutable d = Disposable.empty
-    let d' = schedule << Scheduler.Delay << pair 0. <| fun t -> P <| fun o' ->
+    let d' = schedule << Scheduler.Origin <| fun t' -> P <| fun o' ->
         let listener (e :Fable.Import.Browser.Event) =
             schedule << Scheduler.Origin <| fun t -> P <| fun _ ->
-                o <| Event (t, e)
+                o <| Event (t - t', e)
             |> ignore
         et.addEventListener (event, (Fable.Core.U2.Case1 listener))
         d <- Disposable.return' <| fun () ->
@@ -31,12 +31,12 @@ let on (event: string) (et: Fable.Import.Browser.EventTarget) = Stream <| fun sc
     Disposable.append d' (Disposable.return' <| fun () -> d.Dispose())
 let periodic period a = Stream <| fun run -> P <| fun o ->
     let rec schedule = fun t -> P <| fun o' ->
-        o' << Scheduler.Origin <| fun t -> P <| fun _ ->
-            try
-                o <| Event(t, a)
-                o' << Scheduler.Delay <| (period, schedule)
-            with err ->
-                o <| Error(t, err)
+        // o' << Scheduler.Origin <| fun t -> P <| fun _ ->
+        try
+            o <| Event(t, a)
+            o' << Scheduler.Delay <| (period, schedule)
+        with err ->
+            o <| Error(t, err)
     run << Scheduler.Delay <| (0., schedule)
 let empty<'a> = Stream <| fun run -> P <| fun (s : O<'a> -> unit) -> Disposable.empty
 let map f (Stream io) = Stream <| fun run -> P <| fun o ->
@@ -44,6 +44,11 @@ let map f (Stream io) = Stream <| fun run -> P <| fun o ->
         | O.Event(t, a) -> o << Event <| (t, f a)
         | O.End(t) -> o << End <| (t)
         | O.Error(t, err) -> o << Error <| (t, err)
+    <| (io run)
+let tap f (Stream io) = Stream <| fun run -> P <| fun o ->
+    P.run <| function
+        | O.Event(t, a) as e -> f a; o e
+        | x -> o x
     <| (io run)
 let take n (Stream io) = Stream <| fun run -> P <| fun o ->
     let mutable i = 0

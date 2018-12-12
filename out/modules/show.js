@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.pair = pair;
-exports.see = exports.onClick = exports.s = exports.run = exports.local = void 0;
+exports.onClick = exports.d = exports.s = exports.run = exports.local = void 0;
 
 var _scheduler = require("./scheduler");
 
@@ -15,6 +15,10 @@ var _String = require("./fable-library.2.1.7/String");
 var _default = require("./default");
 
 var _stream = require("./stream");
+
+var _disposable = require("./disposable");
+
+var _Util = require("./fable-library.2.1.7/Util");
 
 function pair(a, b) {
   return [a, b];
@@ -54,13 +58,16 @@ const run = (0, _scheduler.run)(function () {
 exports.run = run;
 const s = (0, _stream.merge)((0, _stream.periodic)(1000, "a"), (0, _stream.periodic)(2000, "b"));
 exports.s = s;
-const onClick = (0, _stream.map)(function f$$1(e$$1) {
+const d = (0, _Util.createAtom)(_disposable.empty);
+exports.d = d;
+const onClick = (0, _stream.map)(function f$$2(e$$1) {
   return "clientX:" + e$$1.clientX.toString() + " clientY:" + e$$1.clientY.toString();
-}, (0, _stream.map)(function f(e) {
+}, (0, _stream.map)(function f$$1(e) {
   return e;
-}, (0, _stream.merge)((0, _stream.on)("click", window), (0, _stream.on)("mousemove", window))));
+}, (0, _stream.merge)((0, _stream.tap)(function f(_arg1) {
+  d().Dispose();
+}, (0, _stream.on)("click", window)), (0, _stream.on)("mousemove", window))));
 exports.onClick = onClick;
-const see = (0, _stream.run)(run, function (arg10$$5) {
+d((0, _stream.run)(run, function (arg10$$5) {
   (0, _String.toConsole)((0, _String.printf)("%A"))(arg10$$5);
-}, (0, _stream.merge)(onClick, s));
-exports.see = see;
+}, (0, _stream.merge)(onClick, s)));

@@ -20,8 +20,6 @@ var _unit = require("./unit");
 
 var _disposable = require("./disposable");
 
-var _String = require("./fable-library.2.1.7/String");
-
 var _timeline = require("./timeline");
 
 var _Util = require("./fable-library.2.1.7/Util");
@@ -125,7 +123,6 @@ function run(tf, timer) {
     if (_arg1$$2 != null) {
       const timeline = _arg1$$2;
       const now$$5 = tf();
-      (0, _String.toConsole)((0, _String.printf)("<- %A"))(now$$5);
       const patternInput = (0, _timeline.getBounds)(timeline);
 
       if (nextRun != null) {
@@ -159,7 +156,6 @@ function run(tf, timer) {
 
   const onTimer = function onTimer() {
     const now$$6 = tf();
-    (0, _String.toConsole)((0, _String.printf)("-> %A"))(now$$6);
     const patternInput$$1 = nextRun;
     nextRun = null;
     let p$$2 = (0, _pith.P$$$empty)();

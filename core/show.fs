@@ -20,11 +20,11 @@ let s =
     Stream.merge
         (Stream.periodic 1000. "a")
         (Stream.periodic 2000. "b")
-
+let mutable d = Disposable.empty
 let onClick =
     Stream.merge
-        (Stream.on "click" Browser.window)
+        ((Stream.on "click" Browser.window) |> Stream.tap (fun _ -> d.Dispose()))
         (Stream.on "mousemove" Browser.window)
     |> Stream.map (fun e -> (unbox e: Browser.MouseEvent))
     |> Stream.map (fun e -> "clientX:" + string e.clientX + " clientY:" + string e.clientY)
-let see = Stream.run run (printfn "%A") (Stream.merge onClick s)
+d <- Stream.run run (printfn "%A") (Stream.merge onClick s)
