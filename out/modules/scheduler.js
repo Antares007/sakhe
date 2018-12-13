@@ -14,13 +14,15 @@ var _Types = require("./fable-library.2.1.7/Types");
 
 var _Reflection = require("./fable-library.2.1.7/Reflection");
 
-var _pith = require("./pith");
-
 var _unit = require("./unit");
+
+var _pith = require("./pith");
 
 var _disposable = require("./disposable");
 
 var _timeline = require("./timeline");
+
+var _String = require("./fable-library.2.1.7/String");
 
 var _Util = require("./fable-library.2.1.7/Util");
 
@@ -32,7 +34,7 @@ const O = (0, _Types.declare)(function Sakhe_Scheduler_O(tag, name, ...fields) {
 exports.O = O;
 
 function O$reflection() {
-  return (0, _Reflection.union)("Sakhe.Scheduler.O", [], O, () => [["Local", [(0, _Reflection.lambda)(_Reflection.float64, (0, _pith.Pith$00602$reflection)(O$reflection(), _Reflection.unit))]], ["Origin", [(0, _Reflection.lambda)(_Reflection.float64, (0, _pith.Pith$00602$reflection)(O$reflection(), _Reflection.unit))]], ["Delay", [_Reflection.float64, (0, _Reflection.lambda)(_Reflection.float64, (0, _pith.Pith$00602$reflection)(O$reflection(), _Reflection.unit))]]]);
+  return (0, _Reflection.union)("Sakhe.Scheduler.O", [], O, () => [["Local", [(0, _Reflection.lambda)(_Reflection.float64, _Reflection.obj)]], ["Origin", [(0, _Reflection.lambda)(_Reflection.float64, _Reflection.obj)]], ["Delay", [_Reflection.float64, (0, _Reflection.lambda)(_Reflection.float64, _Reflection.obj)]]]);
 }
 
 function mappend(l, r, t) {
@@ -81,7 +83,7 @@ function ring(canceled, offset, io, now) {
 }
 
 function runAllNows(now$$4, io$$4) {
-  return new _pith.Pith$00602(0, "P", function (o$0027) {
+  return function (o$0027) {
     const ring$$1 = function ring$$1(p$$1, o$$1) {
       p$$1(function (_arg1$$1) {
         switch (_arg1$$1.tag) {
@@ -110,23 +112,24 @@ function runAllNows(now$$4, io$$4) {
     };
 
     (0, _pith.P$$$run)(o$0027, (0, _pith.P$$$pmap)(ring$$1, io$$4(now$$4)));
-  });
+  };
 }
 
 function run(tf, timer) {
   let nextRun = null;
   let timerd = _disposable.empty;
+  let now$$5 = tf();
 
   const schedule = function schedule(_arg1$$2) {
     var tl, nr;
 
     if (_arg1$$2 != null) {
       const timeline = _arg1$$2;
-      const now$$5 = tf();
       const patternInput = (0, _timeline.getBounds)(timeline);
 
       if (nextRun != null) {
-        if (tl = nextRun[1], (nr = nextRun[0], nr > patternInput[0])) {
+        if (tl = nextRun[1], (nr = nextRun[0], nr >= patternInput[0])) {
+          (0, _String.toConsole)((0, _String.printf)("<- %A %A >= %A"))(now$$5)(nextRun[0])(patternInput[0]);
           nextRun = [patternInput[0], (0, _timeline.mappend)(function (l$$1, r$$1) {
             return function (t$$1) {
               return mappend(l$$1, r$$1, t$$1);
@@ -138,6 +141,7 @@ function run(tf, timer) {
           if (nextRun != null) {
             const tl$$2 = nextRun[1];
             const nr$$2 = nextRun[0];
+            (0, _String.toConsole)((0, _String.printf)("<- %A %A < %A"))(now$$5)(nr$$2)(patternInput[0]);
             nextRun = [nr$$2, (0, _timeline.mappend)(function (l$$2, r$$2) {
               return function (t$$2) {
                 return mappend(l$$2, r$$2, t$$2);
@@ -148,6 +152,7 @@ function run(tf, timer) {
           }
         }
       } else {
+        (0, _String.toConsole)((0, _String.printf)("<- %A None"))(now$$5);
         nextRun = [patternInput[0], timeline];
         timerd = timer((0, _Util.max)(_Util.comparePrimitives, patternInput[0] - now$$5, 0), onTimer);
       }
@@ -155,7 +160,7 @@ function run(tf, timer) {
   };
 
   const onTimer = function onTimer() {
-    const now$$6 = tf();
+    now$$5 = tf();
     const patternInput$$1 = nextRun;
     nextRun = null;
     let p$$2 = (0, _pith.P$$$empty)();
@@ -163,7 +168,7 @@ function run(tf, timer) {
       p$$2 = (0, _pith.P$$$mappend)(function (arg00$0040$$1, arg10$0040$$6) {
         (0, _unit.mappend)(null, null);
       }, p$$2, runAllNows(tio[0], tio[1]));
-    }, (0, _timeline.runTo)(now$$6, patternInput$$1[1]));
+    }, (0, _timeline.runTo)(now$$5, patternInput$$1[1]));
     schedule((0, _option.mappend)(function (l$$4, r$$3) {
       return (0, _timeline.mappend)(function (l$$5, r$$4) {
         return function (t$$3) {
@@ -179,8 +184,7 @@ function run(tf, timer) {
 
   return function (m) {
     const canceled$$1 = new _Types.FSharpRef(false);
-    const now$$8 = tf();
-    const offset$$3 = 0 - now$$8;
+    const offset$$3 = 0 - now$$5;
     let io$$13;
 
     switch (m.tag) {
@@ -188,8 +192,8 @@ function run(tf, timer) {
         {
           const io$$10 = m.fields[0];
 
-          io$$13 = function (now$$10) {
-            return ring(canceled$$1, 0, io$$10, now$$10);
+          io$$13 = function (now$$8) {
+            return ring(canceled$$1, 0, io$$10, now$$8);
           };
 
           break;
@@ -200,12 +204,12 @@ function run(tf, timer) {
           const io$$11 = m.fields[1];
           const delay$$2 = m.fields[0];
 
-          io$$13 = function (now$$11) {
+          io$$13 = function (now$$9) {
             return ring(canceled$$1, offset$$3, function (t$$5) {
-              return new _pith.Pith$00602(0, "P", function (o$$3) {
+              return function (o$$3) {
                 o$$3(new O(2, "Delay", delay$$2, io$$11));
-              });
-            }, now$$11);
+              };
+            }, now$$9);
           };
 
           break;
@@ -215,13 +219,13 @@ function run(tf, timer) {
         {
           const io$$9 = m.fields[0];
 
-          io$$13 = function (now$$9) {
-            return ring(canceled$$1, offset$$3, io$$9, now$$9);
+          io$$13 = function (now$$7) {
+            return ring(canceled$$1, offset$$3, io$$9, now$$7);
           };
         }
     }
 
-    const p$$3 = runAllNows(now$$8, io$$13);
+    const p$$3 = runAllNows(now$$5, io$$13);
     const timeline$$1 = (0, _timeline.fromPith)(function (l$$7, r$$6) {
       return function (t$$6) {
         return mappend(l$$7, r$$6, t$$6);

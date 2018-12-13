@@ -1,5 +1,5 @@
 ﻿namespace Sakhe
-type Pith<'a, 'b> = private P of (('a -> unit) -> 'b)
+type [<Fable.Core.Erase>] Pith<'a, 'b> = private P of (('a -> unit) -> 'b)
 
 [<RequireQualifiedAccess>]
 module P =

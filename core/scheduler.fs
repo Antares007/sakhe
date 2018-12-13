@@ -1,6 +1,6 @@
 module Sakhe.Scheduler
 
-type T = (float -> Pith<O, unit>)
+type [<Fable.Core.Erase>] T = (float -> Pith<O, unit>)
 and O =
     | Local of T
     | Origin of T
@@ -25,26 +25,28 @@ let rec runAllNows (now, io: T) = P <| fun o' ->
 let run (tf: unit -> float) timer =
     let mutable nextRun = None
     let mutable timerd = Disposable.empty
+    let mutable now = tf()
     let rec schedule = function
         | None -> ()
         | Some timeline ->
-            let now = tf ()
-            // printfn "<- %A" now
             let (nextArrival, _) = TimeLine.getBounds timeline
             match nextRun with
             | None                                  ->
+                printfn "<- %A None" now
                 nextRun <- Some (nextArrival, timeline)
                 timerd <- timer (System.Math.Max (nextArrival - now, 0.)) onTimer
-            | Some (nr, tl) when nr > nextArrival  ->
+            | Some (nr, tl) when nr >= nextArrival  ->
+                printfn "<- %A %A >= %A" now nr nextArrival
                 nextRun <- Some (nextArrival, TimeLine.mappend mappend tl timeline)
                 timerd.Dispose()
                 timerd <- timer (System.Math.Max (nextArrival - now, 0.)) onTimer
             | Some (nr, tl)                         ->
+                printfn "<- %A %A < %A" now nr nextArrival
                 nextRun <- Some (nr, TimeLine.mappend mappend tl timeline)
     and onTimer () =
-        let now = tf()
-        // printfn "-> %A" now
+        now <- tf()
         let (nr, tl) = nextRun.Value
+        // printfn "-> %A" now
         nextRun <- None
         let mutable p = P.empty
         let l =
@@ -54,7 +56,6 @@ let run (tf: unit -> float) timer =
         schedule <| Option.mappend (TimeLine.mappend mappend) l (TimeLine.fromPith mappend p)
     fun m ->
         let canceled = ref false
-        let now = tf()
         let offset = 0. - now
         let io =
             match m with
