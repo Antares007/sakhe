@@ -4,12 +4,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="pith.fs" />
+    <Compile Include="io.fs" />
     <Compile Include="disposable.fs" />
     <Compile Include="option.fs" />
     <Compile Include="unit.fs" />
     <Compile Include="time.fs" />
+    <Compile Include="new.fs" />
     <Compile Include="timeline.fs" />
+    <Compile Include="timeline2.fs" />
     <Compile Include="scheduler.fs" />
+    <Compile Include="scheduler2.fs" />
     <Compile Include="stream.fs" />
     <Compile Include="default.fs" />
     <Compile Include="show.fs" />
