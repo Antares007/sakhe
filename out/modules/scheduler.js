@@ -10,9 +10,9 @@ exports.runAllNows = runAllNows;
 exports.run = run;
 exports.O = void 0;
 
-var _Types = require("./fable-library.2.1.7/Types");
+var _Types = require("./fable-library.2.1.8/Types");
 
-var _Reflection = require("./fable-library.2.1.7/Reflection");
+var _Reflection = require("./fable-library.2.1.8/Reflection");
 
 var _unit = require("./unit");
 
@@ -22,9 +22,9 @@ var _disposable = require("./disposable");
 
 var _timeline = require("./timeline");
 
-var _String = require("./fable-library.2.1.7/String");
+var _String = require("./fable-library.2.1.8/String");
 
-var _Util = require("./fable-library.2.1.7/Util");
+var _Util = require("./fable-library.2.1.8/Util");
 
 var _option = require("./option");
 

@@ -8,7 +8,6 @@
     "build": "fable-splitter -c ./splitter.config.js",
     "build-fable": "fable-splitter -c ./splitter.fable.config.js",
     "watch": "fable-splitter -w -c ./splitter.config.js ",
-
     "postinstall": "dotnet restore"
   },
   "author": "",
@@ -19,7 +18,10 @@
     "@babel/plugin-transform-modules-commonjs": "^7.0.0",
     "@babel/preset-env": "^7.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "fable-compiler": "^2.1.8",
+    "fable-splitter": "^2.1.0"
+  },
   "prettier": {
     "semi": false
   }

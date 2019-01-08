@@ -24,9 +24,9 @@ exports.join = join;
 exports.bind = bind;
 exports.O$00601 = void 0;
 
-var _Types = require("./fable-library.2.1.7/Types");
+var _Types = require("./fable-library.2.1.8/Types");
 
-var _Reflection = require("./fable-library.2.1.7/Reflection");
+var _Reflection = require("./fable-library.2.1.8/Reflection");
 
 var _pith = require("./pith");
 
@@ -34,13 +34,13 @@ var _scheduler = require("./scheduler");
 
 var _disposable = require("./disposable");
 
-var _Seq = require("./fable-library.2.1.7/Seq");
+var _Seq = require("./fable-library.2.1.8/Seq");
 
-var _Util = require("./fable-library.2.1.7/Util");
+var _Util = require("./fable-library.2.1.8/Util");
 
-var _Array = require("./fable-library.2.1.7/Array");
+var _Array = require("./fable-library.2.1.8/Array");
 
-var _Option = require("./fable-library.2.1.7/Option");
+var _Option = require("./fable-library.2.1.8/Option");
 
 const O$00601 = (0, _Types.declare)(function Sakhe_Stream_O(tag, name, ...fields) {
   _Types.Union.call(this, tag, name, ...fields);

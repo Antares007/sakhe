@@ -7,6 +7,7 @@ exports.compare = compare;
 exports.equals = equals;
 exports.abs = abs;
 exports.round = round;
+exports.truncate = truncate;
 exports.ceil = ceil;
 exports.floor = floor;
 exports.pow = pow;
@@ -54,11 +55,17 @@ function abs(x) {
   return x.abs();
 }
 
-function round(x) {
-  return x.round(0, x.cmp(0) >= 0 ? 1
+function round(x, digits = 0) {
+  return x.round(digits, x.cmp(0) >= 0 ? 1
   /* ROUND_HALF_UP */
   : 2
   /* ROUND_HALF_EVEN */
+  );
+}
+
+function truncate(x) {
+  return x.round(0, 0
+  /* ROUND_DOWN */
   );
 }
 

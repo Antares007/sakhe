@@ -10,11 +10,11 @@ var _stream = require("./stream");
 
 var _disposable = require("./disposable");
 
-var _Util = require("./fable-library.2.1.7/Util");
+var _Util = require("./fable-library.2.1.8/Util");
 
 var _default = require("./default");
 
-var _String = require("./fable-library.2.1.7/String");
+var _String = require("./fable-library.2.1.8/String");
 
 function pair(a, b) {
   return [a, b];

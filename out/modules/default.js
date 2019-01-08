@@ -9,9 +9,9 @@ exports.tf = tf;
 exports.subscribe = subscribe;
 exports.scheduler = exports.Sink$00601 = void 0;
 
-var _Types = require("./fable-library.2.1.7/Types");
+var _Types = require("./fable-library.2.1.8/Types");
 
-var _Reflection = require("./fable-library.2.1.7/Reflection");
+var _Reflection = require("./fable-library.2.1.8/Reflection");
 
 var _disposable = require("./disposable");
 
