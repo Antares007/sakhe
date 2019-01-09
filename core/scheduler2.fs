@@ -5,18 +5,17 @@ type O =
     | Origin of IO<float, O, unit>
     | Delay  of float * IO<float, O, unit>
 
-let rec ring (canceled: bool ref) (offset: float) (io: IO<float, O, unit>) =
-    IO.pmap <| fun io o now ->
+let rec ring (canceled: bool ref) (offset: float) io =
+    IO <| fun o now ->
         if canceled.Value then ()
         else
-        io <| function
+        IO.run (now + offset) <| function
             | Local io          -> o <| Local  (ring canceled (0. - now) io)
             | Origin io         -> o <| Origin (ring canceled 0. io)
             | Delay (delay, io) -> o <| Delay  (delay, ring canceled offset io)
-        <| now + offset
-    <| io
+        <| io
 let rec runAllNows (now, io: IO<float, O, unit>) = IO <| fun o' () ->
-    let rec ring io o i = 
+    let rec ring io  = IO <| fun o i ->
         io <| function
             | Local io 
             | Origin io  -> IO.run now o' (IO.pmap ring io)
@@ -24,6 +23,43 @@ let rec runAllNows (now, io: IO<float, O, unit>) = IO <| fun o' () ->
         <| i
     IO.run now o' (IO.pmap ring io)
 let mappend = IO.mappend Unit.mappend
+
+let mkScheduler (tf: unit -> float) (requestNextFrame: (unit -> unit) -> 'h) =
+    let mutable now = tf()
+    let mutable mainTimeline = None
+    let rec nextFrame () =
+        now <- tf()
+        match mainTimeline with 
+        | None -> ()
+        | Some tl ->
+            let (na, _) = TimeLine2.getBounds tl
+            if now < na then ()
+            else
+            let mutable newTlIo = IO.empty
+            let restTl =
+                IO.run () <| fun tio ->
+                    newTlIo <- (IO.mappend Unit.mappend) newTlIo (runAllNows tio)
+                <| TimeLine2.runTo now tl
+            mainTimeline <- Option.mappend (TimeLine2.mappend mappend) restTl (TimeLine2.fromIO mappend newTlIo)
+        requestNextFrame nextFrame |> ignore
+    requestNextFrame nextFrame |> ignore
+    fun m ->
+        let canceled = ref false
+        let offset = 0. - now
+        let io =
+            match m with
+            | Local io ->
+                ring canceled offset io
+            | Origin io ->
+                ring canceled 0. io
+            | Delay (delay, io) ->
+                ring canceled offset << IO <| fun o t ->
+                    o << Delay <| (delay, io)
+        let p = runAllNows (now, io)
+        let timeline = TimeLine2.fromIO mappend p
+        mainTimeline <- Option.mappend (TimeLine2.mappend mappend) mainTimeline timeline
+        Disposable.return' <| fun () -> canceled.Value <- true
+    
 let run (tf: unit -> float) timer =
     let mutable nextRun = None
     let mutable timerd = Disposable.empty

@@ -3,6 +3,7 @@ import { empty } from "./disposable";
 import { createAtom } from "./fable-library.2.1.0-beta-006/Util";
 import { scheduler } from "./default";
 import { toConsole, printf } from "./fable-library.2.1.0-beta-006/String";
+import { mappend } from "./scheduler2";
 export function pair(a, b) {
   return [a, b];
 }
@@ -19,3 +20,10 @@ export const sc = combineArray([at(3, "a"), at(2, "b"), at(1, "c")]);
 d(run(scheduler, function (arg10) {
   toConsole(printf("%A"))(arg10);
 }, merge(onClick, s)));
+export function see2(o) {
+  return function () {
+    o(43);
+  };
+}
+see2(null)(function (o$$1) {});
+export const see = mappend;

@@ -1,24 +1,34 @@
 module Sakhe.TimeLine2
 
-type T<'a, 'b when 'a : comparison> =
+type Tt<'a, 'b when 'a : comparison> =
     private
     | T of ('a * 'b) []
-    | LR of T<'a, 'b> * T<'a, 'b>
+    | LR of Tt<'a, 'b> * Tt<'a, 'b>
+let findAppendPosition (a : float) (sortedArray : ResizeArray<float*'b>) =
+    let rec go l r =
+        if l < r then
+            let m = (l + r) / 2
+            if fst sortedArray.[m] > a then go l m
+            else go (m + 1) r
+        else l - 1
+    go 0 (Array.length (unbox sortedArray))
 
 let fromIO mappend io =
-    let mutable s = Map.empty
+    let line = ResizeArray()
     IO.run () <| fun (b, a) ->
-        match Map.tryFind b s with
-        | None -> s <- Map.add b a s
-        | Some o -> s <- Map.add b (mappend o a) s
+        match findAppendPosition b line with
+        | -1 ->
+            line.Add (b, a)
+        | n -> 
+            if fst line.[n] = b then
+                line.[n] <- (b, mappend (snd line.[n]) a)
+            else if n = Array.length (unbox line) then
+                line.Add (b, a)
+            else
+                line.Insert(n, (b, a))
     <| io
-    let line =
-        s
-        |> Map.toSeq
-        |> Seq.sortBy fst
-        |> Seq.toArray
-    if Array.isEmpty line then None
-    else Some << T <| line
+    if Array.length (unbox line) = 0 then None
+    else Some << T << unbox <| line
 
 let rec toIO = function
     | T a -> IO <| fun o () -> Array.iter o a
@@ -39,26 +49,18 @@ let rec runTo now tl =
     IO <| fun o () ->
         match tl with
         | T a ->
-            if now < (fst a.[0]) then Some(T a)
-            else
-                a
-                |> Seq.takeWhile (fun (a, _) -> a <= now)
-                |> Seq.iter o
-                if fst a.[a.Length - 1] <= now then None
+            match findAppendPosition now (unbox a) with
+            | -1 -> Some(T a)
+            | n ->
+                let alen = Array.length a
+                let to' = if n < alen && fst a.[n] = now then n else n - 1
+                for i = 0 to to' do o a.[i]
+                if n = alen then None
                 else
-                    Some(T(a
-                           |> Seq.skipWhile (fun (a, _) -> a <= now)
-                           |> Seq.toArray))
+                let rez = ResizeArray()
+                for i = to' + 1 to alen - 1 do rez.Add a.[i]
+                Some << T << unbox <| rez
         | LR(l, r) ->
             match IO.run () o (runTo now l) with
             | None -> IO.run () o (runTo now r)
             | Some tl -> Some(LR(tl, r))
-
-let private findAppendPosition (a : 'a) (sortedArray : 'a []) =
-    let rec go l r =
-        if l < r then
-            let m = (l + r) / 2
-            if sortedArray.[m] > a then go l m
-            else go (m + 1) r
-        else l - 1
-    go 0 (Array.length sortedArray)
