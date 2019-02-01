@@ -1,5 +1,6 @@
 import { declare, Union } from "./fable-library.2.1.0-beta-006/Types";
 import { union, array, tuple } from "./fable-library.2.1.0-beta-006/Reflection";
+import { mappend as mappend$$3 } from "./unit";
 export const Tt$00602 = declare(function Sakhe_TimeLine2_Tt(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
@@ -35,7 +36,7 @@ export function findAppendPosition(a, sortedArray) {
 }
 export function fromIO(mappend$$1, io) {
   const line = [];
-  io(null)(function (tupledArg) {
+  io(function (tupledArg) {
     const matchValue = findAppendPosition(tupledArg[0], line) | 0;
 
     if (matchValue === -1) {
@@ -51,7 +52,7 @@ export function fromIO(mappend$$1, io) {
         line.splice(n, 0, [tupledArg[0], tupledArg[1]]);
       }
     }
-  });
+  })(null);
 
   if (line.length === 0) {
     return null;
@@ -63,7 +64,9 @@ export function toIO(_arg1) {
   if (_arg1.tag === 1) {
     const r$$1 = _arg1.fields[1];
     const l$$1 = _arg1.fields[0];
-    return ((mappend, l, r) => o => i => mappend(l(o)(i), r(o)(i)))(function (arg00$0040, arg10$0040) {}, toIO(l$$1), toIO(r$$1));
+    return ((mappend, l, r) => o => i => mappend(l(o)(i), r(o)(i)))(function (arg00$0040, arg10$0040) {
+      mappend$$3(null, null);
+    }, toIO(l$$1), toIO(r$$1));
   } else {
     const a$$2 = _arg1.fields[0];
     return function (o$$1) {
@@ -92,7 +95,9 @@ export function mappend(mappend$$2, l$$3, r$$3) {
   } else if (patternInput$$1[1] < patternInput[0]) {
     return new Tt$00602(1, "LR", r$$3, l$$3);
   } else {
-    const p = ((mappend, l, r) => o => i => mappend(l(o)(i), r(o)(i)))(function (arg00$0040$$1, arg10$0040$$1) {}, toIO(l$$3), toIO(r$$3));
+    const p = ((mappend, l, r) => o => i => mappend(l(o)(i), r(o)(i)))(function (arg00$0040$$1, arg10$0040$$1) {
+      mappend$$3(null, null);
+    }, toIO(l$$3), toIO(r$$3));
 
     const o$$2 = fromIO(mappend$$2, p);
     return o$$2;
@@ -104,13 +109,13 @@ export function runTo(now, tl) {
       if (tl.tag === 1) {
         const r$$4 = tl.fields[1];
         const l$$4 = tl.fields[0];
-        const matchValue$$2 = runTo(now, l$$4)(null)(o$$3);
+        const matchValue$$2 = runTo(now, l$$4)(o$$3)(null);
 
         if (matchValue$$2 != null) {
           const tl$$1 = matchValue$$2;
           return new Tt$00602(1, "LR", tl$$1, r$$4);
         } else {
-          return runTo(now, r$$4)(null)(o$$3);
+          return runTo(now, r$$4)(o$$3)(null);
         }
       } else {
         const a$$4 = tl.fields[0];

@@ -1,11 +1,12 @@
 import { FSharpRef, declare, Union } from "./fable-library.2.1.0-beta-006/Types";
 import { union, lambda, obj, float64 } from "./fable-library.2.1.0-beta-006/Reflection";
+import { mappend as mappend$$1 } from "./unit";
 import { P$$$run as P$0024$0024$0024run, P$$$pmap as P$0024$0024$0024pmap, P$$$empty as P$0024$0024$0024empty, P$$$mappend as P$0024$0024$0024mappend } from "./pith";
 import { return$0027 as return$00240027, empty } from "./disposable";
-import { fromPith, runTo, mappend as mappend$$1, getBounds } from "./timeline";
+import { fromPith, runTo, mappend as mappend$$2, getBounds } from "./timeline";
 import { toConsole, printf } from "./fable-library.2.1.0-beta-006/String";
 import { max, comparePrimitives } from "./fable-library.2.1.0-beta-006/Util";
-import { mappend as mappend$$2 } from "./option";
+import { mappend as mappend$$3 } from "./option";
 export const O = declare(function Sakhe_Scheduler_O(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
@@ -13,7 +14,9 @@ export function O$reflection() {
   return union("Sakhe.Scheduler.O", [], O, () => [["Local", [lambda(float64, obj)]], ["Origin", [lambda(float64, obj)]], ["Delay", [float64, lambda(float64, obj)]]]);
 }
 export function mappend(l, r, t) {
-  return P$0024$0024$0024mappend(function (arg00$0040, arg10$0040) {}, l(t), r(t));
+  return P$0024$0024$0024mappend(function (arg00$0040, arg10$0040) {
+    mappend$$1(null, null);
+  }, l(t), r(t));
 }
 export function ring(canceled, offset, io, now) {
   if (canceled.contents) {
@@ -100,7 +103,7 @@ export function run(tf, timer) {
       if (nextRun != null) {
         if (tl = nextRun[1], (nr = nextRun[0], nr >= patternInput[0])) {
           toConsole(printf("<- %A %A >= %A"))(now$$5)(nextRun[0])(patternInput[0]);
-          nextRun = [patternInput[0], mappend$$1(function (l$$1, r$$1) {
+          nextRun = [patternInput[0], mappend$$2(function (l$$1, r$$1) {
             return function (t$$1) {
               return mappend(l$$1, r$$1, t$$1);
             };
@@ -112,7 +115,7 @@ export function run(tf, timer) {
             const tl$$2 = nextRun[1];
             const nr$$2 = nextRun[0];
             toConsole(printf("<- %A %A < %A"))(now$$5)(nr$$2)(patternInput[0]);
-            nextRun = [nr$$2, mappend$$1(function (l$$2, r$$2) {
+            nextRun = [nr$$2, mappend$$2(function (l$$2, r$$2) {
               return function (t$$2) {
                 return mappend(l$$2, r$$2, t$$2);
               };
@@ -135,10 +138,12 @@ export function run(tf, timer) {
     nextRun = null;
     let p$$2 = P$0024$0024$0024empty();
     const l$$3 = P$0024$0024$0024run(function (tio) {
-      p$$2 = P$0024$0024$0024mappend(function (arg00$0040$$1, arg10$0040$$6) {}, p$$2, runAllNows(tio[0], tio[1]));
+      p$$2 = P$0024$0024$0024mappend(function (arg00$0040$$1, arg10$0040$$6) {
+        mappend$$1(null, null);
+      }, p$$2, runAllNows(tio[0], tio[1]));
     }, runTo(now$$5, patternInput$$1[1]));
-    schedule(mappend$$2(function (l$$4, r$$3) {
-      return mappend$$1(function (l$$5, r$$4) {
+    schedule(mappend$$3(function (l$$4, r$$3) {
+      return mappend$$2(function (l$$5, r$$4) {
         return function (t$$3) {
           return mappend(l$$5, r$$4, t$$3);
         };

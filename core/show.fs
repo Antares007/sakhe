@@ -23,4 +23,4 @@ d <- Stream.run Default.scheduler (printfn "%A") (Stream.merge onClick s)
 
 let see2 = IO <| fun o () -> o 43
 IO.run () (fun o -> ()) see2
-let see = Scheduler2.mappend
+let see = Scheduler2.mkScheduler

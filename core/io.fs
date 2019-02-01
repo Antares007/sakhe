@@ -6,7 +6,7 @@ module IO =
     let empty<'i,'o> = IO <| fun (o : 'o -> unit) (_:'i) -> ()
     [<Emit("((mappend, l, r) => o => i => mappend(l(o)(i), r(o)(i)))($0, $1, $2)")>]
     let mappend mappend (IO l) (IO r) = IO <| fun o i -> mappend (l o i) (r o i)
-    [<Emit("$2($0)($1)")>]
+    [<Emit("$2($1)($0)")>]
     let run i o (IO io) = io o i
     [<Emit("((map, io) => o => i => map(io(o)(i)))($0,$1)")>]
     let map f (IO io) = IO <| fun o i  -> f (io o i)

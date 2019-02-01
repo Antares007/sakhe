@@ -6,6 +6,7 @@ import { value } from "./fable-library.2.1.0-beta-006/Option";
 import { P$$$return$0027 as P$0024$0024$0024return$00240027, P$$$mappend as P$0024$0024$0024mappend, P$$$run as P$0024$0024$0024run } from "./pith";
 import { skipWhile, iterate, takeWhile, sortWith } from "./fable-library.2.1.0-beta-006/Seq";
 import { ofSeq } from "./fable-library.2.1.0-beta-006/Array";
+import { mappend as mappend$$3 } from "./unit";
 export const T$00602 = declare(function Sakhe_TimeLine_T(tag, name, ...fields) {
   Union.call(this, tag, name, ...fields);
 }, Union);
@@ -45,7 +46,9 @@ export function toPith(_arg1) {
   if (_arg1.tag === 1) {
     const r = _arg1.fields[1];
     const l = _arg1.fields[0];
-    return P$0024$0024$0024mappend(function (arg00$0040, arg10$0040$$1) {}, toPith(l), toPith(r));
+    return P$0024$0024$0024mappend(function (arg00$0040, arg10$0040$$1) {
+      mappend$$3(null, null);
+    }, toPith(l), toPith(r));
   } else {
     const a$$1 = _arg1.fields[0];
     return P$0024$0024$0024return$00240027(function (o$$2) {
@@ -72,7 +75,9 @@ export function mappend(mappend$$2, l$$2, r$$2) {
   } else if (compare(patternInput$$1[1], patternInput[0]) < 0) {
     return new T$00602(1, "LR", r$$2, l$$2);
   } else {
-    const p = P$0024$0024$0024mappend(function (arg00$0040$$1, arg10$0040$$2) {}, toPith(l$$2), toPith(r$$2));
+    const p = P$0024$0024$0024mappend(function (arg00$0040$$1, arg10$0040$$2) {
+      mappend$$3(null, null);
+    }, toPith(l$$2), toPith(r$$2));
     const o$$3 = fromPith(mappend$$2, p);
     return o$$3;
   }
