@@ -2,7 +2,7 @@
   "name": "sakhe",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "babel": {
     "presets": [
       [
@@ -50,9 +50,7 @@
     "flow-bin": "^0.70.0"
   },
   "scripts": {
-    "lint": "eslint src && flow",
-    "build": "babel src -d lib",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron ."
   },
   "repository": {
     "type": "git",
