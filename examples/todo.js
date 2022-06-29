@@ -2,7 +2,7 @@ const PatchBark = require('../src.old/barks/patch')
 
 PatchBark()(
   document.getElementById('root-node'),
-  ...require('./initState')('todo')
+  ...require('./initstate')('todo')
 )(TodoApp()).drain()
 
 function TodoApp () {

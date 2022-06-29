@@ -74,5 +74,5 @@ const Folder = path => (state, sselect) => {
 
 PatchBark()(
   document.getElementById('root-node'),
-  ...require('./initState')('folder')
+  ...require('./initstate')('folder')
 )(Folder(pathJoin(__dirname, '..'))).drain()

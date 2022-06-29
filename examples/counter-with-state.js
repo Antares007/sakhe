@@ -24,5 +24,5 @@ const Counter = (state, sselect) => {
 
 PatchBark()(
   document.getElementById('root-node'),
-  ...require('./initState')('counter')
+  ...require('./initstate')('counter')
 )(Counter).drain()
