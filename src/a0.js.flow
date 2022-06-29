@@ -1,4 +1,0 @@
-// @flow
-export type Ray<A> = {put(A): number}
-export type Pith<A> = (Ray<A>) => void
-declare export default function tree<A, B>(deltaC: (A[]) => B): (Pith<A>) => B

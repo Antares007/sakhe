@@ -1,4 +1,4 @@
-const PatchBark = require('../src.old/barks/patch')
+const PatchBark = require('../src/barks/patch')
 
 PatchBark()(
   document.getElementById('root-node'),

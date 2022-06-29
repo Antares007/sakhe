@@ -1,7 +1,7 @@
 const m = require('most')
 const watch$ = require('./watch$')
 const {join: pathJoin} = require('path')
-const PatchBark = require('../src.old/barks/patch')
+const PatchBark = require('../src/barks/patch')
 
 const mapError = err =>
   m.of(put => {

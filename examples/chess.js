@@ -1,5 +1,5 @@
-const PatchBark = require('../src.old/barks/patch')
-const apiRing = require('../src.old/rings/api')
+const PatchBark = require('../src/barks/patch')
+const apiRing = require('../src/rings/api')
 const Knight = put =>
   put.node(
     'span',
@@ -122,6 +122,6 @@ PatchBark(apiRing, p =>
     }),
     ...rest
   ])(chessRing(p))
-)(document.getElementById('root-node'), ...require('./initState')('chess'))(
+)(document.getElementById('root-node'), ...require('./initstate')('chess'))(
   Chess
 ).drain()
